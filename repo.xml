@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<meta xmlns="http://exist-db.org/xquery/repo">
+    <description>Edirom Online Backend</description>
+    <author>Daniel Röwenstrunk</author>
+    <website/>
+    <status>alpha</status>
+    <license>GPL 3</license>
+    <copyright>true</copyright>
+    <type>application</type>
+    <target>edirom_online_backend</target>
+    <prepare>pre-install.xql</prepare>
+    <finish>post-install.xql</finish>
+    <permissions user="edirom" group="ediromgroup" mode="rw-rw-r--"/>
+</meta>

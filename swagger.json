@@ -1,0 +1,109 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is the description and documentation of the Edirom Online backend API.",
+    "version": "1.0.0",
+    "title": "Edirom Online Backend",
+    "license": {
+      "name": "GPL 3.0"
+    }
+  },
+  "host": "localhost:9090",
+  "basePath": "/exist/restxq",
+  "schemes": [
+    "http"
+  ],
+  "tags": [
+    {
+      "name": "Objects",
+      "description": "Objects of the Gumpenhuber edition"
+    }
+  ],
+  "paths": {
+  "/editions": {
+      "get": {
+        "tags": [
+          "Objects"
+        ],
+        "summary": "Get all editions",
+        "description": "Returns all editions",
+        "operationId": "getEditions",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Edition"
+              }
+            },
+            "headers": {
+              "totalrecordcount": {
+                "type": "integer",
+                "description": "The total size of the result set"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/editions/{editionID}": {
+      "get": {
+        "tags": [
+          "Objects"
+        ],
+        "summary": "Get details for a single edition",
+        "description": "Returns a single edition description",
+        "operationId": "getEditionDetails",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "editionID",
+            "in": "path",
+            "description": "ID of edition to return",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Edition"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Edition not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Edition": {
+      "type": "object",
+      "properties": {
+        "editionID": {
+          "type": "string",
+          "example": "edition-5638362"
+        },
+        "title": {
+          "type": "string",
+          "example": "Freischütz Digital"
+        },
+        "uri": {
+          "type": "string",
+          "example": "xmldb:exist:///db/apps/freidi/edition/freidi-edition.xml"
+        }
+      }
+    }
+  }
+}

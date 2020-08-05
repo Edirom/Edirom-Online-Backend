@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://expath.org/ns/pkg" name="https://backend.edirom.de"
+    abbrev="edirom_online_backend" version="0.1" spec="1.0">
+    <title>Edirom Online Backend</title>
+    <dependency package="http://www.functx.com"/>
+</package>
+
