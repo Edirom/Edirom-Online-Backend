@@ -16,9 +16,9 @@ declare
     %output:media-type("application/json")
     %output:method("json")
     function editions:editions-json() {
-        let $editions := ''
+        let $editions := '[{"editionID": "edition-45346", "title": "Freischütz Digital", "uri": "xmldb:exist:///db/apps/freidi/edition/freidi-edition.xml"}]'
         return (
-            commons:set-response-header-totalrecordcount($commons:response-headers, count($total-set)),
+            commons:set-response-header($commons:response-headers),
             $editions
         )
 };
@@ -30,7 +30,7 @@ declare
     %output:media-type("application/json")
     %output:method("json")
     function editions:editionsID-json($editionID as xs:string) {
-        let $edition := ''
+        let $edition := '{"editionID": "edition-45346", "title": "Freischütz Digital", "uri": "xmldb:exist:///db/apps/freidi/edition/freidi-edition.xml"}'
         return (
             $commons:response-headers,
             $edition

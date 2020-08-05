@@ -15,12 +15,11 @@ declare variable $commons:response-headers :=
         </http:response>
     </rest:response>;
 
-declare function commons:set-response-header-totalrecordcount($response-headers as element(rest:response), $totalrecordcount as xs:positiveInteger) as element(rest:response) {
+declare function commons:set-response-header($response-headers as element(rest:response)) as element(rest:response) {
     element {$response-headers/name()} {
         $response-headers/@*,
         element {$response-headers/http:response/name()} {
-            $response-headers/http:response/* except $response-headers/http:response/http:header[@name = 'totalrecordcount'],
-            <http:header name="totalrecordcount" value="{$totalrecordcount}"/>
+            $response-headers/http:response/*
         }
     }
 };
