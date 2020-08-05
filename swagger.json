@@ -39,12 +39,6 @@
               "items": {
                 "$ref": "#/definitions/Edition"
               }
-            },
-            "headers": {
-              "totalrecordcount": {
-                "type": "integer",
-                "description": "The total size of the result set"
-              }
             }
           }
         }
@@ -82,6 +76,30 @@
           },
           "404": {
             "description": "Edition not found"
+          }
+        }
+      }
+    },
+    "/getDefaultEdition": {
+      "get": {
+        "tags": [
+          "Objects"
+        ],
+        "summary": "Get default edition set by environment variable",
+        "description": "Returns default editions",
+        "operationId": "getDefaultEdition",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Edition"
+              }
+            }
           }
         }
       }
