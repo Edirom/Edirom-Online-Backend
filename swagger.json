@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "This is the description and documentation of the Edirom Online backend API.",
+    "description": "This is the description and documentation of the Edirom Online Backend API.",
     "version": "1.0.0",
     "title": "Edirom Online Backend",
     "license": {
@@ -16,7 +16,7 @@
   "tags": [
     {
       "name": "Objects",
-      "description": "Objects of the Gumpenhuber edition"
+      "description": "Objects of Edirom Online Editions"
     }
   ],
   "paths": {
