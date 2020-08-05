@@ -88,7 +88,7 @@ declare function config:get-max-limit() as xs:positiveInteger {
 
 declare function config:get-conf-entry($key as xs:string) as xs:string {
     try { json-doc($config:config-path)?data($key) cast as xs:string }
-    catch * { util:log-system-out('error reading conf entry: ' + $key), "" }
+    catch * { util:log-system-out('error reading conf entry: ' || $key ), "" }
 };
 
 (:~
