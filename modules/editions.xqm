@@ -47,11 +47,18 @@ declare
     %output:method("json")
     function editions:getDefaultEdition-json() {
         let $uri := config:get-conf-entry("EDITION_URI")
-        let $edition := editions:editionToJson(doc($uri)/edirom:edition)
+        let $edition := if(doc($uri)) 
+                        then(
+                            doc($uri)/edirom:edition
+                        )else (
+                            editions:findEdition()
+                        )
+        let $edition-json := editions:editionToJson($edition)
+              
         return (
             $commons:response-headers,
-            $edition
-        )
+            $edition-json
+        )   
 };
 
 declare %private function editions:editionToJson($edition as element(edirom:edition)) as map() {
@@ -66,6 +73,14 @@ declare %private function editions:title($edition as element(edirom:edition)) as
     $edition/edirom:editionName[1] => normalize-space() 
 };
 
-
+(:~
+: Returns the URI of the first found Edition
+:
+: @return The URI
+:)
+declare %private function editions:findEdition() as xs:string {
+    let $edition := (collection('/db/apps')//edirom:edition)[1]
+    return utils:uri($edition)
+};
 
 
