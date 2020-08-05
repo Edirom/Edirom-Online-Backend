@@ -26,9 +26,15 @@ declare variable $target external;
 declare variable $local:repo-descriptor := doc(concat('file://', $dir, '/repo.xml'))/repo:meta;
 
 declare function local:set-options() as xs:string* {
+    (
+    for $opt in available-environment-variables()
+    return
+        config:set-option($opt, string(environment-variable($opt)))
+    ,
     for $opt in available-environment-variables()[starts-with(., 'SWAGGER_')]
     return
         config:set-swagger-option(substring($opt, 9), string(environment-variable($opt)))
+    )
 };
 
 (: set options passed as environment variables :)

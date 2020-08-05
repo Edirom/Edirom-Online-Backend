@@ -38,6 +38,8 @@ declare variable $config:expath-descriptor := doc(concat($config:app-root, "/exp
 
 declare variable $config:swagger-config-path := $config:app-root || "/swagger.json";
 
+declare variable $config:config-path := $config:app-root || "/conf.json";
+
 (:~
  : Returns the repo.xml descriptor for the current application.
  :)
@@ -82,6 +84,47 @@ declare function config:app-meta($node as node(), $model as map(*)) as element()
 declare function config:get-max-limit() as xs:positiveInteger {
     try { json-doc($config:swagger-config-path)?parameters?limitParam?maximum cast as xs:positiveInteger }
     catch * { util:log-system-out('error reading maximum limit, defaulting to 200'), 200 }
+};
+
+(:~
+ : set option from environment variable
+ : NB: You have to be logged in as admin to be able to update preferences!
+ :
+ : @param $key a sequence of keys navigating to the object; 
+ :  e.g. the sequence ('foo', 'bar') will select the object 'bar' within the object 'foo'. 
+ :  Non existing keys will be added, existing keys will be updated
+ : @param $value the value of the new or updated key. 
+ :  String values will be parsed as JSON, so you can pass objects or arrays via
+ :  environment variables. NB: JSON strings need to be wrapped in double quotes!  
+ : @return the new value if successful, the empty sequence otherwise
+ :)
+declare function config:set-option($key as xs:string*, $value as item()?) as item()? {
+    let $optionsFile := fn:json-doc($config:config-path)
+    let $valueJSON := 
+        typeswitch($value)
+        case xs:string return
+            try { parse-json($value) }
+            catch * { $value } (: parse-json() fails for simple string values  :)
+        case node() return parse-json(json:xml-to-json($value)) (: the output of json:xml-to-json() seems to be a string, not a map object :)
+        case array(*) return $value
+        case map(*) return $value
+        default return error('config:set-option(): failed to convert value of ' || string-join($key, '.') || ' to a JSON object.')
+    let $update := config:map-put-recursive($optionsFile, $key, $valueJSON)
+    let $serialize-json := function($json as item()) as xs:string {
+        serialize($json, <output:serialization-parameters><output:method>json</output:method></output:serialization-parameters>)
+    }
+    let $update2string := $serialize-json($update)
+    let $fileName := functx:substring-after-last($config:config-path, '/')
+    let $collection := functx:substring-before-last($config:config-path, '/')
+    let $update := 
+        try { 
+            xmldb:store($collection, $fileName, $update2string, 'application/json'),
+            util:log-system-out('set option "' || string-join($key, '.') || '" to "' || $serialize-json($valueJSON) || '"')
+        }
+        catch * { error('config:set-option(): failed to set option "' || string-join($key, '.') || '" to "' || $serialize-json($valueJSON) || '" -- Error was ' || string-join(($err:code, $err:description), ' ;; ')) }
+    return
+        if($update) then $valueJSON
+        else ()
 };
 
 (:~
