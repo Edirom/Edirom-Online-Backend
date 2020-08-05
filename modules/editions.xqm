@@ -9,6 +9,7 @@ declare namespace map="http://www.w3.org/2005/xpath-functions/map";
 
 import module namespace config="https://backend.edirom.de/config" at "config.xqm";
 import module namespace commons="https://backend.edirom.de/commons" at "commons.xqm";
+import module namespace utils="https://backend.edirom.de/utils" at "utils.xqm";
 
 declare
     %rest:GET
@@ -57,7 +58,7 @@ declare %private function editions:editionToJson($edition as element(edirom:edit
     map {
         'editionID': editions:title($edition),
         'title': $edition/data(@xml:id),
-        'uri': editions:uri($edition)
+        'uri': utils:uri($edition)
     }
 };
 
@@ -65,8 +66,6 @@ declare %private function editions:title($edition as element(edirom:edition)) as
     $edition/edirom:editionName[1] => normalize-space() 
 };
 
-declare %private function editions:uri($edition as element(edirom:edition)) as xs:string {
-    document-uri($edition) 
-};
+
 
 
