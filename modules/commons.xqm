@@ -15,15 +15,6 @@ declare variable $commons:response-headers :=
         </http:response>
     </rest:response>;
 
-declare function commons:set-response-header($response-headers as element(rest:response)) as element(rest:response) {
-    element {$response-headers/name()} {
-        $response-headers/@*,
-        element {$response-headers/http:response/name()} {
-            $response-headers/http:response/*
-        }
-    }
-};
-
 declare function commons:set-status($response-headers as element(rest:response), $status as xs:integer) as element(rest:response) {
     element {$response-headers/name()} {
         $response-headers/@*,

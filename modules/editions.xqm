@@ -18,10 +18,12 @@ declare
     %output:media-type("application/json")
     %output:method("json")
     function editions:editions-json() {
-        let $editions := '[{"editionID": "edition-45346", "title": "Freischütz Digital", "uri": "xmldb:exist:///db/apps/freidi/edition/freidi-edition.xml"}]'
+        let $editions := for $edition in collection('/db/apps')//edirom:edition
+                            return editions:editionToJson($edition)
+        let $edition-json := '[' || string-join($editions, ',') || ']'
         return (
-            commons:set-response-header($commons:response-headers),
-            $editions
+            $commons:response-headers,
+            $edition-json
         )
 };
 
@@ -32,10 +34,11 @@ declare
     %output:media-type("application/json")
     %output:method("json")
     function editions:editionsID-json($editionID as xs:string) {
-        let $edition := '{"editionID": "edition-45346", "title": "Freischütz Digital", "uri": "xmldb:exist:///db/apps/freidi/edition/freidi-edition.xml"}'
+        let $edition := collection('/db/apps')//edirom:edition[@xml:id eq $editionID]
+        let $edition-json := editions:editionToJson($edition)
         return (
             $commons:response-headers,
-            $edition
+            $edition-json
         )
 };
 
