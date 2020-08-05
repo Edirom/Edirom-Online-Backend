@@ -27,7 +27,7 @@ declare variable $local:repo-descriptor := doc(concat('file://', $dir, '/repo.xm
 
 declare function local:set-options() as xs:string* {
     (
-    for $opt in available-environment-variables()
+    for $opt in available-environment-variables()[starts-with(., 'EDITION_')]
     return
         config:set-option($opt, string(environment-variable($opt)))
     ,

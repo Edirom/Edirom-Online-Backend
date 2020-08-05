@@ -86,6 +86,11 @@ declare function config:get-max-limit() as xs:positiveInteger {
     catch * { util:log-system-out('error reading maximum limit, defaulting to 200'), 200 }
 };
 
+declare function config:get-conf-entry($key as xs:string) as xs:string {
+    try { json-doc($config:config-path)?data($key) cast as xs:string }
+    catch * { util:log-system-out('error reading conf entry: ' + $key), "" }
+};
+
 (:~
  : set option from environment variable
  : NB: You have to be logged in as admin to be able to update preferences!
