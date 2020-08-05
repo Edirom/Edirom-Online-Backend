@@ -10,6 +10,7 @@ declare namespace repo="http://exist-db.org/xquery/repo";
 declare namespace expath="http://expath.org/ns/pkg";
 declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace util="http://exist-db.org/xquery/util";
+declare namespace map="http://www.w3.org/2005/xpath-functions/map";
 import module namespace json="http://www.json.org";
 import module namespace functx="http://www.functx.com";
 import module namespace xmldb="http://exist-db.org/xquery/xmldb";
@@ -87,7 +88,7 @@ declare function config:get-max-limit() as xs:positiveInteger {
 };
 
 declare function config:get-conf-entry($key as xs:string) as xs:string {
-    try { json-doc($config:config-path)?data($key) cast as xs:string }
+    try { map:get(json-doc($config:config-path), $key) cast as xs:string }
     catch * { util:log-system-out('error reading conf entry: ' || $key ), "" }
 };
 
