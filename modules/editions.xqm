@@ -20,7 +20,7 @@ declare
     function editions:editions-json() {
         let $editions := for $edition in collection('/db/apps')//edirom:edition
                             return editions:editionToJson($edition)
-        let $edition-json := '[' || string-join($editions, ',') || ']'
+        let $edition-json := array { $editions }
         return (
             $commons:response-headers,
             $edition-json
