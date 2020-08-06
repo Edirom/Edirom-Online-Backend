@@ -2,3 +2,5 @@
 build/
 *.xpr
 .idea/
+*.xar
+*.sh
