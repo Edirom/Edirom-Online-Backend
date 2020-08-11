@@ -20,7 +20,7 @@
     }
   ],
   "paths": {
-  "/editions": {
+    "/editions": {
       "get": {
         "tags": [
           "Objects"
@@ -120,6 +120,33 @@
         "uri": {
           "type": "string",
           "example": "xmldb:exist:///db/apps/freidi/edition/freidi-edition.xml"
+        },
+        "preferencesURI": {
+          "type": "string",
+          "example": "xmldb:exist:///db/apps/freidi/edition/freidi-prefs.xml"
+        },
+        "languages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Language"
+          }
+        }
+      }
+    },
+    "Language": {
+      "type": "object",
+      "properties": {
+        "langCode": {
+          "type": "string",
+          "example": "de"
+        },
+        "complete": {
+          "type": "boolean",
+          "example": true
+        },
+        "uri": {
+          "type": "string",
+          "example": "xmldb:exist:///db/apps/freidi/edition/freidi-lang-de.xml"
         }
       }
     }
