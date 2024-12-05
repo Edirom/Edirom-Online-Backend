@@ -11,14 +11,14 @@ xquery version "3.1";
  : @author <a href="mailto:bohl@edirom.de">Benjamin W. Bohl</a>
  :)
 
-module namespace eutil = "http://www.edirom.de/xquery/util";
+module namespace eutil = "http://www.edirom.de/xquery/eutil";
 
 (: IMPORTS ================================================================= :)
 
 import module namespace functx = "http://www.functx.com";
 
-import module namespace annotation="http://www.edirom.de/xquery/annotation" at "../xqm/annotation.xqm";
-import module namespace edition="http://www.edirom.de/xquery/edition" at "../xqm/edition.xqm";
+import module namespace annotation="http://www.edirom.de/xquery/annotation" at "annotation.xqm";
+import module namespace edition="http://www.edirom.de/xquery/edition" at "edition.xqm";
 import module namespace source="http://www.edirom.de/xquery/source" at "source.xqm";
 import module namespace teitext="http://www.edirom.de/xquery/teitext" at "teitext.xqm";
 import module namespace work="http://www.edirom.de/xquery/work" at "work.xqm";
@@ -91,7 +91,7 @@ declare function eutil:getLocalizedName($node, $lang) {
         if($node/edirom:names) then
             ($name)
         else
-            ($name => string-join(' ') => normalize-space())
+            (eutil:joinAndNormalize($name))
 
 };
 
@@ -107,45 +107,41 @@ declare function eutil:getLocalizedTitle($node as node(), $lang as xs:string?) a
     let $namespace := eutil:getNamespace($node)
   
     let $titleMEI :=
-        if ($lang != '' and $lang = $node/mei:title/@xml:lang and not($node/mei:title/mei:titlePart)) then
-            ($node/mei:title[@xml:lang = $lang]//text() => string-join() => normalize-space())
-        else if ($lang != '' and $lang = $node/mei:title/@xml:lang and $node/mei:title/mei:titlePart) then
-            ($node/mei:title[@xml:lang = $lang]/mei:titlePart[1]//text() => string-join() => normalize-space())
+        if ($lang != '' and $lang = $node/mei:title[mei:titlePart]/@xml:lang) then
+            (eutil:joinAndNormalize($node/mei:title[@xml:lang = $lang]/mei:titlePart, '. '))
+        else if ($lang != '' and $lang = $node/mei:title[not(mei:titlePart)]/@xml:lang) then
+            (eutil:joinAndNormalize($node/mei:title[@xml:lang = $lang]))
         else
-            (($node//mei:title)[1]//text() => string-join() => normalize-space())
+            (eutil:joinAndNormalize(($node//mei:title)[1]))
     
     let $titleTEI :=
         if ($lang != '' and $lang = $node/tei:title/@xml:lang) then
-            $node/tei:title[@xml:lang = $lang]/text()
+            eutil:joinAndNormalize($node/tei:title[@xml:lang = $lang])
         else
-            $node/tei:title[1]/text()
+            eutil:joinAndNormalize($node/tei:title[1])
     
     return
-        if ($namespace = 'mei') then
+        if ($namespace = 'mei' and $titleMEI != '') then
             ($titleMEI)
-        else if ($namespace = 'tei') then
+        else if ($namespace = 'tei' and $titleTEI != '') then
             ($titleTEI)
         else
-            ('unknown')
+            ('[No title found!]')
 
 };
+
 (:~
  : Returns a document
  :
  : @param $uri The URIs of the documents to process
  : @return The document
  :)
-declare function eutil:getDoc($uri) {
-
-    if(starts-with($uri, 'textgrid:')) then(
-        let $session := request:get-cookie-value('edirom_online_textgrid_sessionId')
-        return
-            doc('http://textgridlab.org/1.0/tgcrud/rest/' || $uri || '/data?sessionId=' || $session)
-    
-    ) else (
-        doc($uri)
-    )
-
+declare function eutil:getDoc($uri as xs:string?) as document-node()? {
+    if(empty($uri) or ($uri eq ""))
+    then util:log("warn", "No document URI provided")
+    else if(doc-available($uri))
+    then doc($uri)
+    else util:log("warn", "Unable to load document at " || $uri)
 };
 
 (:~
@@ -240,7 +236,7 @@ declare function eutil:getPartLabel($measureOrPerfRes as node(), $type as xs:str
             upper-case($i)
 
     return
-        normalize-space(string-join(($label, $numbering),' '))
+        eutil:joinAndNormalize(($label, $numbering))
 
 };
 
@@ -268,7 +264,7 @@ declare function eutil:getLanguageString($key as xs:string, $values as xs:string
 declare function eutil:getLanguageString($key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string {
 
     let $base := system:get-module-load-path()
-    let $file := doc(concat($base, '/../locale/edirom-lang-', $lang, '.xml'))
+    let $file := eutil:getDoc(concat($base, '/../locale/edirom-lang-', $lang, '.xml'))
     
     let $string := $file//entry[@key = $key]/string(@value)
     let $string := functx:replace-multi($string, for $i in (0 to (count($values) - 1)) return concat('\{',$i,'\}'), $values)
@@ -279,21 +275,20 @@ declare function eutil:getLanguageString($key as xs:string, $values as xs:string
 };
 
 (:~
- : Return a value of preference to key
+ : Returns a value from the preferences for a given key
  :
- : @param $key The key to search for
- : @return The string
+ : @param $key The key to look up
+ : @param $edition The current edition URI
+ : @return The preference value
  :)
 declare function eutil:getPreference($key as xs:string, $edition as xs:string?) as xs:string {
 
-    let $file := doc('../prefs/edirom-prefs.xml')
-    let $projectFile := doc(edition:getPreferencesURI($edition))
+    let $preferencesFile := 
+        try { doc(edition:getPreferencesURI($edition)) }
+        catch * { util:log-system-out('Failed to load preferences') }
 
     return
-        if($projectFile != 'null' and $projectFile//entry[@key = $key]) then
-            ($projectFile//entry[@key = $key]/string(@value))
-        else
-            ($file//entry[@key = $key]/string(@value))
+        $preferencesFile//entry[@key = $key]/@value => string()
 
 };
 
@@ -398,4 +393,25 @@ declare function eutil:request-lang-preferred-iso639() as xs:string {
         else
             "en"
 
+};
+
+(:~
+ : Returns one joined and normalized string
+ :
+ : @param $strings The string(s) to be processed
+ : @return The string (joined with whitespace and normalized space)
+ :)
+declare function eutil:joinAndNormalize($strings as xs:string*) as xs:string {
+    $strings => string-join(' ') => normalize-space()
+};
+
+(:~
+ : Returns one joined and normalized string
+ :
+ : @param $strings The string(s) to be processed
+ : @param $separator One ore more characters as separators for joining the string
+ : @return The string (joined and normalized space)
+ :)
+declare function eutil:joinAndNormalize($strings as xs:string*, $separator as xs:string) as xs:string {
+    $strings => string-join($separator) => normalize-space()
 };
