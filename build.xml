@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="EdiromOnline" default="xar">
-    
-    <import file="${basedir}/.sencha/app/build-impl.xml"/>
-    <import file="${basedir}/testing/ant-tests.xml"/>
+<project name="EdiromOnlineBackend" default="xar">
     
     <property name="project.version" value="1.0.0"/>
-    <property name="project.app" value="Edirom-Online"/>
-    <property name="project.title" value="Edirom Online"/>
+    <property name="project.app" value="Edirom-Online-Backend"/>
+    <property name="project.title" value="Edirom Online Backend"/>
     <property name="repo.target" value="${project.app}"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="build-xar"/>
-    <property name="temp.dir.name" value="temp"/>
-    <property name="temp.dir" value="${build.dir}/${temp.dir.name}"/>
     
     <tstamp/>
 
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
     <target name="build-plus">
         <copy todir="${build.dir}" preservelastmodified="true">
-            <fileset dir="${basedir}/add">
+            <fileset dir="${basedir}">
                 <include name="*"/>
                 <include name="data/locale/"/>
                 <include name="data/prefs/"/>
@@ -32,12 +31,15 @@
                 <include name="data/xslt/tei/Stylesheets/common/"/>
                 <include name="data/xslt/tei/Stylesheets/VERSION"/>
                 <include name="help/**"/>
-                <exclude name="help/images/">
-                    <!-- exclude help images here because the below filterset
-                         would alter their contents and render them unreadable.
-                         Will be copied in anoter copy statement without filterset. -->
-                </exclude>
                 <include name="index/**"/>
+                <exclude name="help/images/">
+                <!-- exclude help images and icon.png here because the below filterset
+                    would alter their contents and render them unreadable.
+                    Will be copied in anoter copy statement without filterset. -->
+                </exclude>
+                <exclude name="icon.png"/>
+                <!-- exclude all files and dirs starting with "build"-->
+                <exclude name="build*"/>
             </fileset>
             <fileset dir="${basedir}">
                 <include name="testing/**"/>
@@ -50,21 +52,19 @@
             </filterset>
         </copy>
         <copy todir="${build.dir}" preservelastmodified="true">
-            <!-- copy help images in separate copy statement because above filterset
+            <!-- copy help images and icon.png in separate copy statement because above filterset
                  would modify their contents and render them unreadable -->
-            <fileset dir="${basedir}/add">
+            <fileset dir="${basedir}">
                 <include name="help/images/"/>
+                <include name="icon.png"/>
             </fileset>
         </copy>
-        <copy file="${build.dir}/resources/pix/ViFE-logo-small-144x144-trans.png" tofile="${build.dir}/icon.png" overwrite="true"/>
-        <copy file="${basedir}/CITATION.cff" tofile="${build.dir}/resources/CITATION.cff" overwrite="true"/>
+        <!--<copy file="${basedir}/CITATION.cff" tofile="${build.dir}/resources/CITATION.cff" overwrite="true"/>-->
     </target>
     
     <target name="xar">
         <mkdir dir="${dist.dir}"/>
-        <zip basedir="${build.dir}" destfile="${dist.dir}/${project.app}-${project.version}-${DSTAMP}-${TSTAMP}.xar">
-            <exclude name="${temp.dir.name}/**"/>
-        </zip>
+        <zip basedir="${build.dir}" destfile="${dist.dir}/${project.app}-${project.version}-${DSTAMP}-${TSTAMP}.xar"/>
     </target>
     
 </project>

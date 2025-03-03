@@ -1,9 +1,6 @@
 ::
-:: cleaning the build dir
-sencha ant clean
-
-:: building the app
-sencha app build
+:: clean build directory
+call ant clean
 
 :: get additional stuff for exist-db
 call ant build-plus
