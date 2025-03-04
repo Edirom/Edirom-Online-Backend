@@ -7,11 +7,20 @@
     <property name="repo.target" value="${project.app}"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="build-xar"/>
+    <property name="tei.dir" value="build-tei"/>
     
     <tstamp/>
 
     <target name="clean">
         <delete dir="${build.dir}"/>
+        <delete dir="${tei.dir}"/>
+    </target>
+
+    <!-- Download TEI Zip file and extract it to ${tei.dir} -->
+    <target name="download-tei">
+        <mkdir dir="${tei.dir}"/>
+        <get src="https://github.com/TEIC/Stylesheets/releases/download/v7.58.0/tei-xsl-7.58.0.zip" dest="${tei.dir}/tei-xsl-7.58.0.zip"/>
+        <unzip src="${tei.dir}/tei-xsl-7.58.0.zip" dest="${tei.dir}"/>
     </target>
 
     <target name="build-plus">
@@ -25,11 +34,6 @@
                 <include name="data/xslt/*"/>
                 <include name="data/xslt/i18n/"/>
                 <include name="data/xslt/tei/profiles/**"/>
-                <include name="data/xslt/tei/Stylesheets/catalog.xml"/>
-                <include name="data/xslt/tei/Stylesheets/i18n.xml"/>
-                <include name="data/xslt/tei/Stylesheets/html/"/>
-                <include name="data/xslt/tei/Stylesheets/common/"/>
-                <include name="data/xslt/tei/Stylesheets/VERSION"/>
                 <include name="help/**"/>
                 <include name="index/**"/>
                 <exclude name="help/images/">
@@ -50,6 +54,17 @@
                 <filter token="project.title" value="${project.title}"/>
                 <filter token="repo.target" value="${repo.target}"/>
             </filterset>
+        </copy>
+        <!-- Copy TEI Stylesheets from ${tei.dir} -->
+        <mkdir dir="${build.dir}/data/xslt/tei/Stylesheets"/>
+        <copy todir="${build.dir}/data/xslt/tei/Stylesheets" preservelastmodified="true">
+            <fileset dir="${tei.dir}/xml/tei/stylesheet">
+                <include name="catalog.xml"/>
+                <include name="i18n.xml"/>
+                <include name="html/"/>
+                <include name="common/"/>
+                <include name="VERSION"/>
+            </fileset>
         </copy>
         <copy todir="${build.dir}" preservelastmodified="true">
             <!-- copy help images and icon.png in separate copy statement because above filterset

@@ -3,7 +3,10 @@
 # clean build directory
 ant clean
 
-# get additional stuff for exist-db
+# get TEI Stylesheets
+ant download-tei
+
+# build the backend
 ant build-plus
 
 # build xar
