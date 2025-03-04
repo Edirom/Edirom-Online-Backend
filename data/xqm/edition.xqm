@@ -41,9 +41,24 @@ declare function edition:details($uri as xs:string) as map(*) {
         map {
             "id": $edition/string(@xml:id),
             "doc": $uri,
-            "name": $edition/edirom:editionName => fn:normalize-space()
+            "name": $edition/edirom:editionName => fn:normalize-space(),
+            "additional_css_path": eutil:getPreference('additional_css_path', $uri),
+            "languages": edition:getLanguageCodesSorted($uri)
         }
 };
+
+(:~
+ : Returns a list of objects with details about all Editions 
+ :
+ :)
+ declare function edition:findEditions() {
+    
+    let $editionURIs := edition:findEditionUris()
+    for $edition in $editionURIs
+    return
+        edition:details($edition)
+};
+ 
 
 (:~
  : Returns a list of URIs pointing to Editions
@@ -95,7 +110,7 @@ declare function edition:getLanguageFileURI($uri as xs:string, $lang as xs:strin
  : @return the edition's languages as defined in the edition file sorted as
  : complete languages in document-order followed by incomplete langauges in document-order
  :)
-declare function edition:getLanguageCodesSorted($uri as xs:string) as xs:string {
+declare function edition:getLanguageCodesSorted($uri as xs:string) as xs:string* {
     
     let $editionDoc := doc($uri)
     
