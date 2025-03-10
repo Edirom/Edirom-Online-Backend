@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+title: Edirom Online Backend
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Daniel
+    family-names: Röwenstrunk
+    orcid: https://orcid.org/0000-0001-6271-2095
+  - given-names: Daniel
+    family-names: Jettka
+    orcid: https://orcid.org/0000-0002-2375-2227
+  - given-names: Hizkiel
+    family-names: Alemayehu
+    orcid: https://orcid.org/0009-0006-3345-086X
+  - given-names: Kristin
+    family-names: Herold
+    orcid: https://orcid.org/0000-0003-2915-353X
+identifiers:
+  - type: doi
+    value: https://doi.org/10.5281/zenodo.14998458
+    description: Edirom-Online Backend
+repository-code: 'https://github.com/Edirom/Edirom-Online-Backend'
+abstract: >-
+  Edirom Online Backend is the backend for the Edirom 
+  Online which is used for the presentation and
+  analysis of critical musical editions in a digital format,
+  particularly in the fields of musicology and philology.
+license: MIT
+version: 1.0.0
+date-released: 2025-03-10
