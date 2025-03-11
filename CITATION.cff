@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: Edirom Online Backend
+title: Edirom-Online Backend
 message: >-
   If you use this software, please cite it using the
   metadata from this file.
@@ -23,7 +23,7 @@ identifiers:
     description: Edirom-Online Backend
 repository-code: 'https://github.com/Edirom/Edirom-Online-Backend'
 abstract: >-
-  Edirom Online Backend is the backend for the Edirom 
+  Edirom-Online Backend is the backend for the Edirom 
   Online which is used for the presentation and
   analysis of critical musical editions in a digital format,
   particularly in the fields of musicology and philology.

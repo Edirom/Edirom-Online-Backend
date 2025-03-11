@@ -12,7 +12,7 @@
 
 Edirom-Online Backend is a free and open-source software and we appreciate to receive contributions from our community!  
 So first of all, thank you for considering contributing to Edirom-Online Backend! When you do so, please try to follow these guidelines.
-Please be aware that the development of this backend is closely related to the Edirom-Online and issues and version planning information are collected in the [Edirom-Online repository]((https://github.com/Edirom/Edirom-Online)).
+Please be aware that the development of this backend is closely related to the Edirom-Online and issues and version planning information are collected in the [Edirom-Online repository](https://github.com/Edirom/Edirom-Online).
 
 ### Bug reports
 
@@ -30,9 +30,9 @@ The active contributors have agreed to organise their work along the so-called '
 * Check the [network graph](https://github.com/Edirom/Edirom-Online-Backend/network) to see all the other forks of other persons to make sure, nobody else is already working on the topic, you want to start to address.
 * Please discuss your idea first in an [issue](https://github.com/Edirom/Edirom-Online/issues). If there is no issue for your idea yet, please **open an issue**. There might be different ways to solve a problem and we want to make sure to find the right approach before spending time on a PR that cannot be merged.
 * **Fork** the `Edirom/Edirom-Online-Backend` repository into your own account, e.g. `username/Edirom-Online-Backend`. (Exception: If you plan to develop in a team (only in this case!), open a dedicated branch on the Edirom-Online-Backend repository.)
-* Create a **dedicated branch** for your fix or feature on your repository, e.g. `ftr-some-new-feature`.
+* Create a **dedicated branch** for your fix or feature on your repository, e.g. for a feature request, that was discussed in issue number 123 `ftr-123-some-new-feature`
 * Make your changes, while you can commit to your branch as many times as you like.
-* It is essential to **test** your modifications before committing or issuing a pull request. A recommended way is running a local eXist-db v5.3.0+ container and deploying your local build of Edirom Online together with some test-data, e.g. the [Edirom Edition Example](https://github.com/Edirom/EditionExample). For other deployment methods, please see our documentation in the [wiki](https://github.com/Edirom/Edirom-Online/wiki). 
+* It is essential to **test** your modifications before committing or issuing a pull request. A recommended way is running a local eXist-db v5.3.0+ container and deploying your local build of Edirom Online together with some test-data, e.g. the [Edirom Edition Example](https://github.com/Edirom/EditionExample). For other deployment methods, please see how to [Setup Edirom Online](https://github.com/Edirom/Edirom-Online/blob/main/docs/setup.md).  
 * After finishing your work, you can open a **pull request** to `Edirom/Edirom-Online-Backend` and fill in our [PR-template](https://github.com/Edirom/Edirom-Online-Backend/tree/develop/.github/pull_request_template.md) to describe what your pull request wants to implement. Make sure, that you MUST address the developer-branch.
 * Each pull request should implement ONE feature or bugfix. If you want to add or fix more than one thing, submit more than one pull request.
 * Your submission will be **reviewed** afterwards. If you are asked to make changes, you can push these changes to your original branch and the pull request will be automatically updated.

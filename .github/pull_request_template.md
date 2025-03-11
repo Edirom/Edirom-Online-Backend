@@ -2,7 +2,7 @@
 <!--- Please describe your changes. Why is this change required? What problem does it solve? -->
 
 <!--- This project only accepts pull requests related to open issues. Please link to the issue here: -->
-Refs #
+Refs https://github.com/Edirom/Edirom-Online/issues/{ISSUE_NUMBER}
 
 ## How Has This Been Tested?
 <!--- Please describe in detail how you tested your changes. -->
