@@ -21,7 +21,7 @@ Refs https://github.com/Edirom/Edirom-Online/issues/{ISSUE_NUMBER}
 <!--- Go over all the following points, and DELETE options that are not relevant. -->
 <!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
 - I have updated the inline documentation accordingly.
-- I have performed a self-review of my code, according to the [style guide](https://github.com/Edirom/Edirom-Online-Backend/blob/develop/STYLE-GUIDE.md)
+- I have performed a self-review of my code, according to the [style guide](https://github.com/Edirom/Edirom-Online/blob/develop/STYLE-GUIDE.md)
 - I have read the [CONTRIBUTING](https://github.com/Edirom/Edirom-Online-Backend/blob/develop/CONTRIBUTING.md) document.
 - I have added tests to cover my changes at [testing](https://github.com/Edirom/Edirom-Online-Backend/tree/develop/testing)
 - All new and existing tests passed.
