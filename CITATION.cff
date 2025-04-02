@@ -42,7 +42,7 @@ identifiers:
   - type: doi
     value: https://doi.org/10.5281/zenodo.14998458
     description: Edirom-Online Backend
-repository-code: 'https://github.com/Edirom/Edirom-Online-Backend'
+repository-code: https://github.com/Edirom/Edirom-Online-Backend
 abstract: >-
   Edirom-Online Backend is the backend for the Edirom 
   Online which is used for the presentation and
