@@ -77,7 +77,7 @@
         <!--<copy file="${basedir}/CITATION.cff" tofile="${build.dir}/resources/CITATION.cff" overwrite="true"/>-->
     </target>
     
-    <target name="xar">
+    <target name="xar" depends="clean,download-tei,build-plus">
         <mkdir dir="${dist.dir}"/>
         <zip basedir="${build.dir}" destfile="${dist.dir}/${project.app}-${project.version}-${DSTAMP}-${TSTAMP}.xar"/>
     </target>
