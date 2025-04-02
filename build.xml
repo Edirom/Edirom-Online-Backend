@@ -74,7 +74,8 @@
                 <include name="icon.png"/>
             </fileset>
         </copy>
-        <!--<copy file="${basedir}/CITATION.cff" tofile="${build.dir}/resources/CITATION.cff" overwrite="true"/>-->
+        <!-- Copy CITATION.cff to resources -->
+        <copy file="${basedir}/CITATION.cff" tofile="${build.dir}/resources/CITATION.cff" overwrite="true"/>
     </target>
     
     <target name="xar" depends="clean,download-tei,build-plus">
