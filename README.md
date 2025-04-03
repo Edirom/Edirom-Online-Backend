@@ -19,17 +19,11 @@ git clone <project url>
 
 ### Building locally
 
-For building Edirom Online you need *ant* installed on your system. 
-Alternatively, you can use a Docker container image for building, e.g. [bwbohl/sencha-cmd]
+For building the Edirom-Online Backend you need *ant* installed on your system. 
+When you have ant installed, just go into the cloned repository and type
 
 ```bash
-docker run --rm -it -v /ABSOLUTE/PATH/TO/YOUR/LOCAL/EDIROM-ONLINE-BACKEND/CLONE:/app --name ediBuild ghcr.io/bwbohl/sencha-cmd:latest
-```
-
-When you have your system prepared with all prerequisites or you have your docker container running you are now set up to execute the build command. Do this by calling the build script included in this repository, either in your native shell or in the container shell, e.g.:
-
-```bash
-./build.sh
+ant
 ```
 
 ### Starting an Edirom instance locally
