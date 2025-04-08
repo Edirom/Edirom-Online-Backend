@@ -478,15 +478,17 @@ return
             </div>
             <div class="contentBox">
                 {
-                    if ($annot/mei:annot) then (
-                        for $a in $annot/mei:annot
+                    for $a in (if($annot/mei:annot) then ($annot/mei:annot) else ($annot))
+                        
+                        let $title := eutil:getLocalizedTitle($annot, $lang, '')
+
                         return (
-                            <h1>{eutil:getLocalizedTitle($annot, $lang)}</h1>,
-                            annotation:getContent($a, '', $edition)
-                        )
-                    ) else (
-                        (<h1>{eutil:getLocalizedTitle($annot, $lang)}</h1>,
-                        annotation:getContent($annot, '', $edition))
+                            if ($title!='') then (
+                                <h1>{$title}</h1>,
+                                annotation:getContent($a, '', $edition)
+                            ) else (
+                                annotation:getContent($a, '', $edition)
+                            )
                         )
                 }
             </div>

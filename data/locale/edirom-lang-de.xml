@@ -151,6 +151,7 @@
         <entry key="drag-and-drop" value="Drag-and-Drop"/>
         <entry key="comboBox" value="Kombobox"/>
         <entry key="views" value="Ansichten"/>
+        <entry key="no_title" value="[Kein Titel gefunden!]"/>
         <entry key="window.minimize" value="minimieren"/>
         <entry key="window.maximize" value="maximieren"/>
         <entry key="view.window.source.SourceView_zoomSlider" value="Schieber für Zoom"/>
