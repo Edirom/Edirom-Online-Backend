@@ -95,6 +95,7 @@ declare function eutil:getLocalizedName($node, $lang) {
 
 };
 
+
 (:~
  : Returns a localized string
  :
@@ -103,6 +104,19 @@ declare function eutil:getLocalizedName($node, $lang) {
  : @return The string (normalized space)
  :)
 declare function eutil:getLocalizedTitle($node as node(), $lang as xs:string?) as xs:string {
+
+    eutil:getLocalizedTitle($node, $lang, eutil:getLanguageString('no_title', ()))
+
+};
+
+(:~
+ : Returns a localized string
+ :
+ : @param $node The node to be processed
+ : @param $lang Optional parameter for lang selection
+ : @return The string (normalized space)
+ :)
+declare function eutil:getLocalizedTitle($node as node(), $lang as xs:string?, $default as xs:string) as xs:string {
 
     let $namespace := eutil:getNamespace($node)
   
@@ -125,8 +139,8 @@ declare function eutil:getLocalizedTitle($node as node(), $lang as xs:string?) a
             ($titleMEI)
         else if ($namespace = 'tei' and $titleTEI != '') then
             ($titleTEI)
-        else
-            ('[No title found!]')
+        else 
+            $default
 
 };
 
