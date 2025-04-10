@@ -38,6 +38,9 @@ authors:
   - given-names: Silke
     family-names: Reich
     orcid: https://orcid.org/0009-0007-8817-0299
+  - given-names: Tobias
+    family-names: Bachmann
+    orcid: https://orcid.org/0009-0003-9952-7899
 identifiers:
   - type: doi
     value: https://doi.org/10.5281/zenodo.14998458
@@ -48,6 +51,6 @@ abstract: >-
   Online which is used for the presentation and
   analysis of critical musical editions in a digital format,
   particularly in the fields of musicology and philology.
-license: MIT
-version: 1.0.0
-date-released: 2025-03-10
+license: GPL-3.0
+version: v1.0.0
+date-released: 2025-04-10
