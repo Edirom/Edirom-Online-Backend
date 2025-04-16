@@ -46,6 +46,9 @@ return
     else
         (: everything else is passed through :)
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+            <set-header name="Access-Control-Allow-Origin" value="*"/>
+            <set-header name="Access-Control-Allow-Headers" value="*"/>
+            <set-header name="Access-Control-Allow-Methods" value="GET,OPTIONS"/>
             <set-attribute name="exist:path" value="{$exist:path}"/>
             <set-attribute name="exist:resource" value="{$exist:resource}"/>
             <set-attribute name="exist:controller" value="{$exist:controller}"/>
