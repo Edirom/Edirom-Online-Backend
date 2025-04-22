@@ -2,7 +2,7 @@ xquery version "3.1";
 
 module namespace eut = "http://www.edirom.de/xquery/xqsuite/eutil-tests";
 
-import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "xmldb:exist:///db/apps/Edirom-Online/data/xqm/eutil.xqm";
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/eutil.xqm";
 
 declare namespace mei="http://www.music-encoding.org/ns/mei";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
@@ -44,8 +44,8 @@ declare
     %test:arg("uri", "")            %test:assertEmpty
     %test:args("foo")               %test:assertEmpty
     %test:args("https://edirom.de") %test:assertXPath("/html")
-    %test:args("xmldb:exist://db/apps/Edirom-Online/data/locale/edirom-lang-de.xml")    %test:assertXPath("/langFile")
-    %test:args("/db/apps/Edirom-Online/data/locale/edirom-lang-de.xml")                 %test:assertXPath("/langFile")
+    %test:args("xmldb:exist://db/apps/Edirom-Online-Backend/data/locale/edirom-lang-de.xml")    %test:assertXPath("/langFile")
+    %test:args("/db/apps/Edirom-Online-Backend/data/locale/edirom-lang-de.xml")                 %test:assertXPath("/langFile")
     function eut:test-getDoc($uri as xs:string?) as document-node()? {
         eutil:getDoc($uri)
 };
