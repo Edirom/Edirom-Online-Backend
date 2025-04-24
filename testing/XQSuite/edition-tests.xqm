@@ -9,7 +9,7 @@ declare namespace test="http://exist-db.org/xquery/xqsuite";
 
 declare
     (: check xml:id :)
-    %test:args("edirom_edition_example")
+    %test:args("xqsuite_test_edition")
     %test:assertEquals("xmldb:exist:///db/apps/Edirom-Online/testing/XQSuite/data/edition.xml")
     (: check database path :)
     %test:args("/db/apps/Edirom-Online/testing/XQSuite/data/edition.xml")
