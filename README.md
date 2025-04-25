@@ -110,4 +110,4 @@ Edirom-Online Backend is released to the public under the terms of the [MIT] ope
 [GitHub Discussions]: https://github.com/Edirom/Edirom-Online/discussions
 [Contributor Code of Conduct]: CODE_OF_CONDUCT.md
 [MIT]: https://opensource.org/license/mit
-[ANT build file]: https://github.com/Edirom/Edirom-Online/blob/develop/build.xml
+[ANT build file]: https://github.com/Edirom/Edirom-Online-Backend/blob/develop/build.xml
