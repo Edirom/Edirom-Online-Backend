@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="EdiromOnlineBackend" default="xar">
     
-    <property name="project.version" value="1.0.0"/>
+    <property name="project.version" value="1.0.1"/>
     <property name="project.app" value="Edirom-Online-Backend"/>
     <property name="project.title" value="Edirom-Online Backend"/>
     <property name="repo.target" value="${project.app}"/>
