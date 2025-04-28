@@ -43,7 +43,7 @@ authors:
     orcid: https://orcid.org/0009-0003-9952-7899
 identifiers:
   - type: doi
-    value: https://doi.org/10.5281/zenodo.14998458
+    value: 10.5281/zenodo.15294819
     description: Edirom-Online Backend
 repository-code: https://github.com/Edirom/Edirom-Online-Backend
 abstract: >-
@@ -52,5 +52,5 @@ abstract: >-
   analysis of critical musical editions in a digital format,
   particularly in the fields of musicology and philology.
 license: GPL-3.0
-version: v1.0.0
-date-released: 2025-04-10
+version: v1.0.1
+date-released: 2025-04-28
