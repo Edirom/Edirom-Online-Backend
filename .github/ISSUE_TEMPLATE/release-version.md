@@ -28,17 +28,17 @@ Checkout new release branch: `git checkout -b release/vX.Y.Z develop`
 - [ ] update CITATION.cff (date, contributors, version, DOI)
 - [ ] bump version number everywhere (find/replace in code), e.g. in build.xml
 - [ ] commit version release branch
-- [ ] build .xar and test it.
+- [ ] build .xar and test it
 
 Checkout main branch: `git checkout main`
 - [ ] `git merge --no-ff release/vX.Y.Z` (release branch into main)
-- [ ] (potentially) resolve merge conflicts and `git continue merge`(?)
+- [ ] (potentially) resolve merge conflicts and `git continue merge`
 - [ ] `git tag` returns a list of all tags
 - [ ] `git tag -a vX.Y.Z -m "vX.Y.Z"`
 - [ ] (potentially) `git tag` for review
 - [ ] `git push --follow-tags`
 
-Release on [github.com](https://github.com): 
+Release on [github.com](https://github.com) 
 - [ ] Go to tag vX.Y.Z and click "Release from Tag"
 - [ ] auto-generate the release description
 - [ ] upload the tested Edirom-Online-X.Y.Z.xar (asset)
@@ -53,6 +53,6 @@ Publication on [zenodo.org](https://zenodo.org)
 - [ ] double-check metadata
 - [ ] publish on Zenodo (with updated files) -> *link publication DOI*
 
-Clean-up:
+Clean-up
 - [ ] delete branch *release/vX.Y.Z*
 - [ ] announce new version to Edirom-Online community
