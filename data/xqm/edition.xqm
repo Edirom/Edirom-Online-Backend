@@ -21,12 +21,15 @@ import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xq
 declare namespace edirom = "http://www.edirom.de/ns/1.3";
 declare namespace util = "http://exist-db.org/xquery/util";
 declare namespace xlink = "http://www.w3.org/1999/xlink";
+declare namespace rest="http://exquery.org/ns/restxq";
+declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 
 (: VARIABLE DECLARATIONS =================================================== :)
 
 declare variable $edition:default-prefs-location as xs:string := '../prefs/edirom-prefs.xml';
 
 (: FUNCTION DECLARATIONS =================================================== :)
+
 
 (:~
  : Returns a map object with details about an Edition
@@ -51,7 +54,13 @@ declare function edition:details($uri as xs:string) as map(*) {
  : Returns a list of objects with details about all Editions 
  :
  :)
- declare function edition:findEditions() {
+ declare
+    %rest:GET
+    %rest:path("/editions")
+    %rest:produces("application/json") 
+    %output:media-type("application/json")
+    %output:method("json")
+ function edition:findEditions() {
     
     let $editionURIs := edition:findEditionUris()
     for $edition in $editionURIs
