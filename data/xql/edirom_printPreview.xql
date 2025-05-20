@@ -7,7 +7,6 @@ xquery version "3.1";
 (: IMPORTS ================================================================= :)
 
 import module namespace edition = "http://www.edirom.de/xquery/edition" at "../xqm/edition.xqm";
-import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -32,8 +31,8 @@ declare option output:omit-xml-declaration "yes";
 declare variable $lang := 'en';
 declare variable $base := concat('file:', replace(system:get-module-load-path(), '\\', '/'), '/../xslt/');
 declare variable $edition := request:get-parameter('edition', '');
-declare variable $imageserver := eutil:getPreference('image_server', $edition);
-declare variable $facsBasePath := eutil:getPreference('image_prefix', $edition);
+declare variable $imageserver := edition:getPreference('image_server', $edition);
+declare variable $facsBasePath := edition:getPreference('image_prefix', $edition);
 
 declare variable $printResolution := 150;
 declare variable $facsAreaWidth := 6.5; (: in inch :)

@@ -17,8 +17,6 @@ module namespace eutil = "http://www.edirom.de/xquery/eutil";
 
 import module namespace functx = "http://www.functx.com";
 
-import module namespace edition="http://www.edirom.de/xquery/edition" at "edition.xqm";
-
 (: NAMESPACE DECLARATIONS ================================================== :)
 
 declare namespace edirom="http://www.edirom.de/ns/1.3";
@@ -210,7 +208,7 @@ declare function eutil:getPartLabel($measureOrPerfRes as node(), $type as xs:str
  :)
 declare function eutil:getLanguageString($key as xs:string, $values as xs:string*) as xs:string? {
 
-    eutil:getLanguageString($key, $values, eutil:getLanguage(''))
+    eutil:getLanguageString($key, $values, eutil:getLanguage())
 
 };
 
@@ -242,18 +240,18 @@ declare function eutil:getLanguageString($key as xs:string, $values as xs:string
  : Returns a language specific string from the locale/edirom-lang files or project specific language files.
  : The latter takes precedence.
  :
- : @param $edition The URI of the Edition's document to process
+ : @param $langFileURI The URI of the Edition's lang file
  : @param $key The key to search for
  : @param $values The values to replace the placeholders with (from the language string) 
  : @param $lang The language code (e.g. "de" or "en")
  : @return The looked up language string from a language file
  :)
-declare function eutil:getLanguageString($edition as xs:string, $key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string? {
+declare function eutil:getLanguageString($langFileURI as xs:string, $key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string? {
 
     (: Try to load a custom language file :)
     let $langFileCustom := 
-        try { doc(edition:getLanguageFileURI($edition, $lang)) }
-        catch * { util:log-system-out('Failed to load the custom language file for edition "' || $edition || '"') }
+        try { doc($langFileURI) }
+        catch * { util:log-system-out('Failed to load the custom language file "' || $langFileURI || '"') }
     
     let $langString :=
         (: If there is a value for the key in the custom language file :)
@@ -273,14 +271,14 @@ declare function eutil:getLanguageString($edition as xs:string, $key as xs:strin
  : Returns a value from the preferences for a given key
  :
  : @param $key The key to look up
- : @param $edition The current edition URI
+ : @param $preferencesURI The URI of the preferences file of the current edition
  : @return The preference value
  :)
-declare function eutil:getPreference($key as xs:string, $edition as xs:string?) as xs:string? {
+declare function eutil:getPreference($key as xs:string, $preferencesURI as xs:string?) as xs:string? {
 
     (: Try to load a custom preferences file :)
     let $prefFileCustom := 
-        try { doc(edition:getPreferencesURI($edition)) }
+        try { doc($preferencesURI) }
         catch * { util:log-system-out('Failed to load the custom preferences file') }
     
     return
@@ -295,17 +293,14 @@ declare function eutil:getPreference($key as xs:string, $edition as xs:string?) 
 };
 
 (:~
- : Return the application and content language
+ : Return the application language
  :
- : @param $edition The edition's path
  : @return The language key
  :)
-declare function eutil:getLanguage($edition as xs:string?) as xs:string {
+declare function eutil:getLanguage() as xs:string {
     
     if (request:get-parameter("lang", "") != "") then
         request:get-parameter("lang", "")
-    else if(eutil:getPreference('application_language', edition:getEditionURI($edition))) then
-        eutil:getPreference('application_language', edition:getEditionURI($edition))
     else    
         'de'
 };

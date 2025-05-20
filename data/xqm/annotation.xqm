@@ -109,7 +109,7 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
     let $cats :=
         string-join(
             for $u in $catURIs
-            return annotation:category_getName($doc/id($u), eutil:getLanguage($edition))
+            return annotation:category_getName($doc/id($u), edition:getLanguage($edition))
          , ', ')
      
     let $count := count($anno/preceding::mei:annot[@type = 'editorialComment']) + 1
@@ -151,10 +151,10 @@ declare function annotation:getContent($anno as element(), $idPrefix as xs:strin
     let $xsltBase := concat(replace(system:get-module-load-path(), 'embedded-eXist-server', ''), '/../xslt/') (: TODO: Prüfen, wie wir an dem replace vorbei kommen:)
     
     let $edition := request:get-parameter('edition', '')
-    let $imageserver :=  eutil:getPreference('image_server', $edition)
-    let $imageBasePath := eutil:getPreference('image_prefix', $edition)
+    let $imageserver :=  edition:getPreference('image_server', $edition)
+    let $imageBasePath := edition:getPreference('image_prefix', $edition)
     
-    let $language := eutil:getLanguage($edition)
+    let $language := edition:getLanguage($edition)
     
     let $p := $anno/mei:p[not(@xml:lang) or @xml:lang = $language]
     
