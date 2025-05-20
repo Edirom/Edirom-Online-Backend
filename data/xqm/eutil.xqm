@@ -18,9 +18,6 @@ module namespace eutil = "http://www.edirom.de/xquery/eutil";
 import module namespace functx = "http://www.functx.com";
 
 import module namespace edition="http://www.edirom.de/xquery/edition" at "edition.xqm";
-import module namespace source="http://www.edirom.de/xquery/source" at "source.xqm";
-import module namespace teitext="http://www.edirom.de/xquery/teitext" at "teitext.xqm";
-import module namespace work="http://www.edirom.de/xquery/work" at "work.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -152,56 +149,6 @@ declare function eutil:getDoc($uri as xs:string?) as document-node()? {
     else if(doc-available($uri))
     then doc($uri)
     else util:log("warn", "Unable to load document at " || $uri)
-};
-
-(:~
- : Returns a comma separated list of document labels
- :
- : @param $docs The URIs of the documents to process
- : @return The labels
- :)
-declare function eutil:getDocumentsLabels($docs as xs:string*, $edition as xs:string) as xs:string {
-
-    string-join(
-        eutil:getDocumentsLabelsAsArray($docs, $edition)
-    , ', ')
-
-};
-
-(:~
- : Returns an array of document labels
- :
- : @param $docs The URIs of the documents to process
- : @return The labels
- :)
-declare function eutil:getDocumentsLabelsAsArray($docs as xs:string*, $edition as xs:string) as xs:string* {
-
-    for $doc in $docs
-    return
-        eutil:getDocumentLabel($doc, $edition)
-
-};
-
-(:~
- : Returns a document's label
- :
- : @param $doc The URIs of the document to process
- : @return The label
- :)
-declare function eutil:getDocumentLabel($doc as xs:string, $edition as xs:string) as xs:string {
-
-    if(work:isWork($doc)) then
-        (work:getLabel($doc, $edition))
-    
-    else if(source:isSource($doc)) then
-        (source:getLabel($doc, $edition))
-    
-    else if(teitext:isText($doc)) then
-        (teitext:getLabel($doc, $edition))
-
-    else
-        ('')
-
 };
 
 (:~

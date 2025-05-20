@@ -60,7 +60,7 @@ let $categoriesLabel := switch (count($categories))
     default return
         eutil:getLanguageString('view.window.AnnotationView_Categories', ())
 
-let $sources := eutil:getDocumentsLabelsAsArray($participants, $edition)
+let $sources := doc:getDocumentsLabelsAsArray($participants, $edition)
 let $sourcesLabel := if (count($sources) gt 1)
 then
     (eutil:getLanguageString('view.window.AnnotationView_Sources', ()))

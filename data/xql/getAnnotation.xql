@@ -7,7 +7,7 @@ xquery version "3.1";
 (: IMPORTS ================================================================= :)
 
 import module namespace annotation = "http://www.edirom.de/xquery/annotation" at "../xqm/annotation.xqm";
-import module namespace edition = "http://www.edirom.de/xquery/edition" at "../xqm/edition.xqm";
+import module namespace doc = "http://www.edirom.de/xquery/document" at "../xqm/document.xqm";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
 import module namespace source = "http://www.edirom.de/xquery/source" at "../xqm/source.xqm";
 
@@ -351,7 +351,7 @@ let $categoriesLabel :=
         else
             ('Category'))
 
-let $sources := eutil:getDocumentsLabelsAsArray($participants, $edition)
+let $sources := doc:getDocumentsLabelsAsArray($participants, $edition)
 
 let $sourcesLabel :=
     if ($lang = 'de') then (
