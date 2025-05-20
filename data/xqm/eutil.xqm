@@ -17,7 +17,6 @@ module namespace eutil = "http://www.edirom.de/xquery/eutil";
 
 import module namespace functx = "http://www.functx.com";
 
-import module namespace annotation="http://www.edirom.de/xquery/annotation" at "annotation.xqm";
 import module namespace edition="http://www.edirom.de/xquery/edition" at "edition.xqm";
 import module namespace source="http://www.edirom.de/xquery/source" at "source.xqm";
 import module namespace teitext="http://www.edirom.de/xquery/teitext" at "teitext.xqm";
@@ -81,10 +80,7 @@ declare function eutil:getLocalizedName($node, $lang) {
             else
                 $node/edirom:names/edirom:name[1]/node()
         
-        ) else if (local-name($node) = 'annot' and $node/@type = 'editorialComment') then
-            (annotation:generateTitle($node))
-        
-        else
+        ) else
         (normalize-space($node))
     
     return
