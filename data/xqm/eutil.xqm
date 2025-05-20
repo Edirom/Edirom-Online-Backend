@@ -28,6 +28,10 @@ declare namespace system="http://exist-db.org/xquery/system";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace util="http://exist-db.org/xquery/util";
 
+(: VARIABLE DECLARATIONS =================================================== :)
+
+declare variable $eutil:default-prefs-location as xs:string := '../prefs/edirom-prefs.xml';
+
 (: FUNCTION DECLARATIONS =================================================== :)
 
 (:~
@@ -285,7 +289,7 @@ declare function eutil:getPreference($key as xs:string, $edition as xs:string?) 
             $prefFileCustom//entry[@key = $key]/@value => string()
         (: If not, take the value for the key in the default preferences file :)
         else
-            try { doc($edition:default-prefs-location)//entry[@key = $key]/@value => string() }
+            try { doc($eutil:default-prefs-location)//entry[@key = $key]/@value => string() }
             (: If the key is not in the default file, then there should be an error :)
             catch * { util:log-system-out(concat('Failed to find the key `', $key, '` in default preferences file')) }
 };

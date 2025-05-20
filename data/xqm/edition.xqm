@@ -24,10 +24,6 @@ declare namespace xlink = "http://www.w3.org/1999/xlink";
 declare namespace rest="http://exquery.org/ns/restxq";
 declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 
-(: VARIABLE DECLARATIONS =================================================== :)
-
-declare variable $edition:default-prefs-location as xs:string := '../prefs/edirom-prefs.xml';
-
 (: FUNCTION DECLARATIONS =================================================== :)
 
 
@@ -154,7 +150,7 @@ declare function edition:getLanguageCodesSorted($uri as xs:string) as xs:string*
 declare function edition:getPreferencesURI($uri as xs:string?) as xs:string {
     if(doc-available($uri) and doc($uri)//edirom:preferences/@xlink:href => string()) 
     then(doc($uri)//edirom:preferences/@xlink:href => string()) 
-    else $edition:default-prefs-location
+    else $eutil:default-prefs-location
 };
 
 (:~
