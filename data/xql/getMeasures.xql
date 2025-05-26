@@ -55,11 +55,9 @@ declare function local:get-measure-ids($measure as element(mei:measure)) as xs:s
 };
 
 (:~
- : Creates measure maps for a part.
+ : Creates measure maps from parts.
  :
- : @param $part The part element
- : @param $measureN The measure number
- : @param $measures Measures that may contain multiRests
+ : @param $measures The measure elements to process
  : @return A sequence of maps with the keys "id", "voice", and "partLabel"
  :)
 declare function local:get-part-measures($measures as element(mei:measure)*) as map(*)* {
@@ -74,21 +72,40 @@ declare function local:get-part-measures($measures as element(mei:measure)*) as 
 };
 
 (:~
+ : Creates measure maps from the score.
+ :
+ : @param $measures The measure elements to process
+ : @return A sequence of maps with the keys "id", and "voice"
+ :)
+declare function local:get-score-measures($measures as element(mei:measure)*) as map(*)* {
+    for $measure in $measures
+    return
+        map {
+            "id": $measure/string(@xml:id),
+            "voice": "voice"
+        }
+};
+
+(:~
  : Returns measures for an mdiv element, grouped by measure number.
  :
  : @param $mdiv The mdiv element
  : @param $mdivID The ID of the mdiv
  : @return An array of measure maps with the keys "id", "measures", "mdivs", and "name"
  :)
-declare function local:getMeasures($mdiv as element(mei:mdiv)?, $mdivID as xs:string?) as array(*)* {
+declare function local:getMeasures($mdiv as element(mei:mdiv)?, $mdivID as xs:string?, $hasParts as xs:boolean) as array(*)* {
     array {
         for $measure in $mdiv//mei:measure
         group by $measureN := local:get-measure-ids($measure)
+        let $measures :=
+            if($hasParts)
+            then local:get-part-measures($measure)
+            else local:get-score-measures($measure)
         order by eutil:sort-as-numeric-alpha($measureN)
         return
             map {
                 "id": 'measure_' || $mdivID || '_' || $measureN,
-                "measures": local:get-part-measures($measure),
+                "measures": array { $measures },
                 "mdivs": $mdivID,
                 "name": $measureN
             }
@@ -118,6 +135,7 @@ declare function local:multiRestMeasures($mdiv as element(mei:mdiv), $measureN a
 let $uri := request:get-parameter('uri', '')
 let $mdivID := request:get-parameter('mdiv', '')
 let $mdiv := eutil:getDoc($uri)/id($mdivID)
+let $hasParts := exists($mdiv//mei:part)
 
 return
-    local:getMeasures($mdiv, $mdivID)
+    local:getMeasures($mdiv, $mdivID, $hasParts)
