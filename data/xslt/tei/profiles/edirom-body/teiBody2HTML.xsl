@@ -163,7 +163,9 @@
                     <!-- url starts with http i.e. points to a web accessible location -->
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="$contextPath || '/' || substring-after(functx:substring-before-last($docUri, '/'), 'xmldb:exist:///db/') || '/'"/>
+                    <xsl:value-of select="replace(
+                    concat($contextPath, '/', substring-after(functx:substring-before-last($docUri, '/'), 'xmldb:exist:///db/'), '/'),
+                    '/+$', '/')"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
