@@ -1,0 +1,8 @@
+{
+  "openapi": "3.0.2",
+  "info": "basic information like contact and licencse",
+  "servers": "URLs to endpoints",
+  "paths": "all the paths offered by the API",
+  "tags": "description of tags used to organize endpoints (paths)",
+  "externalDocs": "where to find the complete documentation or more to read."
+}
