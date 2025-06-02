@@ -74,13 +74,7 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
     
     let $id := $anno/string(@xml:id)
     let $lang := request:get-parameter('lang', '')
-    let $genericTitle := eutil:getLocalizedTitle($anno, $lang)
-    
-    let $title :=
-        if(exists($genericTitle) and string-length($genericTitle) gt 0) then
-            ($genericTitle)
-        else
-            (annotation:generateTitle($anno))
+    let $title := annotation:getTitle($anno, $lang)
     
     let $doc := $anno/root()
     let $prio := annotation:getPriorityLabel($anno)
@@ -115,7 +109,7 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
     let $cats :=
         string-join(
             for $u in $catURIs
-            return annotation:category_getName($doc/id($u), eutil:getLanguage($edition))
+            return annotation:category_getName($doc/id($u), edition:getLanguage($edition))
          , ', ')
      
     let $count := count($anno/preceding::mei:annot[@type = 'editorialComment']) + 1
@@ -135,11 +129,12 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
  : Generates a title for annotation which have none
  :
  : @param $anno The Annotation to process
+ : @param $lang The language to use
  : @return The string result
  :)
-declare function annotation:generateTitle($anno as element()) {
-    let $mdiv.n := 'Satz ' || string(count($anno/ancestor::mei:mdiv/preceding-sibling::mei:mdiv) + 1)
-    let $measure := 'Takt ' || $anno/ancestor::mei:measure/string(@n)
+declare function annotation:generateTitle($anno as element(), $lang as xs:string) {
+    let $mdiv.n := eutil:getLanguageString('Movement_n', string(count($anno/ancestor::mei:mdiv/preceding-sibling::mei:mdiv) + 1), $lang)
+    let $measure := eutil:getLanguageString('Bar_n', $anno/ancestor::mei:measure/string(@n), $lang)
     return $mdiv.n || ', ' || $measure
 };
 
@@ -156,10 +151,10 @@ declare function annotation:getContent($anno as element(), $idPrefix as xs:strin
     let $xsltBase := concat(replace(system:get-module-load-path(), 'embedded-eXist-server', ''), '/../xslt/') (: TODO: Prüfen, wie wir an dem replace vorbei kommen:)
     
     let $edition := request:get-parameter('edition', '')
-    let $imageserver :=  eutil:getPreference('image_server', $edition)
-    let $imageBasePath := eutil:getPreference('image_prefix', $edition)
+    let $imageserver :=  edition:getPreference('image_server', $edition)
+    let $imageBasePath := edition:getPreference('image_prefix', $edition)
     
-    let $language := eutil:getLanguage($edition)
+    let $language := edition:getLanguage($edition)
     
     let $p := $anno/mei:p[not(@xml:lang) or @xml:lang = $language]
     
@@ -176,15 +171,17 @@ declare function annotation:getContent($anno as element(), $idPrefix as xs:strin
 };
 
 (:~
- : Returns a HTML representation of an Annotation's title
+ : Returns an annotation's title as string
  :
- : @param $anno The Annotation to process
- : @param $idPrefix A prefix for all ids (because of uniqueness in application)
- : @return The HTML representation
+ : @param $anno The annotation to process
+ : @param $lang The language to use
+ : @return The title
  :)
-declare function annotation:getTitle($anno as element(), $idPrefix as xs:string, $edition as xs:string?) {
+declare function annotation:getTitle($anno as element(), $lang as xs:string) {
 
-    $anno/mei:title[not(@xml:lang) or @xml:lang = eutil:getLanguage($edition)]/text()
+    if($anno/mei:title or $anno/mei:name)
+    then(eutil:getLocalizedName($anno, $lang))
+    else(annotation:generateTitle($anno, $lang))
 };
 
 (:~

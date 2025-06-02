@@ -12,6 +12,7 @@ module namespace teitext="http://www.edirom.de/xquery/teitext";
 
 (: IMPORTS ================================================================= :)
 
+import module namespace edition="http://www.edirom.de/xquery/edition" at "edition.xqm";
 import module namespace eutil="http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
@@ -40,6 +41,6 @@ declare function teitext:isText($uri as xs:string) as xs:boolean {
  :)
 declare function teitext:getLabel($uri as xs:string, $edition as xs:string) as xs:string {
 
-    eutil:getLocalizedTitle(eutil:getDoc($uri), eutil:getLanguage($edition))
+    eutil:getLocalizedTitle(eutil:getDoc($uri), edition:getLanguage($edition))
 
 };

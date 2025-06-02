@@ -30,6 +30,7 @@ declare variable $edition:default-prefs-location as xs:string := '../prefs/ediro
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
+
 (:~
  : Returns a map object with details about an Edition
  :
@@ -44,7 +45,7 @@ declare function edition:details($uri as xs:string) as map(*) {
             "id": $edition/string(@xml:id),
             "doc": $uri,
             "name": $edition/edirom:editionName => fn:normalize-space(),
-            "additional_css_path": eutil:getPreference('additional_css_path', $uri),
+            "additional_css_path": edition:getPreference('additional_css_path', $uri),
             "languages": edition:getLanguageCodesSorted($uri)
         }
 };
@@ -146,6 +147,22 @@ declare function edition:getLanguageCodesSorted($uri as xs:string) as xs:string*
 };
 
 (:~
+ : Return the application and content language
+ :
+ : @param $edition The edition's path
+ : @return The language key
+ :)
+declare function edition:getLanguage($edition as xs:string?) as xs:string {
+    
+    if (request:get-parameter("lang", "") != "") then
+        request:get-parameter("lang", "")
+    else if(edition:getPreference('application_language', edition:getEditionURI($edition))) then
+        edition:getPreference('application_language', edition:getEditionURI($edition))
+    else    
+        'de'
+};
+
+(:~
  : Returns the URI of the preferences file for a given edition
  :
  : @param $uri The URI of the Edition's document to process
@@ -154,7 +171,19 @@ declare function edition:getLanguageCodesSorted($uri as xs:string) as xs:string*
 declare function edition:getPreferencesURI($uri as xs:string?) as xs:string {
     if(doc-available($uri) and doc($uri)//edirom:preferences/@xlink:href => string()) 
     then(doc($uri)//edirom:preferences/@xlink:href => string()) 
-    else $edition:default-prefs-location
+    else $eutil:default-prefs-location
+};
+
+(:~
+ : Returns a value from the preferences for a given key
+ :
+ : @param $key The key to look up
+ : @param $edition The current edition URI
+ : @return The preference value
+ :)
+declare function edition:getPreference($key as xs:string, $edition as xs:string?) as xs:string? {
+
+    eutil:getPreference($key, edition:getPreferencesURI($edition))
 };
 
 (:~
@@ -220,7 +249,7 @@ declare function edition:getFrontendUri($editionUri as xs:string, $contextPath a
  : @return The document nodes contained in or under the given collection
  :)
 declare function edition:collection($editionUri as xs:string?) as document-node()* {
-    if($editionUri and eutil:getPreference('edition_path', $editionUri))
-    then collection(eutil:getPreference('edition_path', $editionUri))
+    if($editionUri and edition:getPreference('edition_path', $editionUri))
+    then collection(edition:getPreference('edition_path', $editionUri))
     else util:log('warn', 'No edition provided')
 };

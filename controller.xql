@@ -3,7 +3,6 @@ xquery version "3.1";
 (: IMPORTS ================================================================= :)
 
 import module namespace edition="http://www.edirom.de/xquery/edition" at "data/xqm/edition.xqm";
-import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "data/xqm/eutil.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -18,7 +17,7 @@ declare variable $exist:resource external;
 declare variable $exist:prefix external;
 declare variable $exist:controller external;
 
-let $langVal := eutil:getLanguage(request:get-parameter("edition", ""))
+let $langVal := edition:getLanguage(request:get-parameter("edition", ""))
 
 return
     if ($exist:path eq "") then
