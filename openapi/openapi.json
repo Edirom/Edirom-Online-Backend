@@ -1,6 +1,6 @@
 {
   "openapi": "3.0.2",
-  "info": "basic information like contact and licencse",
+  "info": "Edirom Online Backend api information",
   "servers": "URLs to endpoints",
   "paths": "all the paths offered by the API",
   "tags": "description of tags used to organize endpoints (paths)",
