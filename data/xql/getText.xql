@@ -94,13 +94,13 @@ let $params := (
     <param name="lang" value="{edition:getLanguage($edition)}"/>,
     <param name="docUri" value="{$uri}"/>,
     <param name="contextPath" value="{$contextPath}"/>,
+    <param name="imagePrefix" value="{$imagePrefix}"/>,
     (: parameters for the TEI Stypesheets :)
     <param name="autoHead" value="false"/>,
     <param name="autoToc" value="false"/>,
     <param name="base" value="{concat($base, '/../xslt/')}"/>,
     <param name="documentationLanguage" value="{edition:getLanguage($edition)}"/>,
     <param name="footnoteBackLink" value="true"/>,
-    <param name="graphicsPrefix" value="{$imagePrefix}"/>, (:TODO from XSLT <param name="graphicsPrefix"/>:)
     <param name="numberHeadings" value="false"/>,
     <param name="pageLayout" value="CSS"/>
 )
