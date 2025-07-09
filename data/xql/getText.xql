@@ -95,7 +95,7 @@ let $params := (
     <param name="docUri" value="{$uri}"/>,
     <param name="contextPath" value="{$contextPath}"/>,
     <param name="imagePrefix" value="{$imagePrefix}"/>,
-    (: parameters for the TEI Stypesheets :)
+    (: parameters for the TEI Stylesheets :)
     <param name="autoHead" value="false"/>,
     <param name="autoToc" value="false"/>,
     <param name="base" value="{concat($base, '/../xslt/')}"/>,
