@@ -18,6 +18,8 @@ import module namespace eutil="http://www.edirom.de/xquery/eutil" at "eutil.xqm"
 (: NAMESPACE DECLARATIONS ================================================== :)
 
 declare namespace mei="http://www.music-encoding.org/ns/mei";
+declare namespace rest="http://exquery.org/ns/restxq";
+declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
@@ -139,4 +141,44 @@ declare function source:getSiglum($source as xs:string) as xs:string? {
         if(exists($elems))
         then $elems[1] => normalize-space()
         else ()
+};
+
+(:~
+ : Returns a movement of an MEI file
+ :
+ : @param $source The URI of the source's document to process
+ : @param $movementId The id of the movement
+:)
+declare
+    %rest:GET
+    %rest:path("/scores/{$scoreId}/movement/{$movementId}")
+    %rest:produces("application/xml", "text/xml")
+    %output:method("xml")
+function source:getScoreMovement($scoreId as xs:string, $movementId as xs:string) {
+
+    let $mei := eutil:getDoc($scoreId)
+    let $mdiv :=
+        if ($movementId eq '') then
+            ($mei//mei:mdiv[1])
+        else
+            ($mei/id($movementId))
+
+    let $base := concat(replace(system:get-module-load-path(), 'embedded-eXist-server', ''), '/../xslt/')
+    let $data := transform:transform($mdiv, concat($base, 'edirom_prepareAnnotsForRendering.xsl'), <parameters/>)
+
+    return
+        
+    <mei xmlns="http://www.music-encoding.org/ns/mei"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
+        {$mei/mei/@meiversion}
+        {$mei//mei:meiHead}
+        <music>
+            <facsimile/>
+            <body>
+                {$data}
+            </body>
+        </music>
+    </mei>
+ 
+
 };

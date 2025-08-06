@@ -59,6 +59,18 @@ declare function edition:details($uri as xs:string) as map(*) {
         edition:details($edition)
 };
  
+declare
+    %rest:GET
+    %rest:path("/{version}/editions")
+    %rest:produces("application/json") 
+    %output:media-type("application/json")
+    %output:method("json")
+ function edition:findEditionsAPI($version as xs:string) {
+    
+    switch ($version) 
+        case "v2" return eutil:jsonapi-wrapper(edition:findEditions())
+        default return "Error: Unsupported API version" 
+};
 
 (:~
  : Returns a list of URIs pointing to Editions

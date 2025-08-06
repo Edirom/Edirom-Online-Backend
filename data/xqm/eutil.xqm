@@ -36,7 +36,7 @@ declare namespace util="http://exist-db.org/xquery/util";
 
 declare variable $eutil:lang := eutil:getLanguage(());
 declare variable $eutil:langDoc := eutil:getDoc(concat('../locale/edirom-lang-', $eutil:lang, '.xml'));
- 
+
 (: FUNCTION DECLARATIONS =================================================== :)
 
 (:~
@@ -152,15 +152,17 @@ declare function eutil:getLocalizedTitle($node as node(), $lang as xs:string?, $
 (:~
  : Returns a document
  :
- : @param $uri The URIs of the documents to process
+ : @param $uriOrId The URI or Id of the document to process
  : @return The document
  :)
-declare function eutil:getDoc($uri as xs:string?) as document-node()? {
-    if(empty($uri) or ($uri eq ""))
+declare function eutil:getDoc($uriOrId as xs:string?) as document-node()? {
+    if(empty($uriOrId) or ($uriOrId eq ""))
     then util:log("warn", "No document URI provided")
-    else if(doc-available($uri))
-    then doc($uri)
-    else util:log("warn", "Unable to load document at " || $uri)
+    else if(doc-available($uriOrId))
+    then doc($uriOrId)
+    else if(collection('/db/apps')/id($uriOrId))
+    then collection('/db/apps')/id($uriOrId)/root()
+    else util:log("warn", "Unable to load document at " || $uriOrId)
 };
 
 (:~
@@ -464,3 +466,12 @@ declare function eutil:joinAndNormalize($strings as xs:string*) as xs:string {
 declare function eutil:joinAndNormalize($strings as xs:string*, $separator as xs:string) as xs:string {
     $strings => string-join($separator) => normalize-space()
 };
+
+declare function eutil:jsonapi-wrapper($data) {
+    map {
+            "data": $data,
+            "links": map {
+                "self: 'dsddsdsdsdsdd'
+            }
+        }
+}
