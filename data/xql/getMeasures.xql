@@ -82,7 +82,7 @@ declare function local:get-score-measures($measures as element(mei:measure)*) as
     return
         map {
             "id": $measure/string(@xml:id),
-            "voice": "voice"
+            "voice": "score"
         }
 };
 
@@ -101,7 +101,7 @@ declare function local:getMeasures($mdiv as element(mei:mdiv)?, $mdivID as xs:st
             if($hasParts)
             then local:get-part-measures($measure)
             else local:get-score-measures($measure)
-        order by eutil:sort-as-numeric-alpha($measureN)
+        order by eutil:compute-measure-sort-key($measureN)
         return
             map {
                 "id": 'measure_' || $mdivID || '_' || $measureN,
