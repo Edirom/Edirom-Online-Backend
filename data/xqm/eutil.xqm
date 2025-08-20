@@ -335,6 +335,26 @@ declare function eutil:sort-as-numeric-alpha($seq as item()* )  as item()* {
 
 } ;
 
+
+(:~
+ : Computes a sort key for numeric-alpha values or nodes (e.g. 1, 1a, 1b, 2)
+ :
+ : @see     http://www.xqueryfunctions.com/xq/functx_compute-sort-key.html
+ : @param   $key the key to compute the sort key for
+ : @return  the computed sort key
+ :)
+declare function eutil:compute-measure-sort-key( $key as xs:string ) as xs:string {
+    
+    let $itemPart1 := (functx:get-matches($key, '\d+'))[1]
+    (: let $itemPart2 := substring-after($key, $itemPart1) :)
+    let $keylength := string-length($itemPart1)
+    let $prefix := functx:repeat-string('0', 30 - $keylength)
+
+    return concat($prefix, $key)
+    
+};
+
+
 (:~
  : Extracts an ISO 639 language code from a given ISO 3166-1 language code
  :
