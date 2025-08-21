@@ -68,8 +68,8 @@
         <entry key="view.desktop.TaskBar_Desktop" value="Desktop {0}"/>
         <entry key="view.desktop.TaskBar_searchWin" value="Öffne Suchfenster"/>
         <entry key="view.desktop.TaskBar_Sort_grid" value="Im Raster anordnen"/>
-        <entry key="view.desktop.TaskBar_Sort_vertical" value="Nebeneinander anordnen"/>
-        <entry key="view.desktop.TaskBar_Sort_horizontal" value="Übereinander anordnen"/>
+        <entry key="view.desktop.TaskBar_Sort_vertical" value="Übereinander anordnen" />
+        <entry key="view.desktop.TaskBar_Sort_horizontal" value="Nebeneinander anordnen" />
         <entry key="view.desktop.TopBar_homeBtnLabel" value="Edirom Online"/>
         <entry key="view.window.AnnotationView_Title" value="Anmerkungen"/>
         <entry key="view.window.AnnotationView_No" value="Nr."/>
@@ -134,8 +134,8 @@
         <entry key="view.window.text.TextView_categoriesMenu" value="Kategorien…"/>
         <entry key="view.window.text.TextView_gotoChapter" value="Gehe zu Kapitel/Nummer…"/>
         <entry key="view.window.text.TextView_viewMenu" value="Darstellung"/>
-        
-        
+
+
         <!-- naming gui elements -->
         <entry key="view.desktop.Desktop" value="Desktop"/>
         <entry key="view.desktop.TopBar" value="Toolbar"/>
@@ -172,8 +172,8 @@
         <entry key="view.window.pref_windowSettings" value="Fenster-Einstellungen"/>
         <entry key="view.window.pref_langSettings" value="Sprach-Einstellungen"/>
         <entry key="Number field with left and right arrows" value="Anzahl der Pfeile nach links und rechts"/>
-        
-        
+
+
         <!-- DATA -->
         <entry key="Annotation" value="Anmerkung"/>
         <entry key="Annotation_plus_Title" value="Anmerkung: {0}"/>
@@ -182,7 +182,7 @@
         <entry key="Bar" value="Takt"/>
         <!-- XSL-FO specific -->
         <entry key="contentsWord" value="Inhaltsverzeichnis"/>
-        
+
         <!-- PERFORMANCE MEDIUM -->
         <entry key="perfMedium.perfRes.voice" value="Singstimme"/>
         <entry key="perfMedium.perfRes.voiceSpeaking" value="Sprechstimme"/>
