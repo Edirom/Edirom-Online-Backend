@@ -33,22 +33,19 @@ declare function annotation:getLocalizedLabel($node) {
     let $lang := request:get-parameter('lang', '')
     let $nodeName := local-name($node)
   
-    let $label :=
-        if($nodeName = 'category') then (
-            (: new style, i.e. //category/label :)
-            let $labels := taxonomy:get-labels( $node )
-            return
-                if ($labels( $lang )) then
-                    $labels( $lang )
-                else
-                    $labels( 'und' )
-        
-        ) else if($nodeName = 'term') then(
-            (: old style, i.e. //term/name :)
-            eutil:getLocalizedName($node, $lang)
-        
-        ) else
-            ($nodeName)
+     let $label :=
+        switch($nodeName)
+            case 'category' return
+                let $labels := taxonomy:get-labels( $node )
+                return
+                    if ( $labels( $lang ) ) then
+                        $labels( $lang )
+                    else
+                        $labels( 'und' )
+            case 'term' return
+                eutil:getLocalizedName($node, $lang)
+            default return
+                $nodeName
   
     return $label
 };
