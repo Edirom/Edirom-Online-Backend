@@ -263,10 +263,10 @@ declare function annotation:getPriorityLabel($anno) as xs:string* {
 : @param $anno The Annotation to process
 : @return The categories (as comma separated string)
 :)
-declare function annotation:getCategories($anno as element()) as xs:string {
+(:declare function annotation:getCategories($anno as element()) as xs:string {
     
     string-join(annotation:get-category-labels-as-sequence($anno), ', ')
-};
+};:)
 
 (:~
  : Returns a sequence of names/labels for an annotation's categories
