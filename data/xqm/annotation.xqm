@@ -57,7 +57,7 @@ declare function annotation:getLocalizedLabel($node) {
  :)
 declare function annotation:annotationsToJSON($uri as xs:string, $edition as xs:string) as map(*)* {
     
-    let $doc := doc($uri)
+    let $doc := eutil:getDoc($uri)
     let $annos := $doc//mei:annot[@type = 'editorialComment']
     return
         for $anno in $annos
