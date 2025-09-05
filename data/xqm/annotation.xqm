@@ -216,6 +216,13 @@ declare function annotation:getPriority($anno as element()) as xs:string* {
             ($locId)
 };
 
+(:~
+ : Gets the label for a Edirom Online annotation priority
+ :
+ : @param $anno should be a mei:annot, mei:term, or mei:category element
+ :
+ : @return 
+ :)
 declare function annotation:getPriorityLabel($anno) as xs:string* {
     
     let $isPrioElemAlready := local-name($anno) = ('term','category')
@@ -236,8 +243,10 @@ declare function annotation:getPriorityLabel($anno) as xs:string* {
                 for $uri in $classBasedUri
                 let $doc :=
                     if(starts-with($uri,'#')) then
+                        (: uri is a local reference to an xml:id in the same document :)
                         ($anno/root())
                     else
+                        (: uri is a reference to an xml:id in another document :)
                         (doc(substring-before($uri,'#')))
                 
                 let $prioElem := $doc/id(replace($uri,'#',''))
@@ -260,7 +269,7 @@ declare function annotation:getCategories($anno as element()) as xs:string {
 };
 
 (:~
- : Returns an array of Annotation's categories
+ : Returns a sequence of names/labels for an annotation's categories
  :
  : @param $anno The Annotation to process
  : @return The categories (as comma separated string)
@@ -280,10 +289,10 @@ declare function annotation:get-category-labels-as-sequence($anno as element()) 
 };
 
 (:~
- : Returns a list of URIs addressed by an Annotation
+ : Returns a sequence of document URIs addressed by an annotation
  :
- : @param $anno The Annotation to process
- : @return The list
+ : @param $anno element() The Annotation to process
+ : @return sequence of xs:string, might be an empty sequence
  :)
 declare function annotation:getParticipants($anno as element()) as xs:string* {
     
