@@ -256,7 +256,7 @@ declare function annotation:getPriorityLabel($anno) as xs:string* {
 :)
 declare function annotation:getCategories($anno as element()) as xs:string {
     
-    string-join(annotation:getCategoriesAsArray($anno), ', ')
+    string-join(annotation:get-category-labels-as-sequence($anno), ', ')
 };
 
 (:~
@@ -265,7 +265,7 @@ declare function annotation:getCategories($anno as element()) as xs:string {
  : @param $anno The Annotation to process
  : @return The categories (as comma separated string)
  :)
-declare function annotation:getCategoriesAsArray($anno as element()) as xs:string* {
+declare function annotation:get-category-labels-as-sequence($anno as element()) as xs:string* {
     
     let $doc := $anno/root()
     
