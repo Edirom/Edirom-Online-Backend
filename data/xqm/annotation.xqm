@@ -17,6 +17,8 @@ module namespace annotation = "http://www.edirom.de/xquery/annotation";
 import module namespace edition="http://www.edirom.de/xquery/edition" at "edition.xqm";
 import module namespace eutil="http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 
+import module namespace taxonomy="http://www.edirom.de/xquery/taxonomy" at "taxonomy.xqm";
+
 (: NAMESPACE DECLARATIONS ================================================== :)
 
 declare namespace mei="http://www.music-encoding.org/ns/mei";
@@ -34,10 +36,12 @@ declare function annotation:getLocalizedLabel($node) {
     let $label :=
         if($nodeName = 'category') then (
             (: new style, i.e. //category/label :)
-            if ($node/mei:label[@xml:lang = $lang]) then
-                $node/mei:label[@xml:lang = $lang]/text()
-            else
-                $node/mei:label[1]/text()
+            let $labels := taxonomy:get-labels( $node )
+            return
+                if ($labels( $lang )) then
+                    $labels( $lang )
+                else
+                    $labels( 'und' )
         
         ) else if($nodeName = 'term') then(
             (: old style, i.e. //term/name :)
