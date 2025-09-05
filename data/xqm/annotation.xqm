@@ -274,21 +274,7 @@ declare function annotation:getCategoriesAsArray($anno as element()) as xs:strin
     let $cats :=
         for $u in $catURIs
         return annotation:category_getName($doc/id($u),'')
-                 
-    
-    (:let $uris := tokenize($anno/mei:ptr[@type eq 'categories']/string(@target),' ')
-    
-    let $string := for $uri in $uris
-                   let $doc := if(starts-with($uri,'#'))
-                               then($anno/root())
-                               else(doc(substring-before($uri,'#')))
-                   let $locID := substring-after($uri,'#')
-                   let $elem := $doc/id($locID)
-                   return
-                       if(local-name($elem) eq 'term')
-                       then(eutil:getLocalizedName($elem))
-                       else($locID)
-    :)
+        
     return $cats
 };
 
