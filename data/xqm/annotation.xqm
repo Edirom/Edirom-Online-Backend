@@ -28,7 +28,7 @@ declare namespace transform="http://exist-db.org/xquery/transform";
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
-declare function annotation:getLocalizedLabel($node) {
+declare function annotation:get-category-label-localized($node) {
 
     let $lang := request:get-parameter('lang', '')
     let $nodeName := local-name($node)
@@ -230,7 +230,7 @@ declare function annotation:getPriorityLabel($anno) as xs:string* {
     
     return
         if($isPrioElemAlready) then
-            (annotation:getLocalizedLabel($anno))
+            (annotation:get-category-label-localized($anno))
         
         else if($oldEdiromStyle) then
             (annotation:getPriority($anno))
@@ -250,7 +250,7 @@ declare function annotation:getPriorityLabel($anno) as xs:string* {
                         (doc(substring-before($uri,'#')))
                 
                 let $prioElem := $doc/id(replace($uri,'#',''))
-                let $label := annotation:getLocalizedLabel($prioElem)
+                let $label := annotation:get-category-label-localized($prioElem)
                 return $label
             
             return string-join($labels,', ')
@@ -309,7 +309,7 @@ declare function annotation:getParticipants($anno as element()) as xs:string* {
  : @return one name
  :)
 declare function annotation:category_getName($category as element(), $language as xs:string) {
-    annotation:getLocalizedLabel($category)
+    annotation:get-category-label-localized($category)
     (:let $names := $category/mei:name
     return
         switch (count($names[@xml:lang = $language]))
