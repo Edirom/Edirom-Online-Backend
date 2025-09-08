@@ -92,7 +92,7 @@ as map( * )
     return
         map {
             "descs": taxonomy:get-descs( $element, $languages ),
-(:            "i18n": eutil:getLanguageString($EDITION, $idString, (), $eutil:lang), :)
+(:          "i18n": eutil:getLanguageString($EDITION, $idString, (), $eutil:lang), :)
             "id": $idString,
             "label":taxonomy:get-labels( $element ),
             "languages": taxonomy:get-languages( $element ),
