@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir=".." name="EdiromOnlineTesting">
     
-    <property name="xqunit-url" value="http://localhost:8080/exist/apps/Edirom-Online/testing/XQSuite/run-unit-tests.xq"/>
+    <property name="xqunit-url" value="http://localhost:8080/exist/apps/Edirom-Online-Backend/testing/XQSuite/run-unit-tests.xq"/>
     
     <target name="run-all-tests" depends="xqunit-tests,check-language-files"/>
     

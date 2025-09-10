@@ -32,6 +32,11 @@ declare namespace system="http://exist-db.org/xquery/system";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace util="http://exist-db.org/xquery/util";
 
+(: VARIABLE DECLARATIONS =================================================== :)
+
+declare variable $eutil:lang := eutil:getLanguage(());
+declare variable $eutil:langDoc := eutil:getDoc(concat('../locale/edirom-lang-', $eutil:lang, '.xml'));
+ 
 (: FUNCTION DECLARATIONS =================================================== :)
 
 (:~
@@ -95,6 +100,7 @@ declare function eutil:getLocalizedName($node, $lang) {
 
 };
 
+
 (:~
  : Returns a localized string
  :
@@ -103,6 +109,19 @@ declare function eutil:getLocalizedName($node, $lang) {
  : @return The string (normalized space)
  :)
 declare function eutil:getLocalizedTitle($node as node(), $lang as xs:string?) as xs:string {
+
+    eutil:getLocalizedTitle($node, $lang, eutil:getLanguageString('no_title', ()))
+
+};
+
+(:~
+ : Returns a localized string
+ :
+ : @param $node The node to be processed
+ : @param $lang Optional parameter for lang selection
+ : @return The string (normalized space)
+ :)
+declare function eutil:getLocalizedTitle($node as node(), $lang as xs:string?, $default as xs:string) as xs:string {
 
     let $namespace := eutil:getNamespace($node)
   
@@ -125,8 +144,8 @@ declare function eutil:getLocalizedTitle($node as node(), $lang as xs:string?) a
             ($titleMEI)
         else if ($namespace = 'tei' and $titleTEI != '') then
             ($titleTEI)
-        else
-            ('[No title found!]')
+        else 
+            $default
 
 };
 
@@ -203,13 +222,7 @@ declare function eutil:getDocumentLabel($doc as xs:string, $edition as xs:string
  :)
 declare function eutil:getPartLabel($measureOrPerfRes as node(), $type as xs:string) as xs:string {
 
-    (: request:get-parameter('lang', '') doesn't work?? [DeRi]:)
-
-    let $lang :=
-        if(request:get-parameter('lang', '') = '') then
-            ('de')
-        else
-            (request:get-parameter('lang', ''))
+    let $lang := $eutil:lang
 
     let $part := $measureOrPerfRes/ancestor::mei:part
     let $voiceRef := $part//mei:staffDef/@decls
@@ -249,7 +262,7 @@ declare function eutil:getPartLabel($measureOrPerfRes as node(), $type as xs:str
  :)
 declare function eutil:getLanguageString($key as xs:string, $values as xs:string*) as xs:string? {
 
-    eutil:getLanguageString($key, $values, eutil:getLanguage(''))
+    eutil:getLanguageString($key, $values, $eutil:lang)
 
 };
 
@@ -265,9 +278,7 @@ declare function eutil:getLanguageString($key as xs:string, $values as xs:string
  :)
 declare function eutil:getLanguageString($key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string? {
 
-    let $file := eutil:getDoc(concat('../locale/edirom-lang-', $lang, '.xml'))
-    
-    let $langString := $file//entry[@key = $key]/string(@value)
+    let $langString := $eutil:langDoc//entry[@key = $key]/string(@value)
 
     return
         if($langString) 
@@ -300,7 +311,7 @@ declare function eutil:getLanguageString($edition as xs:string, $key as xs:strin
             $langFileCustom//entry[@key = $key]/@value => string()
         (: If not, take the value for the key in the default language file :)
         else
-            eutil:getDoc(concat('../locale/edirom-lang-', $lang, '.xml'))//entry[@key = $key]/@value => string()
+            $eutil:langDoc//entry[@key = $key]/@value => string()
     return
         if($langString) 
         (: replace placeholders in the language string with values provided to the function as parameter :)
@@ -411,7 +422,7 @@ declare function eutil:iso3166-1-to-iso639($iso3166-1 as xs:string) as xs:string
 };
 
 (:~
- : Returns the ISO 639 language code with the highest 'quality' (none cosidered as 1) from
+ : Returns the ISO 639 language code with the highest 'quality' (none considered as 1) from
  : the HTTP-request Accept-Language header
  :
  : @author Benjamin W. Bohl
