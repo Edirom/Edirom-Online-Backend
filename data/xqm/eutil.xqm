@@ -29,7 +29,9 @@ declare namespace util="http://exist-db.org/xquery/util";
 (: VARIABLE DECLARATIONS =================================================== :)
 
 declare variable $eutil:default-prefs-location as xs:string := '../prefs/edirom-prefs.xml';
-
+declare variable $eutil:lang := eutil:getLanguage(());
+declare variable $eutil:langDoc := eutil:getDoc(concat('../locale/edirom-lang-', $eutil:lang, '.xml'));
+ 
 (: FUNCTION DECLARATIONS =================================================== :)
 
 (:~
@@ -162,13 +164,7 @@ declare function eutil:getDoc($uri as xs:string?) as document-node()? {
  :)
 declare function eutil:getPartLabel($measureOrPerfRes as node(), $type as xs:string) as xs:string {
 
-    (: request:get-parameter('lang', '') doesn't work?? [DeRi]:)
-
-    let $lang :=
-        if(request:get-parameter('lang', '') = '') then
-            ('de')
-        else
-            (request:get-parameter('lang', ''))
+    let $lang := $eutil:lang
 
     let $part := $measureOrPerfRes/ancestor::mei:part
     let $voiceRef := $part//mei:staffDef/@decls
@@ -208,7 +204,7 @@ declare function eutil:getPartLabel($measureOrPerfRes as node(), $type as xs:str
  :)
 declare function eutil:getLanguageString($key as xs:string, $values as xs:string*) as xs:string? {
 
-    eutil:getLanguageString($key, $values, eutil:getLanguage())
+    eutil:getLanguageString($key, $values, $eutil:lang)
 
 };
 
@@ -224,9 +220,7 @@ declare function eutil:getLanguageString($key as xs:string, $values as xs:string
  :)
 declare function eutil:getLanguageString($key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string? {
 
-    let $file := eutil:getDoc(concat('../locale/edirom-lang-', $lang, '.xml'))
-    
-    let $langString := $file//entry[@key = $key]/string(@value)
+    let $langString := $eutil:langDoc//entry[@key = $key]/string(@value)
 
     return
         if($langString) 
@@ -259,7 +253,7 @@ declare function eutil:getLanguageString($langFileURI as xs:string, $key as xs:s
             $langFileCustom//entry[@key = $key]/@value => string()
         (: If not, take the value for the key in the default language file :)
         else
-            eutil:getDoc(concat('../locale/edirom-lang-', $lang, '.xml'))//entry[@key = $key]/@value => string()
+            $eutil:langDoc//entry[@key = $key]/@value => string()
     return
         if($langString) 
         (: replace placeholders in the language string with values provided to the function as parameter :)
@@ -356,7 +350,7 @@ declare function eutil:iso3166-1-to-iso639($iso3166-1 as xs:string) as xs:string
 };
 
 (:~
- : Returns the ISO 639 language code with the highest 'quality' (none cosidered as 1) from
+ : Returns the ISO 639 language code with the highest 'quality' (none considered as 1) from
  : the HTTP-request Accept-Language header
  :
  : @author Benjamin W. Bohl
