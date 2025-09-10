@@ -30,6 +30,7 @@ let $contextPath := if(starts-with(document-uri($doc), '/db'))
                     else document-uri($doc)
 let $contextPath := substring-before($contextPath, concat('help/help_', $lang, '.xml'))
 let $contextPath := request:get-context-path() || $contextPath
+let $host := request:get-scheme() || '://' || request:get-hostname() || ':' || request:get-server-port()
 
 let $xsl := doc('../xslt/edirom_langReplacement.xsl')
 let $doc := 
@@ -47,7 +48,8 @@ let $doc :=
             <param name="base" value="{concat($base, '/../xslt/')}"/>
             <param name="lang" value="{$lang}"/>
             <param name="tocDepth" value="1"/>
-            <param name="contextPath" value="{$contextPath}"/>
+            (: == passing empty value for docUri (XSLT expects xs:anyURI, but ExtJS view does not provide value) -> github#480 == :)
+            <param name="contextPath" value="{$host}{$contextPath}"/>
             (: == passing empty value for docUri (XSLT expects xs:anyURI, but ExtJS view does not provide value) -> github#480 == :)
             <param name="docUri" value="''"/>
         </parameters>

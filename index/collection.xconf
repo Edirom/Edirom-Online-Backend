@@ -28,5 +28,6 @@
         <create qname="@xml:lang" type="xs:string"/>
         <create qname="@xml:id" type="xs:string"/>
         <create qname="@id" type="xs:string"/>
+        <create qname="@key" type="xs:string"/>
     </index>
 </collection>
