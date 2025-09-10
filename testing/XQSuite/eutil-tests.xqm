@@ -2,7 +2,7 @@ xquery version "3.1";
 
 module namespace eut = "http://www.edirom.de/xquery/xqsuite/eutil-tests";
 
-import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "xmldb:exist:///db/apps/Edirom-Online/data/xqm/eutil.xqm";
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/eutil.xqm";
 
 declare namespace mei="http://www.music-encoding.org/ns/mei";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
@@ -44,8 +44,8 @@ declare
     %test:arg("uri", "")            %test:assertEmpty
     %test:args("foo")               %test:assertEmpty
     %test:args("https://edirom.de") %test:assertXPath("/html")
-    %test:args("xmldb:exist://db/apps/Edirom-Online/data/locale/edirom-lang-de.xml")    %test:assertXPath("/langFile")
-    %test:args("/db/apps/Edirom-Online/data/locale/edirom-lang-de.xml")                 %test:assertXPath("/langFile")
+    %test:args("xmldb:exist://db/apps/Edirom-Online-Backend/data/locale/edirom-lang-de.xml")    %test:assertXPath("/langFile")
+    %test:args("/db/apps/Edirom-Online-Backend/data/locale/edirom-lang-de.xml")                 %test:assertXPath("/langFile")
     function eut:test-getDoc($uri as xs:string?) as document-node()? {
         eutil:getDoc($uri)
 };
@@ -81,35 +81,35 @@ declare
 
 declare 
     (: Test empty replacements with non-existing key :)
-    %test:arg("edition", "edirom_edition_example")
+    %test:arg("edition", "xqsuite_test_edition")
     %test:arg("key", "foo1g4#")
     %test:arg("values") 
     %test:arg("lang", "de") %test:assertEmpty
     (: Test empty replacements with existing key :)
-    %test:arg("edition", "edirom_edition_example")
+    %test:arg("edition", "xqsuite_test_edition")
     %test:arg("key", "global_cancel")
     %test:arg("values") 
     %test:arg("lang", "de") %test:assertEquals("Test-Abbrechen")
     (: Test empty replacements with existing key in another language :)
-    %test:arg("edition", "edirom_edition_example")
+    %test:arg("edition", "xqsuite_test_edition")
     %test:arg("key", "global_cancel")
     %test:arg("values") 
     %test:arg("lang", "it") %test:assertEquals("Test-it-Abbrechen")
     (: Test replacements with existing key :)
-    %test:args("edirom_edition_example", "view.desktop.TaskBar_Desktop", "5", "de") %test:assertEquals("Test-Desktop 5")
+    %test:args("xqsuite_test_edition", "view.desktop.TaskBar_Desktop", "5", "de") %test:assertEquals("Test-Desktop 5")
     (: Test replacements with existing key in another language :)
-    %test:args("edirom_edition_example", "view.desktop.TaskBar_Desktop", "foo", "it") %test:assertEquals("Test-it-Desktop foo")
+    %test:args("xqsuite_test_edition", "view.desktop.TaskBar_Desktop", "foo", "it") %test:assertEquals("Test-it-Desktop foo")
     (: Test replacements with existing key without placeholders :)
-    %test:args("edirom_edition_example", "global_cancel", "foo", "de") %test:assertEquals("Test-Abbrechen")
+    %test:args("xqsuite_test_edition", "global_cancel", "foo", "de") %test:assertEquals("Test-Abbrechen")
     (: Test replacements with existing key and non-existing language :)
-    %test:args("edirom_edition_example", "global_cancel", "foo", "foo1g4#lang") %test:assertEmpty
+    %test:args("xqsuite_test_edition", "global_cancel", "foo", "foo1g4#lang") %test:assertEmpty
     (: Test empty replacements with non-existing key and non-existing language :)
-    %test:arg("edition", "edirom_edition_example")
+    %test:arg("edition", "xqsuite_test_edition")
     %test:arg("key", "foo1g4#")
     %test:arg("values") 
     %test:arg("lang", "foo1g4#lang") %test:assertEmpty
     (: Test empty replacements with existing key from default language file :)
-    %test:arg("edition", "edirom_edition_example")
+    %test:arg("edition", "xqsuite_test_edition")
     %test:arg("key", "view.desktop.Desktop_Maximize")
     %test:arg("values") 
     %test:arg("lang", "de") %test:assertEquals("Maximieren")

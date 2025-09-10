@@ -3,6 +3,7 @@
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 [![GitHub release](https://img.shields.io/github/v/release/Edirom/Edirom-Online-Backend.svg)](https://github.com/Edirom/Edirom-Online-Backend/releases)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14998458.svg)](https://doi.org/10.5281/zenodo.14998458)
+[![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B%20%20%E2%97%8F%20%20%E2%97%8B-orange)](https://fair-software.eu)
 
 </div>
 
@@ -19,17 +20,11 @@ git clone <project url>
 
 ### Building locally
 
-For building Edirom Online you need *ant* installed on your system. 
-Alternatively, you can use a Docker container image for building, e.g. [bwbohl/sencha-cmd]
+For building the Edirom-Online Backend you need *ant* installed on your system. 
+When you have ant installed, just go into the cloned repository and type
 
 ```bash
-docker run --rm -it -v /ABSOLUTE/PATH/TO/YOUR/LOCAL/EDIROM-ONLINE-BACKEND/CLONE:/app --name ediBuild ghcr.io/bwbohl/sencha-cmd:latest
-```
-
-When you have your system prepared with all prerequisites or you have your docker container running you are now set up to execute the build command. Do this by calling the build script included in this repository, either in your native shell or in the container shell, e.g.:
-
-```bash
-./build.sh
+ant
 ```
 
 ### Starting an Edirom instance locally
@@ -41,10 +36,10 @@ When you have your system prepared with all prerequisites or you have your docke
   * Login with "admin:[empty]"
 * build and deploy **xar of Edirom-Online Backend**
   * also see [building locally] above
-  * at `http://localhost:8080/exist/apps/dashboard/admin#` (signed-in) go to "Package Manager" then "Upload" and select the xar file which (supposed above build-method was used) was built at `/PATH_TO_LOCAL_EDIROM_REPO/build-xar/Edirom-Online-Backend-1.0.0-[TIMESTAMP].xar`
+  * at `http://localhost:8080/exist/apps/dashboard/admin#` (signed-in) go to "Package Manager" then "Upload" and select the xar file which (supposed above build-method was used) was built at `/PATH_TO_LOCAL_EDIROM_REPO/build-xar/Edirom-Online-Backend-1.0.1-[TIMESTAMP].xar`
 * build and deploy **xar of Edirom-Online Frontend**
   * for building the frontend module please see https://github.com/Edirom/Edirom-Online-Frontend
-  * at `http://localhost:8080/exist/apps/dashboard/admin#` (signed-in) go to "Package Manager" then "Upload" and select the xar file which (supposed above build-method was used) was built at `/PATH_TO_LOCAL_EDIROM_REPO/build-xar/Edirom-Online-Frontend-1.0.0-[TIMESTAMP].xar`
+  * at `http://localhost:8080/exist/apps/dashboard/admin#` (signed-in) go to "Package Manager" then "Upload" and select the xar file which (supposed above build-method was used) was built at `/PATH_TO_LOCAL_EDIROM_REPO/build-xar/Edirom-Online-Frontend-1.0.1-[TIMESTAMP].xar`
 * build **xar of sample data** for deploying at exist-db
   * also see [building sample data]
   * at `http://localhost:8080/exist/apps/dashboard/admin#` (signed-in) go to "Package Manager" then "Upload" and select the xar file which (supposed above build-method was used) was built at `/PATH_TO_LOCAL_EDIROM_EDITION_EXAMPLE_REPO/build/EditionExample-0.1.xar`
@@ -115,4 +110,4 @@ Edirom-Online Backend is released to the public under the terms of the [MIT] ope
 [GitHub Discussions]: https://github.com/Edirom/Edirom-Online/discussions
 [Contributor Code of Conduct]: CODE_OF_CONDUCT.md
 [MIT]: https://opensource.org/license/mit
-[ANT build file]: https://github.com/Edirom/Edirom-Online/blob/develop/build.xml
+[ANT build file]: https://github.com/Edirom/Edirom-Online-Backend/blob/develop/build.xml

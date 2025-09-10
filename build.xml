@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="EdiromOnlineBackend" default="xar">
     
-    <property name="project.version" value="1.0.0"/>
+    <property name="project.version" value="1.0.1"/>
     <property name="project.app" value="Edirom-Online-Backend"/>
-    <property name="project.title" value="Edirom Online Backend"/>
+    <property name="project.title" value="Edirom-Online Backend"/>
     <property name="repo.target" value="${project.app}"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="build-xar"/>
@@ -74,10 +74,11 @@
                 <include name="icon.png"/>
             </fileset>
         </copy>
-        <!--<copy file="${basedir}/CITATION.cff" tofile="${build.dir}/resources/CITATION.cff" overwrite="true"/>-->
+        <!-- Copy CITATION.cff to resources -->
+        <copy file="${basedir}/CITATION.cff" tofile="${build.dir}/resources/CITATION.cff" overwrite="true"/>
     </target>
     
-    <target name="xar">
+    <target name="xar" depends="clean,download-tei,build-plus">
         <mkdir dir="${dist.dir}"/>
         <zip basedir="${build.dir}" destfile="${dist.dir}/${project.app}-${project.version}-${DSTAMP}-${TSTAMP}.xar"/>
     </target>
