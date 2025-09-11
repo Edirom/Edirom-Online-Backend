@@ -285,6 +285,22 @@ declare function annotation:get-category-labels-as-sequence($anno as element()) 
 };
 
 (:~
+ : Gets the labels for an annotation’s classes
+ :
+ :@param element() mei:annot element
+ :@return sequence of xs:string, might be an empty sequence
+ :)
+declare function annotation:get-class-labels-as-sequence($anno as element(mei:annot)) as xs:string* {
+
+    (: TODO fix strict binding to definitions in the same file :)
+    let $doc := $anno/root()
+
+    for $classIDREF in annotation:get-class-idrefs-as-sequence($anno)
+    return annotation:get-category-label-localized($doc/id($classIDREF))
+
+};
+
+(:~
  : Gets the IDREFs for an annotation’s classes
  :
  :@param element() mei:annot element
