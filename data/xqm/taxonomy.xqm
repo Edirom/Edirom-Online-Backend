@@ -178,7 +178,7 @@ as xs:string
 declare function taxonomy:get-labels( $element as element( * ) )
 as map ( * )
 {
-    let $element :=  taxonomy:taxonomy-or-category-test( $element )
+    let $element := taxonomy:taxonomy-or-category-test( $element )
 
     return
         taxonomy:get-labels( $element, array{} )
