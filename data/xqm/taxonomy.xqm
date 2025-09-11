@@ -211,7 +211,16 @@ as map ( * )
             for $lang at $i in array:flatten( $languages )
             return
                 switch ( $lang )
-                    case "und" return map:entry( "und", ( ( $element/mei:label[ not (@xml:lang ) ] )[ 1 ], $element/@label )[ 1 ] )
+                    case "und" return
+                        map:entry(
+                            "und",
+                            ( (: pick the first of the following :)
+                                (: the first mei:label without @xml:lang :)
+                                ( $element/mei:label[ not (@xml:lang ) ] )[ 1 ],
+                                (: the @label :)
+                                $element/@label,
+                                (: the first mei:label :)
+                                ( $element/mei:label )[ 1 ] )[ 1 ] => normalize-space() )
                     default return
                       map:entry( $lang, $element/mei:label[ @xml:lang = $lang ] => normalize-space() )
         )
