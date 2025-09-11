@@ -107,7 +107,11 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
     
     let $classes := annotation:get-class-idrefs-as-sequence($anno)
     let $catURIs := distinct-values((tokenize(replace($anno/mei:ptr[@type = 'categories']/@target,'#',''),' '), $classes[contains(.,'annotation.category.')]))
-    
+
+    let $classes-elements :=
+        for $uri in $classes
+        return $doc/id($uri)
+
     let $cats :=
         string-join(
             for $u in $catURIs
@@ -124,8 +128,24 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
         'pos': string($count),
         'sigla': string-join($sigla,', ')
     }
+
+    (: create a map with keys for each taxonomy used for this annotation and the corresponding class labels :)
+    let $taxonomiesMap := map:merge(
+        for $usedTaxonomy in $classes-elements[ancestor::mei:taxonomy]
+        let $taxonomyIdentifier := taxonomy:get-root-identifying-string( $usedTaxonomy )
+        return
+            map:entry(
+                $taxonomyIdentifier,
+                for $classElement in $classes-elements[self::mei:category]
+                where taxonomy:get-root-identifying-string( $classElement ) = $taxonomyIdentifier
+                return taxonomy:get-label-localized-as-string($classElement))
+    )
+
     return
-            $baseMap
+        map:merge((
+            $baseMap,
+            $taxonomiesMap
+        ))
 };
 
 (:~
