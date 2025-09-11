@@ -47,9 +47,12 @@ let $uri :=
     else
         ($URI)
 
+
+let $annotations := annotation:annotationsToJSON($uri, $EDITION)
+
 return
     map {
         'success': true(),
         'total': count(doc($uri)//mei:annot[@type = 'editorialComment']),
-        'annotations': array {annotation:annotationsToJSON($uri, $EDITION)}
+        'annotations': array {$annotations},
     }
