@@ -105,7 +105,7 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
             else
                 ($pDoc//mei:title[@type = 'siglum']/text())
     
-    let $classes := tokenize(replace(normalize-space($anno/@class),'#',''),' ')
+    let $classes := annotation:get-class-idrefs-as-sequence($anno)
     let $catURIs := distinct-values((tokenize(replace($anno/mei:ptr[@type = 'categories']/@target,'#',''),' '), $classes[contains(.,'annotation.category.')]))
     
     let $cats :=
