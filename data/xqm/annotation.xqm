@@ -123,8 +123,6 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
     let $baseMap := map {
         'id': $id,
         'title': normalize-space($title),
-        'categories': $cats,
-        'priority': $prio,
         'pos': string($count),
         'sigla': string-join($sigla,', ')
     }
