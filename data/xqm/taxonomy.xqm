@@ -143,6 +143,19 @@ as map( * )
 
 };
 
+declare function taxonomy:get-label-localized-as-string( $element as element( mei:category ) )
+as xs:string
+{
+    let $lang := request:get-parameter( 'lang', $eutil:lang )
+    let $labels := taxonomy:get-labels( $element )
+    return
+        if ( $labels( $lang ) ) then
+            $labels( $lang )
+        else
+            $labels( 'und' )
+
+};
+
 (:~
  : Returns labels of a mei:taxonomy or mei:category element.
  : This is the 1-arity version.
