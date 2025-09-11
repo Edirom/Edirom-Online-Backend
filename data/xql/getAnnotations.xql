@@ -15,6 +15,8 @@ xquery version "3.1";
 
 import module namespace annotation = "http://www.edirom.de/xquery/annotation" at "../xqm/annotation.xqm";
 
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
+
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -52,10 +54,18 @@ let $annotations := annotation:annotationsToJSON($uri, $EDITION)
 
 let $annotationFields := map:keys($annotations[1])
 
+let $emptyFields :=
+    for $fieldName in $annotationFields
+    where every $annotation in $annotations satisfies (
+        map:contains($annotation, $fieldName) and eutil:is-empty($annotation($fieldName))
+    )
+    return $fieldName
+
 return
     map {
         'success': true(),
         'total': count(doc($uri)//mei:annot[@type = 'editorialComment']),
         'annotations': array {$annotations},
         'fields': $annotationFields,
+        'emptyFields': $emptyFields
     }
