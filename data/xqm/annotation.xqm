@@ -285,6 +285,19 @@ declare function annotation:get-category-labels-as-sequence($anno as element()) 
 };
 
 (:~
+ : Gets the IDREFs for an annotation’s classes
+ :
+ :@param element() mei:annot element
+ :@return sequence of xs:IDREF, might be an empty sequence
+ :)
+declare function annotation:get-class-idrefs-as-sequence($anno as element(mei:annot)) as xs:IDREF* {
+
+    for $token in $anno/@class => normalize-space() => replace('#','') => tokenize(' ')
+    return xs:IDREF($token)
+
+};
+
+(:~
  : Returns a sequence of document URIs addressed by an annotation
  :
  : @param $anno element() The Annotation to process
