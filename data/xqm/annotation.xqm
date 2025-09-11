@@ -121,15 +121,16 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
      
     let $count := count($anno/preceding::mei:annot[@type = 'editorialComment']) + 1
     
+    let $baseMap := map {
+        'id': $id,
+        'title': normalize-space($title),
+        'categories': $cats,
+        'priority': $prio,
+        'pos': string($count),
+        'sigla': string-join($sigla,', ')
+    }
     return
-        map {
-            'id': $id,
-            'title': normalize-space($title),
-            'categories': $cats,
-            'priority': $prio,
-            'pos': string($count),
-            'sigla': string-join($sigla,', ')
-        }
+            $baseMap
 };
 
 (:~
