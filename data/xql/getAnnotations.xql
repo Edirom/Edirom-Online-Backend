@@ -50,9 +50,12 @@ let $uri :=
 
 let $annotations := annotation:annotationsToJSON($uri, $EDITION)
 
+let $annotationFields := map:keys($annotations[1])
+
 return
     map {
         'success': true(),
         'total': count(doc($uri)//mei:annot[@type = 'editorialComment']),
         'annotations': array {$annotations},
+        'fields': $annotationFields,
     }
