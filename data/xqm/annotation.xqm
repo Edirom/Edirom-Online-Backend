@@ -36,12 +36,7 @@ declare function annotation:get-category-label-localized($node) {
      let $label :=
         switch($nodeName)
             case 'category' return
-                let $labels := taxonomy:get-labels( $node )
-                return
-                    if ( $labels( $lang ) ) then
-                        $labels( $lang )
-                    else
-                        $labels( 'und' )
+                taxonomy:get-label-localized-as-string($node)
             case 'term' return
                 eutil:getLocalizedName($node, $lang)
             default return
