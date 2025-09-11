@@ -96,7 +96,7 @@ as map( * )
             "id": $idString,
             "label":taxonomy:get-labels( $element ),
             "languages": taxonomy:get-languages( $element ),
-            "taxonomy": ($element/ancestor::mei:taxonomy/@xml:id, substring-after($element/@class, '#'))[1] => xs:string()
+            "taxonomy": taxonomy:get-root-identifying-string( $element )
         }
 
 };
