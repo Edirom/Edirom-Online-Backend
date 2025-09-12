@@ -80,8 +80,8 @@
         <entry key="view.window.AnnotationView_Participants" value="Subjekte"/>
         <entry key="view.window.AnnotationView_Source" value="Quelle"/>
         <entry key="view.window.AnnotationView_Sources" value="Quellen"/>
-        <entry key="view.window.AnnotationView_Siglum" value="Source Siglum"/>
         <entry key="view.window.AnnotationView_Sigla" value="Quelle"/>
+        <entry key="view.window.AnnotationView_Siglum" value="Quellensigle"/>
         <entry key="view.window.AnnotationView_AnnotationID" value="Annot.-ID"/>
         <entry key="view.window.AnnotationView_List" value="Liste"/>
         <entry key="view.window.AnnotationView_Display" value="Darstellung"/>
