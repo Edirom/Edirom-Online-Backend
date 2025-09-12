@@ -33,7 +33,7 @@
 
         <entry key="controller.desktop.TaskBar_confirmReload" value="Die Anwendung muss neu gestartet werden, damit die Spracheinstellung vollständig umgesetzt wird."/>
 
-        <entry key="controller.window.Window_annotationView" value="Anmerkungen"/>
+        <entry key="controller.window.Window_annotationView" value="Anmerkung"/>
         <entry key="controller.window.Window_headerView" value="Metadaten"/>
         <entry key="controller.window.Window_renderingView" value="Rendering"/>
         <entry key="controller.window.Window_searchView" value="Suche"/>
@@ -45,9 +45,6 @@
         <entry key="controller.window.Window_textView" value="Text"/>
         <entry key="controller.window.Window_xmlView" value="XML-Ansicht"/>
         <entry key="controller.window.Window_iFrameView" value="HTML-Ansicht"/>
-        <entry key="sourceDescription" value="Quellenbeschreibung"/>
-        <entry key="xmlSourceDescription" value="XML Quellenbeschreibung"/>
-        
         <entry key="view.desktop.Desktop_Cascade" value="Überlappen"/>
         <entry key="view.desktop.Desktop_Close" value="Schließen"/>
         <entry key="view.desktop.Desktop_CloseAll" value="Schließe alle"/>
