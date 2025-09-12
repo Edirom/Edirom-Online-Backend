@@ -135,9 +135,15 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
         return
             map:entry(
                 $taxonomyIdentifier,
-                for $classElement in $classes-elements[self::mei:category]
-                where taxonomy:get-root-identifying-string( $classElement ) = $taxonomyIdentifier
-                return taxonomy:get-label-localized-as-string($classElement))
+                string-join (
+                    (
+                        for $classElement in $classes-elements[self::mei:category]
+                        where taxonomy:get-root-identifying-string( $classElement ) = $taxonomyIdentifier
+                        return taxonomy:get-label-localized-as-string($classElement)
+                    ),
+                    ', '
+                )
+            )
     )
 
     return
