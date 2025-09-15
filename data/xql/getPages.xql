@@ -31,26 +31,26 @@ let $ret :=
     (:let $image := doc($surface/mei:graphic[@type='facsimile']/string(@target))/img:image:)
     let $graphic := $surface/mei:graphic[@type = 'facsimile']
     return
-        map {
-            'id': $surface/string(@xml:id),
-            'path': $graphic/string(@target),
-            'name': $surface/string(@n),
-            'width': $graphic/string(@width),
-            'height': $graphic/string(@height)
-        }
+            map {
+                'id': $surface/string(@xml:id),
+                'path': $graphic/string(@target),
+                'name': if ($surface/@label) then $surface/string(@label) else $surface/string(@n),
+                'width': $graphic/string(@width),
+                'height': $graphic/string(@height)
+            }
 
 let $ret :=
     if (count($ret) = 0) then (
         for $surface in $mei//tei:surface
         let $graphic := $surface/tei:graphic[1]
         return
-            map {
-                'id': $surface/string(@xml:id),
-                'path': $graphic/string(@url),
-                'name': $surface/string(@n),
-                'width': replace($graphic/string(@width), 'px', ''),
-                'height': replace($graphic/string(@height), 'px', '')
-            }
+                map {
+                    'id': $surface/string(@xml:id),
+                    'path': $graphic/string(@url),
+                    'name': if ($surface/@label) then $surface/string(@label) else $surface/string(@n),
+                    'width': replace($graphic/string(@width), 'px', ''),
+                    'height': replace($graphic/string(@height), 'px', '')
+                }
     ) else
     ($ret)
 
