@@ -346,7 +346,6 @@ declare function eutil:sort-as-numeric-alpha($seq as item()* )  as item()* {
 declare function eutil:compute-measure-sort-key( $key as xs:string ) as xs:string {
     
     let $itemPart1 := (functx:get-matches($key, '\d+'))[1]
-    (: let $itemPart2 := substring-after($key, $itemPart1) :)
     let $keylength := string-length($itemPart1)
     let $prefix := functx:repeat-string('0', 30 - $keylength)
 
