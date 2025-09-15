@@ -106,7 +106,7 @@ declare function local:getMeasures($mdiv as element(mei:mdiv)?, $mdivID as xs:st
             map {
                 "id": 'measure_' || $mdivID || '_' || $measureN,
                 "measures": array { $measures },
-                "mdivs": $mdivID,
+                "mdivs": array { $mdivID },
                 "name": $measureN
             }
     }
