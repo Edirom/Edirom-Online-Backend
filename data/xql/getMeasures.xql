@@ -104,7 +104,7 @@ declare function local:getMeasures($mdiv as element(mei:mdiv)?, $mdivID as xs:st
         order by eutil:compute-measure-sort-key($measureN)
         return
             map {
-                "id": 'measure_' || $mdivID || '_' || $measureN,
+                "id": (if (count($measures) eq 1) then (map:get($measures[1], 'id')) else ('measure_' || $mdivID || '_' || $measureN) ),
                 "measures": array { $measures },
                 "mdivs": array { $mdivID },
                 "name": $measureN
@@ -139,3 +139,4 @@ let $hasParts := exists($mdiv//mei:part)
 
 return
     local:getMeasures($mdiv, $mdivID, $hasParts)
+ 
