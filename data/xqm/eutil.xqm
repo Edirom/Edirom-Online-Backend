@@ -29,6 +29,8 @@ declare namespace util="http://exist-db.org/xquery/util";
 (: VARIABLE DECLARATIONS =================================================== :)
 
 declare variable $eutil:default-prefs-location as xs:string := '../prefs/edirom-prefs.xml';
+declare variable $eutil:lang as xs:string := eutil:getLanguage();
+declare variable $eutil:langDoc as document-node() := doc('../locale/edirom-lang-' || $eutil:lang || '.xml');
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
