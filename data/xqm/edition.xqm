@@ -123,8 +123,8 @@ declare function edition:getLanguageCodesSorted($uri as xs:string) as xs:string*
         (
             $languages[@complete eq 'true']/@xml:lang ,
             $languages[exists(@complete) and not(@complete eq 'true' or @complete eq 'false')]/@xml:lang ,
-            $languages[@complete eq 'false']/@xml:lang ,
-            $languages[not(@complete)]/@xml:lang
+            $languages[not(@complete)]/@xml:lang ,
+            $languages[@complete eq 'false']/@xml:lang 
         )[. ne ""]
 };
 
