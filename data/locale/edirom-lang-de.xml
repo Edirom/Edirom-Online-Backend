@@ -180,6 +180,8 @@
         <entry key="Bars_from_to" value="Takte {0} bis {1}"/>
         <entry key="Bar_n" value="Takt {0}"/>
         <entry key="Bar" value="Takt"/>
+        <entry key="Movement_n" value="Satz {0}"/>
+        <entry key="Movement" value="Satz"/>
         <!-- XSL-FO specific -->
         <entry key="contentsWord" value="Inhaltsverzeichnis"/>
 
