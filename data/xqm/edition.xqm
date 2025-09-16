@@ -117,28 +117,15 @@ declare function edition:getLanguageFileURI($uri as xs:string, $lang as xs:strin
  :)
 declare function edition:getLanguageCodesSorted($uri as xs:string) as xs:string* {
     
-    let $editionDoc := doc($uri)
-    
-    let $languagesComplete := (
-        for $lang in $editionDoc//edirom:language
-        let $langCode := $lang/@xml:lang
-        let $langComplete := xs:boolean($lang/@complete)
-        where $langComplete = true()
-        return
-            $langCode
-    )
-    
-    let $languagesIncomplete := (
-        for $lang in $editionDoc//edirom:language
-        let $langCode := $lang/@xml:lang
-        let $langComplete := xs:boolean($lang/@complete)
-        where $langComplete = false()
-        return
-            $langCode
-    )
-    
+    let $languages := doc($uri)//edirom:language
+
     return
-        ($languagesComplete, $languagesIncomplete)
+        (
+            $languages[@complete eq 'true']/@xml:lang ,
+            $languages[@complete eq 'false']/@xml:lang ,
+            $languages[exists(@complete) and not(@complete eq 'true' or @complete eq 'false')]/@xml:lang ,
+            $languages[not(@complete)]/@xml:lang
+        )[. ne ""]
 };
 
 (:~
