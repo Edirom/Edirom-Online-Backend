@@ -54,6 +54,20 @@ declare function eutil:getNamespace($node as node()) as xs:string {
 
 };
 
+
+(:~
+ : Returns a localized string
+ :
+ : @param $node The node to be processed
+ : @return The string
+ :)
+declare function eutil:getLocalizedName($node) {
+
+    eutil:getLocalizedName($node, request:get-parameter('lang', ''))
+
+};
+
+
 (:~
  : Returns a localized string
  :
@@ -63,26 +77,35 @@ declare function eutil:getNamespace($node as node()) as xs:string {
 declare function eutil:getLocalizedName($node, $lang) {
 
     let $name :=
-        if ($node/mei:title) then (
-            if ($lang = $node/mei:title/@xml:lang) then
-                $node/mei:title[@xml:lang = $lang]/text()
-            else
-                $node/mei:title[1]/text()
+
+        (: if current node has child mei:title or mei:name or mei:label :)
+        if ($node/mei:title or $node/mei:name or $node/mei:label) then (
+
+            for $childNode in ($node/mei:title, $node/mei:name, $node/mei:label)[1]
+            return
+                if ($lang = $childNode/@xml:lang) then
+                    $childNode[@xml:lang = $lang]/text()
+                else
+                    $childNode[1]/text()
         
-        ) else if ($node/mei:name) then (
-            if ($lang = $node/mei:name/@xml:lang) then
-                $node/mei:name[@xml:lang = $lang]/text()
-            else
-                $node/mei:name[1]/text()
-        
+        (: if current node has child edirom:names :)
         ) else if ($node/edirom:names) then (
             if ($lang = $node/edirom:names/edirom:name/@xml:lang) then
                 $node/edirom:names/edirom:name[@xml:lang = $lang]/node()
             else
                 $node/edirom:names/edirom:name[1]/node()
         
-        ) else
-        (normalize-space($node))
+        (: if current node is an mei:annot :)
+        ) else if ( $node[self::mei:annot] ) then (
+            (: if $node is mei:annot and does not have child mei:title or mei:name (covered by cases above) :)
+            let $mdiv.n := eutil:getLanguageString('Movement_n', string(count($node/ancestor::mei:mdiv/preceding-sibling::mei:mdiv) + 1), $lang)
+            let $measure := eutil:getLanguageString('Bar_n', $node/ancestor::mei:measure/string(@n), $lang)
+            return $mdiv.n || ', ' || $measure
+        )
+
+        (: otherwise :)
+        else
+            (normalize-space($node))
     
     return
         if($node/edirom:names) then
