@@ -76,8 +76,8 @@
         <entry key="view.window.AnnotationView_No" value="No."/>
         <entry key="view.window.AnnotationView_TitleLabel" value="Title"/>
         <entry key="view.window.AnnotationView_Categories" value="Categories"/>
-        <entry key="view.window.AnnotationView_Category" value="Category"/>
-        <entry key="view.window.AnnotationView_Priority" value="Priority"/>
+        <entry key="view.window.AnnotationView_ediromCategory" value="Category"/>
+        <entry key="view.window.AnnotationView_ediromPriority" value="Priority"/>
         <entry key="view.window.AnnotationView_Participants" value="Participants"/>
         <entry key="view.window.AnnotationView_Source" value="Source"/>
         <entry key="view.window.AnnotationView_Sources" value="Sources"/>
