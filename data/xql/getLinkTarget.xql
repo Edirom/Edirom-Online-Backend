@@ -103,10 +103,10 @@ declare function local:getView($type as xs:string, $docUri as xs:string, $doc as
             (exists($doc//mei:annot[@type = 'editorialComment']))
         
         else if($type = 'html_iFrameView')
-        then(true())
+        then(exists($doc/html) or exists($doc/html:html) or contains($docUri, '.html'))
         
         else if($type = 'xml_xmlView')
-        then(true())
+        then(exists($doc/mei:mei) or exists($doc/tei:TEI))
         
         else if ($type = 'desc_xmlView') then
             (exists($doc//mei:annot[@type = 'descLink']))

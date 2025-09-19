@@ -7,6 +7,7 @@ xquery version "3.1";
 (: IMPORTS ================================================================= :)
 
 import module namespace annotation = "http://www.edirom.de/xquery/annotation" at "../xqm/annotation.xqm";
+import module namespace doc = "http://www.edirom.de/xquery/document" at "../xqm/document.xqm";
 import module namespace edition = "http://www.edirom.de/xquery/edition" at "../xqm/edition.xqm";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
 import module namespace source = "http://www.edirom.de/xquery/source" at "../xqm/source.xqm";
@@ -31,9 +32,9 @@ declare variable $imageWidth := 600;
 
 declare variable $edition := request:get-parameter('edition', '');
 
-declare variable $imageserver := eutil:getPreference('image_server', $edition);
+declare variable $imageserver := edition:getPreference('image_server', $edition);
 
-declare variable $imageBasePath := eutil:getPreference('image_prefix', $edition);
+declare variable $imageBasePath := edition:getPreference('image_prefix', $edition);
 
 declare variable $lang := request:get-parameter('lang', '');
 
@@ -351,7 +352,7 @@ let $categoriesLabel :=
         else
             ('Category'))
 
-let $sources := eutil:getDocumentsLabelsAsArray($participants, $edition)
+let $sources := doc:getDocumentsLabelsAsArray($participants, $edition)
 
 let $sourcesLabel :=
     if ($lang = 'de') then (
@@ -413,7 +414,7 @@ return
                 </div>
             </div>
             <div class="contentBox">
-                <h1>{eutil:getLocalizedName($annot, $lang)}</h1>
+                <h1>{annotation:getTitle($annot, $lang)}</h1>
                 {annotation:getContent($annot, '', $edition)}
             </div>
 
