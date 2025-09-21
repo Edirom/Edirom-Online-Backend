@@ -56,7 +56,7 @@
                 <local name="xquery.result"/>
                 <java classname="net.sf.saxon.Query" failonerror="false" outputproperty="xquery.result">
                     <arg value="testing/check-language-files.xq"/>
-                    <arg value="{http://www.edirom.de/ns/1.3}language-files-path=../add/data/locale?select=*.xml"/>
+                    <arg value="{http://www.edirom.de/ns/1.3}language-files-path=../data/locale?select=*.xml"/>
                 </java>
                 <fail>
                     Missing entries in language files at /add/data/locale: &#10;${xquery.result}
@@ -73,7 +73,7 @@
                 <local name="xquery.result"/>
                 <java classname="net.sf.saxon.Query" failonerror="false" outputproperty="xquery.result">
                     <arg value="testing/check-language-files.xq"/>
-                    <arg value="{http://www.edirom.de/ns/1.3}language-files-path=../add/data/xslt/i18n?select=*.xml"/>
+                    <arg value="{http://www.edirom.de/ns/1.3}language-files-path=../data/xslt/i18n?select=*.xml"/>
                 </java>
                 <fail>
                     Missing entries in language files at /add/data/xslt/i18n: &#10;${xquery.result}
