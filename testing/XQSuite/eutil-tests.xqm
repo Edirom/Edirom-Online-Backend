@@ -125,9 +125,8 @@ declare
 
 (:
 
-    let $case := ( 'child::mei:title'[$node/mei:title], 'child::mei:name'[$node/mei:name], 
-                   'child::mei:label'[$node/mei:label], 'child::edirom:names'[$node/edirom:names], 
-                   'self::mei:annot'[$node[self::mei:annot]], 'other' )[1]
+    let $case := (  'child::mei:label'[$node/mei:label], 
+                   'self::mei:annot'[$node[self::mei:annot]] )[1]
 
 :)
 
@@ -139,6 +138,14 @@ declare
     %test:arg("node", "<titleStmt xmlns='http://www.music-encoding.org/ns/mei'><title xml:lang='de'>Deutscher Titel</title></titleStmt>") %test:assertEquals("Deutscher Titel")
     (: Test output with two title child elements and existing language :)
     %test:arg("node", "<titleStmt xmlns='http://www.music-encoding.org/ns/mei'><title xml:lang='de'>Deutscher Titel</title><title xml:lang='en'>English title</title></titleStmt>") %test:assertEquals("English title")
+    (: Test output with one label child element and existing language :)
+    %test:arg("node", "<category xmlns='http://www.music-encoding.org/ns/mei'><label xml:lang='en'>articulation</label></category>") %test:assertEquals("articulation")
+    (: Test output with one label child element and non-existing language :)
+    %test:arg("node", "<category xmlns='http://www.music-encoding.org/ns/mei'><label xml:lang='de'>Artikulation</label></category>") %test:assertEquals("Artikulation")
+    (: Test output with two label child elements and existing language :)
+    %test:arg("node", "<category xmlns='http://www.music-encoding.org/ns/mei'><label xml:lang='de'>Artikulation</label><label xml:lang='en'>articulation</label></category>") %test:assertEquals("articulation")
+    (: Test output with two label child elements and non-existing language :)
+    %test:arg("node", "<category xmlns='http://www.music-encoding.org/ns/mei'><label xml:lang='de'>Artikulation</label><label xml:lang='es'>articulacion</label></category>") %test:assertEquals("Artikulation")
     (: Test output with two name elements and existing language :)
     %test:arg("node", "<navigatorItem xmlns='http://www.edirom.de/ns/1.3'><names><name xml:lang='de'>Einführung</name><name xml:lang='en'>Introduction</name></names></navigatorItem>") %test:assertEquals("Introduction")
     (: Test output with two name elements and non-existing language, fallback to first element's text content :)
@@ -159,6 +166,14 @@ declare
     %test:arg("node", "<titleStmt xmlns='http://www.music-encoding.org/ns/mei'><title xml:lang='en'>English title</title></titleStmt>") %test:assertEquals("English title")
     (: Test output with two title child elements and existing language :)
     %test:arg("node", "<titleStmt xmlns='http://www.music-encoding.org/ns/mei'><title xml:lang='de'>Deutscher Titel</title><title xml:lang='en'>English title</title></titleStmt>") %test:assertEquals("Deutscher Titel")
+    (: Test output with one label child element and existing language :)
+    %test:arg("node", "<category xmlns='http://www.music-encoding.org/ns/mei'><label xml:lang='de'>Artikulation</label></category>") %test:assertEquals("Artikulation")
+    (: Test output with one label child element and non-existing language :)
+    %test:arg("node", "<category xmlns='http://www.music-encoding.org/ns/mei'><label xml:lang='en'>articulation</label></category>") %test:assertEquals("articulation")
+    (: Test output with two label child elements and existing language :)
+    %test:arg("node", "<category xmlns='http://www.music-encoding.org/ns/mei'><label xml:lang='de'>Artikulation</label><label xml:lang='en'>articulation</label></category>") %test:assertEquals("Artikulation")
+    (: Test output with two label child elements and non-existing language :)
+    %test:arg("node", "<category xmlns='http://www.music-encoding.org/ns/mei'><label xml:lang='en'>articulation</label><label xml:lang='es'>articulacion</label></category>") %test:assertEquals("articulation")
     (: Test output with two name elements and existing language :)
     %test:arg("node", "<navigatorItem xmlns='http://www.edirom.de/ns/1.3'><names><name xml:lang='de'>Einführung</name><name xml:lang='en'>Introduction</name></names></navigatorItem>") %test:assertEquals("Einführung")
     (: Test output with two name elements and non-existing language, fallback to first element's text content :)
@@ -181,6 +196,18 @@ declare
     (: Test output with non-existing language, fallback to first element's text content :)
     %test:arg("node", "<titleStmt xmlns='http://www.music-encoding.org/ns/mei'><title xml:lang='de'>Deutscher Titel</title><title xml:lang='en'>English title</title></titleStmt>")
     %test:arg("lang", "foo1g4#lang") %test:assertEquals("Deutscher Titel")
+    (: Test output with one label child element and language de :)
+    %test:arg("node", "<category xmlns='http://www.music-encoding.org/ns/mei'><label xml:lang='de'>Artikulation</label></category>") 
+    %test:arg("lang", "de") %test:assertEquals("Artikulation")
+    (: Test output with one label child element and non-existing language en :)
+    %test:arg("node", "<category xmlns='http://www.music-encoding.org/ns/mei'><label xml:lang='de'>Artikulation</label></category>") 
+    %test:arg("lang", "en") %test:assertEquals("Artikulation")
+    (: Test output with two label child elements and existing language en :)
+    %test:arg("node", "<category xmlns='http://www.music-encoding.org/ns/mei'><label xml:lang='de'>Artikulation</label><label xml:lang='en'>articulation</label></category>") 
+    %test:arg("lang", "en") %test:assertEquals("articulation")
+    (: Test output with two label child elements and non-existing language de, fallback to first element's text content :)
+    %test:arg("node", "<category xmlns='http://www.music-encoding.org/ns/mei'><label xml:lang='en'>articulation</label><label xml:lang='es'>articulacion</label></category>") 
+    %test:arg("lang", "de") %test:assertEquals("articulation")
     (: Test output with two name elements and existing language de :)
     %test:arg("node", "<navigatorItem xmlns='http://www.edirom.de/ns/1.3'><names><name xml:lang='de'>Einführung</name><name xml:lang='en'>Introduction</name></names></navigatorItem>")
     %test:arg("lang", "de") %test:assertEquals("Einführung")
