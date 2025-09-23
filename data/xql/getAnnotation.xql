@@ -414,7 +414,7 @@ return
                 </div>
             </div>
             <div class="contentBox">
-                <h1>{annotation:getTitle($annot, $lang)}</h1>
+                <h1>{eutil:getLocalizedName($annot, $lang)}</h1>
                 {annotation:getContent($annot, '', $edition)}
             </div>
 
