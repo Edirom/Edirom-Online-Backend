@@ -121,3 +121,44 @@ declare
     function eut:test-getLanguageString-4-arity($langFileURI as xs:string, $key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string? {
         eutil:getLanguageString($langFileURI, $key, $values, $lang)
 };
+
+
+declare 
+    (: setting default language to 'en' - it is derived in code by a global setting :)
+    (: Test output with one title element and existing language :)
+    %test:arg("node", "<titleStmt><title xml:lang='en'>English title</title></titleStmt>") %test:assertEquals("English title")
+    (: Test output with one title element and non-existing language :)
+    %test:arg("node", "<titleStmt><title xml:lang='de'>Deutscher Titel</title></titleStmt>") %test:assertEquals("Deutscher Titel")
+    (: Test output with two title elements :)
+    %test:arg("node", "<titleStmt><title xml:lang='de'>Deutscher Titel</title><title xml:lang='en'>English title</title></titleStmt>") %test:assertEquals("English title")
+    function eut:test-getLocalizedName-1-arity-en($node as element()) as xs:string? {
+        eutil:getLocalizedName($node, "en")
+};
+
+
+declare     
+    (: setting default language to 'de' - it is derived in code by a global setting :)
+    (: Test output with one title element and existing language :)
+    %test:arg("node", "<titleStmt><title xml:lang='de'>Deutscher Titel</title></titleStmt>") %test:assertEquals("Deutscher Titel")
+    (: Test output with one title element and non-existing language :)
+    %test:arg("node", "<titleStmt><title xml:lang='en'>English title</title></titleStmt>") %test:assertEquals("English title")
+    (: Test output with two title elements :)
+    %test:arg("node", "<titleStmt><title xml:lang='de'>Deutscher Titel</title><title xml:lang='en'>English title</title></titleStmt>") %test:assertEquals("Deutscher Titel")
+    function eut:test-getLocalizedName-1-arity-de($node as element()) as xs:string? {
+        eutil:getLocalizedName($node, "de")
+};
+
+declare     
+    (: Test output with title elements and language de :)
+    %test:arg("node", "<titleStmt><title xml:lang='de'>Deutscher Titel</title><title xml:lang='en'>English title</title></titleStmt>")
+    %test:arg("lang", "de") %test:assertEquals("Deutscher Titel")
+    (: Test output with title elements and language en :)
+    %test:arg("node", "<titleStmt><title xml:lang='de'>Deutscher Titel</title><title xml:lang='en'>English title</title></titleStmt>")
+    %test:arg("lang", "en") %test:assertEquals("English title")
+    (: Test output with non-existing language :)
+    %test:arg("node", "<titleStmt><title xml:lang='de'>Deutscher Titel</title><title xml:lang='en'>English title</title></titleStmt>")
+    %test:arg("lang", "foo1g4#lang") %test:assertEmpty
+
+    function eut:test-getLocalizedName-2-arity($node as element(), $lang as xs:string) as xs:string? {
+        eutil:getLocalizedName($node, $lang)
+};

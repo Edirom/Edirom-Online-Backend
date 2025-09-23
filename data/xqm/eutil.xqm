@@ -59,9 +59,9 @@ declare function eutil:getNamespace($node as node()) as xs:string {
  : Returns a localized string
  :
  : @param $node The node to be processed
- : @return The string
+ : @return The localized output string
  :)
-declare function eutil:getLocalizedName($node) {
+declare function eutil:getLocalizedName($node as element()) as xs:string {
 
     eutil:getLocalizedName($node, request:get-parameter('lang', ''))
 
@@ -69,12 +69,13 @@ declare function eutil:getLocalizedName($node) {
 
 
 (:~
- : Returns a localized string
+ : Returns a localized string for a provided language
  :
  : @param $node The node to be processed
- : @return The string
+ : @param $lang The language for the localized output
+ : @return The localized output string
  :)
-declare function eutil:getLocalizedName($node, $lang) {
+declare function eutil:getLocalizedName($node as element(), $lang as xs:string) as xs:string {
 
     let $name :=
 
@@ -84,16 +85,16 @@ declare function eutil:getLocalizedName($node, $lang) {
             for $childNode in ($node/mei:title, $node/mei:name, $node/mei:label)[1]
             return
                 if ($lang = $childNode/@xml:lang) then
-                    $childNode[@xml:lang = $lang]/text()
+                    $childNode[@xml:lang = $lang]/text() || ''
                 else
-                    $childNode[1]/text()
+                    $childNode[1]/text() || ''
         
         (: if current node has child edirom:names :)
         ) else if ($node/edirom:names) then (
             if ($lang = $node/edirom:names/edirom:name/@xml:lang) then
-                $node/edirom:names/edirom:name[@xml:lang = $lang]/node()
+                $node/edirom:names/edirom:name[@xml:lang = $lang]/node() || ''
             else
-                $node/edirom:names/edirom:name[1]/node()
+                $node/edirom:names/edirom:name[1]/node() || ''
         
         (: if current node is an mei:annot :)
         ) else if ( $node[self::mei:annot] ) then (
