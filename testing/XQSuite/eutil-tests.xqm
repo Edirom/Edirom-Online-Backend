@@ -122,7 +122,6 @@ declare
         eutil:getLanguageString($langFileURI, $key, $values, $lang)
 };
 
-
 declare 
     (: setting default language to 'en' - it is derived in code by a global setting :)
     (: Test output with one title element and existing language :)
@@ -134,7 +133,6 @@ declare
     function eut:test-getLocalizedName-1-arity-en($node as element()) as xs:string? {
         eutil:getLocalizedName($node, "en")
 };
-
 
 declare     
     (: setting default language to 'de' - it is derived in code by a global setting :)
@@ -161,4 +159,31 @@ declare
 
     function eut:test-getLocalizedName-2-arity($node as element(), $lang as xs:string) as xs:string? {
         eutil:getLocalizedName($node, $lang)
+};
+
+declare
+    %test:args("1", "2")     %test:assertFalse
+    %test:args("2", "1")     %test:assertTrue
+    %test:args("2", "2")     %test:assertFalse
+    %test:args("1a", "2b")     %test:assertFalse
+    %test:args("10a", "2b")     %test:assertTrue
+    %test:args("10a", "2ba")     %test:assertTrue
+    %test:args("10a1", "10ba")     %test:assertFalse
+    %test:args("2b", "1a")     %test:assertTrue
+    %test:args("", "2")     %test:assertFalse
+    %test:args("2", "")     %test:assertTrue
+    function eut:test-compute-measure-sort-key($key1 as xs:string, $key2 as xs:string) as xs:boolean {
+        eutil:compute-measure-sort-key($key1) > eutil:compute-measure-sort-key($key2)
+};
+
+declare
+    %test:arg("seq", 2, 1, 3)     %test:assertEquals(1, 2, 3)
+    %test:arg("seq", 1, 2, 3)     %test:assertEquals(1, 2, 3)
+    %test:arg("seq", "1", "2", "3")     %test:assertEquals("1", "2", "3")
+    %test:arg("seq", "1a", "1", "10", "2", "10b", "3s")     %test:assertEquals("1", "1a", "2", "3s", "10", "10b")
+    %test:arg("seq", "10aa", "10aaa", "10x", "2c", "10_b")     %test:assertEquals("2c", "10_b", "10aa", "10aaa", "10x")
+    %test:arg("seq", "<a/>", "<c/>", "<b/>")     %test:assertEquals("<a/>", "<c/>", "<b/>")
+    %test:arg("seq", "<a>1</a>", "<c>3</c>", "<b>2</b>")     %test:assertEquals("<a>1</a>", "<b>2</b>", "<c>3</c>")
+    function eut:sort-as-numeric-alpha($seq as item()*) as item()* {
+        eutil:sort-as-numeric-alpha($seq)
 };
