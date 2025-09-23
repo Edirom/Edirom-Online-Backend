@@ -77,27 +77,38 @@ declare function eutil:getLocalizedName($node as element()) as xs:string {
  :)
 declare function eutil:getLocalizedName($node as element(), $lang as xs:string) as xs:string {
 
+    (: identify the context for further processing:)
+    let $case := ( 'child::mei:title'[$node/mei:title], 'child::mei:name'[$node/mei:name], 
+                   'child::mei:label'[$node/mei:label], 'child::edirom:names'[$node/edirom:names], 
+                   'self::mei:annot'[$node[self::mei:annot]], 'other' )[1]
+        
+
     let $name :=
 
         (: if current node has child mei:title or mei:name or mei:label :)
-        if ($node/mei:title or $node/mei:name or $node/mei:label) then (
+        if ($case eq 'child::mei:title' or $case eq 'child::mei:name' or $case eq 'child::mei:label') then (
 
-            for $childNode in ($node/mei:title, $node/mei:name, $node/mei:label)[1]
+            let $childNodes := $node/mei:*[local-name() = substring-after($case, 'mei:')]
+
+            (: return most appropriate string, either from children's text or empty string :)
             return
-                if ($lang = $childNode/@xml:lang) then
-                    $childNode[@xml:lang = $lang]/text() || ''
-                else
-                    $childNode[1]/text() || ''
+                (
+                    string-join($childNodes[@xml:lang = $lang]/text(), ' ')[not(matches(., '^\s*$'))],
+                    $childNodes[1]/text(),
+                    ''
+                )[1]
+        )
         
         (: if current node has child edirom:names :)
-        ) else if ($node/edirom:names) then (
+        else if ($case eq 'child::edirom:names') then (
             if ($lang = $node/edirom:names/edirom:name/@xml:lang) then
                 $node/edirom:names/edirom:name[@xml:lang = $lang]/node() || ''
             else
                 $node/edirom:names/edirom:name[1]/node() || ''
+        )
         
         (: if current node is an mei:annot :)
-        ) else if ( $node[self::mei:annot] ) then (
+        else if ( $case eq 'self::mei:annot' ) then (
             (: if $node is mei:annot and does not have child mei:title or mei:name (covered by cases above) :)
             let $mdiv.n := eutil:getLanguageString('Movement_n', string(count($node/ancestor::mei:mdiv/preceding-sibling::mei:mdiv) + 1), $lang)
             let $measure := eutil:getLanguageString('Bar_n', $node/ancestor::mei:measure/string(@n), $lang)
@@ -105,8 +116,9 @@ declare function eutil:getLocalizedName($node as element(), $lang as xs:string) 
         )
 
         (: otherwise :)
-        else
+        else (
             (normalize-space($node))
+        )
     
     return
         if($node/edirom:names) then

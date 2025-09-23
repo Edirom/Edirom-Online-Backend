@@ -8,6 +8,7 @@ declare namespace mei="http://www.music-encoding.org/ns/mei";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace test="http://exist-db.org/xquery/xqsuite";
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
+declare namespace edirom="http://www.edirom.de/ns/1.3";
 
 
 declare 
@@ -122,26 +123,50 @@ declare
         eutil:getLanguageString($langFileURI, $key, $values, $lang)
 };
 
+(:
+
+    let $case := ( 'child::mei:title'[$node/mei:title], 'child::mei:name'[$node/mei:name], 
+                   'child::mei:label'[$node/mei:label], 'child::edirom:names'[$node/edirom:names], 
+                   'self::mei:annot'[$node[self::mei:annot]], 'other' )[1]
+
+:)
+
 declare 
     (: setting default language to 'en' - it is derived in code by a global setting :)
-    (: Test output with one title element and existing language :)
+    (: Test output with one title child element and existing language :)
     %test:arg("node", "<titleStmt xmlns='http://www.music-encoding.org/ns/mei'><title xml:lang='en'>English title</title></titleStmt>") %test:assertEquals("English title")
-    (: Test output with one title element and non-existing language :)
+    (: Test output with one title child element and non-existing language :)
     %test:arg("node", "<titleStmt xmlns='http://www.music-encoding.org/ns/mei'><title xml:lang='de'>Deutscher Titel</title></titleStmt>") %test:assertEquals("Deutscher Titel")
-    (: Test output with two title elements :)
+    (: Test output with two title child elements and existing language :)
     %test:arg("node", "<titleStmt xmlns='http://www.music-encoding.org/ns/mei'><title xml:lang='de'>Deutscher Titel</title><title xml:lang='en'>English title</title></titleStmt>") %test:assertEquals("English title")
+    (: Test output with two name elements and existing language :)
+    %test:arg("node", "<navigatorItem xmlns='http://www.edirom.de/ns/1.3'><names><name xml:lang='de'>Einführung</name><name xml:lang='en'>Introduction</name></names></navigatorItem>") %test:assertEquals("Introduction")
+    (: Test output with two name elements and non-existing language, fallback to first element's text content :)
+    %test:arg("node", "<navigatorItem xmlns='http://www.edirom.de/ns/1.3'><names><name xml:lang='de'>Einführung</name><name xml:lang='es'>Introduccion</name></names></navigatorItem>") %test:assertEquals("Einführung")
+    (: Test output with random element w/o children :)
+    %test:arg("node", "<p xmlns='http://www.w3.org/1999/xhtml'>string</p>") %test:assertEquals("string")   
+    (: Test output with random element w/ children :)
+    %test:arg("node", "<div xmlns='http://www.w3.org/1999/xhtml'><p><span>string</span></p></div>") %test:assertEquals("string")
     function eut:test-getLocalizedName-1-arity-en($node as element()) as xs:string? {
         eutil:getLocalizedName($node, "en")
 };
 
 declare     
     (: setting default language to 'de' - it is derived in code by a global setting :)
-    (: Test output with one title element and existing language :)
+    (: Test output with one title child element and existing language :)
     %test:arg("node", "<titleStmt xmlns='http://www.music-encoding.org/ns/mei'><title xml:lang='de'>Deutscher Titel</title></titleStmt>") %test:assertEquals("Deutscher Titel")
-    (: Test output with one title element and non-existing language :)
+    (: Test output with one title child element and non-existing language :)
     %test:arg("node", "<titleStmt xmlns='http://www.music-encoding.org/ns/mei'><title xml:lang='en'>English title</title></titleStmt>") %test:assertEquals("English title")
-    (: Test output with two title elements :)
+    (: Test output with two title child elements and existing language :)
     %test:arg("node", "<titleStmt xmlns='http://www.music-encoding.org/ns/mei'><title xml:lang='de'>Deutscher Titel</title><title xml:lang='en'>English title</title></titleStmt>") %test:assertEquals("Deutscher Titel")
+    (: Test output with two name elements and existing language :)
+    %test:arg("node", "<navigatorItem xmlns='http://www.edirom.de/ns/1.3'><names><name xml:lang='de'>Einführung</name><name xml:lang='en'>Introduction</name></names></navigatorItem>") %test:assertEquals("Einführung")
+    (: Test output with two name elements and non-existing language, fallback to first element's text content :)
+    %test:arg("node", "<navigatorItem xmlns='http://www.edirom.de/ns/1.3'><names><name xml:lang='en'>Introduction</name><name xml:lang='es'>Introduccion</name></names></navigatorItem>") %test:assertEquals("Introduction")
+    (: Test output with random element w/o children :)
+    %test:arg("node", "<p xmlns='http://www.w3.org/1999/xhtml'>string</p>") %test:assertEquals("string")   
+    (: Test output with random element w/ children :)
+    %test:arg("node", "<div xmlns='http://www.w3.org/1999/xhtml'><p><span>string</span></p></div>") %test:assertEquals("string")
     function eut:test-getLocalizedName-1-arity-de($node as element()) as xs:string? {
         eutil:getLocalizedName($node, "de")
 };
@@ -153,10 +178,36 @@ declare
     (: Test output with title elements and language en :)
     %test:arg("node", "<titleStmt xmlns='http://www.music-encoding.org/ns/mei'><title xml:lang='de'>Deutscher Titel</title><title xml:lang='en'>English title</title></titleStmt>")
     %test:arg("lang", "en") %test:assertEquals("English title")
-    (: Test output with non-existing language :)
+    (: Test output with non-existing language, fallback to first element's text content :)
     %test:arg("node", "<titleStmt xmlns='http://www.music-encoding.org/ns/mei'><title xml:lang='de'>Deutscher Titel</title><title xml:lang='en'>English title</title></titleStmt>")
-    %test:arg("lang", "foo1g4#lang") %test:assertEmpty
-
+    %test:arg("lang", "foo1g4#lang") %test:assertEquals("Deutscher Titel")
+    (: Test output with two name elements and existing language de :)
+    %test:arg("node", "<navigatorItem xmlns='http://www.edirom.de/ns/1.3'><names><name xml:lang='de'>Einführung</name><name xml:lang='en'>Introduction</name></names></navigatorItem>")
+    %test:arg("lang", "de") %test:assertEquals("Einführung")
+    (: Test output with two name elements and existing language en :)
+    %test:arg("node", "<navigatorItem xmlns='http://www.edirom.de/ns/1.3'><names><name xml:lang='de'>Einführung</name><name xml:lang='en'>Introduction</name></names></navigatorItem>")
+    %test:arg("lang", "en") %test:assertEquals("Introduction")
+    (: Test output with two name elements and non-existing language, fallback to first element's text content :)
+    %test:arg("node", "<navigatorItem xmlns='http://www.edirom.de/ns/1.3'><names><name xml:lang='en'>Introduction</name><name xml:lang='es'>Introduccion</name></names></navigatorItem>")
+    %test:arg("lang", "de") %test:assertEquals("Introduction")
+    (: Test output with random element w/o children and language en :)
+    %test:arg("node", "<p xmlns='http://www.w3.org/1999/xhtml'>string</p>") 
+    %test:arg("lang", "de") %test:assertEquals("string")
+    (: Test output with random element w/o children and language de :)
+    %test:arg("node", "<p xmlns='http://www.w3.org/1999/xhtml'>string</p>") 
+    %test:arg("lang", "de") %test:assertEquals("string")
+    (: Test output with random element w/o children and non-existing language :)
+    %test:arg("node", "<p xmlns='http://www.w3.org/1999/xhtml'>string</p>") 
+    %test:arg("lang", "foo1g4#lang") %test:assertEquals("string")
+    (: Test output with random element w/ children and language en :)
+    %test:arg("node", "<div xmlns='http://www.w3.org/1999/xhtml'><p><span>string</span></p></div>") 
+    %test:arg("lang", "de") %test:assertEquals("string")
+    (: Test output with random element w/ children and language de :)
+    %test:arg("node", "<div xmlns='http://www.w3.org/1999/xhtml'><p><span>string</span></p></div>")
+    %test:arg("lang", "de") %test:assertEquals("string")
+    (: Test output with random element w/ children and non-existing language :)
+    %test:arg("node", "<div xmlns='http://www.w3.org/1999/xhtml'><p><span>string</span></p></div>")
+    %test:arg("lang", "foo1g4#lang") %test:assertEquals("string")    
     function eut:test-getLocalizedName-2-arity($node as element(), $lang as xs:string) as xs:string? {
         eutil:getLocalizedName($node, $lang)
 };
