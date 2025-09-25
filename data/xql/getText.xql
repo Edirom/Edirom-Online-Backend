@@ -38,6 +38,7 @@ let $path := request:get-parameter('path', '')
 let $page := request:get-parameter('page', '')
 let $doc := eutil:getDoc($uri)/root()
 let $contextPath := request:get-context-path()
+let $host := request:get-scheme() || '://' || request:get-hostname() || ':' || request:get-server-port()
 let $xslInstruction := $doc//processing-instruction(xml-stylesheet)
 
 let $xslInstruction :=
@@ -100,7 +101,8 @@ let $params := (
     <param name="base" value="{concat($base, '/../xslt/')}"/>,
     <param name="documentationLanguage" value="{edition:getLanguage($edition)}"/>,
     <param name="footnoteBackLink" value="true"/>,
-    <param name="graphicsPrefix" value="{$imagePrefix}"/>, (:TODO from XSLT <param name="graphicsPrefix"/>:)
+    <param name="contextPath" value="{$host}{$contextPath}"/>,
+            
     <param name="numberHeadings" value="false"/>,
     <param name="pageLayout" value="CSS"/>
 )
