@@ -13,6 +13,7 @@ module namespace source = "http://www.edirom.de/xquery/source";
 
 (: IMPORTS ================================================================= :)
 
+import module namespace edition="http://www.edirom.de/xquery/edition" at "edition.xqm";
 import module namespace eutil="http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
@@ -71,7 +72,7 @@ declare function source:getLabels($sources as xs:string*, $edition as xs:string)
 declare function source:getLabel($source as xs:string, $edition as xs:string) as xs:string {
 
     let $sourceDoc := eutil:getDoc($source)
-    let $language := eutil:getLanguage($edition)
+    let $language := edition:getLanguage($edition)
 
     let $label :=
         (:TODO encoding of source labels may heavily differ in certain encoding contexts, thus introduction of class="http://www.edirom.de/edirom-online/source/label" OR some configuration method, e.g., a user definable function :)

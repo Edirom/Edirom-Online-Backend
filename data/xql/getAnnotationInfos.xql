@@ -90,7 +90,7 @@ let $annots := $editionCollection//mei:annot[matches(@plist, $uri)] | $mei//mei:
 let $categories :=
     for $category in local:getDistinctCategories($annots)
     let $categoryElement := ($editionCollection/id($category)[mei:label or mei:name])[1]
-    let $name := annotation:category_getName($categoryElement, eutil:getLanguage($edition))
+    let $name := annotation:category_getName($categoryElement, edition:getLanguage($edition))
     order by $name
     return
         map {

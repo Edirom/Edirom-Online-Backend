@@ -163,7 +163,9 @@
                     <!-- url starts with http i.e. points to a web accessible location -->
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="$contextPath || '/' || substring-after(functx:substring-before-last($docUri, '/'), 'xmldb:exist:///db/') || '/'"/>
+                    <xsl:value-of select="replace(
+                    concat($contextPath, '/', substring-after(functx:substring-before-last($docUri, '/'), 'xmldb:exist:///db/'), '/'),
+                    '/+$', '/')"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -1315,4 +1317,18 @@
         </xsl:if>
     </xsl:template>
     <!-- /SAVED OLD TEI TEMPLATES TO MAKE THIS WORK -->
+    
+    <!-- ADDITIONAL TEMPLATES -->
+    
+    <xd:doc scope="component">
+        <xd:desc>Wrap tei:g contents in a HTML span element and makeRendition.</xd:desc>
+    </xd:doc>
+    <xsl:template match="tei:g">
+        <xsl:element name="span">
+            <xsl:call-template name="makeRendition" />
+            <xsl:apply-templates />
+        </xsl:element>
+    </xsl:template>
+    
+    <!-- /ADDITIONAL TEMPLATES -->
 </xsl:stylesheet>

@@ -81,43 +81,70 @@ declare
 
 declare 
     (: Test empty replacements with non-existing key :)
-    %test:arg("edition", "xqsuite_test_edition")
+    %test:arg("langFileURI", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/language-de.xml")
     %test:arg("key", "foo1g4#")
     %test:arg("values") 
     %test:arg("lang", "de") %test:assertEmpty
     (: Test empty replacements with existing key :)
-    %test:arg("edition", "xqsuite_test_edition")
+    %test:arg("langFileURI", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/language-de.xml")
     %test:arg("key", "global_cancel")
     %test:arg("values") 
     %test:arg("lang", "de") %test:assertEquals("Test-Abbrechen")
     (: Test empty replacements with existing key in another language :)
-    %test:arg("edition", "xqsuite_test_edition")
+    %test:arg("langFileURI", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/language-it.xml")
     %test:arg("key", "global_cancel")
     %test:arg("values") 
     %test:arg("lang", "it") %test:assertEquals("Test-it-Abbrechen")
     (: Test replacements with existing key :)
-    %test:args("xqsuite_test_edition", "view.desktop.TaskBar_Desktop", "5", "de") %test:assertEquals("Test-Desktop 5")
+    %test:args("xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/language-de.xml", "view.desktop.TaskBar_Desktop", "5", "de") %test:assertEquals("Test-Desktop 5")
     (: Test replacements with existing key in another language :)
-    %test:args("xqsuite_test_edition", "view.desktop.TaskBar_Desktop", "foo", "it") %test:assertEquals("Test-it-Desktop foo")
+    %test:args("xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/language-it.xml", "view.desktop.TaskBar_Desktop", "foo", "it") %test:assertEquals("Test-it-Desktop foo")
     (: Test replacements with existing key without placeholders :)
-    %test:args("xqsuite_test_edition", "global_cancel", "foo", "de") %test:assertEquals("Test-Abbrechen")
+    %test:args("xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/language-de.xml", "global_cancel", "foo", "de") %test:assertEquals("Test-Abbrechen")
     (: Test replacements with existing key and non-existing language :)
-    %test:args("xqsuite_test_edition", "global_cancel", "foo", "foo1g4#lang") %test:assertEmpty
+    %test:args("", "global_cancel", "foo", "foo1g4#lang") %test:assertEmpty
     (: Test empty replacements with non-existing key and non-existing language :)
-    %test:arg("edition", "xqsuite_test_edition")
+    %test:arg("langFileURI", "")
     %test:arg("key", "foo1g4#")
     %test:arg("values") 
     %test:arg("lang", "foo1g4#lang") %test:assertEmpty
     (: Test empty replacements with existing key from default language file :)
-    %test:arg("edition", "xqsuite_test_edition")
+    %test:arg("langFileURI", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/language-de.xml")
     %test:arg("key", "view.desktop.Desktop_Maximize")
     %test:arg("values") 
     %test:arg("lang", "de") %test:assertEquals("Maximieren")
-    (: Test empty replacements with non-existing editionID – with existing key from default language file :)
-    %test:arg("edition", "foobar4#_edition")
+    (: Test empty replacements with non-existing language file – with existing key from default language file :)
+    %test:arg("langFileURI", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/language-fr.xml")
     %test:arg("key", "view.desktop.Desktop_Maximize")
     %test:arg("values") 
     %test:arg("lang", "de") %test:assertEquals("Maximieren")
-    function eut:test-getLanguageString-4-arity($edition as xs:string, $key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string? {
-        eutil:getLanguageString($edition, $key, $values, $lang)
+    function eut:test-getLanguageString-4-arity($langFileURI as xs:string, $key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string? {
+        eutil:getLanguageString($langFileURI, $key, $values, $lang)
+};
+
+declare
+    %test:args("1", "2")     %test:assertFalse
+    %test:args("2", "1")     %test:assertTrue
+    %test:args("2", "2")     %test:assertFalse
+    %test:args("1a", "2b")     %test:assertFalse
+    %test:args("10a", "2b")     %test:assertTrue
+    %test:args("10a", "2ba")     %test:assertTrue
+    %test:args("10a1", "10ba")     %test:assertFalse
+    %test:args("2b", "1a")     %test:assertTrue
+    %test:args("", "2")     %test:assertFalse
+    %test:args("2", "")     %test:assertTrue
+    function eut:test-compute-measure-sort-key($key1 as xs:string, $key2 as xs:string) as xs:boolean {
+        eutil:compute-measure-sort-key($key1) > eutil:compute-measure-sort-key($key2)
+};
+
+declare
+    %test:arg("seq", 2, 1, 3)     %test:assertEquals(1, 2, 3)
+    %test:arg("seq", 1, 2, 3)     %test:assertEquals(1, 2, 3)
+    %test:arg("seq", "1", "2", "3")     %test:assertEquals("1", "2", "3")
+    %test:arg("seq", "1a", "1", "10", "2", "10b", "3s")     %test:assertEquals("1", "1a", "2", "3s", "10", "10b")
+    %test:arg("seq", "10aa", "10aaa", "10x", "2c", "10_b")     %test:assertEquals("2c", "10_b", "10aa", "10aaa", "10x")
+    %test:arg("seq", "<a/>", "<c/>", "<b/>")     %test:assertEquals("<a/>", "<c/>", "<b/>")
+    %test:arg("seq", "<a>1</a>", "<c>3</c>", "<b>2</b>")     %test:assertEquals("<a>1</a>", "<b>2</b>", "<c>3</c>")
+    function eut:sort-as-numeric-alpha($seq as item()*) as item()* {
+        eutil:sort-as-numeric-alpha($seq)
 };

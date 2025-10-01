@@ -25,9 +25,9 @@ declare option output:omit-xml-declaration "yes";
 (: VARIABLE DECLARATIONS =================================================== :)
 
 declare variable $edition := request:get-parameter('edition', '');
-declare variable $imageserver := eutil:getPreference('image_server', $edition);
+declare variable $imageserver := edition:getPreference('image_server', $edition);
 
-declare variable $imagePrefix := eutil:getPreference('image_prefix', $edition);
+declare variable $imagePrefix := edition:getPreference('image_prefix', $edition);
 
 (: QUERY BODY ============================================================== :)
 
@@ -61,7 +61,7 @@ let $xslInstruction :=
         else
         ()
 
-(:let $imagePrefix := eutil:getPreference('image_prefix', request:get-parameter('edition', '')):)
+(:let $imagePrefix := edition:getPreference('image_prefix', request:get-parameter('edition', '')):)
 
 let $xsl :=
     if ($xslInstruction) then

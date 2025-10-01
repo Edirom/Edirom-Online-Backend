@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="EdiromOnlineBackend" default="xar">
-    
-    <property name="project.version" value="1.0.1"/>
+
+    <import file="${basedir}/testing/ant-tests.xml"/>
+
+    <property name="project.version" value="1.1.0"/>
     <property name="project.app" value="Edirom-Online-Backend"/>
-    <property name="project.title" value="Edirom-Online Backend"/>
+    <property name="project.title" value="Edirom Online Backend"/>
     <property name="repo.target" value="${project.app}"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="build-xar"/>
