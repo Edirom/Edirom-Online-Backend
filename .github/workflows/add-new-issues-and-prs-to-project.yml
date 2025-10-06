@@ -1,10 +1,8 @@
 name: Adds all issues to project board
-
 on:
   issues:
     types:
       - opened
-
 jobs:
   add-to-project:
     name: Add issue to project
@@ -13,4 +11,4 @@ jobs:
       - uses: actions/add-to-project@v1.0.2
         with:
           project-url: https://github.com/orgs/Edirom/projects/4
-          github-token: ${{ secrets.VIFEBOTS_GITHUB_TOKEN }}
+          github-token: ${{ secrets.ADD_TO_PROJECT_TOKEN }}
