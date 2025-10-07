@@ -71,12 +71,13 @@
         <entry key="view.desktop.TaskBar_Sort_vertical" value="Sort windows vertically"/>
         <entry key="view.desktop.TaskBar_Sort_horizontal" value="Sort windows horizontally"/>
         <entry key="view.desktop.TopBar_homeBtnLabel" value="Edirom Online"/>
-        <entry key="view.window.AnnotationView_Title" value="Annotation"/>
+        
+        <entry key="view.window.AnnotationView_Title" value="Annotations"/>
         <entry key="view.window.AnnotationView_No" value="No."/>
         <entry key="view.window.AnnotationView_TitleLabel" value="Title"/>
         <entry key="view.window.AnnotationView_Categories" value="Categories"/>
-        <entry key="view.window.AnnotationView_Category" value="Category"/>
-        <entry key="view.window.AnnotationView_Priority" value="Priority"/>
+        <entry key="view.window.AnnotationView_ediromCategory" value="Category"/>
+        <entry key="view.window.AnnotationView_ediromPriority" value="Priority"/>
         <entry key="view.window.AnnotationView_Participants" value="Participants"/>
         <entry key="view.window.AnnotationView_Source" value="Source"/>
         <entry key="view.window.AnnotationView_Sources" value="Sources"/>
@@ -88,11 +89,11 @@
         <entry key="view.window.AnnotationView_Grid" value="Grid view"/>
         <entry key="view.window.AnnotationView_Single" value="Single view"/>
         <entry key="view.window.AnnotationView_ListView" value="List view"/>
-        
         <entry key="view.window.AnnotationView_PreviousAnnotation" value="Previous annotation"/>
         <entry key="view.window.AnnotationView_NextAnnotation" value="Next annotation"/>
         <entry key="view.window.AnnotationView_OpenAll" value="Open all sources"/>
         <entry key="view.window.AnnotationView_CloseAll" value="Close all sources"/>
+        
         <entry key="view.window.HelpWindow_Title" value="Help"/>
         <entry key="view.window.TobBar_View" value="View"/>
         

@@ -17,6 +17,8 @@ module namespace annotation = "http://www.edirom.de/xquery/annotation";
 import module namespace edition="http://www.edirom.de/xquery/edition" at "edition.xqm";
 import module namespace eutil="http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 
+import module namespace taxonomy="http://www.edirom.de/xquery/taxonomy" at "taxonomy.xqm";
+
 (: NAMESPACE DECLARATIONS ================================================== :)
 
 declare namespace mei="http://www.music-encoding.org/ns/mei";
@@ -26,25 +28,19 @@ declare namespace transform="http://exist-db.org/xquery/transform";
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
-declare function annotation:getLocalizedLabel($node) {
+declare function annotation:get-category-label-localized($node) {
 
     let $lang := request:get-parameter('lang', '')
     let $nodeName := local-name($node)
   
-    let $label :=
-        if($nodeName = 'category') then (
-            (: new style, i.e. //category/label :)
-            if ($node/mei:label[@xml:lang = $lang]) then
-                $node/mei:label[@xml:lang = $lang]/text()
-            else
-                $node/mei:label[1]/text()
-        
-        ) else if($nodeName = 'term') then(
-            (: old style, i.e. //term/name :)
-            eutil:getLocalizedName($node, $lang)
-        
-        ) else
-            ($nodeName)
+     let $label :=
+        switch($nodeName)
+            case 'category' return
+                taxonomy:get-label-localized-as-string($node)
+            case 'term' return
+                eutil:getLocalizedName($node, $lang)
+            default return
+                $nodeName
   
     return $label
 };
@@ -57,7 +53,7 @@ declare function annotation:getLocalizedLabel($node) {
  :)
 declare function annotation:annotationsToJSON($uri as xs:string, $edition as xs:string) as map(*)* {
     
-    let $doc := doc($uri)
+    let $doc := eutil:getDoc($uri)
     let $annos := $doc//mei:annot[@type = 'editorialComment']
     return
         for $anno in $annos
@@ -103,26 +99,52 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
             else
                 ($pDoc//mei:title[@type = 'siglum']/text())
     
-    let $classes := tokenize(replace(normalize-space($anno/@class),'#',''),' ')
+    let $classes := annotation:get-class-idrefs-as-sequence($anno)
     let $catURIs := distinct-values((tokenize(replace($anno/mei:ptr[@type = 'categories']/@target,'#',''),' '), $classes[contains(.,'annotation.category.')]))
-    
+
+    let $classes-elements :=
+        for $uri in $classes
+        return $doc/id($uri)
+
     let $cats :=
         string-join(
             for $u in $catURIs
-            return annotation:category_getName($doc/id($u), edition:getLanguage($edition))
+            return annotation:get-category-label-localized($doc/id($u))
          , ', ')
      
     let $count := count($anno/preceding::mei:annot[@type = 'editorialComment']) + 1
-    
+
+    (: create a map with all static information about the annotation :)
+    let $baseMap := map {
+        'id': $id,
+        'title': normalize-space($title),
+        'pos': string($count),
+        'sigla': string-join($sigla,', ')
+    }
+
+    (: create a map with keys for each taxonomy used for this annotation and the corresponding class labels :)
+    let $taxonomiesMap := map:merge(
+        for $usedTaxonomy in $classes-elements[ancestor::mei:taxonomy]
+        let $taxonomyIdentifier := taxonomy:get-root-identifying-string( $usedTaxonomy )
+        return
+            map:entry(
+                $taxonomyIdentifier,
+                string-join (
+                    (
+                        for $classElement in $classes-elements[self::mei:category]
+                        where taxonomy:get-root-identifying-string( $classElement ) = $taxonomyIdentifier
+                        return taxonomy:get-label-localized-as-string($classElement)
+                    ),
+                    ', '
+                )
+            )
+    )
+
     return
-        map {
-            'id': $id,
-            'title': normalize-space($title),
-            'categories': $cats,
-            'priority': $prio,
-            'pos': string($count),
-            'sigla': string-join($sigla,', ')
-        }
+        map:merge((
+            $baseMap,
+            $taxonomiesMap
+        ))
 };
 
 (:~
@@ -147,8 +169,8 @@ declare function annotation:generateTitle($anno as element(), $lang as xs:string
  :)
 declare function annotation:getContent($anno as element(), $idPrefix as xs:string, $edition as xs:string?) {
 
-    (:let $xsltBase := concat('file:', system:get-module-load-path(), '/../xslt/'):)
-    let $xsltBase := concat(replace(system:get-module-load-path(), 'embedded-eXist-server', ''), '/../xslt/') (: TODO: Prüfen, wie wir an dem replace vorbei kommen:)
+    (: TODO: check, whether replace is still necessary, by deploying in eXist-db app with embedded jetty :)
+    let $xsltBase := concat(replace(system:get-module-load-path(), 'embedded-eXist-server', ''), '/../xslt/')
     
     let $edition := request:get-parameter('edition', '')
     let $imageserver :=  edition:getPreference('image_server', $edition)
@@ -212,6 +234,13 @@ declare function annotation:getPriority($anno as element()) as xs:string* {
             ($locId)
 };
 
+(:~
+ : Gets the label for a Edirom Online annotation priority
+ :
+ : @param $anno should be a mei:annot, mei:term, or mei:category element
+ :
+ : @return 
+ :)
 declare function annotation:getPriorityLabel($anno) as xs:string* {
     
     let $isPrioElemAlready := local-name($anno) = ('term','category')
@@ -219,7 +248,7 @@ declare function annotation:getPriorityLabel($anno) as xs:string* {
     
     return
         if($isPrioElemAlready) then
-            (annotation:getLocalizedLabel($anno))
+            (annotation:get-category-label-localized($anno))
         
         else if($oldEdiromStyle) then
             (annotation:getPriority($anno))
@@ -232,12 +261,14 @@ declare function annotation:getPriorityLabel($anno) as xs:string* {
                 for $uri in $classBasedUri
                 let $doc :=
                     if(starts-with($uri,'#')) then
+                        (: uri is a local reference to an xml:id in the same document :)
                         ($anno/root())
                     else
+                        (: uri is a reference to an xml:id in another document :)
                         (doc(substring-before($uri,'#')))
                 
                 let $prioElem := $doc/id(replace($uri,'#',''))
-                let $label := annotation:getLocalizedLabel($prioElem)
+                let $label := annotation:get-category-label-localized($prioElem)
                 return $label
             
             return string-join($labels,', ')
@@ -250,18 +281,18 @@ declare function annotation:getPriorityLabel($anno) as xs:string* {
 : @param $anno The Annotation to process
 : @return The categories (as comma separated string)
 :)
-declare function annotation:getCategories($anno as element()) as xs:string {
+(:declare function annotation:getCategories($anno as element()) as xs:string {
     
-    string-join(annotation:getCategoriesAsArray($anno), ', ')
-};
+    string-join(annotation:get-category-labels-as-sequence($anno), ', ')
+};:)
 
 (:~
- : Returns an array of Annotation's categories
+ : Returns a sequence of names/labels for an annotation's categories
  :
  : @param $anno The Annotation to process
  : @return The categories (as comma separated string)
  :)
-declare function annotation:getCategoriesAsArray($anno as element()) as xs:string* {
+declare function annotation:get-category-labels-as-sequence($anno as element()) as xs:string* {
     
     let $doc := $anno/root()
     
@@ -270,30 +301,45 @@ declare function annotation:getCategoriesAsArray($anno as element()) as xs:strin
     
     let $cats :=
         for $u in $catURIs
-        return annotation:category_getName($doc/id($u),'')
-                 
-    
-    (:let $uris := tokenize($anno/mei:ptr[@type eq 'categories']/string(@target),' ')
-    
-    let $string := for $uri in $uris
-                   let $doc := if(starts-with($uri,'#'))
-                               then($anno/root())
-                               else(doc(substring-before($uri,'#')))
-                   let $locID := substring-after($uri,'#')
-                   let $elem := $doc/id($locID)
-                   return
-                       if(local-name($elem) eq 'term')
-                       then(eutil:getLocalizedName($elem))
-                       else($locID)
-    :)
+        return annotation:get-category-label-localized($doc/id($u))
+        
     return $cats
 };
 
 (:~
- : Returns a list of URIs addressed by an Annotation
+ : Gets the labels for an annotation’s classes
  :
- : @param $anno The Annotation to process
- : @return The list
+ :@param element() mei:annot element
+ :@return sequence of xs:string, might be an empty sequence
+ :)
+declare function annotation:get-class-labels-as-sequence($anno as element(mei:annot)) as xs:string* {
+
+    (: TODO fix strict binding to definitions in the same file :)
+    let $doc := $anno/root()
+
+    for $classIDREF in annotation:get-class-idrefs-as-sequence($anno)
+    return annotation:get-category-label-localized($doc/id($classIDREF))
+
+};
+
+(:~
+ : Gets the IDREFs for an annotation’s classes
+ :
+ :@param element() mei:annot element
+ :@return sequence of xs:IDREF, might be an empty sequence
+ :)
+declare function annotation:get-class-idrefs-as-sequence($anno as element(mei:annot)) as xs:IDREF* {
+
+    for $token in $anno/@class => normalize-space() => replace('#','') => tokenize(' ')
+    return xs:IDREF($token)
+
+};
+
+(:~
+ : Returns a sequence of document URIs addressed by an annotation
+ :
+ : @param $anno element() The Annotation to process
+ : @return sequence of xs:string, might be an empty sequence
  :)
 declare function annotation:getParticipants($anno as element()) as xs:string* {
     
@@ -301,19 +347,4 @@ declare function annotation:getParticipants($anno as element()) as xs:string* {
     let $uris := distinct-values(for $uri in $ps return substring-before($uri,'#'))
     
     return $uris
-};
-
-(:~
- : Returns an annotation category's name
- :
- : @param $category The category to process
- : @return one name
- :)
-declare function annotation:category_getName($category as element(), $language as xs:string) {
-    annotation:getLocalizedLabel($category)
-    (:let $names := $category/mei:name
-    return
-        switch (count($names[@xml:lang = $language]))
-            case 1 return $names[@xml:lang = $language]
-            default return $names[1]:)
 };
