@@ -17,10 +17,9 @@ declare namespace xmldb = "http://exist-db.org/xquery/xmldb";
 
 (: OPTION DECLARATIONS ===================================================== :)
 
-declare option output:media-type "text/html";
-declare option output:method "xhtml";
+declare option output:media-type "application/json";
+declare option output:method "json";
 declare option output:indent "yes";
-declare option output:omit-xml-declaration "yes";
 
 (: VARIABLE DECLARATIONS =================================================== :)
 
@@ -28,103 +27,70 @@ declare variable $lang := request:get-parameter('lang', '');
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
-declare function local:getCategory($category, $depth) {
+declare function local:getCategory($category) {
+    let $items := 
+        for $elem in $category/edirom:navigatorItem | $category/edirom:navigatorCategory | $category/edirom:navigatorSeparator
+        return
+            if (local-name($elem) eq 'navigatorItem') then (
+                local:getItem($elem)
+            ) else if (local-name($elem) eq 'navigatorSeparator') then (
+                local:getSeparator()
+            ) else if (local-name($elem) eq 'navigatorCategory') then (
+                local:getCategory($elem)
+            ) else
+                ()
     
-    <div
-        class="navigatorCategory{
-                if ($depth = 1) then
-                    ()
-                else
-                    ($depth)
-            }"
-        id="{$category/@xml:id}">
-        <div
-            class="navigatorCategoryTitle{
-                    if ($depth = 1) then
-                        ()
-                    else
-                        ($depth)
-                }">
-            {
-                if ($depth = 1) then
-                    (eutil:getLocalizedName($category, $lang))
-                else
-                    (
-                    <span
-                        id="{$category/@xml:id}-title"
-                        onclick="if(Ext.get('{$category/@xml:id}-title').hasCls('folded')) {{Ext.get('{$category/@xml:id}-title').removeCls('folded');Ext.get(Ext.get('{$category/@xml:id}-title').query('.fa')[0]).removeCls('fa-caret-right').addCls('fa-caret-down');Ext.get('{$category/@xml:id}-items').removeCls('hidden');}}else{{Ext.get('{$category/@xml:id}-title').addCls('folded');Ext.get(Ext.get('{$category/@xml:id}-title').query('.fa')[0]).removeCls('fa-caret-down').addCls('fa-caret-right');Ext.get('{$category/@xml:id}-items').addCls('hidden');}}"
-                        class="folded">{eutil:getLocalizedName($category, $lang)}<i
-                            class="fa fa-caret-right fa-fw"></i></span>
-                    )
-            }
-        </div>
-        <div
-            id="{$category/@xml:id}-items"
-            class="{
-                    if ($depth = 1) then
-                        ()
-                    else
-                        ('hidden')
-                }">
-            {
-                for $elem in $category/edirom:navigatorItem | $category/edirom:navigatorCategory
-                return
-                    if (local-name($elem) eq 'navigatorItem') then (
-                        local:getItem($elem, $depth)
-                    ) else if (local-name($elem) eq 'navigatorSeparator') then (
-                        local:getSeparator()
-                    ) else if (local-name($elem) eq 'navigatorCategory') then (
-                        local:getCategory($elem, $depth + 1)
-                    ) else
-                        ()
-            }
-        </div>
-    </div>
+    return
+        map {
+            "type": "navigatorCategory",
+            "id": string($category/@xml:id),
+            "sortNo": string($category/@sortNo),
+            "name": eutil:getLocalizedName($category, $lang),
+            "items": array { $items }
+        }
 };
 
-declare function local:getItem($item, $depth) {
-    
+declare function local:getItem($item) {
     let $target := $item/replace(@targets, '\[.*\]', '')
-    let $cfg := concat('{', replace(substring-before($item/substring-after(@targets, '['), ']'), '=', ':'), '}')
-    let $target :=
-        if (starts-with($target, 'javascript:')) then
-            (replace($target, 'javascript:', ''))
+    let $cfg := substring-before($item/substring-after(@targets, '['), ']')
+    let $baseMap := map {
+        "type": "navigatorItem",
+        "id": string($item/@xml:id),
+        "sortNo": string($item/@sortNo),
+        "name": eutil:getLocalizedName($item, $lang),
+        "targets": string($item/@targets),
+        "target": $target
+    }
+    
+    return
+        if ($cfg != '') then
+            map:put($baseMap, "config", $cfg)
         else
-            (concat("loadLink('", $target, "', ", $cfg, ")"))
-        return
-        
-        <div class="navigatorItem{
-                    if ($depth lt 2) then
-                        ()
-                    else
-                        ($depth)
-                }"
-            id="{$item/@xml:id}"
-            onclick="{$target}">
-            {eutil:getLocalizedName($item, $lang)}
-        </div>
+            $baseMap
 };
 
 declare function local:getSeparator() {
-    
-    <div class="navigatorSeparator"></div>
+    map {
+        "type": "navigatorSeparator"
+    }
 };
 
 declare function local:getDefinition($navConfig) {
     let $elems := $navConfig/*
     
-    for $elem in $elems
-    
     return
-        
-        if (local-name($elem) eq 'navigatorItem') then (
-            local:getItem($elem, 1)
-        ) else if (local-name($elem) eq 'navigatorSeparator') then (
-            local:getSeparator()
-        ) else if (local-name($elem) eq 'navigatorCategory') then (
-            local:getCategory($elem, 1)
-        ) else
-            ()
+        array {
+            for $elem in $elems
+            return
+                if (local-name($elem) eq 'navigatorItem') then (
+                    local:getItem($elem)
+                ) else if (local-name($elem) eq 'navigatorSeparator') then (
+                    local:getSeparator()
+                ) else if (local-name($elem) eq 'navigatorCategory') then (
+                    local:getCategory($elem)
+                ) else
+                    ()
+        }
 };
 
 (: QUERY BODY ============================================================== :)
@@ -136,4 +102,6 @@ let $work := $edition/id($workId)
 let $navConfig := $work/edirom:navigatorDefinition
 
 return
-    local:getDefinition($navConfig)
+    map {
+        "navigatorDefinition": local:getDefinition($navConfig)
+    }
