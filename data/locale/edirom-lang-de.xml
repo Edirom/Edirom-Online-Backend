@@ -56,8 +56,10 @@
         <entry key="view.desktop.Desktop_Tile" value="Nebeneinander"/>
         
         <entry key="view.desktop.TaskBar_concordanceNav" value="Öffne Konkordanznavigator"/>
-        <entry key="view.desktop.TaskBar_measureNumbers" value="Taktzahlen einblenden"/>
-        <entry key="view.desktop.TaskBar_annotations" value="Anmerkungen einblenden"/>
+        <entry key="view.desktop.TaskBar_measureNumbers" value="Taktzahlen ein-/ausblenden"/>
+        <entry key="view.desktop.TaskBar_showMeasures" value="Taktzahlen ein-/ausblenden (global)"/>
+        <entry key="view.desktop.TaskBar_annotations" value="Anmerkungen ein-/ausblenden"/>
+        <entry key="view.desktop.TaskBar_showAnnotations" value="Anmerkungen ein-/ausblenden (global)"/>
         <entry key="view.desktop.TaskBar_help" value="Hilfe"/>
         <entry key="view.desktop.TaskBar_pref" value="Einstellungen"/>
         <entry key="view.desktop.TaskBar_lang" value="Sprache umschalten"/>
@@ -106,10 +108,10 @@
         <entry key="view.window.source.SourceView_prioMenu" value="Prioritäten…"/>
         <entry key="view.window.source.SourceView_gotoMovement" value="Gehe zu Satz/Nummer…"/>
         <entry key="view.window.source.SourceView_layersMenu" value="Ebenen…"/>
-        <entry key="view.window.source.SourceView_showMeasures" value="Taktzählung ein-/ausblenden"/>
+        <entry key="view.window.source.SourceView_showMeasures" value="Taktzählung ein-/ausblenden (in diesem Fenster)"/>
         <entry key="view.window.source.SourceView_fitView" value="Ansicht einpassen"/>
         <entry key="view.window.source.SourceView_annotationsMenu" value="Anmerkungen"/>
-        <entry key="view.window.source.SourceView_ShowAnnotations" value="Anmerkungen ein-/ausblenden"/>
+        <entry key="view.window.source.SourceView_showAnnotations" value="Anmerkungen ein-/ausblenden (in diesem Fenster)"/>
         <entry key="view.window.source.SourceView_gotoMenu" value="Gehe zu…"/>
         <entry key="view.window.source.SourceView_gotoMeasure" value="Gehe zu Takt…"/>
         <entry key="view.window.source.SourceView_GotoMsg_Title" value="Gehe zu Takt…"/>
