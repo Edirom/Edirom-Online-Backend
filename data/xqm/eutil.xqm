@@ -355,6 +355,28 @@ declare function eutil:compute-measure-sort-key( $key as xs:string ) as xs:strin
 
 
 (:~
+ : Checks if an item is considered empty according to various criteria.
+ : An item is considered empty if it is:
+ : - An empty sequence ()
+ : - An empty string ""
+ : - A sequence containing only one empty string ("")
+ : - An empty array []
+ : - An empty map map{}
+ :
+ : @param $item the item to check for emptiness
+ : @return true if the item is empty, false otherwise
+ :)
+declare function eutil:is-empty($item) as xs:boolean {
+
+    empty($item) or
+    ($item instance of xs:string and $item = "") or
+    (count($item) = 1 and $item instance of xs:string and $item = "") or
+    ($item instance of array(*) and array:size($item) = 0) or
+    ($item instance of map(*) and map:size($item) = 0)
+
+};
+
+(:~
  : Extracts an ISO 639 language code from a given ISO 3166-1 language code
  :
  : @author Benjamin W. Bohl

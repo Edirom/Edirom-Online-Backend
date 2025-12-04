@@ -33,7 +33,7 @@
         
         <entry key="controller.desktop.TaskBar_confirmReload" value="Die Anwendung muss neu gestartet werden, damit die Spracheinstellung vollständig umgesetzt wird."/>
         
-        <entry key="controller.window.Window_annotationView" value="Anmerkung"/>
+        <entry key="controller.window.Window_annotationView" value="Anmerkungen"/>
         <entry key="controller.window.Window_headerView" value="Metadaten"/>
         <entry key="controller.window.Window_renderingView" value="Rendering"/>
         <entry key="controller.window.Window_searchView" value="Suche"/>
@@ -71,28 +71,29 @@
         <entry key="view.desktop.TaskBar_Sort_vertical" value="Übereinander anordnen" />
         <entry key="view.desktop.TaskBar_Sort_horizontal" value="Nebeneinander anordnen" />
         <entry key="view.desktop.TopBar_homeBtnLabel" value="Edirom Online"/>
+        
         <entry key="view.window.AnnotationView_Title" value="Anmerkungen"/>
         <entry key="view.window.AnnotationView_No" value="Nr."/>
         <entry key="view.window.AnnotationView_TitleLabel" value="Titel"/>
         <entry key="view.window.AnnotationView_Categories" value="Kategorien"/>
-        <entry key="view.window.AnnotationView_Category" value="Kategorie"/>
-        <entry key="view.window.AnnotationView_Priority" value="Priorität"/>
+        <entry key="view.window.AnnotationView_ediromCategory" value="Kategorie"/>
+        <entry key="view.window.AnnotationView_ediromPriority" value="Priorität"/>
         <entry key="view.window.AnnotationView_Participants" value="Subjekte"/>
         <entry key="view.window.AnnotationView_Source" value="Quelle"/>
         <entry key="view.window.AnnotationView_Sources" value="Quellen"/>
-        <entry key="view.window.AnnotationView_Siglum" value="Source Siglum"/>
-        <entry key="view.window.AnnotationView_Sigla" value="Quelle"/>
+        <entry key="view.window.AnnotationView_Siglum" value="Quellensigle"/>
+        <entry key="view.window.AnnotationView_Sigla" value="Quellensiglen"/>
         <entry key="view.window.AnnotationView_AnnotationID" value="Annot.-ID"/>
         <entry key="view.window.AnnotationView_List" value="Liste"/>
         <entry key="view.window.AnnotationView_Display" value="Darstellung"/>
         <entry key="view.window.AnnotationView_Grid" value="Rasteransicht"/>
         <entry key="view.window.AnnotationView_Single" value="Einzelansicht"/>
         <entry key="view.window.AnnotationView_ListView" value="Listenansicht"/>
-        
         <entry key="view.window.AnnotationView_PreviousAnnotation" value="Vorherige Anmerkung"/>
         <entry key="view.window.AnnotationView_NextAnnotation" value="Nächste Anmerkung"/>
         <entry key="view.window.AnnotationView_OpenAll" value="Alle Quellen öffnen"/>
         <entry key="view.window.AnnotationView_CloseAll" value="Alle Quellen schließen"/>
+        
         <entry key="view.window.HelpWindow_Title" value="Hilfe"/>
         <entry key="view.window.TobBar_View" value="Ansicht"/>
         
