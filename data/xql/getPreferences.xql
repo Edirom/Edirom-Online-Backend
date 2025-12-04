@@ -46,7 +46,7 @@ return
         let $data := 
             map:merge((
                 $file//(pref:entry|entry) ! map:entry(./string(@key), ./string(@value)), 
-                $projectFile//entry ! map:entry(./string(@key), ./string(@value))  
+                $projectFile//(pref:entry|entry) ! map:entry(./string(@key), ./string(@value))  
             ))
         return
             response:stream($data => serialize($outputOptions), $serializationParameters)
