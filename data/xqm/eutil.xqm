@@ -25,7 +25,7 @@ declare namespace request="http://exist-db.org/xquery/request";
 declare namespace system="http://exist-db.org/xquery/system";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace util="http://exist-db.org/xquery/util";
-declar namespace pref="http://www.edirom.de/ns/prefs/1.0";
+declare namespace pref="http://www.edirom.de/ns/prefs/1.0";
 
 (: VARIABLE DECLARATIONS =================================================== :)
 
