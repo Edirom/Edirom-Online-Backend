@@ -25,6 +25,7 @@ declare namespace request="http://exist-db.org/xquery/request";
 declare namespace system="http://exist-db.org/xquery/system";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace util="http://exist-db.org/xquery/util";
+declar namespace pref="http://www.edirom.de/ns/prefs/1.0";
 
 (: VARIABLE DECLARATIONS =================================================== :)
 
@@ -312,11 +313,11 @@ declare function eutil:getPreference($key as xs:string, $preferencesURI as xs:st
     
     return
         (: If there is a value for the key in the custom preferences file :)
-        if($prefFileCustom//entry/@key = $key) then
-            $prefFileCustom//entry[@key = $key]/@value => string()
+        if($prefFileCustom//(pref:entry|entry)/@key = $key) then
+            $prefFileCustom//(pref:entry|entry)[@key = $key]/@value => string()
         (: If not, take the value for the key in the default preferences file :)
         else
-            try { doc($eutil:default-prefs-location)//entry[@key = $key]/@value => string() }
+            try { doc($eutil:default-prefs-location)//(pref:entry|entry)[@key = $key]/@value => string() }
             (: If the key is not in the default file, then there should be an error :)
             catch * { util:log-system-out(concat('Failed to find the key `', $key, '` in default preferences file')) }
 };
