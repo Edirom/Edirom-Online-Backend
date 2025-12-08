@@ -37,7 +37,7 @@ let $term := request:get-parameter('term', '')
 let $path := request:get-parameter('path', '')
 let $page := request:get-parameter('page', '')
 let $doc := eutil:getDoc($uri)/root()
-let $contextPath := request:get-context-path()
+let $contextPath := request:get-scheme()|| "://" || request:get-server-name() || ":" || request:get-server-port() || request:get-context-path()
 let $xslInstruction := $doc//processing-instruction(xml-stylesheet)
 
 let $xslInstruction :=
@@ -94,13 +94,13 @@ let $params := (
     <param name="lang" value="{edition:getLanguage($edition)}"/>,
     <param name="docUri" value="{$uri}"/>,
     <param name="contextPath" value="{$contextPath}"/>,
-    (: parameters for the TEI Stypesheets :)
+    <param name="imagePrefix" value="{$imagePrefix}"/>,
+    (: parameters for the TEI Stylesheets :)
     <param name="autoHead" value="false"/>,
     <param name="autoToc" value="false"/>,
     <param name="base" value="{concat($base, '/../xslt/')}"/>,
     <param name="documentationLanguage" value="{edition:getLanguage($edition)}"/>,
     <param name="footnoteBackLink" value="true"/>,
-    <param name="graphicsPrefix" value="{$imagePrefix}"/>, (:TODO from XSLT <param name="graphicsPrefix"/>:)
     <param name="numberHeadings" value="false"/>,
     <param name="pageLayout" value="CSS"/>
 )
