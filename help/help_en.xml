@@ -10,6 +10,7 @@
                <persName xml:id="bwb" ref="https://orcid.org/0000-0001-7217-9167">Benjamin W. Bohl</persName>
                <persName xml:id="dr" ref="https://orcid.org/0000-0001-6271-2095">Daniel Röwenstrunk</persName>
                <persName xml:id="kh" ref="https://orcid.org/0000-0003-2915-353X">Kristin Herold</persName>
+               <persName xml:id="dj" ref="https://orcid.org/0000-0002-2375-2227">Daniel Jettka</persName>
             </respStmt>         
          </titleStmt>
          <publicationStmt>
@@ -46,6 +47,7 @@
          <change when="2013-08-08" who="#bwb">added description of searchWindow; deactivated link to missing preferences section;</change>
          <change when="2024-12-05" who="#kh">update metadata (add orcid, delete old addresses etc.)</change>
          <change when="2024-12-10" who="#kh">replaced old (partly deprecated) content with updated and revised german help, which was translated to english; correct indentation</change>
+         <change when="2025-12-16" who="#dj">update to new button arrangement</change>
       </revisionDesc>
    </teiHeader>
    <text>
@@ -81,7 +83,7 @@
                   <p>The <term type="ediromGui" key="view.desktop.TaskBar_home"/> is located on the left edge of the <term type="ediromGui" key="view.desktop.TopBar"/>.
                       Next to it is the <term type="ediromGui" key="comboBox"/>. This enables a selection of the various works contained within an edition and thus attempts to emulate the structure of a “classic” printed edition volume with several works included.
                       The <term type="ediromGui" key="comboBox"/> and thus the packaging of several works in one edition (analogous to an earlier edition volume) is used less frequently in newer <term type="ediromGui" key="global_appName"/> versions and the name of the individual work edition appears in its place.
-                      On the right is the input for the <ptr target="#search"/> and a button that opens an <term type="ediromGui" key="view.desktop.TaskBar_about"/> window.
+                      On the right is the input for the <ptr target="#search"/>.
                    </p>
                   <figure>
                      <graphic url="help/images/menubar_en.png"/>
@@ -158,17 +160,24 @@
                      <graphic url="help/images/annotations.png"/>
                      <head><term type="ediromGui" key="view.desktop.TaskBar_annotations"/></head>
                   </figure>
+                  <!-- Presently not in use ... -->
+                  <!--
                   <p>The <term type="ediromGui" key="view.desktop.Desktop"/> button opens a new <term type="ediromGui" key="view.desktop.Desktop"/> in <term type="ediromGui" key ="global_appName"/>. This will open a completely new set of windows without changing the contents of the current desktop.</p>
                   <figure>
                      <graphic url="help/images/workspace-switcher.png"/>
                      <head><term type="ediromGui" key="view.desktop.Desktop"/></head>
                   </figure>
+                  -->
                   <p>The button with the two horizontal arrows triggers the <term type="ediromGui" key="view.desktop.TaskBar_concordanceNav"/> command, and the navigator for <ptr target="#concordanceNavigator"/> opens. Details on how to use the concordance navigator can be found in the corresponding section.</p>
                   <figure>
                      <graphic url="help/images/concordanceNavigator.png"/>
                      <head><term type="ediromGui" key="view.desktop.TaskBar_concordanceNav"/></head>
                   </figure>
-                  <p>At the bottom right, you can use the question mark button to open the <term type="ediromGui" key="view.desktop.TaskBar_help"/> or move it to the foreground.</p>
+                  <p>At the bottom right, you can use the i (as info) button that opens an <term type="ediromGui" key="view.desktop.TaskBar_about"/> window and the question mark button to open the <term type="ediromGui" key="view.desktop.TaskBar_help"/> or move it to the foreground.</p>
+                  <figure>
+                     <graphic url="help/images/about.png"/>
+                     <head><term type="ediromGui" key="view.desktop.TaskBar_about"/></head>
+                  </figure>
                   <figure>
                      <graphic url="help/images/help.png"/>
                      <head><term type="ediromGui" key="view.desktop.TaskBar_help"/></head>
@@ -226,29 +235,6 @@
                      <term type="ediromGui" key="view.window.TopBar"/>
                   </head>
                   <p>In the <term type="ediromGui" key="view.window.TopBar"/> there are the following additional menus.</p>
-                  <!-- content windows Faksimile toolbar VIEWMENU -->
-                  <p>
-                     <hi rend="bold">
-                        <term type="ediromGui" key="view.window.source.SourceView_viewMenu"/><lb/>
-                     </hi>
-                     Under <term type="ediromGui" key="view.window.text.TextView_viewMenu"/> there are the following sub-points:
-                     <list type="gloss">
-                        <label>
-                           <term type="ediromGui" key="view.window.source.SourceView_showMeasures"/>
-                        </label>
-                        <item>The option supports the control of the display of <term type="ediromGui" key="Bar"/> numbers from the current source.
-                           In the middle of each <term type="ediromGui" key="Bar"/> the number is shown.</item>
-                        <label>
-                           <term type="ediromGui" key="view.window.source.SourceView_fitView"/>
-                        </label>
-                        <item>The entry controls the adjustment of the zoom level of the source to the current window size.</item>
-                        <label>
-                           <term type="ediromGui" key="view.window.source.SourceView_layersMenu"/>
-                        </label>
-                        <item>The menu entry shows or hides existing layers in the music if they were provided by the edition.
-                           These layers could, for example, be colored notes to visually highlight the additions in the autograph or facsimiles.</item>
-                     </list>
-                  </p>
                   <!-- content windows Faksimile toolbar ANNOTATIONSMENU -->
                   <p>
                      <hi>
@@ -256,13 +242,6 @@
                      </hi>
                      Under <term type="ediromGui" key="view.window.source.SourceView_annotationsMenu"/> there are the following sub-points.
                      <list type="gloss">
-                        <label>
-                           <term type="ediromGui" key="view.window.source.SourceView_ShowAnnotations"/>
-                        </label>
-                        <item>The option enables the display of the critical report annotations as annotation symbols on the facsimiles or edition.
-                           Annotations can be filtered by priority and category (see below).
-                           In each source, only the annotations that are related to the open source are displayed.
-                           Mouseover over the annotation symbol opens a tooltip that can be used to open the annotation in a new window.</item>
                         <label>
                            <term type="ediromGui" key="view.window.source.SourceView_prioMenu"/>
                         </label>
@@ -299,31 +278,13 @@
                   <p>The <term type="ediromGui" key="view.window.BottomBar"/> contains the following tools for navigation within the content of the sources:</p>
                   <figure>
                      <graphic url="help/images/pageView.png"/>
-                     <head><term type="ediromGui" key="view.window.source.SourceView_PageBasedView"/>: switches to page-based navigation of the source.</head>
+                     <head><term type="ediromGui" key="view.window.source.SourceView_PageBasedView"/></head>
+                     <p>This switches to page-based navigation of the source.</p>
                   </figure>
                   <figure>
                      <graphic url="help/images/barView.png"/>
-                     <head><term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView"/>: switches to <term type="ediromGui" key="Bar"/>-based navigation of the source. When this view is activated, the following three additional tools appear in the <term type="ediromGui" key="view.window.BottomBar"/>.</head>
-                  </figure>
-                  <figure>
-                     <graphic url="help/images/SourceView_measureBasedCombo.png"/>
-                     <head><term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView"/>, <term type="ediromGui" key="view.window.source.SourceView_measureBasedCombo"/>: The movement whose <term type="ediromGui" key="Bar"/>s should be displayed can be selected.</head>
-                  </figure>
-                  <figure>
-                     <graphic url="help/images/selectVoices.png"/>
-                     <head><term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView"/>, <term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView_selectVoices"/>: Individual parts can be selected. This tool is only available when different parts are in the encoding.</head>
-                  </figure>  
-                  <figure>
-                     <graphic url="help/images/SourceView_measureBasedRange.png"/>
-                     <head><term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView"/>, <term type="ediromGui" key="view.window.source.SourceView_measureBasedRange"/>: Enter a <term type="ediromGui" key="Bar"/> range through which you want to scroll.</head>
-                  </figure>
-                  <figure>
-                     <graphic url="help/images/slider.png"/>
-                     <head><term type="ediromGui" key="view.window.source.SourceView_zoomSlider"/></head>
-                  </figure>
-                  <figure>
-                     <graphic url="help/images/zoom-fit.png"/>
-                     <head><term type="ediromGui" key="view.window.source.SourceView_fitView"/>: resizes the current source to fit the window.</head>
+                     <head><term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView"/></head>
+                     <p>switches to <term type="ediromGui" key="Bar"/>-based navigation of the source. When this view is activated,slightly different tools appear in the <term type="ediromGui" key="view.window.BottomBar"/> as in the <term type="ediromGui" key="view.window.source.SourceView_PageBasedView"/> (see descriptions below).</p>
                   </figure>
                   <figure>
                      <graphic url="help/images/prev-box-next.png"/>
@@ -331,6 +292,41 @@
                      <p>The number in the number field shows the current page number (<term type="ediromGui" key="view.window.source.SourceView_PageBasedView"/>) or <term type="ediromGui" key="Bar"/> number (<term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView"/>).
                         Switching to another page or <term type="ediromGui" key="Bar"/> is possible by clicking on the arrow heads or entering a number in the number field.
                         The possible numbers correspond to the source, so they do not always start with 1 and can also contain alphanumeric characters.</p>
+                  </figure>
+                  <figure>
+                     <graphic url="help/images/slider.png"/>
+                     <head><term type="ediromGui" key="view.window.source.SourceView_PageBasedView"/>, <term type="ediromGui" key="view.window.source.SourceView_zoomSlider"/></head>
+                     <p>This sets the zoom level for the displayed source.</p>
+                  </figure>
+                  <figure>
+                     <graphic url="help/images/SourceView_measureBasedCombo.png"/>
+                     <head><term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView"/>, <term type="ediromGui" key="view.window.source.SourceView_measureBasedCombo"/></head>
+                     <p>The movement whose <term type="ediromGui" key="Bar"/>s should be displayed can be selected.</p>
+                  </figure>
+                  <figure>
+                     <graphic url="help/images/SourceView_measureBasedRange.png"/>
+                     <head><term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView"/>, <term type="ediromGui" key="view.window.source.SourceView_measureBasedRange"/></head>
+                     <p>Enter a <term type="ediromGui" key="Bar"/> range through which you want to scroll.</p>
+                  </figure>
+                  <figure>
+                     <graphic url="help/images/selectVoices.png"/>
+                     <head><term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView"/>, <term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView_selectVoices"/></head>
+                     <p>Individual parts can be selected. This tool is only available when different parts are in the encoding.</p>
+                  </figure>
+                  <figure>
+                     <graphic url="help/images/measureNumbers.png"/>
+                     <head><term type="ediromGui" key="view.desktop.TaskBar_measureNumbers"/></head>
+                     <p>The <term type="ediromGui" key="Bar"/>s of facsimiles and editions are usually provided with numbers; these can be shown and hidden in the current window using this button. The window's setting will be overridden when the global <term type="ediromGui" key="view.desktop.TaskBar_measureNumbers"/> button is used.</p>
+                  </figure>
+                  <figure>
+                     <graphic url="help/images/annotations.png"/>
+                     <head><term type="ediromGui" key="view.desktop.TaskBar_annotations"/></head>
+                    <p>With the speech bubble button you can <term type="ediromGui" key="view.desktop.TaskBar_annotations"/> for the current window. The window's setting will be overridden when the global <term type="ediromGui" key="view.desktop.TaskBar_annotations"/> button is used.</p>
+                  </figure>
+                  <figure>
+                     <graphic url="help/images/zoom-fit.png"/>
+                     <head><term type="ediromGui" key="view.window.source.SourceView_fitView"/></head>
+                     <p>This resizes the current source to fit the window.</p>
                   </figure>
                </div>
             </div>
