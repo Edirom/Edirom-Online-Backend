@@ -25,6 +25,7 @@ declare namespace request="http://exist-db.org/xquery/request";
 declare namespace system="http://exist-db.org/xquery/system";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace util="http://exist-db.org/xquery/util";
+declare namespace pref="http://www.edirom.de/ns/prefs/1.0";
 
 (: VARIABLE DECLARATIONS =================================================== :)
 
@@ -54,35 +55,71 @@ declare function eutil:getNamespace($node as node()) as xs:string {
 
 };
 
+
 (:~
  : Returns a localized string
  :
  : @param $node The node to be processed
- : @return The string
+ : @return The localized output string
  :)
-declare function eutil:getLocalizedName($node, $lang) {
+declare function eutil:getLocalizedName($node as element()) as xs:string {
+
+    eutil:getLocalizedName($node, request:get-parameter('lang', ''))
+
+};
+
+
+(:~
+ : Returns a localized string for a provided language
+ :
+ : @param $node The node to be processed
+ : @param $lang The language for the localized output
+ : @return The localized output string
+ :)
+declare function eutil:getLocalizedName($node as element(), $lang as xs:string) as xs:string {
+
+    (: identify the context for further processing:)
+    let $case := ( 'child::mei:title'[$node/mei:title], 'child::mei:name'[$node/mei:name], 
+                   'child::mei:label'[$node/mei:label], 'child::edirom:names'[$node/edirom:names], 
+                   'self::mei:annot'[$node[self::mei:annot]], 'other' )[1]
+        
 
     let $name :=
-        if ($node/mei:title) then (
-            if ($lang = $node/mei:title/@xml:lang) then
-                $node/mei:title[@xml:lang = $lang]/text()
-            else
-                $node/mei:title[1]/text()
+
+        (: if current node has child mei:title or mei:name or mei:label :)
+        if ($case eq 'child::mei:title' or $case eq 'child::mei:name' or $case eq 'child::mei:label') then (
+
+            let $childNodes := $node/mei:*[local-name() = substring-after($case, 'mei:')]
+
+            (: return most appropriate string, either from children's text or empty string :)
+            return
+                (
+                    string-join($childNodes[@xml:lang = $lang]/text(), ' ')[not(matches(., '^\s*$'))],
+                    $childNodes[1]/text(),
+                    ''
+                )[1]
+        )
         
-        ) else if ($node/mei:name) then (
-            if ($lang = $node/mei:name/@xml:lang) then
-                $node/mei:name[@xml:lang = $lang]/text()
-            else
-                $node/mei:name[1]/text()
-        
-        ) else if ($node/edirom:names) then (
+        (: if current node has child edirom:names :)
+        else if ($case eq 'child::edirom:names') then (
             if ($lang = $node/edirom:names/edirom:name/@xml:lang) then
-                $node/edirom:names/edirom:name[@xml:lang = $lang]/node()
+                $node/edirom:names/edirom:name[@xml:lang = $lang]/node() || ''
             else
-                $node/edirom:names/edirom:name[1]/node()
+                $node/edirom:names/edirom:name[1]/node() || ''
+        )
         
-        ) else
-        (normalize-space($node))
+        (: if current node is an mei:annot :)
+        else if ( $case eq 'self::mei:annot' ) then (
+            (: if $node is mei:annot and does not have child mei:title or mei:name (covered by cases above) :)
+            let $mdiv.n := eutil:getLanguageString('Movement_n', string(count($node/ancestor::mei:mdiv/preceding-sibling::mei:mdiv) + 1), $lang)
+            let $measure := eutil:getLanguageString('Bar_n', $node/ancestor::mei:measure/string(@n), $lang)
+            return $mdiv.n || ', ' || $measure
+        )
+
+        (: otherwise :)
+        else (
+            (normalize-space($node))
+        )
     
     return
         if($node/edirom:names) then
@@ -276,11 +313,11 @@ declare function eutil:getPreference($key as xs:string, $preferencesURI as xs:st
     
     return
         (: If there is a value for the key in the custom preferences file :)
-        if($prefFileCustom//entry/@key = $key) then
-            $prefFileCustom//entry[@key = $key]/@value => string()
+        if($prefFileCustom//(pref:entry|entry)/@key = $key) then
+            $prefFileCustom//(pref:entry|entry)[@key = $key]/@value => string()
         (: If not, take the value for the key in the default preferences file :)
         else
-            try { doc($eutil:default-prefs-location)//entry[@key = $key]/@value => string() }
+            try { doc($eutil:default-prefs-location)//(pref:entry|entry)[@key = $key]/@value => string() }
             (: If the key is not in the default file, then there should be an error :)
             catch * { util:log-system-out(concat('Failed to find the key `', $key, '` in default preferences file')) }
 };

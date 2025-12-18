@@ -56,8 +56,10 @@
         <entry key="view.desktop.Desktop_Tile" value="Tile"/>
         
         <entry key="view.desktop.TaskBar_concordanceNav" value="Open concordance navigator"/>
-        <entry key="view.desktop.TaskBar_measureNumbers" value="Show measure numbers"/>
-        <entry key="view.desktop.TaskBar_annotations" value="Show annotations"/>
+        <entry key="view.desktop.TaskBar_measureNumbers" value="Show/hide measure numbers"/>
+        <entry key="view.desktop.TaskBar_showMeasures" value="Show/hide measure numbers (global)"/>
+        <entry key="view.desktop.TaskBar_annotations" value="Show/hide annotations"/>
+        <entry key="view.desktop.TaskBar_showAnnotations" value="Show/hide annotations (global)"/>
         <entry key="view.desktop.TaskBar_help" value="Help"/>
         <entry key="view.desktop.TaskBar_pref" value="Preferences"/>
         <entry key="view.desktop.TaskBar_lang" value="Switch language"/>
@@ -106,7 +108,7 @@
         <entry key="view.window.source.SourceView_prioMenu" value="Priorities…"/>
         <entry key="view.window.source.SourceView_gotoMovement" value="Go to movement/number…"/>
         <entry key="view.window.source.SourceView_layersMenu" value="Layers…"/>
-        <entry key="view.window.source.SourceView_showMeasures" value="Show/Hide measures"/>
+        <entry key="view.window.source.SourceView_showMeasures" value="Show/hide measures (this window)"/>
         <entry key="view.window.source.SourceView_fitView" value="Fit score"/>
         <entry key="view.window.source.SourceView_PageBasedView" value="Page based view"/>
         <entry key="view.window.source.SourceView_PageBasedView_previousPage" value="Previous page"/>
@@ -120,7 +122,7 @@
         <entry key="view.window.source.SourceView_MeasureBasedView_movementSelectorBox" value="Select movement"/>
         <entry key="view.window.source.SourceView_MeasureBasedView_selectVoices" value="Select parts"/>
         <entry key="view.window.source.SourceView_annotationsMenu" value="Annotations"/>
-        <entry key="view.window.source.SourceView_ShowAnnotations" value="Show/Hide annotations"/>
+        <entry key="view.window.source.SourceView_showAnnotations" value="Show/hide annotations (this window)"/>
         <entry key="view.window.source.SourceView_gotoMenu" value="Go to…"/>
         <entry key="view.window.source.SourceView_gotoMeasure" value="Go to measure…"/>
         <entry key="view.window.source.SourceView_GotoMsg_Title" value="Go to measure…"/>

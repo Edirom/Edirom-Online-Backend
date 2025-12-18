@@ -3,7 +3,7 @@
 
     <import file="${basedir}/testing/ant-tests.xml"/>
 
-    <property name="project.version" value="1.1.0"/>
+    <property name="project.version" value="1.2.0"/>
     <property name="project.app" value="Edirom-Online-Backend"/>
     <property name="project.title" value="Edirom Online Backend"/>
     <property name="repo.target" value="${project.app}"/>

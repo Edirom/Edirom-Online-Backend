@@ -19,6 +19,7 @@ import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/e
 declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace request = "http://exist-db.org/xquery/request";
 declare namespace response = "http://exist-db.org/xquery/response";
+declare namespace pref = "http://www.edirom.de/ns/prefs/1.0";
 
 (: OPTION DECLARATIONS ===================================================== :)
 
@@ -44,8 +45,8 @@ return
             </output:serialization-parameters>
         let $data := 
             map:merge((
-                $file//entry ! map:entry(./string(@key), ./string(@value)), 
-                $projectFile//entry ! map:entry(./string(@key), ./string(@value))  
+                $file//(pref:entry|entry) ! map:entry(./string(@key), ./string(@value)), 
+                $projectFile//(pref:entry|entry) ! map:entry(./string(@key), ./string(@value))  
             ))
         return
             response:stream($data => serialize($outputOptions), $serializationParameters)
