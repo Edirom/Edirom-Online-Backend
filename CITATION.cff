@@ -46,7 +46,7 @@ identifiers:
     value: 10.5281/zenodo.17953690
     description: Edirom Online Backend
 repository-code: https://github.com/Edirom/Edirom-Online-Backend
-commit: a52adee3d786427202d5ae985172a0cce7db2081
+commit: 840507f6e5882f62a55dcf20c2a91b3455b6e27b
 abstract: >-
   Edirom-Online Backend is the backend for the Edirom 
   Online which is used for the presentation and
@@ -54,5 +54,5 @@ abstract: >-
   particularly in the fields of musicology and philology.
 license: GPL-3.0
 version: v1.2.0
-date-released: 2025-12-18
+date-released: 2025-12-19
 
