@@ -142,7 +142,7 @@
         <entry key="view.desktop.Desktop" value="Desktop"/>
         <entry key="view.desktop.TopBar" value="Toolbar"/>
         <entry key="view.desktop.TopBar_searchField" value="Suchfeld"/>
-        <entry key="view.desktop.TopBar_homeBtn" value="{key=view.desktop.TaskBar_home} Button"/>
+        <entry key="view.desktop.TopBar_homeBtn" value="{key=view.desktop.TaskBar_home}Button"/>
         <entry key="view.desktop.TaskBar" value="Taskbar"/>
         <entry key="view.desktop.TaskBar_btnDesktop" value="Button der Task-Leiste"/>
         <entry key="view.window.TopBar" value="Fenster-Toolbar"/>
