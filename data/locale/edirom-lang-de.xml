@@ -82,8 +82,8 @@
         <entry key="view.window.AnnotationView_Participants" value="Subjekte"/>
         <entry key="view.window.AnnotationView_Source" value="Quelle"/>
         <entry key="view.window.AnnotationView_Sources" value="Quellen"/>
-        <entry key="view.window.AnnotationView_Siglum" value="Source Siglum"/>
-        <entry key="view.window.AnnotationView_Sigla" value="Quelle"/>
+        <entry key="view.window.AnnotationView_Siglum" value="Siglum"/>
+        <entry key="view.window.AnnotationView_Sigla" value="Siglen"/>
         <entry key="view.window.AnnotationView_AnnotationID" value="Annot.-ID"/>
         <entry key="view.window.AnnotationView_List" value="Liste"/>
         <entry key="view.window.AnnotationView_Display" value="Darstellung"/>
@@ -102,6 +102,13 @@
         <entry key="view.window.concordanceNavigator.ConcordanceNavigator_Show" value="Anzeigen"/>
         
         <entry key="view.window.search.SearchWindow_Title" value="Suche"/>
+        <entry key="view.window.search.SearchWindow_Hit" value="Treffer"/>
+        <entry key="view.window.search.SearchWindow_Hits" value="Treffer"/>
+        <entry key="view.window.search.SearchWindow_NoHit" value="Kein Treffer gefunden"/>
+        <entry key="view.window.search.SearchWindow_NoHits" value="Keine Treffer gefunden"/>
+        <entry key="view.window.search.SearchWindow_HitsIn" value="Treffer gefunden in"/>
+        <entry key="view.window.search.SearchWindow_ShowAllHits" value="Alle Treffer zeigen"/>   
+        <entry key="view.window.search.SearchWindow_Objects" value="Objekten"/>
         <entry key="view.window.about.AboutWindow_Title" value="About Edirom Online"/>
         <entry key="view.window.about.AboutWindow_License" value="Lizenz"/>
         <entry key="view.window.source.SourceView_categoriesMenu" value="Kategorien…"/>
@@ -182,8 +189,11 @@
         <entry key="Bars_from_to" value="Takte {0} bis {1}"/>
         <entry key="Bar_n" value="Takt {0}"/>
         <entry key="Bar" value="Takt"/>
+        <entry key="Bars" value="Takte"/>
         <entry key="Movement_n" value="Satz {0}"/>
         <entry key="Movement" value="Satz"/>
+        <entry key="Detail" value="Ausschnitt"/>
+        <entry key="Abbrev_page" value="S."/>
         <!-- XSL-FO specific -->
         <entry key="contentsWord" value="Inhaltsverzeichnis"/>
 

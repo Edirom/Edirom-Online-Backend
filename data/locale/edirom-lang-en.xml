@@ -82,8 +82,8 @@
         <entry key="view.window.AnnotationView_Participants" value="Participants"/>
         <entry key="view.window.AnnotationView_Source" value="Source"/>
         <entry key="view.window.AnnotationView_Sources" value="Sources"/>
-        <entry key="view.window.AnnotationView_Siglum" value="Source Siglum"/>
-        <entry key="view.window.AnnotationView_Sigla" value="Source Sigla"/>
+        <entry key="view.window.AnnotationView_Siglum" value="Siglum"/>
+        <entry key="view.window.AnnotationView_Sigla" value="Sigla"/>
         <entry key="view.window.AnnotationView_AnnotationID" value="Annot.-ID"/>
         <entry key="view.window.AnnotationView_List" value="List"/>
         <entry key="view.window.AnnotationView_Display" value="Display"/>
@@ -102,6 +102,13 @@
         <entry key="view.window.concordanceNavigator.ConcordanceNavigator_Show" value="Show"/>
         
         <entry key="view.window.search.SearchWindow_Title" value="Search"/>
+        <entry key="view.window.search.SearchWindow_Hit" value="hit"/>
+        <entry key="view.window.search.SearchWindow_Hits" value="hits"/>
+        <entry key="view.window.search.SearchWindow_NoHit" value="No hit found"/>
+        <entry key="view.window.search.SearchWindow_NoHits" value="No hits found"/>
+        <entry key="view.window.search.SearchWindow_HitsIn" value="Found hits in"/>
+        <entry key="view.window.search.SearchWindow_ShowAllHits" value="show all hits"/>        
+        <entry key="view.window.search.SearchWindow_Objects" value="objects"/>
         <entry key="view.window.about.AboutWindow_Title" value="About Edirom Online"/>
         <entry key="view.window.about.AboutWindow_License" value="License"/>
         <entry key="view.window.source.SourceView_categoriesMenu" value="Categories…"/>
@@ -181,8 +188,11 @@
         <entry key="Bars_from_to" value="Bars {0} to {1}"/>
         <entry key="Bar_n" value="Bar {0}"/>
         <entry key="Bar" value="bar"/>
+        <entry key="Bars" value="bars"/>
         <entry key="Movement_n" value="Movement {0}"/>
         <entry key="Movement" value="movement"/>
+        <entry key="Detail" value="detail"/>
+        <entry key="Abbrev_page" value="p."/>
         <!-- XSL-FO specific -->
         <entry key="contentsWord" value="Table of contents"/>
         

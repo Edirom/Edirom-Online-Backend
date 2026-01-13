@@ -417,30 +417,22 @@ declare function local:getItemLabel($elems as element()*) as xs:string {
                         let $measureNs := distinct-values($items/ancestor::mei:measure/@n)
 
                         let $label :=
-                            if ($lang = 'de') then(
-                                if (count($measureNs) gt 1) then
-                                    (concat('Takte ', $measureNs[1], '-', $measureNs[last()]))
-                                else (
-                                    concat('Takt ', $measureNs[1])
-                                )
-                            ) else (
-                                if (count($measureNs) gt 1) then (
-                                    concat('Bars ', $measureNs[1], '-', $measureNs[last()])
-                                ) else (
-                                    concat('Bar ', $measureNs[1])
-                                )
+                            if (count($measureNs) gt 1) then
+                                (concat(eutil:getLanguageString('Bars', (), $lang), ' ', $measureNs[1], '-', $measureNs[last()]))
+                            else (
+                                concat(eutil:getLanguageString('Bar', (), $lang), ' ', $measureNs[1])
                             )
 
                         return
                             concat($label, ' (', string-join($items/preceding::mei:staffDef[@n = $items[1]/@n][1]/@label.abbr, ', '), ')')
                     ) else
-                        (concat('Takt ', $items[1]/ancestor::mei:measure/@n, ' (', $items[1]/preceding::mei:staffDef[@n = $items[1]/@n][1]/@label.abbr, ')'))
+                        (concat(eutil:getLanguageString('Bar', (), $lang), ' ', $items[1]/ancestor::mei:measure/@n, ' (', $items[1]/preceding::mei:staffDef[@n = $items[1]/@n][1]/@label.abbr, ')'))
 
                 ) else if (local-name($items[1]) eq 'zone') then (
                     if (count($items) gt 1) then (
                         (:Dieser Fall sollte nicht vorkommen, da freie zones nicht zusammengefasst werden dürfen:)
                     ) else (
-                        concat('Ausschnitt (S. ', $items[1]/parent::mei:surface/@n, ')')
+                        concat(eutil:getLanguageString('Detail', (), $lang), ' (', eutil:getLanguageString('Abbrev_page', (), $lang), ' ', $items[1]/parent::mei:surface/@n, ')')
                     )
                 ) else ()
         ), ' ')

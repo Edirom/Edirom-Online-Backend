@@ -90,15 +90,9 @@ let $return :=
         return (
             
             if (count($search) gt 0) then (
-                if ($lang = 'de') then
-                    (<div class="searchResultOverview">Die Suche ergab Treffer in <span class="num">{count($search)}</span> Objekten:</div>)
-                else
-                    (<div class="searchResultOverview">Hits in <span class="num">{count($search)}</span> objects:</div>)
-            ) else (
-                if ($lang = 'de') then
-                    (<div class="searchResultOverview">Die Suche ergab keine Treffer.</div>)
-                else
-                    (<div class="searchResultOverview">No match found.</div>)
+                    (<div class="searchResultOverview">{eutil:getLanguageString('view.window.search.SearchWindow_HitsIn', (), $lang)} <span class="num">{count($search)}</span> {eutil:getLanguageString('view.window.search.SearchWindow_Objects', (), $lang)}:</div>)
+            ) else (                
+                    (<div class="searchResultOverview">{eutil:getLanguageString('view.window.search.SearchWindow_NoHits', (), $lang)}.</div>)
             ),
             
             for $hit in $search
@@ -135,13 +129,10 @@ let $return :=
                                 ()
                                 }?term={replace($term, '"', '\\"')}');">{$title}</span><span
                             class="resultCount">{
-                                if ($lang = 'de') then
-                                    (concat('(', $hitCount, ' Treffer', ')'))
+                                if ($hitCount gt 1) then
+                                    (concat('(', $hitCount, ' ', eutil:getLanguageString('view.window.search.SearchWindow_Hits', (), $lang), ')'))
                                 else
-                                    (concat('(', $hitCount, ' hit', if ($hitCount gt 1) then
-                                        ('s')
-                                    else
-                                        (''), ')'))
+                                    (concat('(', $hitCount, ' ', eutil:getLanguageString('view.window.search.SearchWindow_Hit', (), $lang), ')'))
                             }</span></div>
                     {
                         (
@@ -175,10 +166,7 @@ let $return :=
                         ,
                         if ($hitCount gt 3) then
                             (<div class="showMore" onclick="$(this).parent().find('div').show(); $(this).hide();">{
-                                    if ($lang = 'de') then
-                                        ('Alle Treffer zeigen')
-                                    else
-                                        ('show all hits')
+                                eutil:getLanguageString('view.window.search.SearchWindow_ShowAllHits', (), $lang)
                                 }</div>)
                         else
                             ()
