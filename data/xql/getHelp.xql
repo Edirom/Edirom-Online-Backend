@@ -54,10 +54,19 @@ let $doc :=
         </parameters>
     )
 
+let $xsl := doc('../xslt/edirom_removeHead.xsl')
+let $doc :=
+    transform:transform($doc, $xsl,
+        <parameters>
+
+        </parameters>
+    )
+
 return
     transform:transform($doc, doc('../xslt/edirom_idPrefix.xsl'),
         <parameters>
             <param name="idPrefix" value="{$idPrefix}"/>
         </parameters>
     )
+    
 
