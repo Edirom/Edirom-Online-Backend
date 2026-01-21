@@ -54,12 +54,11 @@ let $doc :=
         </parameters>
     )
 
+(: XSLT for removing unnecessary/disturbing head tags, e.g. meta, title, link - because those end up breaking CSS in other windows:)
 let $xsl := doc('../xslt/edirom_removeHead.xsl')
 let $doc :=
     transform:transform($doc, $xsl,
-        <parameters>
-
-        </parameters>
+        <parameters></parameters>
     )
 
 return
