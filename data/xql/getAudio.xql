@@ -42,7 +42,7 @@ let $albumCover := $doc//mei:graphic[@type = 'cover']/string(@target)
 let $records :=
     for $rec in $doc//mei:recording
         let $recSource := $doc//mei:source[@xml:id = substring-after($rec/@decls, '#')]
-        let $recTitle := $recSource/mei:titleStmt/string-join(mei:title, ';')
+        let $recTitle := $recSource/mei:titleStmt/string-join(mei:title, '; ')
         let $avFile := $rec/mei:avFile[1]/string(@target)
         let $avType := $rec/mei:avFile[1]/string(@mimetype)
         return
@@ -51,7 +51,7 @@ let $records :=
                 'composer': replace($artist, '"', '\\"'),
                 "work": replace($album, '"', '\\"'),
                 "src": $avFile,
-                "cover": $albumCover,
+                (: "cover": $albumCover, :)
                 "type": $avType
             }
 
