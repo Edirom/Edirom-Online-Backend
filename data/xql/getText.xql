@@ -116,14 +116,23 @@ let $params := (
 
 let $doc := transform:transform($doc, doc($xsl), <parameters>{$params}</parameters>)
 
-let $body := $doc//xhtml:body
 
+(: Return transformation result $doc in <div class="shadow-host"> and open a shadowDOM via script for the $doc's HTML content :)
 return
     element div {
-        for $attribute in $body/@*
-        return
-            $attribute,
-        for $node in $body/node()
-        return
-            $node
+        attribute class {"shadow-host"},
+        $doc
+    },
+    element script {
+        attribute type {"text/javascript"},
+        text {
+            "
+            document.querySelectorAll('.shadow-host').forEach(host => {
+                const shadow = host.attachShadow({ mode: 'open' });
+                while (host.firstChild) {
+                    shadow.appendChild(host.firstChild);
+                }
+                });
+            "
+        }
     }
