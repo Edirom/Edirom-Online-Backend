@@ -117,6 +117,5 @@ let $params := (
 let $doc := transform:transform($doc, doc($xsl), <parameters>{$params}</parameters>)
 
 
-(: Return transformation result $doc in <div class="shadow-host"> and open a shadowDOM via script for the $doc's HTML content :)
 return
     $doc
