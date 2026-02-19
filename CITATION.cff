@@ -46,7 +46,7 @@ identifiers:
     value: 10.5281/zenodo.17953690
     description: Edirom Online Backend
 repository-code: https://github.com/Edirom/Edirom-Online-Backend
-commit: 3b879525ab307cb6cdb16369a9aff305187b4823
+commit: 7062230550a17ae64ec0283660aa6c2d0d9cebcf
 abstract: >-
   Edirom-Online Backend is the backend for the Edirom 
   Online which is used for the presentation and

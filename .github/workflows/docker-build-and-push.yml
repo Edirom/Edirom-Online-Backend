@@ -1,9 +1,8 @@
 name: Docker Build and Push
 
 on:
-  push:
-    branches:
-      - ftr-136-build-docker-image-and-deploy-to-dockerhub
+  release:
+    types: [published]  # Triggers only when a release is published (not created or edited)
 
 jobs:
   build-and-push:
@@ -15,10 +14,13 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
-          username: Edirom
+          username: vifebot
           password: ${{ secrets.VIFEBOT_DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
         run: |
-          docker build -t Edirom/Edirom-Online-Backend .
-          docker push Edirom/Edirom-Online-Backend
+          IMAGE_NAME="edirom/edirom-online-backend"
+          TAG=${GITHUB_REF#refs/tags/}
+          
+          docker build -t $IMAGE_NAME:$TAG .
+          docker push $IMAGE_NAME:$TAG
