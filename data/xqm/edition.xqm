@@ -52,16 +52,33 @@ declare function edition:details($uri as xs:string) as map(*) {
  :)
  declare
     %rest:GET
-    %rest:path("/editions")
+    %rest:path("/{$apiVersion}/editions")
     %rest:produces("application/json") 
     %output:media-type("application/json")
     %output:method("json")
- function edition:findEditions() {
-    
-    let $editionURIs := edition:findEditionUris()
-    for $edition in $editionURIs
-    return
-        edition:details($edition)
+ function edition:findEditions($apiVersion as xs:string) {
+
+    (: API version 1 (legacy) :)
+    if($apiVersion eq "v1") then
+        let $editionURIs := edition:findEditionUris()
+        for $edition in $editionURIs
+        return
+            edition:details($edition)
+    else 
+
+    (: API version 2 :)
+    if($apiVersion eq "v2") then
+        let $editionURIs := edition:findEditionUris()
+        let $result :=
+            for $edition in $editionURIs
+            return
+                edition:details($edition)
+        return
+            eutil:responseWrapper("json", "true", $result, count($result), 200, "")
+
+    (: Invalid API version :)
+    else
+        eutil:responseWrapper("json", "false", (), 0, 400, "invalid_api_version") 
 };
  
 
