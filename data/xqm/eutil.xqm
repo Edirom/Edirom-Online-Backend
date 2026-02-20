@@ -467,3 +467,60 @@ declare function eutil:joinAndNormalize($strings as xs:string*) as xs:string {
 declare function eutil:joinAndNormalize($strings as xs:string*, $separator as xs:string) as xs:string {
     $strings => string-join($separator) => normalize-space()
 };
+
+(:~
+ : Wrapper for API responses
+ :
+ : @param $outputFormat The output format to be used for the response
+ : @param $success Whether the request was successful or not
+ : @param $data The data to be included in the response
+ : @param $size The size of the data to be included in the response
+ : @param $statusCode The HTTP status code to be included in the response
+ : @param $statusMessage The HTTP status message to be included in the response
+ : @param $errorCode The error code to be included in the response (if applicable)
+ : @return The response in appropriate format (e.g. JSON or XML)
+ :)
+ declare function eutil:responseWrapper($outputFormat as xs:string, $success as xs:string, $data as item()*, 
+ $size as xs:integer, $statusCode as xs:integer, $errorCode as xs:string) as map(*) {
+
+    let $statusMessage := 
+        if($statusCode = 200) then 
+            "OK" 
+        else if($statusCode = 400) then
+            "Bad Request"
+        else if($statusCode = 404) then
+            "Not Found"
+        else if($statusCode = 500) then
+            "Internal Server Error"
+        else
+            ""
+
+    let $response := 
+        (: JSON :)
+        if($outputFormat eq "json") then
+            map {
+                'success': $success,
+                'status_code': $statusCode,
+                'status_message': $statusMessage,
+                'error_code': $errorCode,
+                'data': $data,
+                'size': $size
+            }
+        else 
+        (: XML :)
+        if($outputFormat eq "xml") then
+            element response {
+                element success { $success },
+                element status_code { $statusCode },
+                element status_message { $statusMessage },
+                element error_code { $errorCode },
+                element data { $data },
+                element size { $size }
+            }
+        else
+        (: unspecified :)
+            "Invalid output format specified"
+    
+    return
+        $response
+};
