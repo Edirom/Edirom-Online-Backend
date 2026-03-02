@@ -25,4 +25,5 @@ declare option output:media-type "application/json";
 
 (: QUERY BODY ============================================================== :)
 
-edition:findEditions()
+(: return info about editions in via v1 API:)
+edition:findEditions('v1')
