@@ -26,7 +26,8 @@ let $uri := request:get-parameter('uri', '')
 let $idPrefix := request:get-parameter('idPrefix', '')
 let $term := request:get-parameter('term', '')
 let $page := request:get-parameter('page', '')
+let $lang := request:get-parameter('lang', '')
 let $contextPath := request:get-scheme()|| "://" || request:get-server-name() || ":" || request:get-server-port() || request:get-context-path()
 
 return 
-    teitext:getHtmlAPI("v1", $edition, $uri, $idPrefix, $term, $page, $contextPath)
+    teitext:getHtmlAPI("v1", $edition, $uri, $idPrefix, $term, $page, $contextPath, $lang)
