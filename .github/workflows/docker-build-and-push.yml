@@ -71,7 +71,7 @@ jobs:
         run: docker run --rm -p 8080:8080 --name edirom-online-backend -d ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
 
       - name: Check the deployed service URL
-        run: i=0 ; while (! curl --fail -sv http://localhost:8080/index.html) ; do if ((i > 20)) ; then echo ' **** timeout ... aborting **** ' ; exit 1 ; else sleep 5 ; echo waiting for container ... ; i=$((i+1)) ; fi ; done
+        run: i=0 ; while (! curl --fail -sv http://localhost:8080/exist/apps/Edirom-Online-Backend/index.html) ; do if ((i > 20)) ; then echo ' **** timeout ... aborting **** ' ; exit 1 ; else sleep 5 ; echo waiting for container ... ; i=$((i+1)) ; fi ; done
 
       - name: Install libxml2-utils for xmllint
         run: |
