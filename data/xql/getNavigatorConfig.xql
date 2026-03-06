@@ -51,22 +51,13 @@ declare function local:getCategory($category) {
 };
 
 declare function local:getItem($item) {
-    let $target := $item/replace(@targets, '\[.*\]', '')
-    let $cfg := substring-before($item/substring-after(@targets, '['), ']')
-    let $baseMap := map {
+    map {
         "type": "navigatorItem",
         "id": string($item/@xml:id),
         "sortNo": string($item/@sortNo),
         "name": eutil:getLocalizedName($item, $lang),
-        "targets": string($item/@targets),
-        "target": $target
+        "targets": string($item/@targets)
     }
-    
-    return
-        if ($cfg != '') then
-            map:put($baseMap, "config", $cfg)
-        else
-            $baseMap
 };
 
 declare function local:getSeparator() {
