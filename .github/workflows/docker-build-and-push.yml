@@ -3,10 +3,10 @@ name: Docker Build, Test, and Push
 on:
   push:
     tags: [ v** ]
-    branches: [ develop, main ]
+    branches: [ develop ]
   pull_request:
     types: [ opened, synchronize, reopened ]
-    branches: [ develop, main ]
+    branches: [ develop ]
 
 jobs:
 
@@ -55,7 +55,7 @@ jobs:
         with:
           images: edirom/edirom-online-backend
           flavor: |
-            latest=${{ github.ref == 'refs/heads/main' }}
+            latest=auto
 
       # Build without pushing
       # subsequent steps will use this image from cache
