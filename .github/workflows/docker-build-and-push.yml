@@ -56,7 +56,17 @@ jobs:
           images: edirom/edirom-online-backend
           flavor: |
             latest=auto
-
+          flavor: |
+            latest=auto
+          tags: |
+           # on push triggers output branch name as tag
+            type=ref,event=branch
+            # on push tag events output git-tag-name as dockerimage-tag, e.g.: v1.2.3
+            type=semver,pattern={{raw}}
+            # output v+major.minor dockerimage tag, e.g.: v1.2
+            type=semver,prefix=v,pattern={{major}}.{{minor}}
+            # output major version at dockerimage-tag, e.g.: v1
+            type=semver,prefix=v,pattern=v{{major}}
       # Build without pushing
       # subsequent steps will use this image from cache
       # https://docs.docker.com/build/ci/github-actions/test-before-push/
