@@ -56,8 +56,6 @@ jobs:
           images: edirom/edirom-online-backend
           flavor: |
             latest=auto
-          flavor: |
-            latest=auto
           tags: |
            # on push triggers output branch name as tag
             type=ref,event=branch
