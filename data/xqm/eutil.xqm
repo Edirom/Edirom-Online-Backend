@@ -6,9 +6,6 @@ xquery version "3.1";
 (:~
  : This module provides library utility functions
  :
- : @author <a href="mailto:roewenstrunk@edirom.de">Daniel Röwenstrunk</a>
- : @author <a href="mailto:roewenstrunk@edirom.de">Nikolaos Beer</a>
- : @author <a href="mailto:bohl@edirom.de">Benjamin W. Bohl</a>
  :)
 
 module namespace eutil = "http://www.edirom.de/xquery/eutil";
