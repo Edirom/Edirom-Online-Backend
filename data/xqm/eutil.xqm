@@ -437,7 +437,7 @@ declare function eutil:iso3166-1-to-iso639($iso3166-1 as xs:string) as xs:string
  : @author Benjamin W. Bohl
  : @return xs:string ISO 639 language code
  :)
-declare function eutil:request-lang-preferred-iso639() as xs:string {
+declare function eutil:request-lang-preferred-iso639() as xs:string? {
 
     let $request.accept-language := request:get-header("Accept-Language")
     return
@@ -460,7 +460,7 @@ declare function eutil:request-lang-preferred-iso639() as xs:string {
                 eutil:iso3166-1-to-iso639($tokens.qmax.first)
         
         else
-            "en"
+            ()
 
 };
 
