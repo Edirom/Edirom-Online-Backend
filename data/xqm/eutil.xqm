@@ -19,10 +19,12 @@ import module namespace functx = "http://www.functx.com";
 declare namespace edirom="http://www.edirom.de/ns/1.3";
 declare namespace mei="http://www.music-encoding.org/ns/mei";
 declare namespace request="http://exist-db.org/xquery/request";
+declare namespace session="http://exist-db.org/xquery/session";
 declare namespace system="http://exist-db.org/xquery/system";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace util="http://exist-db.org/xquery/util";
 declare namespace pref="http://www.edirom.de/ns/prefs/1.0";
+declare namespace xmldb="http://exist-db.org/xquery/xmldb";
 
 (: VARIABLE DECLARATIONS =================================================== :)
 
@@ -47,8 +49,14 @@ declare variable $eutil:app-root as xs:string :=
 ;
 
 declare variable $eutil:default-prefs-location as xs:string := '../prefs/edirom-prefs.xml';
-declare variable $eutil:lang as xs:string := eutil:getLanguage();
-declare variable $eutil:langDoc as document-node() := doc('../locale/edirom-lang-' || $eutil:lang || '.xml');
+declare variable $eutil:supported-languages :=
+    (: Extract supported languages from the provided langFiles :)
+    collection($eutil:app-root || '/data/locale')//langFile/data(lang);
+declare variable $eutil:langDoc :=
+    function($lang as xs:string?) as document-node()? {
+        collection($eutil:app-root || '/data/locale')//langFile/lang[.=eutil:getSetLanguage($lang)]/root()
+        (:eutil:getDoc('../locale/edirom-lang-' || eutil:getSetLanguage($lang) || '.xml'):)
+    };
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
@@ -81,7 +89,7 @@ declare function eutil:getNamespace($node as node()) as xs:string {
  :)
 declare function eutil:getLocalizedName($node as element()) as xs:string {
 
-    eutil:getLocalizedName($node, request:get-parameter('lang', ''))
+    eutil:getLocalizedName($node, eutil:getSetLanguage(()))
 
 };
 
@@ -227,7 +235,7 @@ declare function eutil:getDoc($uri as xs:string?) as document-node()? {
  :)
 declare function eutil:getPartLabel($measureOrPerfRes as node(), $type as xs:string) as xs:string {
 
-    let $lang := $eutil:lang
+    let $lang := eutil:getSetLanguage(())
 
     let $part := $measureOrPerfRes/ancestor::mei:part
     let $voiceRef := $part//mei:staffDef/@decls
@@ -267,7 +275,7 @@ declare function eutil:getPartLabel($measureOrPerfRes as node(), $type as xs:str
  :)
 declare function eutil:getLanguageString($key as xs:string, $values as xs:string*) as xs:string? {
 
-    eutil:getLanguageString($key, $values, eutil:getLanguage())
+    eutil:getLanguageString($key, $values, eutil:getSetLanguage(()))
 };
 
 (:~
@@ -282,7 +290,7 @@ declare function eutil:getLanguageString($key as xs:string, $values as xs:string
  :)
 declare function eutil:getLanguageString($key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string? {
 
-    let $langString := $eutil:langDoc//entry[@key = $key]/string(@value)
+    let $langString := $eutil:langDoc($lang)//entry[@key = $key]/string(@value)
 
     return
         if($langString) 
@@ -315,7 +323,7 @@ declare function eutil:getLanguageString($langFileURI as xs:string, $key as xs:s
             $langFileCustom//entry[@key = $key]/@value => string()
         (: If not, take the value for the key in the default language file :)
         else
-            $eutil:langDoc//entry[@key = $key]/@value => string()
+            $eutil:langDoc($lang)//entry[@key = $key]/@value => string()
     return
         if($langString) 
         (: replace placeholders in the language string with values provided to the function as parameter :)
@@ -349,16 +357,47 @@ declare function eutil:getPreference($key as xs:string, $preferencesURI as xs:st
 };
 
 (:~
- : Return the application language
+ : Get and set the application language
  :
+ : If a `$lang` parameter is provided and it is supported by some langFile, the same value will be returned
+ :      and saved to the current session. If the provided value is not supported, an error will be raised.
+ : If no `$lang` parameter is provided (i.e. `$lang` equals the empty-sequence), the function will try
+ :      to determine the language in the following order:
+ : 1. from the HTTP request parameter "lang"
+ : 2. from the session attribute "lang"
+ : 3. from the preferred browser language as provided in the "Accept-Language" header
+ : 4. from the first supported language provided by `$eutil:supported-languages`
+ :
+ : @param $lang The language code (e.g. "de" or "en")
  : @return The language key
  :)
-declare function eutil:getLanguage() as xs:string {
-    
-    if (request:get-parameter("lang", "") != "") then
-        request:get-parameter("lang", "")
-    else    
-        'de'
+declare function eutil:getSetLanguage($lang as xs:string?) as xs:string? {
+
+    if ($lang)
+    then
+        if ($lang = $eutil:supported-languages)
+        then (
+            $lang,
+            session:set-attribute('lang', $lang)
+        )
+        else (
+            util:log-system-out('Language code "' || $lang || '" is not supported. Please try with "' || string-join($eutil:supported-languages, '", "') || '".')
+        )
+    else if (request:get-parameter('lang', '') = $eutil:supported-languages)
+    then (
+        request:get-parameter('lang', ''),
+        session:set-attribute('lang', request:get-parameter('lang', ''))
+    )
+    else if(session:exists() and session:get-attribute('lang') = $eutil:supported-languages)
+    then
+        session:get-attribute('lang')
+    else if(eutil:request-lang-preferred-iso639() = $eutil:supported-languages)
+    then (
+        eutil:request-lang-preferred-iso639(),
+        session:set-attribute('lang', eutil:request-lang-preferred-iso639())
+    )
+    else
+        $eutil:supported-languages[1]
 };
 
 (:~
