@@ -26,6 +26,26 @@ declare namespace pref="http://www.edirom.de/ns/prefs/1.0";
 
 (: VARIABLE DECLARATIONS =================================================== :)
 
+(:
+    Determine the application root collection from the current module load path.
+:)
+declare variable $eutil:app-root as xs:string :=
+    let $rawPath := replace(system:get-module-load-path(), '/null/', '//')
+    let $modulePath :=
+        (: strip the xmldb: part :)
+        if (starts-with($rawPath, "xmldb:exist://")) then
+            if (starts-with($rawPath, "xmldb:exist://embedded-eXist-server")) then
+                substring($rawPath, 36)
+            else if (contains($rawPath, "/xmlrpc/")) then
+                substring-after($rawPath, "/xmlrpc")
+            else
+                substring($rawPath, 15)
+        else
+            $rawPath
+    return
+        substring-before($modulePath, "/data/xqm")
+;
+
 declare variable $eutil:default-prefs-location as xs:string := '../prefs/edirom-prefs.xml';
 declare variable $eutil:lang as xs:string := eutil:getLanguage();
 declare variable $eutil:langDoc as document-node() := doc('../locale/edirom-lang-' || $eutil:lang || '.xml');
