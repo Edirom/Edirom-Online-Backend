@@ -47,7 +47,7 @@ declare variable $eutil:app-root as xs:string :=
     return
         substring-before($modulePath, "/data/xqm")
 ;
-
+declare variable $eutil:INVALID_LANGUAGE_CODE := QName("http://www.edirom.de/xquery/eutil", "InvalidLanguageCodeError");
 declare variable $eutil:default-prefs-location as xs:string := '../prefs/edirom-prefs.xml';
 declare variable $eutil:supported-languages :=
     (: Extract supported languages from the provided langFiles :)
@@ -381,7 +381,7 @@ declare function eutil:getSetLanguage($lang as xs:string?) as xs:string? {
             session:set-attribute('lang', $lang)
         )
         else (
-            util:log-system-out('Language code "' || $lang || '" is not supported. Please try with "' || string-join($eutil:supported-languages, '", "') || '".')
+            error($eutil:INVALID_LANGUAGE_CODE, 'Language code "' || $lang || '" is not supported. Please try with "' || string-join($eutil:supported-languages, '", "') || '".')
         )
     else if (request:get-parameter('lang', '') = $eutil:supported-languages)
     then (
