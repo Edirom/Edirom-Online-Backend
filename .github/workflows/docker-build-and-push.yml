@@ -61,6 +61,7 @@ jobs:
           # on tag output v+major.minor dockerimage tag, e.g.: v1.2
           # on tag output major version at dockerimage-tag, e.g.: v1
           tags: |
+            type=ref,event=pr
             type=ref,event=branch
             type=semver,pattern={{raw}}
             type=semver,prefix=v,pattern={{major}}.{{minor}}
