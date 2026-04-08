@@ -28,10 +28,13 @@ Checkout develop branch: `git checkout develop`
   - [ ] TEI stylesheets
   - [ ] Euryanthe
 
-Checkout new release branch: `git checkout -b release/vX.Y.Z develop`
+Prepare and checkout new release in branch
+- [ ] have a look into release milestone and manage last issues and PRs
+- [ ] `git checkout develop` and `git pull`
+- [ ] `git checkout -b release/vX.Y.Z develop`
 - [ ] update CITATION.cff (date, contributors, version, DOI)
 - [ ] bump version number everywhere (find/replace in code), e.g. in build.xml
-- [ ] commit version release branch
+- [ ] `git add [... changed files ...]` and `git commit -m "new version updates"`
 - [ ] build .xar and test it
 
 Checkout main branch: `git checkout main`
@@ -57,10 +60,6 @@ Publication on [zenodo.org](https://zenodo.org)
 - [ ] update description (take "What's changed" section from GitHub release info)
 - [ ] double-check metadata
 - [ ] publish on Zenodo (with updated files) -> *link publication DOI*
-
-Clean-up
-- [ ] delete branch *release/vX.Y.Z*
-- [ ] announce new version to Edirom-Online community
 
 Plan next release
 - [ ] create new release issue
