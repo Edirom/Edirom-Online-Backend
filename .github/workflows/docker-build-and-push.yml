@@ -65,7 +65,7 @@ jobs:
             type=ref,event=branch
             type=semver,pattern={{raw}}
             type=semver,prefix=v,pattern={{major}}.{{minor}}
-            type=semver,prefix=v,pattern=v{{major}}
+            type=semver,prefix=v,pattern={{major}}
       # Build without pushing
       # subsequent steps will use this image from cache
       # https://docs.docker.com/build/ci/github-actions/test-before-push/
