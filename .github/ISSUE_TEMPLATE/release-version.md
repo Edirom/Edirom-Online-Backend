@@ -51,8 +51,11 @@ Release on [github.com](https://github.com)
 - [ ] upload the tested Edirom-Online-X.Y.Z.xar (asset)
 - [ ] publish the release on GitHub - *link GitHub release*
 
-Checkout develop branch: `git checkout develop`
-- [ ] `git merge --no-ff release/vX.Y.Z` (release branch into develop)
+Merge and clean up branches
+- [ ] `git checkout develop`
+- [ ] `git merge --no-ff main` (main branch into develop)
+- [ ] `git push origin --delete release/vX.Y.Z` 
+- [ ] `git branch -d release/vX.Y.Z`
 
 Publication on [zenodo.org](https://zenodo.org)
 - [ ] edit publication draft
