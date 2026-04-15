@@ -36,7 +36,7 @@ declare variable $imageserver := edition:getPreference('image_server', $edition)
 
 declare variable $imageBasePath := edition:getPreference('image_prefix', $edition);
 
-declare variable $lang := request:get-parameter('lang', '');
+declare variable $lang := eutil:getSetLanguage(());
 
 (: FUNCTION DECLARATIONS =================================================== :)
 

@@ -30,7 +30,7 @@ declare option output:media-type "application/json";
 
 (: VARIABLE DECLARATIONS =================================================== :)
 
-declare variable $lang := request:get-parameter('lang', '');
+declare variable $lang := eutil:getSetLanguage(());
 declare variable $edition := request:get-parameter('edition', '');
 declare variable $imageserver := edition:getPreference('image_server', $edition);
 declare variable $uri := request:get-parameter('uri', '');

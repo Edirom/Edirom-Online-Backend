@@ -9,7 +9,7 @@
 # 1. Build Environment
 #########################
 
-FROM eclipse-temurin:21 as builder
+FROM eclipse-temurin:21 AS builder
 
 # installing Apache Ant
 RUN apt-get install -y --no-install-recommends apt-transport-https \

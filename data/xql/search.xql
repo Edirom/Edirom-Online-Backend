@@ -50,7 +50,7 @@ declare function local:getPath($node as node()) as xs:string {
 
 (: QUERY BODY ============================================================== :)
 
-let $lang := request:get-parameter('lang', '')
+let $lang := eutil:getSetLanguage(())
 let $edition := request:get-parameter('edition', '')
 let $term := request:get-parameter('term', '')
 

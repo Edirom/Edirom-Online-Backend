@@ -1,0 +1,8 @@
+build-xar
+build
+build-tei
+.DS_Store
+.idea/
+.env
+.github/
+.git/

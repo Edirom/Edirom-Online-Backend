@@ -43,16 +43,16 @@ authors:
     orcid: https://orcid.org/0009-0007-8817-0299
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.17953690
+    value: 10.5281/zenodo.19450673
     description: Edirom Online Backend
 repository-code: https://github.com/Edirom/Edirom-Online-Backend
-commit: 83dba0e4db204b8849202f9d10da6ae25b40d6a8
+commit: 146c2770a513cb7e9353704de4d833027431e846
 abstract: >-
   Edirom-Online Backend is the backend for the Edirom 
   Online which is used for the presentation and
   analysis of critical musical editions in a digital format,
   particularly in the fields of musicology and philology.
 license: GPL-3.0
-version: v1.2.0
-date-released: 2026-03-02
+version: v1.3.0
+date-released: 2026-04-08
 
