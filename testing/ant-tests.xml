@@ -21,22 +21,21 @@
         </description>
         
         <!--
-            Hard coded here which should actually be a dependency. 
-            Yet, the current setup needs sencha for creating this 
-            so I simply put it here, too 
+            Creating a temporary file to store the results of the unit tests.
+            The file will be deleted on exit.
         -->
-        <mkdir dir="${temp.dir}"/>
+        <tempfile property="xqunit-tests-results.file" suffix=".xml" deleteonexit="true"/>
         
         <!-- Retrieve the unit tests from the eXistdb -->
-        <get src="${xqunit-url}" dest="${temp.dir}/xqunit-tests-results.xml"/>
+        <get src="${xqunit-url}" dest="${xqunit-tests-results.file}"/>
         
         <!-- Parse the results and check for errors -->
-        <exec executable="xmllint" dir="${temp.dir}" outputproperty="error.count">
-            <arg line="--xpath &quot;count(//testcase[failure])&quot; xqunit-tests-results.xml"/>
+        <exec executable="xmllint" outputproperty="error.count">
+            <arg line="--xpath &quot;count(//testcase[failure])&quot; ${xqunit-tests-results.file}"/>
         </exec>
         
         <!-- Load the results and output to the logs -->
-        <loadfile srcFile="${temp.dir}/xqunit-tests-results.xml" property="xqunit-tests-results"/>
+        <loadfile srcFile="${xqunit-tests-results.file}" property="xqunit-tests-results"/>
         <echo>${xqunit-tests-results}</echo>
         
         <!-- Fail the build if errors are encountered -->
@@ -56,7 +55,7 @@
                 <local name="xquery.result"/>
                 <java classname="net.sf.saxon.Query" failonerror="false" outputproperty="xquery.result">
                     <arg value="testing/check-language-files.xq"/>
-                    <arg value="{http://www.edirom.de/ns/1.3}language-files-path=../add/data/locale?select=*.xml"/>
+                    <arg value="{http://www.edirom.de/ns/1.3}language-files-path=../data/locale?select=*.xml"/>
                 </java>
                 <fail>
                     Missing entries in language files at /add/data/locale: &#10;${xquery.result}
@@ -73,7 +72,7 @@
                 <local name="xquery.result"/>
                 <java classname="net.sf.saxon.Query" failonerror="false" outputproperty="xquery.result">
                     <arg value="testing/check-language-files.xq"/>
-                    <arg value="{http://www.edirom.de/ns/1.3}language-files-path=../add/data/xslt/i18n?select=*.xml"/>
+                    <arg value="{http://www.edirom.de/ns/1.3}language-files-path=../data/xslt/i18n?select=*.xml"/>
                 </java>
                 <fail>
                     Missing entries in language files at /add/data/xslt/i18n: &#10;${xquery.result}

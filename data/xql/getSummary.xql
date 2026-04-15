@@ -484,9 +484,9 @@ declare function local:getTextSummary($doc, $facsBasePath) {
 };
 
 declare function local:getImagePath($server, $edition) {
-    (:let $server :=  eutil:getPreference('image_server', request:get-parameter('edition', '')) :)
+    (:let $server :=  edition:getPreference('image_server', request:get-parameter('edition', '')) :)
     
-    let $i_path := eutil:getPreference('image_prefix', $edition)
+    let $i_path := edition:getPreference('image_prefix', $edition)
     
     return
         $i_path
@@ -516,9 +516,9 @@ else
     ($uri)
 let $doc := eutil:getDoc($docUri)
 let $edition := request:get-parameter('edition', '')
-let $server := eutil:getPreference('image_server', $edition)
+let $server := edition:getPreference('image_server', $edition)
 let $imagePrefix := local:getImagePath($server, $edition)
-(:eutil:getPreference('image_prefix', request:get-parameter('edition', '')):)
+(:edition:getPreference('image_prefix', request:get-parameter('edition', '')):)
 (:$doc//mei:facsimile/mei:surface[1]/mei:graphic[1]/@target:)
 
 return

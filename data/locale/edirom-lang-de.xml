@@ -56,8 +56,10 @@
         <entry key="view.desktop.Desktop_Tile" value="Nebeneinander"/>
         
         <entry key="view.desktop.TaskBar_concordanceNav" value="Öffne Konkordanznavigator"/>
-        <entry key="view.desktop.TaskBar_measureNumbers" value="Taktzahlen einblenden"/>
-        <entry key="view.desktop.TaskBar_annotations" value="Anmerkungen einblenden"/>
+        <entry key="view.desktop.TaskBar_measureNumbers" value="Taktzahlen ein-/ausblenden"/>
+        <entry key="view.desktop.TaskBar_showMeasures" value="Taktzahlen ein-/ausblenden (global)"/>
+        <entry key="view.desktop.TaskBar_annotations" value="Anmerkungen ein-/ausblenden"/>
+        <entry key="view.desktop.TaskBar_showAnnotations" value="Anmerkungen ein-/ausblenden (global)"/>
         <entry key="view.desktop.TaskBar_help" value="Hilfe"/>
         <entry key="view.desktop.TaskBar_pref" value="Einstellungen"/>
         <entry key="view.desktop.TaskBar_lang" value="Sprache umschalten"/>
@@ -80,8 +82,8 @@
         <entry key="view.window.AnnotationView_Participants" value="Subjekte"/>
         <entry key="view.window.AnnotationView_Source" value="Quelle"/>
         <entry key="view.window.AnnotationView_Sources" value="Quellen"/>
-        <entry key="view.window.AnnotationView_Siglum" value="Source Siglum"/>
-        <entry key="view.window.AnnotationView_Sigla" value="Quelle"/>
+        <entry key="view.window.AnnotationView_Siglum" value="Siglum"/>
+        <entry key="view.window.AnnotationView_Sigla" value="Siglen"/>
         <entry key="view.window.AnnotationView_AnnotationID" value="Annot.-ID"/>
         <entry key="view.window.AnnotationView_List" value="Liste"/>
         <entry key="view.window.AnnotationView_Display" value="Darstellung"/>
@@ -100,16 +102,23 @@
         <entry key="view.window.concordanceNavigator.ConcordanceNavigator_Show" value="Anzeigen"/>
         
         <entry key="view.window.search.SearchWindow_Title" value="Suche"/>
+        <entry key="view.window.search.SearchWindow_Hit" value="Treffer"/>
+        <entry key="view.window.search.SearchWindow_Hits" value="Treffer"/>
+        <entry key="view.window.search.SearchWindow_NoHit" value="Kein Treffer gefunden"/>
+        <entry key="view.window.search.SearchWindow_NoHits" value="Keine Treffer gefunden"/>
+        <entry key="view.window.search.SearchWindow_HitsIn" value="Treffer gefunden in"/>
+        <entry key="view.window.search.SearchWindow_ShowAllHits" value="Alle Treffer zeigen"/>   
+        <entry key="view.window.search.SearchWindow_Objects" value="Objekten"/>
         <entry key="view.window.about.AboutWindow_Title" value="About Edirom Online"/>
         <entry key="view.window.about.AboutWindow_License" value="Lizenz"/>
         <entry key="view.window.source.SourceView_categoriesMenu" value="Kategorien…"/>
         <entry key="view.window.source.SourceView_prioMenu" value="Prioritäten…"/>
         <entry key="view.window.source.SourceView_gotoMovement" value="Gehe zu Satz/Nummer…"/>
         <entry key="view.window.source.SourceView_layersMenu" value="Ebenen…"/>
-        <entry key="view.window.source.SourceView_showMeasures" value="Taktzählung ein-/ausblenden"/>
+        <entry key="view.window.source.SourceView_showMeasures" value="Taktzählung ein-/ausblenden (in diesem Fenster)"/>
         <entry key="view.window.source.SourceView_fitView" value="Ansicht einpassen"/>
         <entry key="view.window.source.SourceView_annotationsMenu" value="Anmerkungen"/>
-        <entry key="view.window.source.SourceView_ShowAnnotations" value="Anmerkungen ein-/ausblenden"/>
+        <entry key="view.window.source.SourceView_showAnnotations" value="Anmerkungen ein-/ausblenden (in diesem Fenster)"/>
         <entry key="view.window.source.SourceView_gotoMenu" value="Gehe zu…"/>
         <entry key="view.window.source.SourceView_gotoMeasure" value="Gehe zu Takt…"/>
         <entry key="view.window.source.SourceView_GotoMsg_Title" value="Gehe zu Takt…"/>
@@ -140,7 +149,7 @@
         <entry key="view.desktop.Desktop" value="Desktop"/>
         <entry key="view.desktop.TopBar" value="Toolbar"/>
         <entry key="view.desktop.TopBar_searchField" value="Suchfeld"/>
-        <entry key="view.desktop.TopBar_homeBtn" value="{key=view.desktop.TaskBar_home} Button"/>
+        <entry key="view.desktop.TopBar_homeBtn" value="{key=view.desktop.TaskBar_home}Button"/>
         <entry key="view.desktop.TaskBar" value="Taskbar"/>
         <entry key="view.desktop.TaskBar_btnDesktop" value="Button der Task-Leiste"/>
         <entry key="view.window.TopBar" value="Fenster-Toolbar"/>
@@ -180,6 +189,11 @@
         <entry key="Bars_from_to" value="Takte {0} bis {1}"/>
         <entry key="Bar_n" value="Takt {0}"/>
         <entry key="Bar" value="Takt"/>
+        <entry key="Bars" value="Takte"/>
+        <entry key="Movement_n" value="Satz {0}"/>
+        <entry key="Movement" value="Satz"/>
+        <entry key="Detail" value="Ausschnitt"/>
+        <entry key="Abbrev_page" value="S."/>
         <!-- XSL-FO specific -->
         <entry key="contentsWord" value="Inhaltsverzeichnis"/>
 

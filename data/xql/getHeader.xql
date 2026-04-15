@@ -34,7 +34,7 @@ let $docUri :=
     else
         ($uri)
 let $doc := eutil:getDoc($docUri)
-let $lang := request:get-parameter('lang', 'de')
+let $lang := eutil:getSetLanguage(())
 
 let $base := concat(replace(system:get-module-load-path(), 'embedded-eXist-server', ''), '/../xslt/') (: TODO: Prüfen, wie wir an dem replace vorbei kommen:)
 

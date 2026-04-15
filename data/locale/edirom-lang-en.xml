@@ -56,8 +56,10 @@
         <entry key="view.desktop.Desktop_Tile" value="Tile"/>
         
         <entry key="view.desktop.TaskBar_concordanceNav" value="Open concordance navigator"/>
-        <entry key="view.desktop.TaskBar_measureNumbers" value="Show measure numbers"/>
-        <entry key="view.desktop.TaskBar_annotations" value="Show annotations"/>
+        <entry key="view.desktop.TaskBar_measureNumbers" value="Show/hide measure numbers"/>
+        <entry key="view.desktop.TaskBar_showMeasures" value="Show/hide measure numbers (global)"/>
+        <entry key="view.desktop.TaskBar_annotations" value="Show/hide annotations"/>
+        <entry key="view.desktop.TaskBar_showAnnotations" value="Show/hide annotations (global)"/>
         <entry key="view.desktop.TaskBar_help" value="Help"/>
         <entry key="view.desktop.TaskBar_pref" value="Preferences"/>
         <entry key="view.desktop.TaskBar_lang" value="Switch language"/>
@@ -80,8 +82,8 @@
         <entry key="view.window.AnnotationView_Participants" value="Participants"/>
         <entry key="view.window.AnnotationView_Source" value="Source"/>
         <entry key="view.window.AnnotationView_Sources" value="Sources"/>
-        <entry key="view.window.AnnotationView_Siglum" value="Source Siglum"/>
-        <entry key="view.window.AnnotationView_Sigla" value="Source Sigla"/>
+        <entry key="view.window.AnnotationView_Siglum" value="Siglum"/>
+        <entry key="view.window.AnnotationView_Sigla" value="Sigla"/>
         <entry key="view.window.AnnotationView_AnnotationID" value="Annot.-ID"/>
         <entry key="view.window.AnnotationView_List" value="List"/>
         <entry key="view.window.AnnotationView_Display" value="Display"/>
@@ -100,13 +102,20 @@
         <entry key="view.window.concordanceNavigator.ConcordanceNavigator_Show" value="Show"/>
         
         <entry key="view.window.search.SearchWindow_Title" value="Search"/>
+        <entry key="view.window.search.SearchWindow_Hit" value="hit"/>
+        <entry key="view.window.search.SearchWindow_Hits" value="hits"/>
+        <entry key="view.window.search.SearchWindow_NoHit" value="No hit found"/>
+        <entry key="view.window.search.SearchWindow_NoHits" value="No hits found"/>
+        <entry key="view.window.search.SearchWindow_HitsIn" value="Found hits in"/>
+        <entry key="view.window.search.SearchWindow_ShowAllHits" value="show all hits"/>        
+        <entry key="view.window.search.SearchWindow_Objects" value="objects"/>
         <entry key="view.window.about.AboutWindow_Title" value="About Edirom Online"/>
         <entry key="view.window.about.AboutWindow_License" value="License"/>
         <entry key="view.window.source.SourceView_categoriesMenu" value="Categories…"/>
         <entry key="view.window.source.SourceView_prioMenu" value="Priorities…"/>
         <entry key="view.window.source.SourceView_gotoMovement" value="Go to movement/number…"/>
         <entry key="view.window.source.SourceView_layersMenu" value="Layers…"/>
-        <entry key="view.window.source.SourceView_showMeasures" value="Show/Hide measures"/>
+        <entry key="view.window.source.SourceView_showMeasures" value="Show/hide measures (this window)"/>
         <entry key="view.window.source.SourceView_fitView" value="Fit score"/>
         <entry key="view.window.source.SourceView_PageBasedView" value="Page based view"/>
         <entry key="view.window.source.SourceView_PageBasedView_previousPage" value="Previous page"/>
@@ -120,7 +129,7 @@
         <entry key="view.window.source.SourceView_MeasureBasedView_movementSelectorBox" value="Select movement"/>
         <entry key="view.window.source.SourceView_MeasureBasedView_selectVoices" value="Select parts"/>
         <entry key="view.window.source.SourceView_annotationsMenu" value="Annotations"/>
-        <entry key="view.window.source.SourceView_ShowAnnotations" value="Show/Hide annotations"/>
+        <entry key="view.window.source.SourceView_showAnnotations" value="Show/hide annotations (this window)"/>
         <entry key="view.window.source.SourceView_gotoMenu" value="Go to…"/>
         <entry key="view.window.source.SourceView_gotoMeasure" value="Go to measure…"/>
         <entry key="view.window.source.SourceView_GotoMsg_Title" value="Go to measure…"/>
@@ -140,7 +149,7 @@
         <entry key="view.desktop.Desktop" value="Desktop"/>
         <entry key="view.desktop.TopBar" value="Toolbar"/>
         <entry key="view.desktop.TopBar_searchField" value="Search Field"/>
-        <entry key="view.desktop.TopBar_homeBtn" value="{key=view.desktop.TaskBar_home} button"/>
+        <entry key="view.desktop.TopBar_homeBtn" value="{key=view.desktop.TaskBar_home}button"/>
         <entry key="view.desktop.TaskBar" value="Taskbar"/>
         <entry key="view.desktop.TaskBar_btnDesktop" value="Taskbar"/>
         <entry key="view.window.TopBar" value="Window toolbar"/>
@@ -179,6 +188,11 @@
         <entry key="Bars_from_to" value="Bars {0} to {1}"/>
         <entry key="Bar_n" value="Bar {0}"/>
         <entry key="Bar" value="bar"/>
+        <entry key="Bars" value="bars"/>
+        <entry key="Movement_n" value="Movement {0}"/>
+        <entry key="Movement" value="movement"/>
+        <entry key="Detail" value="detail"/>
+        <entry key="Abbrev_page" value="p."/>
         <!-- XSL-FO specific -->
         <entry key="contentsWord" value="Table of contents"/>
         

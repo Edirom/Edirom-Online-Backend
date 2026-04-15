@@ -30,4 +30,7 @@
         <create qname="@id" type="xs:string"/>
         <create qname="@key" type="xs:string"/>
     </index>
+    <triggers>
+        <trigger class="org.exist.extensions.exquery.restxq.impl.RestXqTrigger"/>
+    </triggers>
 </collection>
