@@ -12,12 +12,14 @@ xquery version "3.1";
 (: IMPORTS ================================================================= :)
 
 import module namespace edition = "http://www.edirom.de/xquery/edition" at "../xqm/edition.xqm";
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
 declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace request = "http://exist-db.org/xquery/request";
 declare namespace response = "http://exist-db.org/xquery/response";
+declare namespace pref = "http://www.edirom.de/ns/prefs/1.0";
 
 (: OPTION DECLARATIONS ===================================================== :)
 
@@ -30,7 +32,7 @@ declare option output:indent "yes";
 let $mode := request:get-parameter('mode', '')
 let $edition := request:get-parameter('edition', '')
 
-let $file := doc($edition:default-prefs-location)
+let $file := doc($eutil:default-prefs-location)
 
 let $projectFile := doc(edition:getPreferencesURI($edition))
 
@@ -43,8 +45,8 @@ return
             </output:serialization-parameters>
         let $data := 
             map:merge((
-                $file//entry ! map:entry(./string(@key), ./string(@value)), 
-                $projectFile//entry ! map:entry(./string(@key), ./string(@value))  
+                $file//(pref:entry|entry) ! map:entry(./string(@key), ./string(@value)), 
+                $projectFile//(pref:entry|entry) ! map:entry(./string(@key), ./string(@value))  
             ))
         return
             response:stream($data => serialize($outputOptions), $serializationParameters)

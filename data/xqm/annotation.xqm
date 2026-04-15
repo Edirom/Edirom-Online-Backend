@@ -26,29 +26,6 @@ declare namespace transform="http://exist-db.org/xquery/transform";
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
-declare function annotation:getLocalizedLabel($node) {
-
-    let $lang := request:get-parameter('lang', '')
-    let $nodeName := local-name($node)
-  
-    let $label :=
-        if($nodeName = 'category') then (
-            (: new style, i.e. //category/label :)
-            if ($node/mei:label[@xml:lang = $lang]) then
-                $node/mei:label[@xml:lang = $lang]/text()
-            else
-                $node/mei:label[1]/text()
-        
-        ) else if($nodeName = 'term') then(
-            (: old style, i.e. //term/name :)
-            eutil:getLocalizedName($node, $lang)
-        
-        ) else
-            ($nodeName)
-  
-    return $label
-};
-
 (:~
  : Returns a JSON representation of all Annotations of a document
  :
@@ -74,13 +51,7 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
     
     let $id := $anno/string(@xml:id)
     let $lang := request:get-parameter('lang', '')
-    let $genericTitle := eutil:getLocalizedTitle($anno, $lang)
-    
-    let $title :=
-        if(exists($genericTitle) and string-length($genericTitle) gt 0) then
-            ($genericTitle)
-        else
-            (annotation:generateTitle($anno))
+    let $title := eutil:getLocalizedName($anno, $lang)
     
     let $doc := $anno/root()
     let $prio := annotation:getPriorityLabel($anno)
@@ -115,7 +86,7 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
     let $cats :=
         string-join(
             for $u in $catURIs
-            return annotation:category_getName($doc/id($u), eutil:getLanguage($edition))
+            return eutil:getLocalizedName($doc/id($u), edition:getLanguage($edition))
          , ', ')
      
     let $count := count($anno/preceding::mei:annot[@type = 'editorialComment']) + 1
@@ -132,18 +103,6 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
 };
 
 (:~
- : Generates a title for annotation which have none
- :
- : @param $anno The Annotation to process
- : @return The string result
- :)
-declare function annotation:generateTitle($anno as element()) {
-    let $mdiv.n := 'Satz ' || string(count($anno/ancestor::mei:mdiv/preceding-sibling::mei:mdiv) + 1)
-    let $measure := 'Takt ' || $anno/ancestor::mei:measure/string(@n)
-    return $mdiv.n || ', ' || $measure
-};
-
-(:~
  : Returns a HTML representation of an Annotation's content
  :
  : @param $anno The Annotation to process
@@ -156,10 +115,10 @@ declare function annotation:getContent($anno as element(), $idPrefix as xs:strin
     let $xsltBase := concat(replace(system:get-module-load-path(), 'embedded-eXist-server', ''), '/../xslt/') (: TODO: Prüfen, wie wir an dem replace vorbei kommen:)
     
     let $edition := request:get-parameter('edition', '')
-    let $imageserver :=  eutil:getPreference('image_server', $edition)
-    let $imageBasePath := eutil:getPreference('image_prefix', $edition)
+    let $imageserver :=  edition:getPreference('image_server', $edition)
+    let $imageBasePath := edition:getPreference('image_prefix', $edition)
     
-    let $language := eutil:getLanguage($edition)
+    let $language := edition:getLanguage($edition)
     
     let $p := $anno/mei:p[not(@xml:lang) or @xml:lang = $language]
     
@@ -173,18 +132,6 @@ declare function annotation:getContent($anno as element(), $idPrefix as xs:strin
     
     return
         $html
-};
-
-(:~
- : Returns a HTML representation of an Annotation's title
- :
- : @param $anno The Annotation to process
- : @param $idPrefix A prefix for all ids (because of uniqueness in application)
- : @return The HTML representation
- :)
-declare function annotation:getTitle($anno as element(), $idPrefix as xs:string, $edition as xs:string?) {
-
-    $anno/mei:title[not(@xml:lang) or @xml:lang = eutil:getLanguage($edition)]/text()
 };
 
 (:~
@@ -222,7 +169,7 @@ declare function annotation:getPriorityLabel($anno) as xs:string* {
     
     return
         if($isPrioElemAlready) then
-            (annotation:getLocalizedLabel($anno))
+            (eutil:getLocalizedName($anno))
         
         else if($oldEdiromStyle) then
             (annotation:getPriority($anno))
@@ -240,22 +187,11 @@ declare function annotation:getPriorityLabel($anno) as xs:string* {
                         (doc(substring-before($uri,'#')))
                 
                 let $prioElem := $doc/id(replace($uri,'#',''))
-                let $label := annotation:getLocalizedLabel($prioElem)
+                let $label := eutil:getLocalizedName($prioElem)
                 return $label
             
             return string-join($labels,', ')
         )
-};
-
-(:~
-: Returns Annotation's categories
-:
-: @param $anno The Annotation to process
-: @return The categories (as comma separated string)
-:)
-declare function annotation:getCategories($anno as element()) as xs:string {
-    
-    string-join(annotation:getCategoriesAsArray($anno), ', ')
 };
 
 (:~
@@ -273,7 +209,7 @@ declare function annotation:getCategoriesAsArray($anno as element()) as xs:strin
     
     let $cats :=
         for $u in $catURIs
-        return annotation:category_getName($doc/id($u),'')
+        return eutil:getLocalizedName($doc/id($u), '')
                  
     
     (:let $uris := tokenize($anno/mei:ptr[@type eq 'categories']/string(@target),' ')
@@ -304,19 +240,4 @@ declare function annotation:getParticipants($anno as element()) as xs:string* {
     let $uris := distinct-values(for $uri in $ps return substring-before($uri,'#'))
     
     return $uris
-};
-
-(:~
- : Returns an annotation category's name
- :
- : @param $category The category to process
- : @return one name
- :)
-declare function annotation:category_getName($category as element(), $language as xs:string) {
-    annotation:getLocalizedLabel($category)
-    (:let $names := $category/mei:name
-    return
-        switch (count($names[@xml:lang = $language]))
-            case 1 return $names[@xml:lang = $language]
-            default return $names[1]:)
 };

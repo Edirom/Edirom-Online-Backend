@@ -6,9 +6,6 @@ xquery version "3.1";
 (:~
  : This module provides library utility functions
  :
- : @author <a href="mailto:roewenstrunk@edirom.de">Daniel Röwenstrunk</a>
- : @author <a href="mailto:roewenstrunk@edirom.de">Nikolaos Beer</a>
- : @author <a href="mailto:bohl@edirom.de">Benjamin W. Bohl</a>
  :)
 
 module namespace eutil = "http://www.edirom.de/xquery/eutil";
@@ -17,26 +14,50 @@ module namespace eutil = "http://www.edirom.de/xquery/eutil";
 
 import module namespace functx = "http://www.functx.com";
 
-import module namespace annotation="http://www.edirom.de/xquery/annotation" at "annotation.xqm";
-import module namespace edition="http://www.edirom.de/xquery/edition" at "edition.xqm";
-import module namespace source="http://www.edirom.de/xquery/source" at "source.xqm";
-import module namespace teitext="http://www.edirom.de/xquery/teitext" at "teitext.xqm";
-import module namespace work="http://www.edirom.de/xquery/work" at "work.xqm";
-
 (: NAMESPACE DECLARATIONS ================================================== :)
 
 declare namespace edirom="http://www.edirom.de/ns/1.3";
 declare namespace mei="http://www.music-encoding.org/ns/mei";
 declare namespace request="http://exist-db.org/xquery/request";
+declare namespace session="http://exist-db.org/xquery/session";
 declare namespace system="http://exist-db.org/xquery/system";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace util="http://exist-db.org/xquery/util";
+declare namespace pref="http://www.edirom.de/ns/prefs/1.0";
+declare namespace xmldb="http://exist-db.org/xquery/xmldb";
 
 (: VARIABLE DECLARATIONS =================================================== :)
 
-declare variable $eutil:lang := eutil:getLanguage(());
-declare variable $eutil:langDoc := eutil:getDoc(concat('../locale/edirom-lang-', $eutil:lang, '.xml'));
- 
+(:
+    Determine the application root collection from the current module load path.
+:)
+declare variable $eutil:app-root as xs:string :=
+    let $rawPath := replace(system:get-module-load-path(), '/null/', '//')
+    let $modulePath :=
+        (: strip the xmldb: part :)
+        if (starts-with($rawPath, "xmldb:exist://")) then
+            if (starts-with($rawPath, "xmldb:exist://embedded-eXist-server")) then
+                substring($rawPath, 36)
+            else if (contains($rawPath, "/xmlrpc/")) then
+                substring-after($rawPath, "/xmlrpc")
+            else
+                substring($rawPath, 15)
+        else
+            $rawPath
+    return
+        substring-before($modulePath, "/data/xqm")
+;
+declare variable $eutil:INVALID_LANGUAGE_CODE := QName("http://www.edirom.de/xquery/eutil", "InvalidLanguageCodeError");
+declare variable $eutil:default-prefs-location as xs:string := '../prefs/edirom-prefs.xml';
+declare variable $eutil:supported-languages :=
+    (: Extract supported languages from the provided langFiles :)
+    collection($eutil:app-root || '/data/locale')//langFile/data(lang);
+declare variable $eutil:langDoc :=
+    function($lang as xs:string?) as document-node()? {
+        collection($eutil:app-root || '/data/locale')//langFile/lang[.=eutil:getSetLanguage($lang)]/root()
+        (:eutil:getDoc('../locale/edirom-lang-' || eutil:getSetLanguage($lang) || '.xml'):)
+    };
+
 (: FUNCTION DECLARATIONS =================================================== :)
 
 (:~
@@ -59,38 +80,80 @@ declare function eutil:getNamespace($node as node()) as xs:string {
 
 };
 
+
 (:~
  : Returns a localized string
  :
  : @param $node The node to be processed
- : @return The string
+ : @return The localized output string
  :)
-declare function eutil:getLocalizedName($node, $lang) {
+declare function eutil:getLocalizedName($node as element()) as xs:string {
+
+    eutil:getLocalizedName($node, eutil:getSetLanguage(()))
+
+};
+
+
+(:~
+ : Returns a localized string for a provided language
+ :
+ : @param $node The node to be processed
+ : @param $lang The language for the localized output
+ : @return The localized output string
+ :)
+declare function eutil:getLocalizedName($node as element(), $lang as xs:string) as xs:string {
+
+    (: identify the context for further processing:)
+    let $case := ( 'child::mei:title'[$node/mei:title], 'child::mei:name'[$node/mei:name], 
+                   'child::mei:label'[$node/mei:label], 'child::edirom:names'[$node/edirom:names],
+                   'child::edirom:labels'[$node/edirom:labels],
+                   'self::mei:annot'[$node[self::mei:annot]], 'other' )[1]
+        
 
     let $name :=
-        if ($node/mei:title) then (
-            if ($lang = $node/mei:title/@xml:lang) then
-                $node/mei:title[@xml:lang = $lang]/text()
-            else
-                $node/mei:title[1]/text()
+
+        (: if current node has child mei:title or mei:name or mei:label :)
+        if ($case eq 'child::mei:title' or $case eq 'child::mei:name' or $case eq 'child::mei:label') then (
+
+            let $childNodes := $node/mei:*[local-name() = substring-after($case, 'mei:')]
+
+            (: return most appropriate string, either from children's text or empty string :)
+            return
+                (
+                    string-join($childNodes[@xml:lang = $lang]/text(), ' ')[not(matches(., '^\s*$'))],
+                    $childNodes[1]/text(),
+                    ''
+                )[1]
+        )
         
-        ) else if ($node/mei:name) then (
-            if ($lang = $node/mei:name/@xml:lang) then
-                $node/mei:name[@xml:lang = $lang]/text()
-            else
-                $node/mei:name[1]/text()
-        
-        ) else if ($node/edirom:names) then (
+        (: if current node has child edirom:names :)
+        else if ($case eq 'child::edirom:names') then (
             if ($lang = $node/edirom:names/edirom:name/@xml:lang) then
-                $node/edirom:names/edirom:name[@xml:lang = $lang]/node()
+                $node/edirom:names/edirom:name[@xml:lang = $lang]/node() || ''
             else
-                $node/edirom:names/edirom:name[1]/node()
+                $node/edirom:names/edirom:name[1]/node() || ''
+        )
         
-        ) else if (local-name($node) = 'annot' and $node/@type = 'editorialComment') then
-            (annotation:generateTitle($node))
+        (: if current node has child edirom:labels :)
+        else if ($case eq 'child::edirom:labels') then (
+            if ($lang = $node/edirom:labels/edirom:label/@xml:lang) then
+                $node/edirom:labels/edirom:label[@xml:lang = $lang]/node() || ''
+            else
+                $node/edirom:labels/edirom:label[1]/node() || ''
+        )
         
-        else
-        (normalize-space($node))
+        (: if current node is an mei:annot :)
+        else if ( $case eq 'self::mei:annot' ) then (
+            (: if $node is mei:annot and does not have child mei:title or mei:name (covered by cases above) :)
+            let $mdiv.n := eutil:getLanguageString('Movement_n', string(count($node/ancestor::mei:mdiv/preceding-sibling::mei:mdiv) + 1), $lang)
+            let $measure := eutil:getLanguageString('Bar_n', $node/ancestor::mei:measure/string(@n), $lang)
+            return $mdiv.n || ', ' || $measure
+        )
+
+        (: otherwise :)
+        else (
+            (normalize-space($node))
+        )
     
     return
         if($node/edirom:names) then
@@ -164,56 +227,6 @@ declare function eutil:getDoc($uri as xs:string?) as document-node()? {
 };
 
 (:~
- : Returns a comma separated list of document labels
- :
- : @param $docs The URIs of the documents to process
- : @return The labels
- :)
-declare function eutil:getDocumentsLabels($docs as xs:string*, $edition as xs:string) as xs:string {
-
-    string-join(
-        eutil:getDocumentsLabelsAsArray($docs, $edition)
-    , ', ')
-
-};
-
-(:~
- : Returns an array of document labels
- :
- : @param $docs The URIs of the documents to process
- : @return The labels
- :)
-declare function eutil:getDocumentsLabelsAsArray($docs as xs:string*, $edition as xs:string) as xs:string* {
-
-    for $doc in $docs
-    return
-        eutil:getDocumentLabel($doc, $edition)
-
-};
-
-(:~
- : Returns a document's label
- :
- : @param $doc The URIs of the document to process
- : @return The label
- :)
-declare function eutil:getDocumentLabel($doc as xs:string, $edition as xs:string) as xs:string {
-
-    if(work:isWork($doc)) then
-        (work:getLabel($doc, $edition))
-    
-    else if(source:isSource($doc)) then
-        (source:getLabel($doc, $edition))
-    
-    else if(teitext:isText($doc)) then
-        (teitext:getLabel($doc, $edition))
-
-    else
-        ('')
-
-};
-
-(:~
  : Returns a part's label (translated if available)
  :
  : @author Dennis Ried
@@ -222,7 +235,7 @@ declare function eutil:getDocumentLabel($doc as xs:string, $edition as xs:string
  :)
 declare function eutil:getPartLabel($measureOrPerfRes as node(), $type as xs:string) as xs:string {
 
-    let $lang := $eutil:lang
+    let $lang := eutil:getSetLanguage(())
 
     let $part := $measureOrPerfRes/ancestor::mei:part
     let $voiceRef := $part//mei:staffDef/@decls
@@ -262,8 +275,7 @@ declare function eutil:getPartLabel($measureOrPerfRes as node(), $type as xs:str
  :)
 declare function eutil:getLanguageString($key as xs:string, $values as xs:string*) as xs:string? {
 
-    eutil:getLanguageString($key, $values, $eutil:lang)
-
+    eutil:getLanguageString($key, $values, eutil:getSetLanguage(()))
 };
 
 (:~
@@ -278,7 +290,7 @@ declare function eutil:getLanguageString($key as xs:string, $values as xs:string
  :)
 declare function eutil:getLanguageString($key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string? {
 
-    let $langString := $eutil:langDoc//entry[@key = $key]/string(@value)
+    let $langString := $eutil:langDoc($lang)//entry[@key = $key]/string(@value)
 
     return
         if($langString) 
@@ -292,18 +304,18 @@ declare function eutil:getLanguageString($key as xs:string, $values as xs:string
  : Returns a language specific string from the locale/edirom-lang files or project specific language files.
  : The latter takes precedence.
  :
- : @param $edition The URI of the Edition's document to process
+ : @param $langFileURI The URI of the Edition's lang file
  : @param $key The key to search for
  : @param $values The values to replace the placeholders with (from the language string) 
  : @param $lang The language code (e.g. "de" or "en")
  : @return The looked up language string from a language file
  :)
-declare function eutil:getLanguageString($edition as xs:string, $key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string? {
+declare function eutil:getLanguageString($langFileURI as xs:string, $key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string? {
 
     (: Try to load a custom language file :)
     let $langFileCustom := 
-        try { doc(edition:getLanguageFileURI($edition, $lang)) }
-        catch * { util:log-system-out('Failed to load the custom language file for edition "' || $edition || '"') }
+        try { doc($langFileURI) }
+        catch * { util:log-system-out('Failed to load the custom language file "' || $langFileURI || '"') }
     
     let $langString :=
         (: If there is a value for the key in the custom language file :)
@@ -311,7 +323,7 @@ declare function eutil:getLanguageString($edition as xs:string, $key as xs:strin
             $langFileCustom//entry[@key = $key]/@value => string()
         (: If not, take the value for the key in the default language file :)
         else
-            $eutil:langDoc//entry[@key = $key]/@value => string()
+            $eutil:langDoc($lang)//entry[@key = $key]/@value => string()
     return
         if($langString) 
         (: replace placeholders in the language string with values provided to the function as parameter :)
@@ -323,41 +335,69 @@ declare function eutil:getLanguageString($edition as xs:string, $key as xs:strin
  : Returns a value from the preferences for a given key
  :
  : @param $key The key to look up
- : @param $edition The current edition URI
+ : @param $preferencesURI The URI of the preferences file of the current edition
  : @return The preference value
  :)
-declare function eutil:getPreference($key as xs:string, $edition as xs:string?) as xs:string? {
+declare function eutil:getPreference($key as xs:string, $preferencesURI as xs:string?) as xs:string? {
 
     (: Try to load a custom preferences file :)
     let $prefFileCustom := 
-        try { doc(edition:getPreferencesURI($edition)) }
+        try { doc($preferencesURI) }
         catch * { util:log-system-out('Failed to load the custom preferences file') }
     
     return
         (: If there is a value for the key in the custom preferences file :)
-        if($prefFileCustom//entry/@key = $key) then
-            $prefFileCustom//entry[@key = $key]/@value => string()
+        if($prefFileCustom//(pref:entry|entry)/@key = $key) then
+            $prefFileCustom//(pref:entry|entry)[@key = $key]/@value => string()
         (: If not, take the value for the key in the default preferences file :)
         else
-            try { doc($edition:default-prefs-location)//entry[@key = $key]/@value => string() }
+            try { doc($eutil:default-prefs-location)//(pref:entry|entry)[@key = $key]/@value => string() }
             (: If the key is not in the default file, then there should be an error :)
             catch * { util:log-system-out(concat('Failed to find the key `', $key, '` in default preferences file')) }
 };
 
 (:~
- : Return the application and content language
+ : Get and set the application language
  :
- : @param $edition The edition's path
+ : If a `$lang` parameter is provided and it is supported by some langFile, the same value will be returned
+ :      and saved to the current session. If the provided value is not supported, an error will be raised.
+ : If no `$lang` parameter is provided (i.e. `$lang` equals the empty-sequence), the function will try
+ :      to determine the language in the following order:
+ : 1. from the HTTP request parameter "lang"
+ : 2. from the session attribute "lang"
+ : 3. from the preferred browser language as provided in the "Accept-Language" header
+ : 4. from the first supported language provided by `$eutil:supported-languages`
+ :
+ : @param $lang The language code (e.g. "de" or "en")
  : @return The language key
  :)
-declare function eutil:getLanguage($edition as xs:string?) as xs:string {
-    
-    if (request:get-parameter("lang", "") != "") then
-        request:get-parameter("lang", "")
-    else if(eutil:getPreference('application_language', edition:getEditionURI($edition))) then
-        eutil:getPreference('application_language', edition:getEditionURI($edition))
-    else    
-        'de'
+declare function eutil:getSetLanguage($lang as xs:string?) as xs:string? {
+
+    if ($lang)
+    then
+        if ($lang = $eutil:supported-languages)
+        then (
+            $lang,
+            session:set-attribute('lang', $lang)
+        )
+        else (
+            error($eutil:INVALID_LANGUAGE_CODE, 'Language code "' || $lang || '" is not supported. Please try with "' || string-join($eutil:supported-languages, '", "') || '".')
+        )
+    else if (request:get-parameter('lang', '') = $eutil:supported-languages)
+    then (
+        request:get-parameter('lang', ''),
+        session:set-attribute('lang', request:get-parameter('lang', ''))
+    )
+    else if(session:exists() and session:get-attribute('lang') = $eutil:supported-languages)
+    then
+        session:get-attribute('lang')
+    else if(eutil:request-lang-preferred-iso639() = $eutil:supported-languages)
+    then (
+        eutil:request-lang-preferred-iso639(),
+        session:set-attribute('lang', eutil:request-lang-preferred-iso639())
+    )
+    else
+        $eutil:supported-languages[1]
 };
 
 (:~
@@ -397,6 +437,25 @@ declare function eutil:sort-as-numeric-alpha($seq as item()* )  as item()* {
 
 } ;
 
+
+(:~
+ : Computes a sort key for numeric-alpha values or nodes (e.g. 1, 1a, 1b, 2)
+ :
+ : @see     http://www.xqueryfunctions.com/xq/functx_compute-sort-key.html
+ : @param   $key the key to compute the sort key for
+ : @return  the computed sort key
+ :)
+declare function eutil:compute-measure-sort-key( $key as xs:string ) as xs:string {
+    
+    let $itemPart1 := (functx:get-matches($key, '\d+'))[1]
+    let $keylength := string-length($itemPart1)
+    let $prefix := functx:repeat-string('0', 30 - $keylength)
+
+    return concat($prefix, $key)
+    
+};
+
+
 (:~
  : Extracts an ISO 639 language code from a given ISO 3166-1 language code
  :
@@ -417,7 +476,7 @@ declare function eutil:iso3166-1-to-iso639($iso3166-1 as xs:string) as xs:string
  : @author Benjamin W. Bohl
  : @return xs:string ISO 639 language code
  :)
-declare function eutil:request-lang-preferred-iso639() as xs:string {
+declare function eutil:request-lang-preferred-iso639() as xs:string? {
 
     let $request.accept-language := request:get-header("Accept-Language")
     return
@@ -440,7 +499,7 @@ declare function eutil:request-lang-preferred-iso639() as xs:string {
                 eutil:iso3166-1-to-iso639($tokens.qmax.first)
         
         else
-            "en"
+            ()
 
 };
 

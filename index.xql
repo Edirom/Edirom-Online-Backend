@@ -33,7 +33,7 @@ let $eoEditionUrisCount := count($eoEditionUris)
 (: if we have only one valid $editionUri we can look for edition specific CSS :)
 let $additional_css_path :=
     if($eoEditionUrisCount eq 1)
-    then eutil:getPreference('additional_css_path', $eoEditionUris)
+    then edition:getPreference('additional_css_path', $eoEditionUris)
     else ()
 
 let $comment := comment{"

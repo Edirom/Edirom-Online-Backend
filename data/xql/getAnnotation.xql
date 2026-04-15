@@ -7,6 +7,7 @@ xquery version "3.1";
 (: IMPORTS ================================================================= :)
 
 import module namespace annotation = "http://www.edirom.de/xquery/annotation" at "../xqm/annotation.xqm";
+import module namespace doc = "http://www.edirom.de/xquery/document" at "../xqm/document.xqm";
 import module namespace edition = "http://www.edirom.de/xquery/edition" at "../xqm/edition.xqm";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
 import module namespace source = "http://www.edirom.de/xquery/source" at "../xqm/source.xqm";
@@ -31,11 +32,11 @@ declare variable $imageWidth := 600;
 
 declare variable $edition := request:get-parameter('edition', '');
 
-declare variable $imageserver := eutil:getPreference('image_server', $edition);
+declare variable $imageserver := edition:getPreference('image_server', $edition);
 
-declare variable $imageBasePath := eutil:getPreference('image_prefix', $edition);
+declare variable $imageBasePath := edition:getPreference('image_prefix', $edition);
 
-declare variable $lang := request:get-parameter('lang', '');
+declare variable $lang := eutil:getSetLanguage(());
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
@@ -199,26 +200,17 @@ declare function local:getItemLabel($elem as element()) {
     let $name := local-name($elem)
     return (
         if($name = 'measure') then (
-            if ($lang = 'de') then
-                (concat('Takt ', if ($elem/@label) then ($elem/@label) else ($elem/@n)))
-            else
-                (concat('Bar ',if ($elem/@label) then ($elem/@label) else ($elem/@n)))
+                (concat(eutil:getLanguageString('Bar', (), $lang), ' ', if ($elem/@label) then ($elem/@label) else ($elem/@n)))
         ) else
             (),
 
         if ($name = 'staff') then (
-            if ($lang = 'de') then
-                (concat($elem/preceding::mei:staffDef[@n = $elem/@n][1]/@label.abbr, ', Takt ', $elem/ancestor::mei:measure/@n))
-            else
-                (concat($elem/preceding::mei:staffDef[@n = $elem/@n][1]/@label.abbr, ', Bar ', $elem/ancestor::mei:measure/@n))
+                (concat($elem/preceding::mei:staffDef[@n = $elem/@n][1]/@label.abbr, ', ', eutil:getLanguageString('Bar', (), $lang), ' ', $elem/ancestor::mei:measure/@n))
         ) else
             (),
 
         if ($name = 'zone') then (
-            if ($lang = 'de') then
-                (concat('Ausschnitt (S. ', $elem/parent::mei:surface/@n, ')'))
-            else
-                (concat('Detail (p. ', $elem/parent::mei:surface/@n, ')'))
+                (concat(eutil:getLanguageString('Detail', (), $lang), ' (', eutil:getLanguageString('Abbrev_page', (), $lang), ' ', $elem/parent::mei:surface/@n, ')'))
         ) else
             ()
     )
@@ -331,61 +323,33 @@ let $participants := annotation:getParticipants($annot)
 
 let $priority := local:getPriority($annot)
 
-let $priorityLabel :=
-    if ($lang = 'de') then
-        ('Priorität')
-    else
-        ('Priority')
+let $priorityLabel := eutil:getLanguageString('view.window.AnnotationView_Priority', (), $lang)
 
 let $categories := local:getCategories($annot)
 
 let $categoriesLabel :=
-    if ($lang = 'de') then (
-        if (count($categories) gt 1) then
-            ('Kategorien')
-        else
-            ('Kategorie')
-    ) else (
-        if (count($categories) gt 1) then
-            ('Categories')
-        else
-            ('Category'))
+    if (count($categories) gt 1) then
+        eutil:getLanguageString('view.window.AnnotationView_Categories', (), $lang)
+    else
+        eutil:getLanguageString('view.window.AnnotationView_Category', (), $lang)
 
-let $sources := eutil:getDocumentsLabelsAsArray($participants, $edition)
+let $sources := doc:getDocumentsLabelsAsArray($participants, $edition)
 
 let $sourcesLabel :=
-    if ($lang = 'de') then (
-        if (count($sources) gt 1) then
-            ('Quellen')
-        else
-            ('Quelle')
-    ) else (
-        if (count($sources) gt 1) then
-            ('Sources')
-        else
-            ('Source')
-    )
+    if (count($sources) gt 1) then
+        eutil:getLanguageString('view.window.AnnotationView_Sources', (), $lang)
+    else
+        eutil:getLanguageString('view.window.AnnotationView_Source', (), $lang)
 
 let $sigla := source:getSiglaAsArray($participants)
 
 let $siglaLabel :=
-    if ($lang = 'de') then (
-        if (count($sigla) gt 1) then
-            ('Siglen')
-        else
-            ('Siglum')
-    ) else (
-        if (count($sigla) gt 1) then
-            ('Sources')
-        else
-            ('Source')
-    )
-
-let $annotIDlabel :=
-    if ($lang = 'de') then
-        ('Anm.-ID')
+    if (count($sigla) gt 1) then            
+        eutil:getLanguageString('view.window.AnnotationView_Sigla', (), $lang)
     else
-        ('Annot.-ID')
+        eutil:getLanguageString('view.window.AnnotationView_Siglum', (), $lang)
+
+let $annotIDlabel := eutil:getLanguageString('view.window.AnnotationView_AnnotationID', (), $lang)
 
 return
     if ($target eq 'view') then (
@@ -430,7 +394,7 @@ return
                                 <img src="{local:getImageAreaPath($imageBasePath, $zone, $imageWidth)}" class="previewImg" onclick="loadLink('{$pUri}')" />
                                 <input type="hidden" class="previewImgData" value="{concat('{width:', number($zone/@lrx) - number($zone/@ulx), ', height:', number($zone/@lry) - number($zone/@uly), '}')}"/>
                             </div>
-                            <div class="label">{if ($lang = 'de') then (concat('Takt ', $elem/@n)) else (concat('Bar ', $elem/@n))}</div>
+                            <div class="label">{eutil:getLanguageString('Bar', (), $lang)}</div>
                         </div>
 
                   )
@@ -444,7 +408,7 @@ return
                                 <img src="{local:getImageAreaPath($imageBasePath, $zone, $imageWidth)}" class="previewImg" onclick="loadLink('{$pUri}')" />
                                 <input type="hidden" class="previewImgData" value="{concat('{width:', number($zone/@lrx) - number($zone/@ulx), ', height:', number($zone/@lry) - number($zone/@uly), '}')}"/>
                             </div>
-                            <div class="label">{concat('Takt ', $elem/@n)}</div>
+                            <div class="label">{concat(eutil:getLanguageString('Bar', (), $lang), ' ', $elem/@n)}</div>
                         </div>
     				)
 

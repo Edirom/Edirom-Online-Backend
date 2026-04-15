@@ -29,7 +29,7 @@ declare option output:media-type "text/html";
 
 (: VARIABLE DECLARATIONS =================================================== :)
 
-declare variable $lang := request:get-parameter('lang', '');
+declare variable $lang := eutil:getSetLanguage(());
 
 (: QUERY BODY ============================================================== :)
 
