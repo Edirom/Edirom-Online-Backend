@@ -14,6 +14,7 @@ xquery version "3.1";
 
 import module namespace source = "http://www.edirom.de/xquery/source" at "../xqm/source.xqm";
 import module namespace teitext = "http://www.edirom.de/xquery/teitext" at "../xqm/teitext.xqm";
+import module namespace edition = "http://www.edirom.de/xquery/edition" at "../xqm/edition.xqm";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
@@ -29,11 +30,11 @@ declare option output:media-type "application/json";
 
 (: VARIABLE DECLARATIONS =================================================== :)
 
-declare variable $lang := request:get-parameter('lang', '');
+declare variable $lang := eutil:getSetLanguage(());
 declare variable $edition := request:get-parameter('edition', '');
-declare variable $imageserver := eutil:getPreference('image_server', $edition);
+declare variable $imageserver := edition:getPreference('image_server', $edition);
 declare variable $uri := request:get-parameter('uri', '');
-declare variable $imageBasePath := eutil:getPreference('image_prefix', $edition);
+declare variable $imageBasePath := edition:getPreference('image_prefix', $edition);
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
@@ -383,7 +384,7 @@ declare function local:getImageAreaParams($zone as element()?, $imgWidth as xs:d
 };
 
 declare function local:getItemLabel($elems as element()*) as xs:string {
-    let $language := eutil:getLanguage($edition)
+    let $language := edition:getLanguage($edition)
 
     return
         string-join((
@@ -416,30 +417,22 @@ declare function local:getItemLabel($elems as element()*) as xs:string {
                         let $measureNs := distinct-values($items/ancestor::mei:measure/@n)
 
                         let $label :=
-                            if ($lang = 'de') then(
-                                if (count($measureNs) gt 1) then
-                                    (concat('Takte ', $measureNs[1], '-', $measureNs[last()]))
-                                else (
-                                    concat('Takt ', $measureNs[1])
-                                )
-                            ) else (
-                                if (count($measureNs) gt 1) then (
-                                    concat('Bars ', $measureNs[1], '-', $measureNs[last()])
-                                ) else (
-                                    concat('Bar ', $measureNs[1])
-                                )
+                            if (count($measureNs) gt 1) then
+                                (concat(eutil:getLanguageString('Bars', (), $lang), ' ', $measureNs[1], '-', $measureNs[last()]))
+                            else (
+                                concat(eutil:getLanguageString('Bar', (), $lang), ' ', $measureNs[1])
                             )
 
                         return
                             concat($label, ' (', string-join($items/preceding::mei:staffDef[@n = $items[1]/@n][1]/@label.abbr, ', '), ')')
                     ) else
-                        (concat('Takt ', $items[1]/ancestor::mei:measure/@n, ' (', $items[1]/preceding::mei:staffDef[@n = $items[1]/@n][1]/@label.abbr, ')'))
+                        (concat(eutil:getLanguageString('Bar', (), $lang), ' ', $items[1]/ancestor::mei:measure/@n, ' (', $items[1]/preceding::mei:staffDef[@n = $items[1]/@n][1]/@label.abbr, ')'))
 
                 ) else if (local-name($items[1]) eq 'zone') then (
                     if (count($items) gt 1) then (
                         (:Dieser Fall sollte nicht vorkommen, da freie zones nicht zusammengefasst werden dürfen:)
                     ) else (
-                        concat('Ausschnitt (S. ', $items[1]/parent::mei:surface/@n, ')')
+                        concat(eutil:getLanguageString('Detail', (), $lang), ' (', eutil:getLanguageString('Abbrev_page', (), $lang), ' ', $items[1]/parent::mei:surface/@n, ')')
                     )
                 ) else ()
         ), ' ')

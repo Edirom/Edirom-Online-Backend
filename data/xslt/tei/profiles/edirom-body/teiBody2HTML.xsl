@@ -1317,4 +1317,18 @@
         </xsl:if>
     </xsl:template>
     <!-- /SAVED OLD TEI TEMPLATES TO MAKE THIS WORK -->
+    
+    <!-- ADDITIONAL TEMPLATES -->
+    
+    <xd:doc scope="component">
+        <xd:desc>Wrap tei:g contents in a HTML span element and makeRendition.</xd:desc>
+    </xd:doc>
+    <xsl:template match="tei:g">
+        <xsl:element name="span">
+            <xsl:call-template name="makeRendition" />
+            <xsl:apply-templates />
+        </xsl:element>
+    </xsl:template>
+    
+    <!-- /ADDITIONAL TEMPLATES -->
 </xsl:stylesheet>
