@@ -46,7 +46,17 @@ return
         let $data := 
             map:merge((
                 $file//(pref:entry|entry) ! map:entry(./string(@key), ./string(@value)), 
-                $projectFile//(pref:entry|entry) ! map:entry(./string(@key), ./string(@value))  
+                $projectFile//(pref:entry|entry) ! map:entry(./string(@key), ./string(@value)),
+                map:entry(
+                    "web-components",
+                    map:merge(
+                        ($file//*[local-name() = 'web-component'], $projectFile//*[local-name() = 'web-component']) ! map:entry(./string(@key),
+                            map:merge(
+                                .//option ! map:entry(./string(@key), ./string(@value))
+                            )
+                        )
+                    )
+                ) 
             ))
         return
             response:stream($data => serialize($outputOptions), $serializationParameters)
