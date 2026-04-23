@@ -62,10 +62,18 @@ declare function local:getSingleConnections($parent) as array(*)* {
     array {
         for $connection in $parent/edirom:connection
         return
-            map {
-                "name": $connection/string(@name),
-                "plist": $connection/string(@plist)
-            }
+            map:merge((
+                if ($connection/@xml:id and normalize-space($connection/string(@xml:id)) != "") then
+                    map {
+                        "id": $connection/string(@xml:id)
+                    }
+                else
+                    map {},
+                map {
+                    "name": $connection/string(@name),
+                    "plist": $connection/string(@plist)
+                }
+            ))
     }
 };
 
