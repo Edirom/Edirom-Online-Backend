@@ -218,7 +218,7 @@
                <head>
                   <term type="ediromGui" key="controller.window.Window_textView"/>
                </head>
-               <p>If the content of a window is text-based, e.g. a TEI file, the entry for <term type="ediromGui" key="controller.window.Window_textView"/> is within a <term><term type="ediromGui" key="view.window.TopBar_View"/>Menu</term> window available.
+               <p>If the content of a window is text-based, e.g. a TEI file, the entry for <term type="ediromGui" key="controller.window.Window_textView"/> is within a <term><term type="ediromGui" key="view.window.TopBar_View"/> Menu</term> window available.
                   The <term type="ediromGui" key="controller.window.Window_textView"/> appears in a similar form to a web page and may contain links to other content.
                </p>
             </div>
@@ -423,7 +423,7 @@
               <head>Working with Annotations</head>
               <p>Annotations that come from an edition's Critical Report can be opened in different ways in <term type="ediromGui" key="global_appName"/>.
                  <lb/>(1) Symbols that are already displayed in the source already provide a wide range of information. The complete critical report can also be accessed by double-clicking.
-                 <lb/>(2) The complete critical report of an edition is usually available as <ptr type="ediromGui" target="#annotationView"/> under the menu item <term key="view.window.TopBar_View"/> in the <term type="ediromGui" key="view.window.TopBar"/> available. As already mentioned above, some editions also offer an entry into the critical report as a topic in the <term type="ediromGui" key="view.navigator.Navigator"/>.</p>
+                 <lb/>(2) The complete critical report of an edition is usually available as <ptr type="ediromGui" target="#annotationView"/> under the menu item <term type="ediromGui" key="view.window.TopBar_View"/> in the <term type="ediromGui" key="view.window.TopBar"/> available. As already mentioned above, some editions also offer an entry into the critical report as a topic in the <term type="ediromGui" key="view.navigator.Navigator"/>.</p>
               <p>Furthermore, <term type="ediromGui" key="global_appName"/> provides the option to create annotations in <term type="ediromGui" key="view.window.AnnotationView_Categories"/> and <term type="ediromGui" key="view.window.AnnotationView_Priority"/>.
                  The use of these options depends on the edition guidelines (e.g. the categories that were actually used). 
                  Therefore, the following description should not be viewed as a complete documentation, but rather as an introduction to the basic concepts of this consideration.</p>
