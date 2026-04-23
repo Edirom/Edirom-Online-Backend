@@ -1,5 +1,10 @@
 xquery version "3.1";
 (:
+ :  NOTE: DEPREACTED - use getAudio.xql for edirom-audio-player web component instead 
+ :)
+
+
+(:
  : For LICENSE-Details please refer to the LICENSE file in the root directory of this repository.
  :)
 
@@ -35,7 +40,7 @@ let $albumCover := $doc//mei:graphic[@type = 'cover']/string(@target)
 let $records :=
     for $rec in $doc//mei:recording
     let $recSource := $doc//mei:source[@xml:id = substring-after($rec/@decls, '#')]
-    let $recTitle := $recSource/mei:titleStmt/mei:title
+    let $recTitle := $recSource/mei:titleStmt/string-join(mei:title, ';')
     let $avFile := $rec/mei:avFile[1]/string(@target)
     return
     (:TODO map instead of concatenation :)

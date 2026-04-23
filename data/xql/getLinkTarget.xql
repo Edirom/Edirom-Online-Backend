@@ -29,7 +29,7 @@ declare option output:media-type "application/json";
 
 (: VARIABLE DECLARATIONS =================================================== :)
 
-declare variable $lang := request:get-parameter('lang', '');
+declare variable $lang := eutil:getSetLanguage(());
 declare variable $uri := request:get-parameter('uri', '');
 
 (: FUNCTION DECLARATIONS =================================================== :)

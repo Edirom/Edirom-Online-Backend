@@ -71,11 +71,11 @@ declare
     (: Test replacements with existing key without placeholders :)
     %test:args("view.desktop.Desktop_Maximize", "foo", "de") %test:assertEquals("Maximieren")
     (: Test replacements with existing key and non-existing language :)
-    %test:args("view.desktop.Desktop_Maximize", "foo", "foo1g4#lang") %test:assertEmpty
+    %test:args("view.desktop.Desktop_Maximize", "foo", "foo1g4#lang") %test:assertError("eutil:InvalidLanguageCodeError")
     (: Test empty replacements with non-existing key and non-existing language :)
     %test:arg("key", "foo1g4#")
     %test:arg("values") 
-    %test:arg("lang", "foo1g4#lang") %test:assertEmpty
+    %test:arg("lang", "foo1g4#lang") %test:assertError("eutil:InvalidLanguageCodeError")
     function eut:test-getLanguageString-3-arity($key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string? {
         eutil:getLanguageString($key, $values, $lang)
 };
@@ -103,12 +103,12 @@ declare
     (: Test replacements with existing key without placeholders :)
     %test:args("xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/language-de.xml", "global_cancel", "foo", "de") %test:assertEquals("Test-Abbrechen")
     (: Test replacements with existing key and non-existing language :)
-    %test:args("", "global_cancel", "foo", "foo1g4#lang") %test:assertEmpty
+    %test:args("", "global_cancel", "foo", "foo1g4#lang") %test:assertError("eutil:InvalidLanguageCodeError")
     (: Test empty replacements with non-existing key and non-existing language :)
     %test:arg("langFileURI", "")
     %test:arg("key", "foo1g4#")
     %test:arg("values") 
-    %test:arg("lang", "foo1g4#lang") %test:assertEmpty
+    %test:arg("lang", "foo1g4#lang") %test:assertError("eutil:InvalidLanguageCodeError")
     (: Test empty replacements with existing key from default language file :)
     %test:arg("langFileURI", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/language-de.xml")
     %test:arg("key", "view.desktop.Desktop_Maximize")
