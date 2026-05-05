@@ -335,9 +335,7 @@ declare function eutil:getLanguageString($key as xs:string, $values as xs:string
 declare function eutil:getLanguageString($langFileURI as xs:string, $key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string? {
 
     (: Try to load a custom language file :)
-    let $langFileCustom := 
-        try { doc($langFileURI) }
-        catch * { util:log-system-out('Failed to load the custom language file "' || $langFileURI || '"') }
+    let $langFileCustom := eutil:getDoc($langFileURI)
     
     let $langString :=
         (: If there is a value for the key in the custom language file :)
@@ -363,9 +361,7 @@ declare function eutil:getLanguageString($langFileURI as xs:string, $key as xs:s
 declare function eutil:getPreference($key as xs:string, $preferencesURI as xs:string?) as xs:string? {
 
     (: Try to load a custom preferences file :)
-    let $prefFileCustom := 
-        try { doc($preferencesURI) }
-        catch * { util:log-system-out('Failed to load the custom preferences file') }
+    let $prefFileCustom := eutil:getDoc($preferencesURI)
     
     return
         (: If there is a value for the key in the custom preferences file :)
@@ -373,9 +369,13 @@ declare function eutil:getPreference($key as xs:string, $preferencesURI as xs:st
             $prefFileCustom//(pref:entry|entry)[@key = $key]/@value => string()
         (: If not, take the value for the key in the default preferences file :)
         else
-            try { doc($eutil:default-prefs-location)//(pref:entry|entry)[@key = $key]/@value => string() }
-            (: If the key is not in the default file, then there should be an error :)
-            catch * { util:log-system-out(concat('Failed to find the key `', $key, '` in default preferences file')) }
+            let $defaultPrefs := eutil:getDoc($eutil:default-prefs-location)
+            return
+                if($defaultPrefs//(pref:entry|entry)[@key = $key])
+                then $defaultPrefs//(pref:entry|entry)[@key = $key]/@value => string()
+                (: If the key is not in the default file, then there should be an error :)
+                else util:log-system-out(concat('Failed to find the key `', $key, '` in default preferences file'))
+
 };
 
 (:~
