@@ -68,7 +68,7 @@ let $doc :=
         let $pb2 := ($doc//tei:pb[@facs eq '#' || $page]/following::tei:pb)[1]/@n
         
         return
-            transform:transform($doc, doc('../xslt/reduceToPage.xsl'),
+            transform:transform($doc, eutil:getDoc('../xslt/reduceToPage.xsl'),
                 <parameters>
                     <param name="pb1" value="{$pb1}"/>
                     <param name="pb2" value="{$pb2}"/>
@@ -105,7 +105,7 @@ let $params := (
     <param name="pageLayout" value="CSS"/>
 )
 
-let $doc := transform:transform($doc, doc($xsl), <parameters>{$params}</parameters>)
+let $doc := transform:transform($doc, eutil:getDoc($xsl), <parameters>{$params}</parameters>)
 
 (: Do a second transformation to add edirom online ID prefixes for unique ID values if object is open mutiple times :)
 let $xsl := '../xslt/edirom_idPrefix.xsl'
@@ -114,7 +114,7 @@ let $params := (
     <param name="idPrefix" value="{$idPrefix}"/>
 )
 
-let $doc := transform:transform($doc, doc($xsl), <parameters>{$params}</parameters>)
+let $doc := transform:transform($doc, eutil:getDoc($xsl), <parameters>{$params}</parameters>)
 
 let $body := $doc//xhtml:body
 

@@ -3,6 +3,10 @@ xquery version "3.1";
  : For LICENSE-Details please refer to the LICENSE file in the root directory of this repository.
  :)
 
+(: IMPORTS ================================================================= :)
+
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xqm";
+
 (: NAMESPACE DECLARATIONS ================================================== :)
 
 declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
@@ -24,14 +28,14 @@ let $idPrefix := request:get-parameter('idPrefix', '')
 
 let $base := replace(system:get-module-load-path(), 'embedded-eXist-server', '') (:TODO:)
 
-let $doc := doc(concat('../../help/help_', $lang, '.xml'))
+let $doc := eutil:getDoc(concat('../../help/help_', $lang, '.xml'))
 let $contextPath := if(starts-with(document-uri($doc), '/db'))
                     then substring-after(document-uri($doc), '/db')
                     else document-uri($doc)
 let $contextPath := substring-before($contextPath, concat('help/help_', $lang, '.xml'))
 let $contextPath := request:get-context-path() || $contextPath
 
-let $xsl := doc('../xslt/edirom_langReplacement.xsl')
+let $xsl := eutil:getDoc('../xslt/edirom_langReplacement.xsl')
 let $doc := 
     transform:transform($doc, $xsl,
         <parameters>
@@ -40,7 +44,7 @@ let $doc :=
         </parameters>
     )
 
-let $xsl := doc('../xslt/tei/profiles/edirom-body/teiBody2HTML.xsl')
+let $xsl := eutil:getDoc('../xslt/tei/profiles/edirom-body/teiBody2HTML.xsl')
 let $doc :=
     transform:transform($doc, $xsl,
         <parameters>
@@ -55,14 +59,14 @@ let $doc :=
     )
 
 (: XSLT for removing unnecessary/disturbing head tags, e.g. meta, title, link - because those end up breaking CSS in other windows:)
-let $xsl := doc('../xslt/edirom_removeHead.xsl')
+let $xsl := eutil:getDoc('../xslt/edirom_removeHead.xsl')
 let $doc :=
     transform:transform($doc, $xsl,
         <parameters></parameters>
     )
 
 return
-    transform:transform($doc, doc('../xslt/edirom_idPrefix.xsl'),
+    transform:transform($doc, eutil:getDoc('../xslt/edirom_idPrefix.xsl'),
         <parameters>
             <param name="idPrefix" value="{$idPrefix}"/>
         </parameters>
