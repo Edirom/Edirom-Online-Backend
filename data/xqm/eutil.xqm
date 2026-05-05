@@ -48,6 +48,7 @@ declare variable $eutil:app-root as xs:string :=
         substring-before($modulePath, "/data/xqm")
 ;
 declare variable $eutil:INVALID_LANGUAGE_CODE := QName("http://www.edirom.de/xquery/eutil", "InvalidLanguageCodeError");
+declare variable $eutil:INVALID_DOCUMENT_URI := QName("http://www.edirom.de/xquery/eutil", "InvalidDocumentUriError");
 declare variable $eutil:default-prefs-location as xs:string := '../prefs/edirom-prefs.xml';
 declare variable $eutil:supported-languages :=
     (: Extract supported languages from the provided langFiles :)
@@ -213,17 +214,36 @@ declare function eutil:getLocalizedTitle($node as node(), $lang as xs:string?, $
 };
 
 (:~
- : Returns a document
+ : Returns a document from internal eXist-db paths only
  :
- : @param $uri The URIs of the documents to process
+ : @param $uri The URI of the document to process
  : @return The document
  :)
 declare function eutil:getDoc($uri as xs:string?) as document-node()? {
-    if(empty($uri) or ($uri eq ""))
-    then util:log("warn", "No document URI provided")
-    else if(doc-available($uri))
-    then doc($uri)
-    else util:log("warn", "Unable to load document at " || $uri)
+    let $normalizedUri := normalize-space($uri)
+    return
+        if($normalizedUri eq "")
+        then util:log("warn", "No document URI provided")
+        else
+            if (not(eutil:isInternalDbUri($normalizedUri)))
+            then error($eutil:INVALID_DOCUMENT_URI, concat('Blocked non-db URI: ', $normalizedUri))
+            else
+                if(doc-available($normalizedUri))
+                then doc($uri)
+                else util:log("warn", "Unable to load document at " || $uri)
+};
+
+(:~
+ : Returns whether a URI points to an internal eXist-db collection under `/db`
+ :
+ : @param $uri The URI to validate
+ : @return `true()` if the URI points to `/db`, otherwise `false()`
+ :)
+declare %private function eutil:isInternalDbUri($uri as xs:string) as xs:boolean {
+    $uri = '/db'
+    or starts-with($uri, '/db/')
+    or starts-with($uri, 'xmldb:exist:///db')
+    or starts-with($uri, 'xmldb:exist://embedded-eXist-server/db')
 };
 
 (:~
