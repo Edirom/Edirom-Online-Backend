@@ -131,7 +131,7 @@ declare function local:getDefinition($navConfig) {
 
 let $editionId := request:get-parameter('editionId', '')
 let $workId := request:get-parameter('workId', '')
-let $edition := doc($editionId)/root()
+let $edition := eutil:getDoc($editionId)
 let $work := $edition/id($workId)
 let $navConfig := $work/edirom:navigatorDefinition
 

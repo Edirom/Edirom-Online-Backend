@@ -34,7 +34,7 @@ declare namespace transform="http://exist-db.org/xquery/transform";
  :)
 declare function annotation:annotationsToJSON($uri as xs:string, $edition as xs:string) as map(*)* {
     
-    let $doc := doc($uri)
+    let $doc := eutil:getDoc($uri)
     let $annos := $doc//mei:annot[@type = 'editorialComment']
     return
         for $anno in $annos

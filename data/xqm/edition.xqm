@@ -35,7 +35,7 @@ declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
  :)
 declare function edition:details($uri as xs:string) as map(*) {
     
-    let $edition := doc($uri)/edirom:edition
+    let $edition := eutil:getDoc($uri)/edirom:edition
     return
         map {
             "id": $edition/string(@xml:id),
@@ -88,7 +88,7 @@ declare function edition:findEditionUris() as xs:string* {
  :)
 declare function edition:getWorkUris($uri as xs:string) as xs:string* {
     
-    doc($uri)//edirom:work/@xlink:href ! string(.)
+    eutil:getDoc($uri)//edirom:work/@xlink:href ! string(.)
 };
 
 (:~
@@ -117,7 +117,7 @@ declare function edition:getLanguageFileURI($uri as xs:string, $lang as xs:strin
  :)
 declare function edition:getLanguageCodesSorted($uri as xs:string) as xs:string* {
     
-    let $languages := doc($uri)//edirom:language
+    let $languages := eutil:getDoc($uri)//edirom:language
 
     return
         (
@@ -151,8 +151,8 @@ declare function edition:getLanguage($edition as xs:string?) as xs:string {
  : @return The URI of the edition's preference file or the default edirom preferences as fallback
  :)
 declare function edition:getPreferencesURI($uri as xs:string?) as xs:string {
-    if(doc-available($uri) and doc($uri)//edirom:preferences/@xlink:href => string()) 
-    then(doc($uri)//edirom:preferences/@xlink:href => string()) 
+    if(doc-available($uri) and eutil:getDoc($uri)//edirom:preferences/@xlink:href)
+    then(eutil:getDoc($uri)//edirom:preferences/@xlink:href => string())
     else $eutil:default-prefs-location
 };
 
@@ -181,7 +181,7 @@ declare function edition:getEditionURI($editionIDorPath as xs:string?) as xs:str
 
     (: $editionID is a resolvable file path with an edirom:edition root element :)
     else if(doc-available($editionIDorPath))
-    then doc($editionIDorPath)/edirom:edition ! concat('xmldb:exist://', document-uri(./root()))
+    then eutil:getDoc($editionIDorPath)/edirom:edition ! concat('xmldb:exist://', document-uri(./root()))
 
     (: $editionID is a resolvable xml:id that points at an edirom:edition :)
     (: since there are potentially multiple documents with the same xml:id we fall back to returning only the first one :)

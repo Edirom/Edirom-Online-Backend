@@ -91,7 +91,7 @@ declare function local:getTextParticipants($participants as xs:string*, $doc as 
 };
 
 declare function local:getTextNoteContent($doc as xs:string, $id as xs:string) as xs:string {
-    let $elem := doc($doc)/id($id)
+    let $elem := eutil:getDoc($doc)/id($id)
     let $content := data($elem)
     return
         if (string-length($content) gt 0)
@@ -227,7 +227,7 @@ declare function local:groupParticipants($participants as xs:string*, $doc as xs
     let $elems :=
         for $p in $participants
         let $id := substring-after($p, '#')
-        return doc($doc)/id($id)
+        return eutil:getDoc($doc)/id($id)
 
     let $zones :=
         for $elem in $elems
@@ -294,7 +294,7 @@ declare function local:getElement($uri as xs:string) as element()? {
     let $id := substring-after($uri, '#')
 
     return
-        doc($doc)/id($id)
+        eutil:getDoc($doc)/id($id)
 };
 
 (: TODO: in Modul auslagern :)
@@ -441,7 +441,7 @@ declare function local:getItemLabel($elems as element()*) as xs:string {
 
 let $docUri := substring-before($uri, '#')
 let $internalId := substring-after($uri, '#')
-let $doc := doc($docUri)
+let $doc := eutil:getDoc($docUri)
 let $annot := $doc/id($internalId)
 
 let $map := map {

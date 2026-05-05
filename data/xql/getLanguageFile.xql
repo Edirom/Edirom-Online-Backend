@@ -12,6 +12,7 @@ xquery version "3.1";
 (: IMPORTS ================================================================= :)
 
 import module namespace edition = "http://www.edirom.de/xquery/edition" at "../xqm/edition.xqm";
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -35,7 +36,7 @@ let $edition := request:get-parameter('edition', '')
 let $file := doc(concat($base, '/../locale/edirom-lang-', $lang, '.xml'))
 :)
 let $file := doc(concat('../locale/edirom-lang-', $lang, '.xml'))
-let $projectFile := doc(edition:getLanguageFileURI($edition, $lang))
+let $projectFile := eutil:getDoc(edition:getLanguageFileURI($edition, $lang))
 
 return
     if ($mode = 'json') then (

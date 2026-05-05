@@ -216,7 +216,7 @@ let $sourceUri := request:get-parameter('uri', '')
 
 let $sourceUriSharp := concat($sourceUri, '#')
 
-let $mei := doc($sourceUri)/root()
+let $mei := eutil:getDoc($sourceUri)
 
 let $surfaceId := request:get-parameter('pageId', '')
 
