@@ -242,6 +242,8 @@ declare function eutil:getDoc($uri as xs:string?) as document-node()? {
 declare %private function eutil:isInternalDbUri($uri as xs:string) as xs:boolean {
     $uri = '/db'
     or starts-with($uri, '/db/')
+    or starts-with($uri, './')
+    or starts-with($uri, '../')
     or starts-with($uri, 'xmldb:exist:///db')
     or starts-with($uri, 'xmldb:exist://embedded-eXist-server/db')
 };
