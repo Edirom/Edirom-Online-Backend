@@ -171,7 +171,7 @@ declare function local:getSourceSummary($doc, $facsBasePath, $server) {
 
 declare function local:getImagePath($basePath, $uri, $width) {
     if (starts-with($uri, 'xmldb:exist')) then (
-        let $imagePath := doc($uri)/edirom_image:image/@file
+        let $imagePath := eutil:getDoc($uri)/edirom_image:image/@file
         return
             concat($basePath, $imagePath, '?dw=', $width, '&amp;amp;mo=fit')
     ) else (

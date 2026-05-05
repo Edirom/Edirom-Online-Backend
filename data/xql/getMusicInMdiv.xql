@@ -3,6 +3,10 @@ xquery version "3.1";
  : For LICENSE-Details please refer to the LICENSE file in the root directory of this repository.
  :)
 
+(: IMPORTS ================================================================= :)
+
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
+
 (: NAMESPACE DECLARATIONS ================================================== :)
 
 declare namespace mei = "http://www.music-encoding.org/ns/mei";
@@ -20,7 +24,7 @@ declare option output:method "xml";
 
 let $uri := request:get-parameter('uri', '')
 let $movementId := request:get-parameter('movementId', '')
-let $mei := doc($uri)/root()
+let $mei := eutil:getDoc($uri)
 
 let $mdiv :=
     if ($movementId eq '') then

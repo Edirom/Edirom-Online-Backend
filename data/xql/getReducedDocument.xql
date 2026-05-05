@@ -38,7 +38,7 @@ let $idPrefix := request:get-parameter('idPrefix', '')
 
 let $base := concat('file:', system:get-module-load-path())
 
-let $doc := doc($uri)/root()
+let $doc := eutil:getDoc($uri)
 let $xsl := '../xslt/reduceToSelection.xsl'
 
 let $doc :=

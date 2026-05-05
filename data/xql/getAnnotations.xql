@@ -12,6 +12,7 @@ xquery version "3.1";
 (: IMPORTS ================================================================= :)
 
 import module namespace annotation = "http://www.edirom.de/xquery/annotation" at "../xqm/annotation.xqm";
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -33,10 +34,12 @@ let $uri :=
     else
         ($uri)
 
+let $doc := eutil:getDoc($uri)
+
 let $map :=
     map {
         'success': true(),
-        'total': count(doc($uri)//mei:annot[@type = 'editorialComment']),
+        'total': count($doc//mei:annot[@type = 'editorialComment']),
         'annotations': array {annotation:annotationsToJSON($uri, $edition)}
     }
 
