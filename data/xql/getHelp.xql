@@ -5,7 +5,7 @@ xquery version "3.1";
 
 (: IMPORTS ================================================================= :)
 
-import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xqm";
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
