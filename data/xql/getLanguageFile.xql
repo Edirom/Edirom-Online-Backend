@@ -28,10 +28,10 @@ declare option output:indent "yes";
 
 (: QUERY BODY ============================================================== :)
 
-let $lang := request:get-parameter('lang', '')
+let $lang := eutil:getSetLanguage(())
 let $mode := request:get-parameter('mode', '')
 let $edition := request:get-parameter('edition', '')
-let $file := eutil:getDoc(concat($eutil:app-root || '/data/locale/edirom-lang-', $lang, '.xml'))
+let $file := $eutil:langDoc($lang)
 let $projectFile := eutil:getDoc(edition:getLanguageFileURI($edition, $lang))
 
 return
@@ -43,10 +43,10 @@ return
             </output:serialization-parameters>
         let $data := 
             map {
-                "lang": $file/langFile/lang => normalize-space(),
+                "lang": $lang,
                 "version": $file/langFile/version => normalize-space(),
                 "keys": map:merge((
-                    $file//entry ! map:entry(./string(@key), ./string(@value)), 
+                    $file//entry ! map:entry(./string(@key), ./string(@value)),
                     $projectFile//entry ! map:entry(./string(@key), ./string(@value))
                 ))
             }
