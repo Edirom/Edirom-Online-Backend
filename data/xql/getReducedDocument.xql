@@ -63,7 +63,7 @@ let $xslInstruction :=
 
 let $xsl :=
     if ($xslInstruction) then
-        (doc($xslInstruction))
+        eutil:getDoc($xslInstruction)
     else
         $eutil:xsltBase || '/teiBody2HTML.xsl'
 
