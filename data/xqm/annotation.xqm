@@ -67,9 +67,12 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
     
     let $sigla :=
         for $p in distinct-values($pList)
+        let $pDoc.valid :=
+            try { eutil:getDoc($p) }
+            catch * {()}
         let $pDoc :=
-            if(doc-available($p)) then
-                (doc($p))
+            if($pDoc.valid) then
+                $pDoc.valid
             else
                 edition:collection($edition)/id($p)/root()
         return
@@ -147,9 +150,9 @@ declare function annotation:getPriority($anno as element()) as xs:string* {
 
     let $doc :=
         if(starts-with($uri,'#')) then
-            ($anno/root())
+            $anno/root()
         else
-            (doc(substring-before($uri,'#')))
+            eutil:getDoc(substring-before($uri,'#'))
     
     let $locId := substring-after($uri,'#')
     
@@ -157,9 +160,9 @@ declare function annotation:getPriority($anno as element()) as xs:string* {
     
     return
         if(local-name($elem) eq 'term') then
-            (eutil:getLocalizedName($elem, $lang))
+            eutil:getLocalizedName($elem, $lang)
         else
-            ($locId)
+            $locId
 };
 
 declare function annotation:getPriorityLabel($anno) as xs:string* {
@@ -182,9 +185,9 @@ declare function annotation:getPriorityLabel($anno) as xs:string* {
                 for $uri in $classBasedUri
                 let $doc :=
                     if(starts-with($uri,'#')) then
-                        ($anno/root())
+                        $anno/root()
                     else
-                        (doc(substring-before($uri,'#')))
+                        eutil:getDoc(substring-before($uri,'#'))
                 
                 let $prioElem := $doc/id(replace($uri,'#',''))
                 let $label := eutil:getLocalizedName($prioElem)
@@ -217,7 +220,7 @@ declare function annotation:getCategoriesAsArray($anno as element()) as xs:strin
     let $string := for $uri in $uris
                    let $doc := if(starts-with($uri,'#'))
                                then($anno/root())
-                               else(doc(substring-before($uri,'#')))
+                               else(eutil:getDoc(substring-before($uri,'#')))
                    let $locID := substring-after($uri,'#')
                    let $elem := $doc/id($locID)
                    return
