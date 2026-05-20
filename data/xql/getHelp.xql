@@ -23,7 +23,7 @@ declare option output:omit-xml-declaration "yes";
 
 (: QUERY BODY ============================================================== :)
 
-let $lang := request:get-parameter('lang', 'en')
+let $lang := eutil:getSetLanguage(())
 let $idPrefix := request:get-parameter('idPrefix', '')
 
 let $doc := eutil:getDoc(concat($eutil:app-root, '/help/help_', $lang, '.xml'))
