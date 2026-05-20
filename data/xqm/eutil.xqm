@@ -49,7 +49,8 @@ declare variable $eutil:app-root as xs:string :=
 ;
 declare variable $eutil:INVALID_LANGUAGE_CODE := QName("http://www.edirom.de/xquery/eutil", "InvalidLanguageCodeError");
 declare variable $eutil:INVALID_DOCUMENT_URI := QName("http://www.edirom.de/xquery/eutil", "InvalidDocumentUriError");
-declare variable $eutil:default-prefs-location as xs:string := '../prefs/edirom-prefs.xml';
+declare variable $eutil:default-prefs-location as xs:string := $eutil:app-root || '/data/prefs/edirom-prefs.xml';
+declare variable $eutil:xsltBase as xs:string := $eutil:app-root || '/data/xslt';
 declare variable $eutil:supported-languages :=
     (: Extract supported languages from the provided langFiles :)
     collection($eutil:app-root || '/data/locale')//langFile/data(lang);
@@ -242,8 +243,6 @@ declare function eutil:getDoc($uri as xs:string?) as document-node()? {
 declare %private function eutil:isInternalDbUri($uri as xs:string) as xs:boolean {
     $uri = '/db'
     or starts-with($uri, '/db/')
-    or starts-with($uri, './')
-    or starts-with($uri, '../')
     or starts-with($uri, 'xmldb:exist:///db')
     or starts-with($uri, 'xmldb:exist://embedded-eXist-server/db')
 };

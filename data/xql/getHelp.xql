@@ -26,29 +26,27 @@ declare option output:omit-xml-declaration "yes";
 let $lang := request:get-parameter('lang', 'en')
 let $idPrefix := request:get-parameter('idPrefix', '')
 
-let $base := replace(system:get-module-load-path(), 'embedded-eXist-server', '') (:TODO:)
-
-let $doc := eutil:getDoc(concat('../../help/help_', $lang, '.xml'))
+let $doc := eutil:getDoc(concat($eutil:app-root, '/help/help_', $lang, '.xml'))
 let $contextPath := if(starts-with(document-uri($doc), '/db'))
                     then substring-after(document-uri($doc), '/db')
                     else document-uri($doc)
 let $contextPath := substring-before($contextPath, concat('help/help_', $lang, '.xml'))
 let $contextPath := request:get-context-path() || $contextPath
 
-let $xsl := eutil:getDoc('../xslt/edirom_langReplacement.xsl')
+let $xsl := eutil:getDoc($eutil:xsltBase || '/edirom_langReplacement.xsl')
 let $doc := 
     transform:transform($doc, $xsl,
         <parameters>
-            <param name="base" value="{concat($base, '/../xslt/')}"/>
+            <param name="base" value="{concat($eutil:xsltBase, '/')}"/>
             <param name="lang" value="{$lang}"/>
         </parameters>
     )
 
-let $xsl := eutil:getDoc('../xslt/tei/profiles/edirom-body/teiBody2HTML.xsl')
+let $xsl := eutil:getDoc($eutil:xsltBase || '/tei/profiles/edirom-body/teiBody2HTML.xsl')
 let $doc :=
     transform:transform($doc, $xsl,
         <parameters>
-            <param name="base" value="{concat($base, '/../xslt/')}"/>
+            <param name="base" value="{concat($eutil:xsltBase, '/')}"/>
             <param name="lang" value="{$lang}"/>
             <param name="tocDepth" value="1"/>
             (: == passing empty value for docUri (XSLT expects xs:anyURI, but ExtJS view does not provide value) -> github#480 == :)
@@ -59,17 +57,15 @@ let $doc :=
     )
 
 (: XSLT for removing unnecessary/disturbing head tags, e.g. meta, title, link - because those end up breaking CSS in other windows:)
-let $xsl := eutil:getDoc('../xslt/edirom_removeHead.xsl')
+let $xsl := eutil:getDoc($eutil:xsltBase || '/edirom_removeHead.xsl')
 let $doc :=
     transform:transform($doc, $xsl,
         <parameters></parameters>
     )
 
 return
-    transform:transform($doc, eutil:getDoc('../xslt/edirom_idPrefix.xsl'),
+    transform:transform($doc, eutil:getDoc($eutil:xsltBase || '/edirom_idPrefix.xsl'),
         <parameters>
             <param name="idPrefix" value="{$idPrefix}"/>
         </parameters>
     )
-    
-

@@ -36,10 +36,8 @@ let $selectionId := request:get-parameter('selectionId', '')
 let $subtreeRoot := request:get-parameter('subtreeRoot', '')
 let $idPrefix := request:get-parameter('idPrefix', '')
 
-let $base := concat('file:', system:get-module-load-path())
-
 let $doc := eutil:getDoc($uri)
-let $xsl := '../xslt/reduceToSelection.xsl'
+let $xsl := $eutil:xsltBase || '/reduceToSelection.xsl'
 
 let $doc :=
     transform:transform($doc, $xsl,
@@ -67,10 +65,10 @@ let $xsl :=
     if ($xslInstruction) then
         (doc($xslInstruction))
     else
-        ('../xslt/teiBody2HTML.xsl')
+        $eutil:xsltBase || '/teiBody2HTML.xsl'
 
 let $params := (
-    <param name="base" value="{concat($base, '/../xslt/')}"/>,
+    <param name="base" value="{concat($eutil:xsltBase, '/')}"/>,
     <param name="idPrefix" value="{$idPrefix}"/>
 )
 

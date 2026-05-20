@@ -31,11 +31,7 @@ declare option output:indent "yes";
 let $lang := request:get-parameter('lang', '')
 let $mode := request:get-parameter('mode', '')
 let $edition := request:get-parameter('edition', '')
-
-(:let $base := concat('file:', system:get-module-load-path())
-let $file := eutil:getDoc(concat($base, '/../locale/edirom-lang-', $lang, '.xml'))
-:)
-let $file := eutil:getDoc(concat('../locale/edirom-lang-', $lang, '.xml'))
+let $file := eutil:getDoc(concat($eutil:app-root || '/data/locale/edirom-lang-', $lang, '.xml'))
 let $projectFile := eutil:getDoc(edition:getLanguageFileURI($edition, $lang))
 
 return

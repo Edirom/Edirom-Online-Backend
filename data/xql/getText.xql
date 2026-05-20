@@ -17,6 +17,10 @@ declare namespace request = "http://exist-db.org/xquery/request";
 
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
 
+declare namespace transform = "http://exist-db.org/xquery/transform";
+
+declare namespace util = "http://exist-db.org/xquery/util";
+
 declare namespace xhtml = "http://www.w3.org/1999/xhtml";
 
 (: OPTION DECLARATIONS ===================================================== :)
@@ -68,7 +72,7 @@ let $doc :=
         let $pb2 := ($doc//tei:pb[@facs eq '#' || $page]/following::tei:pb)[1]/@n
         
         return
-            transform:transform($doc, eutil:getDoc('../xslt/reduceToPage.xsl'),
+            transform:transform($doc, eutil:getDoc($eutil:xsltBase || '/reduceToPage.xsl'),
                 <parameters>
                     <param name="pb1" value="{$pb1}"/>
                     <param name="pb2" value="{$pb2}"/>
@@ -76,7 +80,6 @@ let $doc :=
             )
     )
 
-let $base := replace(system:get-module-load-path(), 'embedded-eXist-server', '')
 let $edition := request:get-parameter('edition', '')
 let $imageserver := edition:getPreference('image_server', $edition)
 
@@ -86,7 +89,7 @@ let $xsl :=
     if ($xslInstruction) then
         ($xslInstruction)
     else
-        ('../xslt/tei/profiles/edirom-body/teiBody2HTML.xsl')
+        $eutil:xsltBase || '/tei/profiles/edirom-body/teiBody2HTML.xsl'
 
 (:TODO introduce injection-point for tei-stylesheet parameters :)
 let $params := (
@@ -98,7 +101,7 @@ let $params := (
     (: parameters for the TEI Stylesheets :)
     <param name="autoHead" value="false"/>,
     <param name="autoToc" value="false"/>,
-    <param name="base" value="{concat($base, '/../xslt/')}"/>,
+    <param name="base" value="{concat($eutil:xsltBase, '/')}"/>,
     <param name="documentationLanguage" value="{edition:getLanguage($edition)}"/>,
     <param name="footnoteBackLink" value="true"/>,
     <param name="numberHeadings" value="false"/>,
@@ -108,7 +111,7 @@ let $params := (
 let $doc := transform:transform($doc, eutil:getDoc($xsl), <parameters>{$params}</parameters>)
 
 (: Do a second transformation to add edirom online ID prefixes for unique ID values if object is open mutiple times :)
-let $xsl := '../xslt/edirom_idPrefix.xsl'
+let $xsl := $eutil:xsltBase || '/edirom_idPrefix.xsl'
 
 let $params := (
     <param name="idPrefix" value="{$idPrefix}"/>

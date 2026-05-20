@@ -32,8 +32,7 @@ let $mdiv :=
     else
         ($mei/id($movementId))
 
-let $base := concat(replace(system:get-module-load-path(), 'embedded-eXist-server', ''), '/../xslt/')
-let $data := transform:transform($mdiv, concat($base, 'edirom_prepareAnnotsForRendering.xsl'), <parameters/>)
+let $data := transform:transform($mdiv, eutil:getDoc($eutil:xsltBase || '/edirom_prepareAnnotsForRendering.xsl'), <parameters/>)
 
 return
     (:TODO eventually dynamically use sources @meiversion? :)
