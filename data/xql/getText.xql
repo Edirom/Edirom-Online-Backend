@@ -51,18 +51,15 @@ let $xslInstruction :=
         (substring-before(substring-after($i, 'href="'), '"'))
     else
         ()
+let $xslInstructionDoc :=
+    try {eutil:getDoc($xslInstruction)}
+    catch * {()}
 
 let $doc :=
     if ($term eq '') then
         ($doc)
     else
-        ($doc//tei:text[ft:query(., $term)]/ancestor::tei:TEI)
-
-let $doc :=
-    if ($term eq '') then
-        ($doc)
-    else
-        (util:expand($doc))
+        ($doc//tei:text[ft:query(., $term)]/ancestor::tei:TEI) => util:expand()
 
 let $doc :=
     if ($page eq '') then
@@ -82,51 +79,49 @@ let $doc :=
 
 let $edition := request:get-parameter('edition', '')
 let $imageserver := edition:getPreference('image_server', $edition)
-
 let $imagePrefix := edition:getPreference('image_prefix', $edition)
 
-let $xsl :=
-    if ($xslInstruction) then
-        ($xslInstruction)
+let $xslDoc.pass1 :=
+    if($xslInstructionDoc) then
+        $xslInstructionDoc
     else
-        $eutil:xsltBase || '/tei/profiles/edirom-body/teiBody2HTML.xsl'
+        eutil:getDoc($eutil:xsltBase || '/tei/profiles/edirom-body/teiBody2HTML.xsl')
 
 (:TODO introduce injection-point for tei-stylesheet parameters :)
-let $params := (
-    (: parameters for Edirom-Online :)
-    <param name="lang" value="{edition:getLanguage($edition)}"/>,
-    <param name="docUri" value="{$uri}"/>,
-    <param name="contextPath" value="{$contextPath}"/>,
-    <param name="imagePrefix" value="{$imagePrefix}"/>,
-    (: parameters for the TEI Stylesheets :)
-    <param name="autoHead" value="false"/>,
-    <param name="autoToc" value="false"/>,
-    <param name="base" value="{concat($eutil:xsltBase, '/')}"/>,
-    <param name="documentationLanguage" value="{edition:getLanguage($edition)}"/>,
-    <param name="footnoteBackLink" value="true"/>,
-    <param name="numberHeadings" value="false"/>,
-    <param name="pageLayout" value="CSS"/>
-)
+let $params.pass1 :=
+    <parameters>
+        (: parameters for Edirom-Online :)
+        <param name="lang" value="{edition:getLanguage($edition)}"/>,
+        <param name="docUri" value="{$uri}"/>,
+        <param name="contextPath" value="{$contextPath}"/>,
+        <param name="imagePrefix" value="{$imagePrefix}"/>,
+        (: parameters for the TEI Stylesheets :)
+        <param name="autoHead" value="false"/>,
+        <param name="autoToc" value="false"/>,
+        <param name="base" value="{concat($eutil:xsltBase, '/')}"/>,
+        <param name="documentationLanguage" value="{edition:getLanguage($edition)}"/>,
+        <param name="footnoteBackLink" value="true"/>,
+        <param name="numberHeadings" value="false"/>,
+        <param name="pageLayout" value="CSS"/>
+    </parameters>
 
-let $doc := transform:transform($doc, eutil:getDoc($xsl), <parameters>{$params}</parameters>)
+let $doc.transformed.pass1 :=
+    if($doc and $xslDoc.pass1)
+    then transform:transform($doc, $xslDoc.pass1, $params.pass1)
+    else ()
 
-(: Do a second transformation to add edirom online ID prefixes for unique ID values if object is open mutiple times :)
-let $xsl := $eutil:xsltBase || '/edirom_idPrefix.xsl'
+(: Do a second transformation to add edirom online ID prefixes for unique ID values if object is open multiple times :)
+let $xslDoc.pass2 := eutil:getDoc($eutil:xsltBase || '/edirom_idPrefix.xsl')
+let $params.pass2 := <parameters><param name="idPrefix" value="{$idPrefix}"/></parameters>
+let $doc.transformed.pass2 :=
+    if($doc.transformed.pass1 and $xslDoc.pass2)
+    then transform:transform($doc.transformed.pass1, $xslDoc.pass2, $params.pass2)
+    else ()
 
-let $params := (
-    <param name="idPrefix" value="{$idPrefix}"/>
-)
-
-let $doc := transform:transform($doc, eutil:getDoc($xsl), <parameters>{$params}</parameters>)
-
-let $body := $doc//xhtml:body
+let $body := $doc.transformed.pass2//xhtml:body
 
 return
     element div {
-        for $attribute in $body/@*
-        return
-            $attribute,
-        for $node in $body/node()
-        return
-            $node
+        $body/@*,
+        $body/node()
     }
