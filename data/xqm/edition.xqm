@@ -152,8 +152,11 @@ declare function edition:getLanguage($edition as xs:string?) as xs:string {
  :)
 declare function edition:getPreferencesURI($uri as xs:string?) as xs:string {
     let $edition :=
-        try { eutil:getDoc($uri) }
-        catch * {()}
+        if($uri)
+        then
+            try { eutil:getDoc($uri) }
+            catch * {()}
+        else ()
     return
         if($edition//edirom:preferences/@xlink:href)
         then $edition//edirom:preferences/@xlink:href => string()
@@ -180,8 +183,11 @@ declare function edition:getPreference($key as xs:string, $edition as xs:string?
  :)
 declare function edition:getEditionURI($editionIDorPath as xs:string?) as xs:string? {
     let $edition :=
-        try { eutil:getDoc($editionIDorPath) }
-        catch * {()}
+        if($editionIDorPath)
+        then
+            try { eutil:getDoc($editionIDorPath) }
+            catch * {()}
+        else ()
     return
         (: $editionID is the empty sequence or the empty string :)
         if(not($editionIDorPath))

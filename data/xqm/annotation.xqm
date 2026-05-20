@@ -68,8 +68,11 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
     let $sigla :=
         for $p in distinct-values($pList)
         let $pDoc.valid :=
-            try { eutil:getDoc($p) }
-            catch * {()}
+            if($p)
+            then
+                try { eutil:getDoc($p) }
+                catch * {()}
+            else ()
         let $pDoc :=
             if($pDoc.valid) then
                 $pDoc.valid
