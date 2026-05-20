@@ -88,4 +88,102 @@
         </parallel>
     </target>
 
+    <target name="docker-setup">
+        <description>Setup Docker container for the regression tests</description>
+        <!-- Pull the latest develop image -->
+        <exec executable="docker" failonerror="true">
+            <arg value="compose"/>
+            <arg value="-f"/>
+            <arg value="testing/docker-compose.yaml"/>
+            <arg value="pull"/>
+            <arg value="edirom-online-backend-development"/>
+        </exec>
+        <!-- Build the test image from the current branch/working copy -->
+        <exec executable="docker" failonerror="true">
+            <arg value="compose"/>
+            <arg value="-f"/>
+            <arg value="testing/docker-compose.yaml"/>
+            <arg value="build"/>
+            <!--<arg value="-/-no-cache"/>-->
+            <arg value="edirom-online-backend-test"/>
+        </exec>
+        <!-- Create the containers so we can add our test data in the next step -->
+        <exec executable="docker" failonerror="true">
+            <arg value="compose"/>
+            <arg value="-f"/>
+            <arg value="testing/docker-compose.yaml"/>
+            <arg value="create"/>
+        </exec>
+
+        <!-- Download clarinet data to temp file -->
+        <tempfile property="test-data-clarinet" suffix=".xar" deleteonexit="true"/>
+        <exec executable="curl" failonerror="true">
+            <arg value="-L"/>
+            <arg value="-s"/>
+            <arg value="-o"/>
+            <arg value="${test-data-clarinet}"/>
+            <arg value="https://git.uni-paderborn.de/-/project/7894/uploads/0e0c97b029820cc94302d4c6151bec79/weber-klarinettenquintett-eol-emeritus.xar"/>
+        </exec>
+
+        <!-- Copy the clarinet test data into the containers -->
+        <exec executable="docker" failonerror="true">
+            <arg value="cp"/>
+            <arg value="${test-data-clarinet}"/>
+            <arg value="eol-dev:/opt/exist/autodeploy/"/>
+        </exec>
+        <exec executable="docker" failonerror="true">
+            <arg value="cp"/>
+            <arg value="${test-data-clarinet}"/>
+            <arg value="eol-test:/opt/exist/autodeploy/"/>
+        </exec>
+
+        <!-- Finally, start the container -->
+        <exec executable="docker" failonerror="true">
+            <arg value="compose"/>
+            <arg value="-f"/>
+            <arg value="testing/docker-compose.yaml"/>
+            <arg value="start"/>
+        </exec>
+
+        <!-- Wait for test container to be healthy -->
+        <exec executable="/bin/bash" failonerror="true">
+            <arg value="-c"/>
+            <arg value="
+                i=0 ;
+                while (! docker inspect eol-test | grep -e Status....healthy) ;
+                do if ((i > 30)) ;
+                then echo ' **** timeout ... aborting **** ' ; exit 1 ;
+                else sleep 5 ; echo waiting for container ... ; i=$((i+1)) ;
+                fi ; done"/>
+        </exec>
+
+        <!-- Wait for dev container to be healthy -->
+        <exec executable="/bin/bash" failonerror="true">
+            <arg value="-c"/>
+            <arg value="
+                i=0 ;
+                while (! docker inspect eol-dev | grep -e Status....healthy) ;
+                do if ((i > 30)) ;
+                then echo ' **** timeout ... aborting **** ' ; exit 1 ;
+                else sleep 5 ; echo waiting for container ... ; i=$((i+1)) ;
+                fi ; done"/>
+        </exec>
+    </target>
+
+    <target name="regression-tests" depends="docker-setup">
+        <description>Run the regression tests</description>
+        <exec executable="testing/regression-test.sh" failonerror="true"/>
+    </target>
+
+    <target name="docker-cleanup">
+        <description>Remove test container</description>
+        <exec executable="docker" failonerror="true">
+            <arg value="compose"/>
+            <arg value="-f"/>
+            <arg value="testing/docker-compose.yaml"/>
+            <arg value="down"/>
+            <arg value="-v"/>
+        </exec>
+    </target>
+
 </project>
