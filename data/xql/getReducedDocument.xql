@@ -60,8 +60,11 @@ let $xslInstruction :=
         ()
 
 let $xslInstructionDoc :=
-    try {eutil:getDoc($xslInstruction)}
-    catch * {()}
+    if (exists($xslInstruction)) then
+        try {eutil:getDoc($xslInstruction)}
+        catch * {()}
+    else
+        ()
 
 let $xslDoc :=
     if ($xslInstructionDoc) then
