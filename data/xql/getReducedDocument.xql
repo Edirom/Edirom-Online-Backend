@@ -59,13 +59,15 @@ let $xslInstruction :=
         else
         ()
 
-(:let $imagePrefix := edition:getPreference('image_prefix', request:get-parameter('edition', '')):)
+let $xslInstructionDoc :=
+    try {eutil:getDoc($xslInstruction)}
+    catch * {()}
 
-let $xsl :=
-    if ($xslInstruction) then
-        eutil:getDoc($xslInstruction)
+let $xslDoc :=
+    if ($xslInstructionDoc) then
+        $xslInstructionDoc
     else
-        $eutil:xsltBase || '/teiBody2HTML.xsl'
+        eutil:getDoc($eutil:xsltBase || '/teiBody2HTML.xsl')
 
 let $params := (
     <param name="base" value="{concat($eutil:xsltBase, '/')}"/>,
@@ -73,7 +75,7 @@ let $params := (
 )
 
 return
-    if ($xslInstruction) then
-        (transform:transform($doc/root(), $xsl, <parameters>{$params}</parameters>))
+    if ($xslInstructionDoc) then
+        (transform:transform($doc/root(), $xslDoc, <parameters>{$params}</parameters>))
     else
-        (transform:transform($doc/root(), $xsl, <parameters>{$params}<param name="graphicsPrefix" value="{$imagePrefix}"/></parameters>))
+        (transform:transform($doc/root(), $xslDoc, <parameters>{$params}<param name="graphicsPrefix" value="{$imagePrefix}"/></parameters>))
