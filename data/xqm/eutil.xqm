@@ -230,8 +230,8 @@ declare function eutil:getDoc($uri as xs:string?) as document-node()? {
             then error($eutil:INVALID_DOCUMENT_URI, concat('Blocked non-db URI: ', $normalizedUri))
             else
                 if(doc-available($normalizedUri))
-                then doc($uri)
-                else util:log("warn", "Unable to load document at " || $uri)
+                then doc($normalizedUri)
+                else util:log("warn", "Unable to load document at " || $normalizedUri)
 };
 
 (:~
