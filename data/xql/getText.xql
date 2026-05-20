@@ -52,8 +52,11 @@ let $xslInstruction :=
     else
         ()
 let $xslInstructionDoc :=
-    try {eutil:getDoc($xslInstruction)}
-    catch * {()}
+    if (exists($xslInstruction)) then
+        try {eutil:getDoc($xslInstruction)}
+        catch * {()}
+    else
+        ()
 
 let $doc :=
     if ($term eq '') then
