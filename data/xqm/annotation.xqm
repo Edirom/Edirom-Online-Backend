@@ -126,7 +126,7 @@ declare function annotation:getContent($anno as element(), $idPrefix as xs:strin
     let $p := $anno/mei:p[not(@xml:lang) or @xml:lang = $language]
     
     let $html :=
-        transform:transform($p,concat($eutil:xsltBase,'/meiP2html.xsl'),
+        transform:transform($p,eutil:getDoc($eutil:xsltBase || '/meiP2html.xsl'),
             <parameters>
                 <param name="idPrefix" value="{$idPrefix}"/>
                 <param name="imagePrefix" value="{$imageBasePath}"/>
