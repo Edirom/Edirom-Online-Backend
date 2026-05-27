@@ -2,7 +2,8 @@
 <project basedir=".." name="EdiromOnlineTesting">
     
     <property name="xqunit-url" value="http://localhost:8080/exist/apps/Edirom-Online-Backend/testing/XQSuite/run-unit-tests.xq"/>
-    
+    <property name="test-data-clarinet" value="clarinet-test-data.xar"/>
+
     <target name="run-all-tests" depends="xqunit-tests,check-language-files"/>
     
     <target name="-check-dependencies">
@@ -90,7 +91,6 @@
 
     <target name="download-test-data">
         <description>Download clarinet data once and reuse local cache</description>
-        <property name="test-data-clarinet" value="clarinet-test-data.xar"/>
         <available file="${test-data-clarinet}" property="test.data.exists"/>
         <antcall target="-do-download-test-data"/>
     </target>
@@ -185,12 +185,12 @@
 
     <target name="test-cleanup">
         <description>Remove test container and remove temp files</description>
-        <exec executable="docker" failonerror="true">
+        <exec executable="docker" failonerror="false">
             <arg value="kill"/>
             <arg value="edirom-online-backend-develop"/>
             <arg value="edirom-online-backend-test"/>
         </exec>
-        <delete file="${test-data-clarinet}"/>
+        <delete file="${test-data-clarinet}" failonerror="false" verbose="true"/>
     </target>
 
 </project>
