@@ -89,7 +89,7 @@ jobs:
         run: ant regression-tests
         if: ${{ github.event_name == 'pull_request' }}
       - name: Tear down Docker
-        run: ant docker-cleanup
+        run: ant test-cleanup
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v7

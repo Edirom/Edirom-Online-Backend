@@ -89,8 +89,13 @@
     </target>
 
     <target name="download-test-data">
-        <description>Download clarinet data to temp file</description>
-        <tempfile property="test-data-clarinet" suffix=".xar" deleteonexit="true"/>
+        <description>Download clarinet data once and reuse local cache</description>
+        <property name="test-data-clarinet" value="clarinet-test-data.xar"/>
+        <available file="${test-data-clarinet}" property="test.data.exists"/>
+        <antcall target="-do-download-test-data"/>
+    </target>
+
+    <target name="-do-download-test-data" unless="test.data.exists">
         <exec executable="curl" failonerror="true">
             <arg value="-L"/>
             <arg value="-s"/>
@@ -178,13 +183,14 @@
         <exec executable="testing/regression-test.sh" failonerror="true"/>
     </target>
 
-    <target name="docker-cleanup">
-        <description>Remove test container</description>
+    <target name="test-cleanup">
+        <description>Remove test container and remove temp files</description>
         <exec executable="docker" failonerror="true">
             <arg value="kill"/>
             <arg value="edirom-online-backend-develop"/>
             <arg value="edirom-online-backend-test"/>
         </exec>
+        <delete file="${test-data-clarinet}"/>
     </target>
 
 </project>
