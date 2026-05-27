@@ -77,10 +77,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Run the Docker image
-        run: docker run --rm -p 8080:8080 --name edirom-online-backend -d ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
-
-      - name: Check the deployed service URL
-        run: i=0 ; while (! curl --fail -sv http://localhost:8080/exist/apps/Edirom-Online-Backend/index.html) ; do if ((i > 20)) ; then echo ' **** timeout ... aborting **** ' ; exit 1 ; else sleep 5 ; echo waiting for container ... ; i=$((i+1)) ; fi ; done
+        run: ant docker-run-test-image -Dtest.image=${{ fromJSON(steps.meta.outputs.json).tags[0] }}
 
       - name: Install libxml2-utils for xmllint
         run: |
@@ -88,8 +85,10 @@ jobs:
           sudo apt-get install libxml2-utils
       - name: Run XQSuite unit tests
         run: ant xqunit-tests
+      - name: Run regression tests
+        run: ant regression-tests
       - name: Tear down Docker
-        run: docker kill edirom-online-backend
+        run: ant docker-cleanup
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
