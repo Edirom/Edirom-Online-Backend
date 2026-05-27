@@ -90,6 +90,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
       - name: Tear down Docker
         run: ant test-cleanup
+        if: ${{ always() }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
