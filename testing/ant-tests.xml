@@ -99,6 +99,8 @@
         <exec executable="curl" failonerror="true">
             <arg value="-L"/>
             <arg value="-s"/>
+            <arg value="-S"/>
+            <arg value="--fail"/>
             <arg value="-o"/>
             <arg value="${test-data-clarinet}"/>
             <arg value="https://git.uni-paderborn.de/-/project/7894/uploads/0e0c97b029820cc94302d4c6151bec79/weber-klarinettenquintett-eol-emeritus.xar"/>
