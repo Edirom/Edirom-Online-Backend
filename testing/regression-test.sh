@@ -4,6 +4,13 @@
 REFERENCE_BASE=http://localhost:8090/exist/apps/Edirom-Online-Backend
 TEST_BASE=http://localhost:8080/exist/apps/Edirom-Online-Backend
 
+SED_OPTION=
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  SED_OPTION="-i ''"
+else
+  SED_OPTION='-i';
+fi
+
 declare -a ENDPOINTS=(
 "/data/xql/getAnnotation.xql?edition=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fedition.xml&uri=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fsources%2Fsource-4-MEI.xml%23annotation-2&target=tip&lang=de"
 "/data/xql/getAnnotationInfos.xql?uri=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fsources%2Fsource-1.xml&lang=de&edition=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fedition.xml"
@@ -54,10 +61,10 @@ do
     echo "testing $i"
     curl -Ls "$REFERENCE_BASE$i" -o "$REF_FILE"
     # replace host and port number with xxxx to avoid false positives
-    sed -i '' 's/localhost:8090/xxxx/g' "$REF_FILE"
+    sed "$SED_OPTION" 's/localhost:8090/xxxx/g' "$REF_FILE"
     curl -Ls "$TEST_BASE$i" -o "$TEST_FILE"
     # replace host and port number with xxxx to avoid false positives
-    sed -i '' 's/localhost:8080/xxxx/g' "$TEST_FILE"
+    sed "$SED_OPTION" 's/localhost:8080/xxxx/g' "$TEST_FILE"
     diff "$REF_FILE" "$TEST_FILE"
     rm "$REF_FILE" "$TEST_FILE"
 done
