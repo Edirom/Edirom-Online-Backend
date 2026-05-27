@@ -76,10 +76,10 @@ do
     # create array of temp files for later removal by `cleanup_temp_files`
     TEMP_FILES=("$REF_FILE" "$TEST_FILE")
     echo "testing $i"
-    curl -Ls "$REFERENCE_BASE$i" -o "$REF_FILE"
+    curl -LsS --fail "$REFERENCE_BASE$i" -o "$REF_FILE"
     # replace host and port number with xxxx to avoid false positives
     sed "$SED_OPTION" 's/localhost:8090/xxxx/g' "$REF_FILE"
-    curl -Ls "$TEST_BASE$i" -o "$TEST_FILE"
+    curl -LsS --fail "$TEST_BASE$i" -o "$TEST_FILE"
     # replace host and port number with xxxx to avoid false positives
     sed "$SED_OPTION" 's/localhost:8080/xxxx/g' "$TEST_FILE"
     diff "$REF_FILE" "$TEST_FILE"
