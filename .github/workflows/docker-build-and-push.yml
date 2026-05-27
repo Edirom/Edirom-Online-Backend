@@ -87,6 +87,7 @@ jobs:
         run: ant xqunit-tests
       - name: Run regression tests
         run: ant regression-tests
+        if: ${{ github.event_name == 'pull_request' }}
       - name: Tear down Docker
         run: ant docker-cleanup
 
