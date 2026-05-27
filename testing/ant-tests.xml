@@ -88,34 +88,8 @@
         </parallel>
     </target>
 
-    <target name="docker-setup">
-        <description>Setup Docker container for the regression tests</description>
-        <!-- Pull the latest develop image -->
-        <exec executable="docker" failonerror="true">
-            <arg value="compose"/>
-            <arg value="-f"/>
-            <arg value="testing/docker-compose.yaml"/>
-            <arg value="pull"/>
-            <arg value="edirom-online-backend-development"/>
-        </exec>
-        <!-- Build the test image from the current branch/working copy -->
-        <exec executable="docker" failonerror="true">
-            <arg value="compose"/>
-            <arg value="-f"/>
-            <arg value="testing/docker-compose.yaml"/>
-            <arg value="build"/>
-            <!--<arg value="-/-no-cache"/>-->
-            <arg value="edirom-online-backend-test"/>
-        </exec>
-        <!-- Create the containers so we can add our test data in the next step -->
-        <exec executable="docker" failonerror="true">
-            <arg value="compose"/>
-            <arg value="-f"/>
-            <arg value="testing/docker-compose.yaml"/>
-            <arg value="create"/>
-        </exec>
-
-        <!-- Download clarinet data to temp file -->
+    <target name="download-test-data">
+        <description>Download clarinet data to temp file</description>
         <tempfile property="test-data-clarinet" suffix=".xar" deleteonexit="true"/>
         <exec executable="curl" failonerror="true">
             <arg value="-L"/>
@@ -124,45 +98,36 @@
             <arg value="${test-data-clarinet}"/>
             <arg value="https://git.uni-paderborn.de/-/project/7894/uploads/0e0c97b029820cc94302d4c6151bec79/weber-klarinettenquintett-eol-emeritus.xar"/>
         </exec>
+    </target>
 
+    <target name="docker-run-test-image" depends="download-test-data">
+        <description>Run the current test image</description>
+        <exec executable="docker" failonerror="true">
+            <arg value="create"/>
+            <arg value="-p"/>
+            <arg value="8080:8080"/>
+            <arg value="--rm"/>
+            <arg value="--name"/>
+            <arg value="edirom-online-backend-test"/>
+            <arg value="${test.image}"/>
+        </exec>
         <!-- Copy the clarinet test data into the containers -->
         <exec executable="docker" failonerror="true">
             <arg value="cp"/>
             <arg value="${test-data-clarinet}"/>
-            <arg value="eol-dev:/opt/exist/autodeploy/"/>
+            <arg value="edirom-online-backend-test:/opt/exist/autodeploy/"/>
         </exec>
+        <!-- Start the container -->
         <exec executable="docker" failonerror="true">
-            <arg value="cp"/>
-            <arg value="${test-data-clarinet}"/>
-            <arg value="eol-test:/opt/exist/autodeploy/"/>
-        </exec>
-
-        <!-- Finally, start the container -->
-        <exec executable="docker" failonerror="true">
-            <arg value="compose"/>
-            <arg value="-f"/>
-            <arg value="testing/docker-compose.yaml"/>
             <arg value="start"/>
+            <arg value="edirom-online-backend-test"/>
         </exec>
-
-        <!-- Wait for test container to be healthy -->
+        <!-- Wait for container to be healthy -->
         <exec executable="/bin/bash" failonerror="true">
             <arg value="-c"/>
             <arg value="
                 i=0 ;
-                while (! docker inspect eol-test | grep -e Status....healthy) ;
-                do if ((i > 30)) ;
-                then echo ' **** timeout ... aborting **** ' ; exit 1 ;
-                else sleep 5 ; echo waiting for container ... ; i=$((i+1)) ;
-                fi ; done"/>
-        </exec>
-
-        <!-- Wait for dev container to be healthy -->
-        <exec executable="/bin/bash" failonerror="true">
-            <arg value="-c"/>
-            <arg value="
-                i=0 ;
-                while (! docker inspect eol-dev | grep -e Status....healthy) ;
+                while (! docker inspect edirom-online-backend-test | grep -e Status....healthy) ;
                 do if ((i > 30)) ;
                 then echo ' **** timeout ... aborting **** ' ; exit 1 ;
                 else sleep 5 ; echo waiting for container ... ; i=$((i+1)) ;
@@ -170,7 +135,45 @@
         </exec>
     </target>
 
-    <target name="regression-tests" depends="docker-setup">
+    <target name="docker-run-develop-image" depends="download-test-data">
+        <description>Pull and run the latest develop image</description>
+        <!-- Pull the image and create the container -->
+        <exec executable="docker" failonerror="true">
+            <arg value="create"/>
+            <arg value="-p"/>
+            <arg value="8090:8080"/>
+            <arg value="--pull"/>
+            <arg value="always"/>
+            <arg value="--rm"/>
+            <arg value="--name"/>
+            <arg value="edirom-online-backend-develop"/>
+            <arg value="edirom/edirom-online-backend:develop"/>
+        </exec>
+        <!-- Copy the clarinet test data into the containers -->
+        <exec executable="docker" failonerror="true">
+            <arg value="cp"/>
+            <arg value="${test-data-clarinet}"/>
+            <arg value="edirom-online-backend-develop:/opt/exist/autodeploy/"/>
+        </exec>
+        <!-- Start the container -->
+        <exec executable="docker" failonerror="true">
+            <arg value="start"/>
+            <arg value="edirom-online-backend-develop"/>
+        </exec>
+        <!-- Wait for container to be healthy -->
+        <exec executable="/bin/bash" failonerror="true">
+            <arg value="-c"/>
+            <arg value="
+                i=0 ;
+                while (! docker inspect edirom-online-backend-develop | grep -e Status....healthy) ;
+                do if ((i > 30)) ;
+                then echo ' **** timeout ... aborting **** ' ; exit 1 ;
+                else sleep 5 ; echo waiting for container ... ; i=$((i+1)) ;
+                fi ; done"/>
+        </exec>
+    </target>
+
+    <target name="regression-tests" depends="docker-run-develop-image">
         <description>Run the regression tests</description>
         <exec executable="testing/regression-test.sh" failonerror="true"/>
     </target>
@@ -178,11 +181,9 @@
     <target name="docker-cleanup">
         <description>Remove test container</description>
         <exec executable="docker" failonerror="true">
-            <arg value="compose"/>
-            <arg value="-f"/>
-            <arg value="testing/docker-compose.yaml"/>
-            <arg value="down"/>
-            <arg value="-v"/>
+            <arg value="kill"/>
+            <arg value="edirom-online-backend-develop"/>
+            <arg value="edirom-online-backend-test"/>
         </exec>
     </target>
 
