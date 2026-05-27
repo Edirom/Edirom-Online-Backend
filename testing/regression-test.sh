@@ -4,6 +4,18 @@
 REFERENCE_BASE=http://localhost:8090/exist/apps/Edirom-Online-Backend
 TEST_BASE=http://localhost:8080/exist/apps/Edirom-Online-Backend
 
+TEMP_FILES=()
+
+cleanup_temp_files() {
+  if ((${#TEMP_FILES[@]})); then
+    rm -f "${TEMP_FILES[@]}"
+  fi
+}
+
+# make sure to always remove temp files
+# even if script exits due to an error
+trap cleanup_temp_files EXIT
+
 SED_OPTION=
 if [[ "$OSTYPE" == "darwin"* ]]; then
   SED_OPTION="-i ''"
@@ -11,6 +23,9 @@ else
   SED_OPTION='-i';
 fi
 
+# the list of endpoints is based on https://edirom.github.io/Edirom-Online-API/
+# with some manual additions
+# Please feel free to add more here!
 declare -a ENDPOINTS=(
 "/data/xql/getAnnotation.xql?edition=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fedition.xml&uri=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fsources%2Fsource-4-MEI.xml%23annotation-2&target=tip&lang=de"
 "/data/xql/getAnnotationInfos.xql?uri=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fsources%2Fsource-1.xml&lang=de&edition=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fedition.xml"
@@ -58,6 +73,8 @@ for i in "${ENDPOINTS[@]}"
 do
     REF_FILE=$(mktemp)
     TEST_FILE=$(mktemp)
+    # create array of temp files for later removal by `cleanup_temp_files`
+    TEMP_FILES=("$REF_FILE" "$TEST_FILE")
     echo "testing $i"
     curl -Ls "$REFERENCE_BASE$i" -o "$REF_FILE"
     # replace host and port number with xxxx to avoid false positives
@@ -66,5 +83,6 @@ do
     # replace host and port number with xxxx to avoid false positives
     sed "$SED_OPTION" 's/localhost:8080/xxxx/g' "$TEST_FILE"
     diff "$REF_FILE" "$TEST_FILE"
-    rm "$REF_FILE" "$TEST_FILE"
+    cleanup_temp_files
+    TEMP_FILES=()
 done
