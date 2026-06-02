@@ -5,2107 +5,2107 @@
     "priority" : "3",
     "pos" : "1",
     "id" : "annotation-1",
-    "title" : "Movement 1, Bar 1",
+    "title" : "Satz 1, Takt 1",
     "sigla" : "K/sv",
     "categories" : "Korrektur"
   }, {
     "priority" : "1",
     "pos" : "2",
     "id" : "annotation-2",
-    "title" : "Movement 1, Bar 5",
+    "title" : "Satz 1, Takt 5",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "3",
     "id" : "annotation-3",
-    "title" : "Movement 1, Bar 7",
+    "title" : "Satz 1, Takt 7",
     "sigla" : "ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "1",
     "pos" : "4",
     "id" : "annotation-4",
-    "title" : "Movement 1, Bar 13",
+    "title" : "Satz 1, Takt 13",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "5",
     "id" : "annotation-5",
-    "title" : "Movement 1, Bar 14",
+    "title" : "Satz 1, Takt 14",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "3",
     "pos" : "6",
     "id" : "annotation-7",
-    "title" : "Movement 1, Bar 15",
+    "title" : "Satz 1, Takt 15",
     "sigla" : "K/sv",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "7",
     "id" : "annotation-6",
-    "title" : "Movement 1, Bar 15",
+    "title" : "Satz 1, Takt 15",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "8",
     "id" : "annotation-8",
-    "title" : "Movement 1, Bar 16",
+    "title" : "Satz 1, Takt 16",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Bogensetzung, Korrektur"
   }, {
     "priority" : "1",
     "pos" : "9",
     "id" : "annotation-9",
-    "title" : "Movement 1, Bar 16",
+    "title" : "Satz 1, Takt 16",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "10",
     "id" : "annotation-10",
-    "title" : "Movement 1, Bar 20",
+    "title" : "Satz 1, Takt 20",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "11",
     "id" : "annotation-11",
-    "title" : "Movement 1, Bar 23",
+    "title" : "Satz 1, Takt 23",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung, Korrektur"
   }, {
     "priority" : "3",
     "pos" : "12",
     "id" : "annotation-13",
-    "title" : "Movement 1, Bar 24",
+    "title" : "Satz 1, Takt 24",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Artikulation"
   }, {
     "priority" : "1",
     "pos" : "13",
     "id" : "annotation-12",
-    "title" : "Movement 1, Bar 24",
+    "title" : "Satz 1, Takt 24",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Editorischer Eingriff, Artikulation"
   }, {
     "priority" : "2",
     "pos" : "14",
     "id" : "annotation-14",
-    "title" : "Movement 1, Bar 25",
+    "title" : "Satz 1, Takt 25",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "2",
     "pos" : "15",
     "id" : "annotation-15",
-    "title" : "Movement 1, Bar 26",
+    "title" : "Satz 1, Takt 26",
     "sigla" : "A",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "16",
     "id" : "annotation-16",
-    "title" : "Movement 1, Bar 27",
+    "title" : "Satz 1, Takt 27",
     "sigla" : "A",
     "categories" : "Korrektur"
   }, {
     "priority" : "1",
     "pos" : "17",
     "id" : "annotation-17",
-    "title" : "Movement 1, Bar 27",
+    "title" : "Satz 1, Takt 27",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "18",
     "id" : "annotation-18",
-    "title" : "Movement 1, Bar 27",
+    "title" : "Satz 1, Takt 27",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "19",
     "id" : "annotation-19",
-    "title" : "Movement 1, Bar 28",
+    "title" : "Satz 1, Takt 28",
     "sigla" : "A, K/sv",
     "categories" : "Artikulation"
   }, {
     "priority" : "3",
     "pos" : "20",
     "id" : "annotation-20",
-    "title" : "Movement 1, Bar 28",
+    "title" : "Satz 1, Takt 28",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "21",
     "id" : "annotation-21",
-    "title" : "Movement 1, Bar 29",
+    "title" : "Satz 1, Takt 29",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Dynamik, Editorischer Eingriff"
   }, {
     "priority" : "3",
     "pos" : "22",
     "id" : "annotation-23",
-    "title" : "Movement 1, Bar 29",
+    "title" : "Satz 1, Takt 29",
     "sigla" : "A",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "23",
     "id" : "annotation-22",
-    "title" : "Movement 1, Bar 29",
+    "title" : "Satz 1, Takt 29",
     "sigla" : "A, K/sv",
     "categories" : "Artikulation"
   }, {
     "priority" : "2",
     "pos" : "24",
     "id" : "annotation-29",
-    "title" : "Movement 1, Bar 30",
+    "title" : "Satz 1, Takt 30",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "25",
     "id" : "annotation-28",
-    "title" : "Movement 1, Bar 30",
+    "title" : "Satz 1, Takt 30",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "26",
     "id" : "annotation-26",
-    "title" : "Movement 1, Bar 30",
+    "title" : "Satz 1, Takt 30",
     "sigla" : "A, K/sv, ED₂",
     "categories" : "Artikulation"
   }, {
     "priority" : "1",
     "pos" : "27",
     "id" : "annotation-27",
-    "title" : "Movement 1, Bar 30",
+    "title" : "Satz 1, Takt 30",
     "sigla" : "A, K/sv",
     "categories" : "Dynamik"
   }, {
     "priority" : "3",
     "pos" : "28",
     "id" : "annotation-25",
-    "title" : "Movement 1, Bar 30",
+    "title" : "Satz 1, Takt 30",
     "sigla" : "A, K/sv",
     "categories" : "Artikulation, Korrektur"
   }, {
     "priority" : "1",
     "pos" : "29",
     "id" : "annotation-30",
-    "title" : "Movement 1, Bar 30",
+    "title" : "Satz 1, Takt 30",
     "sigla" : "A, K/sv",
     "categories" : "Artikulation"
   }, {
     "priority" : "2",
     "pos" : "30",
     "id" : "annotation-24",
-    "title" : "Movement 1, Bar 30",
+    "title" : "Satz 1, Takt 30",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "3",
     "pos" : "31",
     "id" : "annotation-32",
-    "title" : "Movement 1, Bar 31",
+    "title" : "Satz 1, Takt 31",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "32",
     "id" : "annotation-33",
-    "title" : "Movement 1, Bar 31",
+    "title" : "Satz 1, Takt 31",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "33",
     "id" : "annotation-31",
-    "title" : "Movement 1, Bar 31",
+    "title" : "Satz 1, Takt 31",
     "sigla" : "A, K/sv",
     "categories" : "Dynamik"
   }, {
     "priority" : "2",
     "pos" : "34",
     "id" : "annotation-34",
-    "title" : "Movement 1, Bar 32",
+    "title" : "Satz 1, Takt 32",
     "sigla" : "A, K/sv",
     "categories" : "Artikulation"
   }, {
     "priority" : "2",
     "pos" : "35",
     "id" : "annotation-35",
-    "title" : "Movement 1, Bar 32",
+    "title" : "Satz 1, Takt 32",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "1",
     "pos" : "36",
     "id" : "annotation-38",
-    "title" : "Movement 1, Bar 33",
+    "title" : "Satz 1, Takt 33",
     "sigla" : "A, K/sv",
     "categories" : "Artikulation"
   }, {
     "priority" : "2",
     "pos" : "37",
     "id" : "annotation-39",
-    "title" : "Movement 1, Bar 33",
+    "title" : "Satz 1, Takt 33",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Dynamik"
   }, {
     "priority" : "3",
     "pos" : "38",
     "id" : "annotation-37",
-    "title" : "Movement 1, Bar 33",
+    "title" : "Satz 1, Takt 33",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Notation"
   }, {
     "priority" : "2",
     "pos" : "39",
     "id" : "annotation-36",
-    "title" : "Movement 1, Bar 33",
+    "title" : "Satz 1, Takt 33",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "40",
     "id" : "annotation-40",
-    "title" : "Movement 1, Bar 33",
+    "title" : "Satz 1, Takt 33",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Dynamik, Editorischer Eingriff, Korrektur"
   }, {
     "priority" : "3",
     "pos" : "41",
     "id" : "annotation-41",
-    "title" : "Movement 1, Bar 33",
+    "title" : "Satz 1, Takt 33",
     "sigla" : "A, K/sv",
     "categories" : "Korrektur"
   }, {
     "priority" : "1",
     "pos" : "42",
     "id" : "annotation-42",
-    "title" : "Movement 1, Bar 34",
+    "title" : "Satz 1, Takt 34",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Korrektur"
   }, {
     "priority" : "3",
     "pos" : "43",
     "id" : "annotation-45",
-    "title" : "Movement 1, Bar 37",
+    "title" : "Satz 1, Takt 37",
     "sigla" : "K/sv",
     "categories" : "Dynamik"
   }, {
     "priority" : "3",
     "pos" : "44",
     "id" : "annotation-44",
-    "title" : "Movement 1, Bar 37",
+    "title" : "Satz 1, Takt 37",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "45",
     "id" : "annotation-46",
-    "title" : "Movement 1, Bar 37",
+    "title" : "Satz 1, Takt 37",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "46",
     "id" : "annotation-47",
-    "title" : "Movement 1, Bar 39",
+    "title" : "Satz 1, Takt 39",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "1",
     "pos" : "47",
     "id" : "annotation-48",
-    "title" : "Movement 1, Bar 40",
+    "title" : "Satz 1, Takt 40",
     "sigla" : "A, K/sv",
     "categories" : "Artikulation"
   }, {
     "priority" : "2",
     "pos" : "48",
     "id" : "annotation-49",
-    "title" : "Movement 1, Bar 41",
+    "title" : "Satz 1, Takt 41",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "49",
     "id" : "annotation-51",
-    "title" : "Movement 1, Bar 41",
+    "title" : "Satz 1, Takt 41",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "3",
     "pos" : "50",
     "id" : "annotation-50",
-    "title" : "Movement 1, Bar 41",
+    "title" : "Satz 1, Takt 41",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "51",
     "id" : "annotation-52",
-    "title" : "Movement 1, Bar 41",
+    "title" : "Satz 1, Takt 41",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "2",
     "pos" : "52",
     "id" : "annotation-53",
-    "title" : "Movement 1, Bar 41",
+    "title" : "Satz 1, Takt 41",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Dynamik, Korrektur"
   }, {
     "priority" : "1",
     "pos" : "53",
     "id" : "annotation-54",
-    "title" : "Movement 1, Bar 43",
+    "title" : "Satz 1, Takt 43",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Editorischer Eingriff"
   }, {
     "priority" : "2",
     "pos" : "54",
     "id" : "annotation-56",
-    "title" : "Movement 1, Bar 44",
+    "title" : "Satz 1, Takt 44",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "55",
     "id" : "annotation-55",
-    "title" : "Movement 1, Bar 44",
+    "title" : "Satz 1, Takt 44",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "1",
     "pos" : "56",
     "id" : "annotation-58",
-    "title" : "Movement 1, Bar 45",
+    "title" : "Satz 1, Takt 45",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "57",
     "id" : "annotation-57",
-    "title" : "Movement 1, Bar 45",
+    "title" : "Satz 1, Takt 45",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "58",
     "id" : "annotation-60",
-    "title" : "Movement 1, Bar 47",
+    "title" : "Satz 1, Takt 47",
     "sigla" : "A, ED₂, K/sv",
     "categories" : "Artikulation, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "59",
     "id" : "annotation-61",
-    "title" : "Movement 1, Bar 49",
+    "title" : "Satz 1, Takt 49",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "60",
     "id" : "annotation-62",
-    "title" : "Movement 1, Bar 50",
+    "title" : "Satz 1, Takt 50",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "61",
     "id" : "annotation-64",
-    "title" : "Movement 1, Bar 51",
+    "title" : "Satz 1, Takt 51",
     "sigla" : "A, ED₁",
     "categories" : "Bogensetzung, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "62",
     "id" : "annotation-63",
-    "title" : "Movement 1, Bar 51",
+    "title" : "Satz 1, Takt 51",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "63",
     "id" : "annotation-65",
-    "title" : "Movement 1, Bar 52",
+    "title" : "Satz 1, Takt 52",
     "sigla" : "A, K/sv",
     "categories" : "Dynamik"
   }, {
     "priority" : "2",
     "pos" : "64",
     "id" : "annotation-67",
-    "title" : "Movement 1, Bar 52",
+    "title" : "Satz 1, Takt 52",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "3",
     "pos" : "65",
     "id" : "annotation-66",
-    "title" : "Movement 1, Bar 52",
+    "title" : "Satz 1, Takt 52",
     "sigla" : "K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "3",
     "pos" : "66",
     "id" : "annotation-68",
-    "title" : "Movement 1, Bar 52",
+    "title" : "Satz 1, Takt 52",
     "sigla" : "K/sv, ED₁",
     "categories" : "Rhythmus"
   }, {
     "priority" : "3",
     "pos" : "67",
     "id" : "annotation-70",
-    "title" : "Movement 1, Bar 53",
+    "title" : "Satz 1, Takt 53",
     "sigla" : "A",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "68",
     "id" : "annotation-69",
-    "title" : "Movement 1, Bar 53",
+    "title" : "Satz 1, Takt 53",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "69",
     "id" : "annotation-73",
-    "title" : "Movement 1, Bar 54",
+    "title" : "Satz 1, Takt 54",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "3",
     "pos" : "70",
     "id" : "annotation-72",
-    "title" : "Movement 1, Bar 54",
+    "title" : "Satz 1, Takt 54",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "71",
     "id" : "annotation-74",
-    "title" : "Movement 1, Bar 54",
+    "title" : "Satz 1, Takt 54",
     "sigla" : "A, K/sv",
     "categories" : "Editorischer Eingriff"
   }, {
     "priority" : "2",
     "pos" : "72",
     "id" : "annotation-75",
-    "title" : "Movement 1, Bar 55",
+    "title" : "Satz 1, Takt 55",
     "sigla" : "A, ED₂, K/sv",
     "categories" : "Dynamik"
   }, {
     "priority" : "1",
     "pos" : "73",
     "id" : "annotation-76",
-    "title" : "Movement 1, Bar 56",
+    "title" : "Satz 1, Takt 56",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "74",
     "id" : "annotation-77",
-    "title" : "Movement 1, Bar 56",
+    "title" : "Satz 1, Takt 56",
     "sigla" : "A, K/sv",
     "categories" : "Notation, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "75",
     "id" : "annotation-78",
-    "title" : "Movement 1, Bar 57",
+    "title" : "Satz 1, Takt 57",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "76",
     "id" : "annotation-79",
-    "title" : "Movement 1, Bar 61",
+    "title" : "Satz 1, Takt 61",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "77",
     "id" : "annotation-80",
-    "title" : "Movement 1, Bar 61",
+    "title" : "Satz 1, Takt 61",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "78",
     "id" : "annotation-81",
-    "title" : "Movement 1, Bar 62",
+    "title" : "Satz 1, Takt 62",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "79",
     "id" : "annotation-84",
-    "title" : "Movement 1, Bar 63",
+    "title" : "Satz 1, Takt 63",
     "sigla" : "A, ED₂, K/sv",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "80",
     "id" : "annotation-83",
-    "title" : "Movement 1, Bar 63",
+    "title" : "Satz 1, Takt 63",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "3",
     "pos" : "81",
     "id" : "annotation-82",
-    "title" : "Movement 1, Bar 63",
+    "title" : "Satz 1, Takt 63",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "82",
     "id" : "annotation-85",
-    "title" : "Movement 1, Bar 66",
+    "title" : "Satz 1, Takt 66",
     "sigla" : "K/sv, ED₁",
     "categories" : "Artikulation, Notation"
   }, {
     "priority" : "1",
     "pos" : "83",
     "id" : "annotation-86",
-    "title" : "Movement 1, Bar 67",
+    "title" : "Satz 1, Takt 67",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Editorischer Eingriff"
   }, {
     "priority" : "1",
     "pos" : "84",
     "id" : "annotation-87",
-    "title" : "Movement 1, Bar 68",
+    "title" : "Satz 1, Takt 68",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Editorischer Eingriff"
   }, {
     "priority" : "2",
     "pos" : "85",
     "id" : "annotation-88",
-    "title" : "Movement 1, Bar 69",
+    "title" : "Satz 1, Takt 69",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "1",
     "pos" : "86",
     "id" : "annotation-89",
-    "title" : "Movement 1, Bar 71",
+    "title" : "Satz 1, Takt 71",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "3",
     "pos" : "87",
     "id" : "annotation-92",
-    "title" : "Movement 1, Bar 72",
+    "title" : "Satz 1, Takt 72",
     "sigla" : "A, ED₂, K/sv",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "88",
     "id" : "annotation-91",
-    "title" : "Movement 1, Bar 72",
+    "title" : "Satz 1, Takt 72",
     "sigla" : "K/sv, ED₁",
     "categories" : "Notation, Dynamik, Spielanweisung"
   }, {
     "priority" : "1",
     "pos" : "89",
     "id" : "annotation-94",
-    "title" : "Movement 1, Bar 78",
+    "title" : "Satz 1, Takt 78",
     "sigla" : "A, K/sv",
     "categories" : "Artikulation, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "90",
     "id" : "annotation-95",
-    "title" : "Movement 1, Bar 80",
+    "title" : "Satz 1, Takt 80",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "91",
     "id" : "annotation-96",
-    "title" : "Movement 1, Bar 81",
+    "title" : "Satz 1, Takt 81",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Notation, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "92",
     "id" : "annotation-97",
-    "title" : "Movement 1, Bar 83",
+    "title" : "Satz 1, Takt 83",
     "sigla" : "A, K/sv",
     "categories" : "Artikulation"
   }, {
     "priority" : "1",
     "pos" : "93",
     "id" : "annotation-98",
-    "title" : "Movement 1, Bar 84",
+    "title" : "Satz 1, Takt 84",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "94",
     "id" : "annotation-99",
-    "title" : "Movement 1, Bar 84",
+    "title" : "Satz 1, Takt 84",
     "sigla" : "K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "95",
     "id" : "annotation-100",
-    "title" : "Movement 1, Bar 85",
+    "title" : "Satz 1, Takt 85",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "96",
     "id" : "annotation-101",
-    "title" : "Movement 1, Bar 86",
+    "title" : "Satz 1, Takt 86",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "97",
     "id" : "annotation-102",
-    "title" : "Movement 1, Bar 90",
+    "title" : "Satz 1, Takt 90",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "98",
     "id" : "annotation-104",
-    "title" : "Movement 1, Bar 91",
+    "title" : "Satz 1, Takt 91",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "3",
     "pos" : "99",
     "id" : "annotation-103",
-    "title" : "Movement 1, Bar 91",
+    "title" : "Satz 1, Takt 91",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Notation"
   }, {
     "priority" : "2",
     "pos" : "100",
     "id" : "annotation-107",
-    "title" : "Movement 1, Bar 92a",
+    "title" : "Satz 1, Takt 92a",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation, Notation"
   }, {
     "priority" : "2",
     "pos" : "101",
     "id" : "annotation-106",
-    "title" : "Movement 1, Bar 92a",
+    "title" : "Satz 1, Takt 92a",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "102",
     "id" : "annotation-107",
-    "title" : "Movement 1, Bar 93",
+    "title" : "Satz 1, Takt 93",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation, Notation"
   }, {
     "priority" : "2",
     "pos" : "103",
     "id" : "annotation-106",
-    "title" : "Movement 1, Bar 93",
+    "title" : "Satz 1, Takt 93",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "3",
     "pos" : "104",
     "id" : "annotation-108",
-    "title" : "Movement 1, Bar 97",
+    "title" : "Satz 1, Takt 97",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation, Notation, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "105",
     "id" : "annotation-109",
-    "title" : "Movement 1, Bar 97",
+    "title" : "Satz 1, Takt 97",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "106",
     "id" : "annotation-110",
-    "title" : "Movement 1, Bar 102",
+    "title" : "Satz 1, Takt 102",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "107",
     "id" : "annotation-111",
-    "title" : "Movement 1, Bar 102",
+    "title" : "Satz 1, Takt 102",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "108",
     "id" : "annotation-112",
-    "title" : "Movement 1, Bar 103",
+    "title" : "Satz 1, Takt 103",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation, Notation"
   }, {
     "priority" : "3",
     "pos" : "109",
     "id" : "annotation-113",
-    "title" : "Movement 1, Bar 106",
+    "title" : "Satz 1, Takt 106",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "1",
     "pos" : "110",
     "id" : "annotation-114",
-    "title" : "Movement 1, Bar 107",
+    "title" : "Satz 1, Takt 107",
     "sigla" : "A, ED₂, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "111",
     "id" : "annotation-115",
-    "title" : "Movement 1, Bar 108",
+    "title" : "Satz 1, Takt 108",
     "sigla" : "A, ED₂, K/sv",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "2",
     "pos" : "112",
     "id" : "annotation-116",
-    "title" : "Movement 1, Bar 111",
+    "title" : "Satz 1, Takt 111",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Dynamik, Korrektur"
   }, {
     "priority" : "1",
     "pos" : "113",
     "id" : "annotation-117",
-    "title" : "Movement 1, Bar 112",
+    "title" : "Satz 1, Takt 112",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Dynamik, Editorischer Eingriff"
   }, {
     "priority" : "3",
     "pos" : "114",
     "id" : "annotation-118",
-    "title" : "Movement 1, Bar 113",
+    "title" : "Satz 1, Takt 113",
     "sigla" : "K/sv, ED₁",
     "categories" : "Notation"
   }, {
     "priority" : "2",
     "pos" : "115",
     "id" : "annotation-119",
-    "title" : "Movement 1, Bar 114",
+    "title" : "Satz 1, Takt 114",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "116",
     "id" : "annotation-120",
-    "title" : "Movement 1, Bar 115",
+    "title" : "Satz 1, Takt 115",
     "sigla" : "A, ED₂, K/sv",
     "categories" : "Artikulation, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "117",
     "id" : "annotation-121",
-    "title" : "Movement 1, Bar 117",
+    "title" : "Satz 1, Takt 117",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "2",
     "pos" : "118",
     "id" : "annotation-123",
-    "title" : "Movement 1, Bar 118",
+    "title" : "Satz 1, Takt 118",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation, Notation"
   }, {
     "priority" : "1",
     "pos" : "119",
     "id" : "annotation-122",
-    "title" : "Movement 1, Bar 118",
+    "title" : "Satz 1, Takt 118",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "120",
     "id" : "annotation-124",
-    "title" : "Movement 1, Bar 120",
+    "title" : "Satz 1, Takt 120",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation, Korrektur"
   }, {
     "priority" : "1",
     "pos" : "121",
     "id" : "annotation-125",
-    "title" : "Movement 1, Bar 122",
+    "title" : "Satz 1, Takt 122",
     "sigla" : "K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik, Korrektur"
   }, {
     "priority" : "2",
     "pos" : "122",
     "id" : "annotation-128",
-    "title" : "Movement 1, Bar 123",
+    "title" : "Satz 1, Takt 123",
     "sigla" : "A, K/sv",
     "categories" : "Artikulation"
   }, {
     "priority" : "3",
     "pos" : "123",
     "id" : "annotation-126",
-    "title" : "Movement 1, Bar 123",
+    "title" : "Satz 1, Takt 123",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "1",
     "pos" : "124",
     "id" : "annotation-127",
-    "title" : "Movement 1, Bar 123",
+    "title" : "Satz 1, Takt 123",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Notation, Editorischer Eingriff"
   }, {
     "priority" : "2",
     "pos" : "125",
     "id" : "annotation-129",
-    "title" : "Movement 1, Bar 124",
+    "title" : "Satz 1, Takt 124",
     "sigla" : "K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "3",
     "pos" : "126",
     "id" : "annotation-130",
-    "title" : "Movement 1, Bar 125",
+    "title" : "Satz 1, Takt 125",
     "sigla" : "K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "1",
     "pos" : "127",
     "id" : "annotation-131",
-    "title" : "Movement 1, Bar 127",
+    "title" : "Satz 1, Takt 127",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "3",
     "pos" : "128",
     "id" : "annotation-132",
-    "title" : "Movement 1, Bar 128",
+    "title" : "Satz 1, Takt 128",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "129",
     "id" : "annotation-133",
-    "title" : "Movement 1, Bar 131",
+    "title" : "Satz 1, Takt 131",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Bogensetzung, Notation, Korrektur"
   }, {
     "priority" : "3",
     "pos" : "130",
     "id" : "annotation-134",
-    "title" : "Movement 1, Bar 133",
+    "title" : "Satz 1, Takt 133",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "2",
     "pos" : "131",
     "id" : "annotation-135",
-    "title" : "Movement 1, Bar 137",
+    "title" : "Satz 1, Takt 137",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "2",
     "pos" : "132",
     "id" : "annotation-136",
-    "title" : "Movement 1, Bar 143",
+    "title" : "Satz 1, Takt 143",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "1",
     "pos" : "133",
     "id" : "annotation-137",
-    "title" : "Movement 1, Bar 145",
+    "title" : "Satz 1, Takt 145",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "2",
     "pos" : "134",
     "id" : "annotation-138",
-    "title" : "Movement 1, Bar 150",
+    "title" : "Satz 1, Takt 150",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Spielanweisung"
   }, {
     "priority" : "3",
     "pos" : "135",
     "id" : "annotation-139",
-    "title" : "Movement 1, Bar 151",
+    "title" : "Satz 1, Takt 151",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "1",
     "pos" : "136",
     "id" : "annotation-140",
-    "title" : "Movement 1, Bar 153",
+    "title" : "Satz 1, Takt 153",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Notation"
   }, {
     "priority" : "1",
     "pos" : "137",
     "id" : "annotation-141",
-    "title" : "Movement 1, Bar 153",
+    "title" : "Satz 1, Takt 153",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Dynamik, Editorischer Eingriff"
   }, {
     "priority" : "2",
     "pos" : "138",
     "id" : "annotation-142",
-    "title" : "Movement 1, Bar 155",
+    "title" : "Satz 1, Takt 155",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Editorischer Eingriff"
   }, {
     "priority" : "1",
     "pos" : "139",
     "id" : "annotation-144",
-    "title" : "Movement 1, Bar 157",
+    "title" : "Satz 1, Takt 157",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation, Editorischer Eingriff"
   }, {
     "priority" : "1",
     "pos" : "140",
     "id" : "annotation-143",
-    "title" : "Movement 1, Bar 157",
+    "title" : "Satz 1, Takt 157",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Editorischer Eingriff"
   }, {
     "priority" : "2",
     "pos" : "141",
     "id" : "annotation-145",
-    "title" : "Movement 1, Bar 161",
+    "title" : "Satz 1, Takt 161",
     "sigla" : "A, K/sv, ED₂",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "3",
     "pos" : "142",
     "id" : "annotation-146",
-    "title" : "Movement 1, Bar 162",
+    "title" : "Satz 1, Takt 162",
     "sigla" : "A, K/sv",
     "categories" : "Korrektur"
   }, {
     "priority" : "3",
     "pos" : "143",
     "id" : "annotation-147",
-    "title" : "Movement 1, Bar 164",
+    "title" : "Satz 1, Takt 164",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "144",
     "id" : "annotation-148",
-    "title" : "Movement 1, Bar 165",
+    "title" : "Satz 1, Takt 165",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation, Notation, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "145",
     "id" : "annotation-149",
-    "title" : "Movement 1, Bar 167",
+    "title" : "Satz 1, Takt 167",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "3",
     "pos" : "146",
     "id" : "annotation-151",
-    "title" : "Movement 1, Bar 168",
+    "title" : "Satz 1, Takt 168",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "147",
     "id" : "annotation-150",
-    "title" : "Movement 1, Bar 168",
+    "title" : "Satz 1, Takt 168",
     "sigla" : "A, K/sv, ED₂",
     "categories" : "Bogensetzung, Korrektur"
   }, {
     "priority" : "1",
     "pos" : "148",
     "id" : "annotation-152",
-    "title" : "Movement 1, Bar 170",
+    "title" : "Satz 1, Takt 170",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "149",
     "id" : "annotation-153",
-    "title" : "Movement 1, Bar 170",
+    "title" : "Satz 1, Takt 170",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "2",
     "pos" : "150",
     "id" : "annotation-154",
-    "title" : "Movement 1, Bar 171",
+    "title" : "Satz 1, Takt 171",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Notation, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "151",
     "id" : "annotation-155",
-    "title" : "Movement 1, Bar 171",
+    "title" : "Satz 1, Takt 171",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Editorischer Eingriff"
   }, {
     "priority" : "1",
     "pos" : "152",
     "id" : "annotation-156",
-    "title" : "Movement 1, Bar 172",
+    "title" : "Satz 1, Takt 172",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation, Notation"
   }, {
     "priority" : "2",
     "pos" : "153",
     "id" : "annotation-157",
-    "title" : "Movement 1, Bar 173",
+    "title" : "Satz 1, Takt 173",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "3",
     "pos" : "154",
     "id" : "annotation-158",
-    "title" : "Movement 1, Bar 178",
+    "title" : "Satz 1, Takt 178",
     "sigla" : "A",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "155",
     "id" : "annotation-159",
-    "title" : "Movement 1, Bar 179",
+    "title" : "Satz 1, Takt 179",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Korrektur"
   }, {
     "priority" : "1",
     "pos" : "156",
     "id" : "annotation-160",
-    "title" : "Movement 1, Bar 179",
+    "title" : "Satz 1, Takt 179",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Korrektur"
   }, {
     "priority" : "1",
     "pos" : "157",
     "id" : "annotation-161",
-    "title" : "Movement 1, Bar 183",
+    "title" : "Satz 1, Takt 183",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "3",
     "pos" : "158",
     "id" : "annotation-162",
-    "title" : "Movement 1, Bar 183",
+    "title" : "Satz 1, Takt 183",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation, Dynamik, Spielanweisung"
   }, {
     "priority" : "2",
     "pos" : "159",
     "id" : "annotation-163",
-    "title" : "Movement 1, Bar 187",
+    "title" : "Satz 1, Takt 187",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Dynamik"
   }, {
     "priority" : "1",
     "pos" : "160",
     "id" : "annotation-164",
-    "title" : "Movement 1, Bar 188",
+    "title" : "Satz 1, Takt 188",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "161",
     "id" : "annotation-165",
-    "title" : "Movement 1, Bar 189",
+    "title" : "Satz 1, Takt 189",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "3",
     "pos" : "162",
     "id" : "annotation-166",
-    "title" : "Movement 1, Bar 190",
+    "title" : "Satz 1, Takt 190",
     "sigla" : "A",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "163",
     "id" : "annotation-167",
-    "title" : "Movement 1, Bar 191",
+    "title" : "Satz 1, Takt 191",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Notation, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "164",
     "id" : "annotation-168",
-    "title" : "Movement 1, Bar 193",
+    "title" : "Satz 1, Takt 193",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "165",
     "id" : "annotation-169",
-    "title" : "Movement 1, Bar 193",
+    "title" : "Satz 1, Takt 193",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "166",
     "id" : "annotation-170",
-    "title" : "Movement 1, Bar 198",
+    "title" : "Satz 1, Takt 198",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "167",
     "id" : "annotation-171",
-    "title" : "Movement 1, Bar 203",
+    "title" : "Satz 1, Takt 203",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "168",
     "id" : "annotation-172",
-    "title" : "Movement 1, Bar 206",
+    "title" : "Satz 1, Takt 206",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "1",
     "pos" : "169",
     "id" : "annotation-173",
-    "title" : "Movement 1, Bar 207",
+    "title" : "Satz 1, Takt 207",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Korrektur"
   }, {
     "priority" : "3",
     "pos" : "170",
     "id" : "annotation-174",
-    "title" : "Movement 1, Bar 209",
+    "title" : "Satz 1, Takt 209",
     "sigla" : "A",
     "categories" : "Korrektur"
   }, {
     "priority" : "1",
     "pos" : "171",
     "id" : "annotation-175",
-    "title" : "Movement 1, Bar 210",
+    "title" : "Satz 1, Takt 210",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "3",
     "pos" : "172",
     "id" : "annotation-176",
-    "title" : "Movement 1, Bar 212",
+    "title" : "Satz 1, Takt 212",
     "sigla" : "K/sv, ED₁",
     "categories" : "Notation"
   }, {
     "priority" : "2",
     "pos" : "173",
     "id" : "annotation-177",
-    "title" : "Movement 1, Bar 214",
+    "title" : "Satz 1, Takt 214",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "174",
     "id" : "annotation-178",
-    "title" : "Movement 1, Bar 214",
+    "title" : "Satz 1, Takt 214",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "175",
     "id" : "annotation-179",
-    "title" : "Movement 1, Bar 218",
+    "title" : "Satz 1, Takt 218",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Notation, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "176",
     "id" : "annotation-182",
-    "title" : "Movement 2, Bar 1",
+    "title" : "Satz 2, Takt 1",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "177",
     "id" : "annotation-180",
-    "title" : "Movement 2, Bar 1",
+    "title" : "Satz 2, Takt 1",
     "sigla" : "K/sv, A",
     "categories" : "Rhythmus"
   }, {
     "priority" : "1",
     "pos" : "178",
     "id" : "annotation-181",
-    "title" : "Movement 2, Bar 1",
+    "title" : "Satz 2, Takt 1",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Dynamik"
   }, {
     "priority" : "1",
     "pos" : "179",
     "id" : "annotation-184",
-    "title" : "Movement 2, Bar 5",
+    "title" : "Satz 2, Takt 5",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Notation, Korrektur"
   }, {
     "priority" : "2",
     "pos" : "180",
     "id" : "annotation-183",
-    "title" : "Movement 2, Bar 5",
+    "title" : "Satz 2, Takt 5",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Bogensetzung, Notation, Korrektur"
   }, {
     "priority" : "3",
     "pos" : "181",
     "id" : "annotation-185",
-    "title" : "Movement 2, Bar 9",
+    "title" : "Satz 2, Takt 9",
     "sigla" : "A, K/sv",
     "categories" : "Dynamik"
   }, {
     "priority" : "1",
     "pos" : "182",
     "id" : "annotation-186",
-    "title" : "Movement 2, Bar 9",
+    "title" : "Satz 2, Takt 9",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "183",
     "id" : "annotation-188",
-    "title" : "Movement 2, Bar 13",
+    "title" : "Satz 2, Takt 13",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Notation, Dynamik, Rhythmus"
   }, {
     "priority" : "2",
     "pos" : "184",
     "id" : "annotation-187",
-    "title" : "Movement 2, Bar 13",
+    "title" : "Satz 2, Takt 13",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "185",
     "id" : "annotation-189",
-    "title" : "Movement 2, Bar 16",
+    "title" : "Satz 2, Takt 16",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Dynamik"
   }, {
     "priority" : "3",
     "pos" : "186",
     "id" : "annotation-191",
-    "title" : "Movement 2, Bar 17",
+    "title" : "Satz 2, Takt 17",
     "sigla" : "K/sv, ED₁",
     "categories" : "Notation"
   }, {
     "priority" : "1",
     "pos" : "187",
     "id" : "annotation-190",
-    "title" : "Movement 2, Bar 17",
+    "title" : "Satz 2, Takt 17",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "188",
     "id" : "annotation-192",
-    "title" : "Movement 2, Bar 18",
+    "title" : "Satz 2, Takt 18",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "189",
     "id" : "annotation-193",
-    "title" : "Movement 2, Bar 23",
+    "title" : "Satz 2, Takt 23",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "190",
     "id" : "annotation-194",
-    "title" : "Movement 2, Bar 26",
+    "title" : "Satz 2, Takt 26",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "191",
     "id" : "annotation-195",
-    "title" : "Movement 2, Bar 26",
+    "title" : "Satz 2, Takt 26",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Dynamik"
   }, {
     "priority" : "3",
     "pos" : "192",
     "id" : "annotation-196",
-    "title" : "Movement 2, Bar 27",
+    "title" : "Satz 2, Takt 27",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "193",
     "id" : "annotation-198",
-    "title" : "Movement 2, Bar 30",
+    "title" : "Satz 2, Takt 30",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Dynamik, Korrektur"
   }, {
     "priority" : "3",
     "pos" : "194",
     "id" : "annotation-197",
-    "title" : "Movement 2, Bar 30",
+    "title" : "Satz 2, Takt 30",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "195",
     "id" : "annotation-199",
-    "title" : "Movement 2, Bar 36",
+    "title" : "Satz 2, Takt 36",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Dynamik"
   }, {
     "priority" : "3",
     "pos" : "196",
     "id" : "annotation-200",
-    "title" : "Movement 2, Bar 36",
+    "title" : "Satz 2, Takt 36",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Notation"
   }, {
     "priority" : "3",
     "pos" : "197",
     "id" : "annotation-202",
-    "title" : "Movement 2, Bar 39",
+    "title" : "Satz 2, Takt 39",
     "sigla" : "K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "1",
     "pos" : "198",
     "id" : "annotation-201",
-    "title" : "Movement 2, Bar 39",
+    "title" : "Satz 2, Takt 39",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Bogensetzung, Notation, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "199",
     "id" : "annotation-203",
-    "title" : "Movement 2, Bar 41",
+    "title" : "Satz 2, Takt 41",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "200",
     "id" : "annotation-205",
-    "title" : "Movement 2, Bar 45",
+    "title" : "Satz 2, Takt 45",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Rhythmus"
   }, {
     "priority" : "2",
     "pos" : "201",
     "id" : "annotation-204",
-    "title" : "Movement 2, Bar 45",
+    "title" : "Satz 2, Takt 45",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "202",
     "id" : "annotation-206",
-    "title" : "Movement 2, Bar 48",
+    "title" : "Satz 2, Takt 48",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Dynamik, Editorischer Eingriff"
   }, {
     "priority" : "1",
     "pos" : "203",
     "id" : "annotation-207",
-    "title" : "Movement 2, Bar 49",
+    "title" : "Satz 2, Takt 49",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Korrektur, Spielanweisung"
   }, {
     "priority" : "1",
     "pos" : "204",
     "id" : "annotation-209",
-    "title" : "Movement 2, Bar 49",
+    "title" : "Satz 2, Takt 49",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "3",
     "pos" : "205",
     "id" : "annotation-208",
-    "title" : "Movement 2, Bar 49",
+    "title" : "Satz 2, Takt 49",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Rhythmus"
   }, {
     "priority" : "2",
     "pos" : "206",
     "id" : "annotation-211",
-    "title" : "Movement 2, Bar 52",
+    "title" : "Satz 2, Takt 52",
     "sigla" : "A, K/sv, ED₂",
     "categories" : "Artikulation"
   }, {
     "priority" : "2",
     "pos" : "207",
     "id" : "annotation-210",
-    "title" : "Movement 2, Bar 52",
+    "title" : "Satz 2, Takt 52",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "208",
     "id" : "annotation-212",
-    "title" : "Movement 2, Bar 52",
+    "title" : "Satz 2, Takt 52",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Dynamik"
   }, {
     "priority" : "2",
     "pos" : "209",
     "id" : "annotation-213",
-    "title" : "Movement 2, Bar 56",
+    "title" : "Satz 2, Takt 56",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Notation, Korrektur"
   }, {
     "priority" : "1",
     "pos" : "210",
     "id" : "annotation-214",
-    "title" : "Movement 2, Bar 58",
+    "title" : "Satz 2, Takt 58",
     "sigla" : "K/sv, ED₂, ED₁, A",
     "categories" : "Notation"
   }, {
     "priority" : "3",
     "pos" : "211",
     "id" : "annotation-215",
-    "title" : "Movement 2, Bar 58",
+    "title" : "Satz 2, Takt 58",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Notation"
   }, {
     "priority" : "3",
     "pos" : "212",
     "id" : "annotation-216",
-    "title" : "Movement 2, Bar 60",
+    "title" : "Satz 2, Takt 60",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Bogensetzung, Korrektur"
   }, {
     "priority" : "2",
     "pos" : "213",
     "id" : "annotation-217",
-    "title" : "Movement 2, Bar 61",
+    "title" : "Satz 2, Takt 61",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Notation"
   }, {
     "priority" : "1",
     "pos" : "214",
     "id" : "annotation-218",
-    "title" : "Movement 2, Bar 62",
+    "title" : "Satz 2, Takt 62",
     "sigla" : "K/sv, ED₂, A",
     "categories" : "Bogensetzung, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "215",
     "id" : "annotation-219",
-    "title" : "Movement 3, Bar 1",
+    "title" : "Satz 3, Takt 1",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Notation"
   }, {
     "priority" : "1",
     "pos" : "216",
     "id" : "annotation-220",
-    "title" : "Movement 3, Bar 1",
+    "title" : "Satz 3, Takt 1",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "1",
     "pos" : "217",
     "id" : "annotation-222",
-    "title" : "Movement 3, Bar 3",
+    "title" : "Satz 3, Takt 3",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "1",
     "pos" : "218",
     "id" : "annotation-221",
-    "title" : "Movement 3, Bar 3",
+    "title" : "Satz 3, Takt 3",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation, Notation"
   }, {
     "priority" : "2",
     "pos" : "219",
     "id" : "annotation-223",
-    "title" : "Movement 3, Bar 5",
+    "title" : "Satz 3, Takt 5",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Korrektur, Artikulation"
   }, {
     "priority" : "3",
     "pos" : "220",
     "id" : "annotation-224",
-    "title" : "Movement 3, Bar 8",
+    "title" : "Satz 3, Takt 8",
     "sigla" : "K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "2",
     "pos" : "221",
     "id" : "annotation-225",
-    "title" : "Movement 3, Bar 8",
+    "title" : "Satz 3, Takt 8",
     "sigla" : "K/sv, ED₂, A",
     "categories" : "Artikulation, Dynamik"
   }, {
     "priority" : "2",
     "pos" : "222",
     "id" : "annotation-227",
-    "title" : "Movement 3, Bar 9",
+    "title" : "Satz 3, Takt 9",
     "sigla" : "A, K/sv",
     "categories" : "Artikulation"
   }, {
     "priority" : "1",
     "pos" : "223",
     "id" : "annotation-226",
-    "title" : "Movement 3, Bar 9",
+    "title" : "Satz 3, Takt 9",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "2",
     "pos" : "224",
     "id" : "annotation-228",
-    "title" : "Movement 3, Bar 12",
+    "title" : "Satz 3, Takt 12",
     "sigla" : "A, K/sv",
     "categories" : "Artikulation"
   }, {
     "priority" : "3",
     "pos" : "225",
     "id" : "annotation-229",
-    "title" : "Movement 3, Bar 12",
+    "title" : "Satz 3, Takt 12",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "226",
     "id" : "annotation-230",
-    "title" : "Movement 3, Bar 12",
+    "title" : "Satz 3, Takt 12",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "3",
     "pos" : "227",
     "id" : "annotation-231",
-    "title" : "Movement 3, Bar 14",
+    "title" : "Satz 3, Takt 14",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "228",
     "id" : "annotation-232",
-    "title" : "Movement 3, Bar 14",
+    "title" : "Satz 3, Takt 14",
     "sigla" : "A, K/sv",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "1",
     "pos" : "229",
     "id" : "annotation-233",
-    "title" : "Movement 3, Bar 17",
+    "title" : "Satz 3, Takt 17",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "3",
     "pos" : "230",
     "id" : "annotation-234",
-    "title" : "Movement 3, Bar 17",
+    "title" : "Satz 3, Takt 17",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "2",
     "pos" : "231",
     "id" : "annotation-235",
-    "title" : "Movement 3, Bar 19",
+    "title" : "Satz 3, Takt 19",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Dynamik"
   }, {
     "priority" : "1",
     "pos" : "232",
     "id" : "annotation-236",
-    "title" : "Movement 3, Bar 25",
+    "title" : "Satz 3, Takt 25",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "3",
     "pos" : "233",
     "id" : "annotation-237",
-    "title" : "Movement 3, Bar 25",
+    "title" : "Satz 3, Takt 25",
     "sigla" : "ED₁, ED₂",
     "categories" : "Artikulation"
   }, {
     "priority" : "2",
     "pos" : "234",
     "id" : "annotation-238",
-    "title" : "Movement 3, Bar 28",
+    "title" : "Satz 3, Takt 28",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "3",
     "pos" : "235",
     "id" : "annotation-239",
-    "title" : "Movement 3, Bar 31",
+    "title" : "Satz 3, Takt 31",
     "sigla" : "K/sv, ED₁",
     "categories" : "Bogensetzung, Notation, Dynamik"
   }, {
     "priority" : "3",
     "pos" : "236",
     "id" : "annotation-241",
-    "title" : "Movement 3, Bar 41",
+    "title" : "Satz 3, Takt 41",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "1",
     "pos" : "237",
     "id" : "annotation-240",
-    "title" : "Movement 3, Bar 41",
+    "title" : "Satz 3, Takt 41",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "1",
     "pos" : "238",
     "id" : "annotation-242",
-    "title" : "Movement 3, Bar 49",
+    "title" : "Satz 3, Takt 49",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Bogensetzung, Artikulation, Dynamik, Korrektur"
   }, {
     "priority" : "3",
     "pos" : "239",
     "id" : "annotation-244",
-    "title" : "Movement 3, Bar 54",
+    "title" : "Satz 3, Takt 54",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "240",
     "id" : "annotation-243",
-    "title" : "Movement 3, Bar 54",
+    "title" : "Satz 3, Takt 54",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "3",
     "pos" : "241",
     "id" : "annotation-245",
-    "title" : "Movement 3, Bar 58",
+    "title" : "Satz 3, Takt 58",
     "sigla" : "A",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "242",
     "id" : "annotation-247",
-    "title" : "Movement 3, Bar 71",
+    "title" : "Satz 3, Takt 71",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "2",
     "pos" : "243",
     "id" : "annotation-248",
-    "title" : "Movement 3, Bar 75",
+    "title" : "Satz 3, Takt 75",
     "sigla" : "K/sv, ED₁",
     "categories" : "Notation"
   }, {
     "priority" : "1",
     "pos" : "244",
     "id" : "annotation-249",
-    "title" : "Movement 3, Bar 80",
+    "title" : "Satz 3, Takt 80",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Notation"
   }, {
     "priority" : "3",
     "pos" : "245",
     "id" : "annotation-250",
-    "title" : "Movement 3, Bar 83",
+    "title" : "Satz 3, Takt 83",
     "sigla" : "K/sv",
     "categories" : "Korrektur"
   }, {
     "priority" : "3",
     "pos" : "246",
     "id" : "annotation-251",
-    "title" : "Movement 3, Bar 83",
+    "title" : "Satz 3, Takt 83",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "1",
     "pos" : "247",
     "id" : "annotation-253",
-    "title" : "Movement 3, Bar 84",
+    "title" : "Satz 3, Takt 84",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Editorischer Eingriff"
   }, {
     "priority" : "2",
     "pos" : "248",
     "id" : "annotation-252",
-    "title" : "Movement 3, Bar 84",
+    "title" : "Satz 3, Takt 84",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Editorischer Eingriff"
   }, {
     "priority" : "2",
     "pos" : "249",
     "id" : "annotation-254",
-    "title" : "Movement 3, Bar 96",
+    "title" : "Satz 3, Takt 96",
     "sigla" : "A, K/sv",
     "categories" : "Dynamik"
   }, {
     "priority" : "1",
     "pos" : "250",
     "id" : "annotation-255",
-    "title" : "Movement 3, Bar 99",
+    "title" : "Satz 3, Takt 99",
     "sigla" : "K/sv, ED₂, A",
     "categories" : "Artikulation, Dynamik"
   }, {
     "priority" : "3",
     "pos" : "251",
     "id" : "annotation-256",
-    "title" : "Movement 3, Bar 104",
+    "title" : "Satz 3, Takt 104",
     "sigla" : "K/sv",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "252",
     "id" : "annotation-257",
-    "title" : "Movement 3, Bar 108",
+    "title" : "Satz 3, Takt 108",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Notation"
   }, {
     "priority" : "3",
     "pos" : "253",
     "id" : "annotation-258",
-    "title" : "Movement 3, Bar 110",
+    "title" : "Satz 3, Takt 110",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "254",
     "id" : "annotation-278",
-    "title" : "Movement 4, Bar 3",
+    "title" : "Satz 4, Takt 3",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "2",
     "pos" : "255",
     "id" : "annotation-279",
-    "title" : "Movement 4, Bar 13",
+    "title" : "Satz 4, Takt 13",
     "sigla" : "K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "1",
     "pos" : "256",
     "id" : "annotation-282",
-    "title" : "Movement 4, Bar 19",
+    "title" : "Satz 4, Takt 19",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "2",
     "pos" : "257",
     "id" : "annotation-283",
-    "title" : "Movement 4, Bar 23",
+    "title" : "Satz 4, Takt 23",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "258",
     "id" : "annotation-285",
-    "title" : "Movement 4, Bar 36",
+    "title" : "Satz 4, Takt 36",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Editorischer Eingriff"
   }, {
     "priority" : "3",
     "pos" : "259",
     "id" : "annotation-292",
-    "title" : "Movement 4, Bar 58",
+    "title" : "Satz 4, Takt 58",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Korrektur"
   }, {
     "priority" : "3",
     "pos" : "260",
     "id" : "annotation-301",
-    "title" : "Movement 4, Bar 108",
+    "title" : "Satz 4, Takt 108",
     "sigla" : "ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "1",
     "pos" : "261",
     "id" : "annotation-302",
-    "title" : "Movement 4, Bar 112",
+    "title" : "Satz 4, Takt 112",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "3",
     "pos" : "262",
     "id" : "annotation-304",
-    "title" : "Movement 4, Bar 128",
+    "title" : "Satz 4, Takt 128",
     "sigla" : "ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "3",
     "pos" : "263",
     "id" : "annotation-305",
-    "title" : "Movement 4, Bar 129",
+    "title" : "Satz 4, Takt 129",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "3",
     "pos" : "264",
     "id" : "annotation-306",
-    "title" : "Movement 4, Bar 131",
+    "title" : "Satz 4, Takt 131",
     "sigla" : "ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "265",
     "id" : "annotation-308",
-    "title" : "Movement 4, Bar 137",
+    "title" : "Satz 4, Takt 137",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "3",
     "pos" : "266",
     "id" : "annotation-309",
-    "title" : "Movement 4, Bar 152",
+    "title" : "Satz 4, Takt 152",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "1",
     "pos" : "267",
     "id" : "annotation-310",
-    "title" : "Movement 4, Bar 153",
+    "title" : "Satz 4, Takt 153",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "3",
     "pos" : "268",
     "id" : "annotation-318",
-    "title" : "Movement 4, Bar 183",
+    "title" : "Satz 4, Takt 183",
     "sigla" : "A",
     "categories" : "Korrektur"
   }, {
     "priority" : "3",
     "pos" : "269",
     "id" : "annotation-319",
-    "title" : "Movement 4, Bar 183",
+    "title" : "Satz 4, Takt 183",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation"
   }, {
     "priority" : "2",
     "pos" : "270",
     "id" : "annotation-320",
-    "title" : "Movement 4, Bar 187",
+    "title" : "Satz 4, Takt 187",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "271",
     "id" : "annotation-321",
-    "title" : "Movement 4, Bar 189",
+    "title" : "Satz 4, Takt 189",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "1",
     "pos" : "272",
     "id" : "annotation-322",
-    "title" : "Movement 4, Bar 193",
+    "title" : "Satz 4, Takt 193",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Bogensetzung, Artikulation, Notation, Korrektur"
   }, {
     "priority" : "3",
     "pos" : "273",
     "id" : "annotation-323",
-    "title" : "Movement 4, Bar 193",
+    "title" : "Satz 4, Takt 193",
     "sigla" : "A",
     "categories" : "Korrektur"
   }, {
     "priority" : "3",
     "pos" : "274",
     "id" : "annotation-325",
-    "title" : "Movement 4, Bar 203",
+    "title" : "Satz 4, Takt 203",
     "sigla" : "A",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "275",
     "id" : "annotation-327",
-    "title" : "Movement 4, Bar 211",
+    "title" : "Satz 4, Takt 211",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "276",
     "id" : "annotation-328",
-    "title" : "Movement 4, Bar 215",
+    "title" : "Satz 4, Takt 215",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "277",
     "id" : "annotation-331",
-    "title" : "Movement 4, Bar 225",
+    "title" : "Satz 4, Takt 225",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "278",
     "id" : "annotation-330",
-    "title" : "Movement 4, Bar 228",
+    "title" : "Satz 4, Takt 228",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   }, {
     "priority" : "2",
     "pos" : "279",
     "id" : "annotation-332",
-    "title" : "Movement 4, Bar 229",
+    "title" : "Satz 4, Takt 229",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "280",
     "id" : "annotation-337",
-    "title" : "Movement 4, Bar 250",
+    "title" : "Satz 4, Takt 250",
     "sigla" : "A, K/sv",
     "categories" : "Artikulation"
   }, {
     "priority" : "1",
     "pos" : "281",
     "id" : "annotation-339",
-    "title" : "Movement 4, Bar 257",
+    "title" : "Satz 4, Takt 257",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Dynamik, Korrektur, Editorischer Eingriff"
   }, {
     "priority" : "2",
     "pos" : "282",
     "id" : "annotation-340",
-    "title" : "Movement 4, Bar 259",
+    "title" : "Satz 4, Takt 259",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Bogensetzung, Korrektur"
   }, {
     "priority" : "2",
     "pos" : "283",
     "id" : "annotation-341",
-    "title" : "Movement 4, Bar 261",
+    "title" : "Satz 4, Takt 261",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "1",
     "pos" : "284",
     "id" : "annotation-345",
-    "title" : "Movement 4, Bar 271",
+    "title" : "Satz 4, Takt 271",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Artikulation, Korrektur"
   }, {
     "priority" : "2",
     "pos" : "285",
     "id" : "annotation-346",
-    "title" : "Movement 4, Bar 274",
+    "title" : "Satz 4, Takt 274",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation, Notation, Korrektur"
   }, {
     "priority" : "3",
     "pos" : "286",
     "id" : "annotation-348",
-    "title" : "Movement 4, Bar 283",
+    "title" : "Satz 4, Takt 283",
     "sigla" : "K/sv",
     "categories" : "Notation, Korrektur"
   }, {
     "priority" : "1",
     "pos" : "287",
     "id" : "annotation-350",
-    "title" : "Movement 4, Bar 294",
+    "title" : "Satz 4, Takt 294",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation, Notation, Editorischer Eingriff"
   }, {
     "priority" : "1",
     "pos" : "288",
     "id" : "annotation-355",
-    "title" : "Movement 4, Bar 308",
+    "title" : "Satz 4, Takt 308",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Editorischer Eingriff"
   }, {
     "priority" : "3",
     "pos" : "289",
     "id" : "annotation-356",
-    "title" : "Movement 4, Bar 313",
+    "title" : "Satz 4, Takt 313",
     "sigla" : "A",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "290",
     "id" : "annotation-357",
-    "title" : "Movement 4, Bar 319",
+    "title" : "Satz 4, Takt 319",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Notation"
   }, {
     "priority" : "2",
     "pos" : "291",
     "id" : "annotation-358",
-    "title" : "Movement 4, Bar 331",
+    "title" : "Satz 4, Takt 331",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung, Artikulation, Notation"
   }, {
     "priority" : "2",
     "pos" : "292",
     "id" : "annotation-359",
-    "title" : "Movement 4, Bar 332",
+    "title" : "Satz 4, Takt 332",
     "sigla" : "A, K/sv",
     "categories" : "Dynamik"
   }, {
     "priority" : "1",
     "pos" : "293",
     "id" : "annotation-361",
-    "title" : "Movement 4, Bar 337",
+    "title" : "Satz 4, Takt 337",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "2",
     "pos" : "294",
     "id" : "annotation-362",
-    "title" : "Movement 4, Bar 338",
+    "title" : "Satz 4, Takt 338",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "1",
     "pos" : "295",
     "id" : "annotation-363",
-    "title" : "Movement 4, Bar 346",
+    "title" : "Satz 4, Takt 346",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Notation"
   }, {
     "priority" : "2",
     "pos" : "296",
     "id" : "annotation-364",
-    "title" : "Movement 4, Bar 347",
+    "title" : "Satz 4, Takt 347",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Artikulation, Korrektur"
   }, {
     "priority" : "2",
     "pos" : "297",
     "id" : "annotation-367",
-    "title" : "Movement 4, Bar 355",
+    "title" : "Satz 4, Takt 355",
     "sigla" : "K/sv, ED₁, ED₂",
     "categories" : "Korrektur"
   }, {
     "priority" : "2",
     "pos" : "298",
     "id" : "annotation-369",
-    "title" : "Movement 4, Bar 357",
+    "title" : "Satz 4, Takt 357",
     "sigla" : "A, K/sv, ED₁, ED₂",
     "categories" : "Artikulation, Korrektur"
   }, {
     "priority" : "3",
     "pos" : "299",
     "id" : "annotation-371",
-    "title" : "Movement 4, Bar 363",
+    "title" : "Satz 4, Takt 363",
     "sigla" : "A",
     "categories" : "Korrektur"
   }, {
     "priority" : "1",
     "pos" : "300",
     "id" : "annotation-374",
-    "title" : "Movement 4, Bar 370",
+    "title" : "Satz 4, Takt 370",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Artikulation"
   }, {
     "priority" : "1",
     "pos" : "301",
     "id" : "annotation-376",
-    "title" : "Movement 4, Bar 373",
+    "title" : "Satz 4, Takt 373",
     "sigla" : "A, K/sv, ED₁",
     "categories" : "Bogensetzung"
   } ]
