@@ -1,0 +1,37 @@
+<div class="annotTip">
+    <div class="metaBox">
+        <div class="property priority">
+            <div class="key">Priorität</div>
+            <div class="value"></div>
+        </div>
+        <div class="property categories">
+            <div class="key">Kategorie</div>
+            <div class="value"></div>
+        </div><!--<div class="property sourceLabel">
+                    <div class="key">{$sourcesLabel}</div>
+                    <div class="value">{string-join($sources, ', ')}</div>
+                </div>-->
+        <div class="property sourceSiglums">
+            <div class="key">Siglen</div>
+            <div class="value">A, K/sv, ED₁</div>
+        </div>
+        <div class="property annotID">
+            <div class="key">Annot.-ID</div>
+            <div class="value">annotation-2</div>
+        </div>
+    </div>
+    <div class="contentBox">
+        <p xmlns:mei="http://www.music-encoding.org/ns/mei" xmlns:functx="http://www.functx.com">Abweichend von A sind in K/sv Bögen vor dem Systemwechsel begonnen, aber
+                           nur in Vl 1 weitergeführt. In T. 6 sind weitere Bögen ergänzt, die außer
+                           in der Vla deutlich vor dem Taktstrich beginnen. Der ED gibt dies jeweils
+                           in zwei aneinander anschließenden Bögen wieder, die außer in Vl 1 vor dem
+                           Taktstrich enden. Vom Hg. wurde die uneinheitliche Bezeichnung aus K/sv
+                           bewußt übernommen, jedoch wurden die nach dem Systemwechsel vor dem
+                           Taktstrich beginnenden Bögen auf T. 5 rückbezogen.</p>
+    </div><!-- <div class="previewArea">
+                {
+                    local:calculatePreviewsForTip(tokenize($annot/string(@plist),' '))
+
+                }
+            </div>-->
+</div>

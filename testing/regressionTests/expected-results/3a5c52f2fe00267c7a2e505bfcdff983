@@ -1,0 +1,32 @@
+<div class="searchResult">
+    <div class="searchResultOverview">Treffer gefunden in<span class="num">3</span>Objekten:</div>
+    <div class="searchResultDoc">
+        <div class="doc"><span class="resultTitle" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-3.xml?term=hilfe');">Zur Printversion</span><span class="resultCount">(1 Treffer)</span></div>
+        <div class="hitP" style="">
+            <p><span class="previous">...nterpretation der Quellen nicht
+                    verbergen darf. Im Idealfall muß der Leser mit  </span><span class="hit" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-3.xml?path=/TEI[1]/text[1]/body[1]/div[1]/p[2]&amp;term=hilfe');">Hilfe</span><span class="following">  des edierten Textes und der
+                    Verzeichnisse wesentliche Merkmale der Quellen ...</span></p>
+        </div>
+    </div>
+    <div class="searchResultDoc">
+        <div class="doc"><span class="resultTitle" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-4.xml?term=hilfe');">Zum vorliegenden Band</span><span class="resultCount">(2 Treffer)</span></div>
+        <div class="hitP" style="">
+            <p><span class="previous">...auf Archivalien zu Heinrich Joseph und Carl Baermann sind der
+                        freundlichen  </span><span class="hit" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-4.xml#fn_6?path=/TEI[1]/text[1]/body[1]/div[1]/p[5]/note[1]&amp;term=hilfe');">Hilfe</span><span class="following">  von Herrn Werner Krahl (Neugersdorf) zu
+                    verdanken.</span></p>
+        </div>
+        <div class="hitP" style="">
+            <p><span class="previous">...Prof. Hervé Laclau und
+                    allen Mitwirkenden dieser Kurse sei für diese wertvolle  </span><span class="hit" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-4.xml?path=/TEI[1]/text[1]/body[1]/div[2]/p[3]&amp;term=hilfe');">Hilfe</span><span class="following">  ebenso herzlich
+                    gedankt, wie den studentischen Teilnehmern eines editionste...</span></p>
+        </div>
+    </div>
+    <div class="searchResultDoc">
+        <div class="doc"><span class="resultTitle" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-1.xml?term=hilfe');">Vorbemerkung</span><span class="resultCount">(1 Treffer)</span></div>
+        <div class="hitP" style="">
+            <p><span class="previous">...on den Komfort, diese Markierungen jederzeit ein- und auszublenden. Damit ist
+               diese  </span><span class="hit" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-1.xml?path=/TEI[1]/text[1]/body[1]/div[2]/p[5]&amp;term=hilfe');">Hilfe</span><span class="following">  stets verfügbar, ohne gleichzeitig das Bild der Stichvorlage durch
+               editorische E...</span></p>
+        </div>
+    </div>
+</div>
