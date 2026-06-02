@@ -180,9 +180,11 @@
         </exec>
     </target>
 
-    <target name="regression-tests" depends="docker-run-develop-image">
+    <target name="regression-tests">
         <description>Run the regression tests</description>
-        <exec executable="testing/regression-test.sh" failonerror="true"/>
+        <exec executable="./regression-test.sh" failonerror="true" dir="testing/regressionTests">
+            <arg value="check"/>
+        </exec>
     </target>
 
     <target name="test-cleanup">
