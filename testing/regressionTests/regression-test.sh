@@ -18,9 +18,9 @@ trap cleanup_temp_files EXIT
 
 SED_OPTION=
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  SED_OPTION="-i ''"
+  SED_OPTION=(-E -i '')
 else
-  SED_OPTION='-i';
+  SED_OPTION=(-E -i);
 fi
 
 # the list of endpoints is based on https://edirom.github.io/Edirom-Online-API/
@@ -69,20 +69,90 @@ declare -a ENDPOINTS=(
 "/data/xql/search.xql?term=hilfe&lang=de&edition=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fedition.xml"
 )
 
-for i in "${ENDPOINTS[@]}"
-do
-    REF_FILE=$(mktemp)
-    TEST_FILE=$(mktemp)
-    # create array of temp files for later removal by `cleanup_temp_files`
-    TEMP_FILES=("$REF_FILE" "$TEST_FILE")
-    echo "testing $i"
-    curl -LsS --fail "$REFERENCE_BASE$i" -o "$REF_FILE"
-    # replace host and port number with xxxx to avoid false positives
-    sed "$SED_OPTION" 's/localhost:8090/xxxx/g' "$REF_FILE"
-    curl -LsS --fail "$TEST_BASE$i" -o "$TEST_FILE"
-    # replace host and port number with xxxx to avoid false positives
-    sed "$SED_OPTION" 's/localhost:8080/xxxx/g' "$TEST_FILE"
-    diff "$REF_FILE" "$TEST_FILE"
-    cleanup_temp_files
-    TEMP_FILES=()
-done
+# Helper function to compute filenames from endpoint via `md5`.
+# The filename will be given as absolute path to the `expected-results` directory,
+# which should be located in the same directory as this script.
+compute_filename_from_endpoint() {
+  local endpoint="$1"
+  local filename
+  filename=$(echo "$endpoint" | md5)
+  echo "$(pwd)"/expected-results/"$filename"
+}
+
+# Helper function to normalize file content by removing host and port information to avoid false positives in the diff.
+normalize_file() {
+  local file="$1"
+  # replace host and port number with xxxx to avoid false positives
+  sed "${SED_OPTION[@]}" 's/localhost:[0-9]+/xxxx/g' "$file"
+}
+
+# Main function to check the endpoints against the expected results.
+# This assumes your container is available at `$TEST_BASE`.
+check() {
+  for i in "${ENDPOINTS[@]}"
+  do
+      REF_FILE=$(compute_filename_from_endpoint "$i")
+      TEST_FILE=$(mktemp)
+      # create array of temp files for later removal by `cleanup_temp_files`
+      TEMP_FILES=("$TEST_FILE")
+      echo "testing $i"
+      curl -LsS --fail "$TEST_BASE$i" -o "$TEST_FILE"
+      # replace host and port number with xxxx to avoid false positives
+      normalize_file "$TEST_FILE"
+      diff "$REF_FILE" "$TEST_FILE"
+      cleanup_temp_files
+      TEMP_FILES=()
+  done
+}
+
+# Helper function to update the expected results in the `expected-results` directory
+# by downloading the current responses from the development backend.
+# This assumes your container is available at `$REFERENCE_BASE`.
+reset() {
+  for i in "${ENDPOINTS[@]}"
+  do
+      FILE_NAME=$(compute_filename_from_endpoint "$i")
+      echo "downloading $FILE_NAME"
+      curl -LsS --fail "$REFERENCE_BASE$i" -o "$FILE_NAME"
+      # replace host and port number with xxxx to avoid false positives
+      normalize_file "$FILE_NAME"
+  done
+}
+
+show_help() {
+  cat << EOF
+Usage: $(basename "$0") [COMMAND]
+
+Commands:
+  check       Run regression tests and compare results (development backend should be running on port 8090 and your test backend on port 8080)
+  reset       Download and reset expected results (development backend should be running on port 8090)
+  help        Show this help message
+
+Examples:
+  ./regression-test.sh check
+  ./regression-test.sh reset
+  ./regression-test.sh help
+EOF
+}
+
+main() {
+  case "${1:-}" in
+    check)
+      check
+      ;;
+    reset)
+      reset
+      ;;
+    help|--help|-h|"")
+      show_help
+      ;;
+    *)
+      echo "Error: Unknown command '$1'"
+      echo ""
+      show_help
+      exit 1
+      ;;
+  esac
+}
+
+main "$@"
