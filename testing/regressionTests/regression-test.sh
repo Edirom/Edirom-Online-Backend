@@ -75,7 +75,9 @@ declare -a ENDPOINTS=(
 compute_filename_from_endpoint() {
   local endpoint="$1"
   local filename
-  filename=$(echo "$endpoint" | md5sum)
+  filename=($(echo "$endpoint" | md5sum))
+  # expanding an array without an index only gives the first element.
+  # making use of this hack to get the string value without the trailing space and dash
   echo "$(pwd)"/expected-results/"$filename"
 }
 
