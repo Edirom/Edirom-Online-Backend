@@ -1,0 +1,7 @@
+{
+  "additional_css_path" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/resources/css/main.css",
+  "id" : "edition-27830471",
+  "languages" : "de",
+  "name" : "Carl Maria von Weber-Gesamtausgabe",
+  "doc" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/edition.xml"
+}
