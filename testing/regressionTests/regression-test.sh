@@ -75,7 +75,7 @@ declare -a ENDPOINTS=(
 compute_filename_from_endpoint() {
   local endpoint="$1"
   local filename
-  filename=$(echo "$endpoint" | md5)
+  filename=$(echo "$endpoint" | md5sum)
   echo "$(pwd)"/expected-results/"$filename"
 }
 
