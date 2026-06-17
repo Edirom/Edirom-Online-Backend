@@ -1,26 +1,101 @@
-name: Docker Build and Push
+name: Docker Build, Test, and Push
 
 on:
-  release:
-    types: [published]  # Triggers only when a release is published (not created or edited)
+  push:
+    tags: [ v** ]
+    branches: [ develop ]
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    branches: [ develop ]
 
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+  check-language-files:
+    name: Check alignment of language files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Install libsaxonhe-java for XQuery support
+        run: |
+          sudo apt-get update
+          sudo apt-get install libsaxonhe-java
+      - name: Run test
+        run: ant -lib /usr/share/java/ check-language-files
+
+  build-test-and-push:
+    name: Build, test, and push Docker image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # fetch all history to include latest tags for build metadata
+          submodules: 'recursive'
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v4
         with:
           username: vifebot
           password: ${{ secrets.VIFEBOT_DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: edirom/edirom-online-backend
+          flavor: |
+            latest=auto
+          # on push output branch name as tag
+          # on tag output git-tag-name as dockerimage-tag, e.g.: v1.2.3
+          # on tag output v+major.minor dockerimage tag, e.g.: v1.2
+          # on tag output major version at dockerimage-tag, e.g.: v1
+          tags: |
+            type=ref,event=pr
+            type=ref,event=branch
+            type=semver,pattern={{raw}}
+            type=semver,prefix=v,pattern={{major}}.{{minor}}
+            type=semver,prefix=v,pattern={{major}}
+      # Build without pushing
+      # subsequent steps will use this image from cache
+      # https://docs.docker.com/build/ci/github-actions/test-before-push/
+      - name: Build and export to Docker
+        uses: docker/build-push-action@v7
+        with:
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Run the Docker image
+        run: docker run --rm -p 8080:8080 --name edirom-online-backend -d ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
+
+      - name: Check the deployed service URL
+        run: i=0 ; while (! curl --fail -sv http://localhost:8080/exist/apps/Edirom-Online-Backend/index.html) ; do if ((i > 20)) ; then echo ' **** timeout ... aborting **** ' ; exit 1 ; else sleep 5 ; echo waiting for container ... ; i=$((i+1)) ; fi ; done
+
+      - name: Install libxml2-utils for xmllint
         run: |
-          IMAGE_NAME="edirom/edirom-online-backend"
-          TAG=${GITHUB_REF#refs/tags/}
-          
-          docker build -t $IMAGE_NAME:$TAG .
-          docker push $IMAGE_NAME:$TAG
+          sudo apt-get update
+          sudo apt-get install libxml2-utils
+      - name: Run XQSuite unit tests
+        run: ant xqunit-tests
+      - name: Tear down Docker
+        run: docker kill edirom-online-backend
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v7
+        if: ${{ github.event_name != 'pull_request' }}
+        with:
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

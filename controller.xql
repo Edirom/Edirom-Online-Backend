@@ -42,6 +42,25 @@ return
             <!--<redirect url="/exist/restxq{$exist:path}"/>-->
             <forward servlet="RestXqServlet"/>
         </dispatch>:)
+    else if (
+        (: serve static API documentation page :)
+        ($exist:path eq "/api.html") or 
+        ($exist:path eq "/api.json")
+    ) then
+        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+            <forward url="{$exist:controller}/data/api/{$exist:path}"/>
+        </dispatch>
+    else if (starts-with($exist:path, "/api")) then
+        (: forward /api to api.xql :)
+        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+            <forward url="{$exist:controller}/data/xql/api.xql">
+                <set-header name="Access-Control-Allow-Origin" value="*"/>
+                <set-header name="Access-Control-Allow-Credentials" value="true"/>
+                <set-header name="Access-Control-Allow-Methods" value="GET, OPTIONS"/>
+                <set-header name="Access-Control-Allow-Headers" value="Accept, Content-Type, Authorization, X-Start"/>
+                <set-header name="Cache-Control" value="no-cache"/>
+            </forward>
+        </dispatch>
     else
         (: everything else is passed through :)
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">

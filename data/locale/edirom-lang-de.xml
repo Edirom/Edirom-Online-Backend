@@ -96,7 +96,7 @@
         <entry key="view.window.AnnotationView_OpenAll" value="Alle Quellen öffnen"/>
         <entry key="view.window.AnnotationView_CloseAll" value="Alle Quellen schließen"/>
         <entry key="view.window.HelpWindow_Title" value="Hilfe"/>
-        <entry key="view.window.TobBar_View" value="Ansicht"/>
+        <entry key="view.window.TopBar_View" value="Ansicht"/>
         
         <entry key="view.window.concordanceNavigator.ConcordanceNavigator_Title" value="Konkordanzen"/>
         <entry key="view.window.concordanceNavigator.ConcordanceNavigator_Show" value="Anzeigen"/>

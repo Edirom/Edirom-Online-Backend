@@ -1,0 +1,32 @@
+{
+    "citationTrees": {
+        "musicStructure": {
+            "@type": "CitationTree",
+            "identifier": "musicStructure",
+            "citeStructure" : [
+                {
+                    "citeType": "Movement",
+                    "citeStructure": [
+                        {
+                            "citeType": "Measure"
+                        }
+                    ]
+                }
+            ]
+        },
+        "paginationStructure": {
+            "@type": "CitationTree",
+            "identifier": "paginationStructure",
+            "citeStructure" : [
+                {
+                    "citeType": "Surface",
+                    "citeStructure": [
+                        {
+                            "citeType": "Zone"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

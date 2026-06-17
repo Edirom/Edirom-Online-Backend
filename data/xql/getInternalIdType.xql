@@ -7,6 +7,8 @@ xquery version "3.1";
 
 import module namespace functx = "http://www.functx.com";
 
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
+
 (: NAMESPACE DECLARATIONS ================================================== :)
 
 declare namespace mei = "http://www.music-encoding.org/ns/mei";
@@ -36,7 +38,7 @@ let $internalId :=
         (substring-before($internalId, '?'))
     else
         ($internalId)
-let $doc := doc($docUri)
+let $doc := eutil:getDoc($docUri)
 let $internal := $doc/id($internalId)
 
 (: Specific handling of virtual measure IDs for parts in OPERA project :)

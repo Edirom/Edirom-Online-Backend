@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-model href="https://music-encoding.org/schema/5.0/mei-all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="https://music-encoding.org/schema/5.0/mei-all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<mei xmlns="http://www.music-encoding.org/ns/mei"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     meiversion="5.0"
+     xml:id="test-mei-score">
+   <meiHead/>
+   <music>
+      <body>
+         <mdiv label="Test Movement 1"
+               xml:id="test-mdiv-1">
+            <score>
+               <scoreDef lyric.name="Plantin MT Std"
+                         meter.count="4"
+                         meter.unit="4"
+                         music.name="Opus Std"
+                         page.botmar="12.7mm"
+                         page.height="297mm"
+                         page.leftmar="12.7mm"
+                         page.rightmar="12.7mm"
+                         page.topmar="12.7mm"
+                         page.width="210mm"
+                         ppq="256"
+                         text.name="Plantin MT Std"
+                         xml:id="m-28">
+                  <staffGrp xml:id="m-29">
+                     <staffDef clef.line="2"
+                               clef.shape="G"
+                               key.mode="major"
+                               keysig="0"
+                               label="Stimme"
+                               lines="5"
+                               n="1"
+                               xml:id="m-30"><!-- voice.ensemble.ah -->
+                        <instrDef midi.channel="1" midi.pan="63" midi.volume="100" xml:id="m-32"/>
+                     </staffDef>
+                     <staffGrp n="1" symbol="brace" xml:id="m-39">
+                        <staffDef clef.line="4"
+                                  clef.shape="F"
+                                  key.mode="major"
+                                  keysig="0"
+                                  label="Klavier"
+                                  lines="5"
+                                  n="2"
+                                  xml:id="m-33"><!-- keyboard.piano.grand -->
+                           <instrDef midi.channel="1" midi.pan="53" midi.volume="100" xml:id="m-35"/>
+                        </staffDef>
+                        <staffDef clef.line="4"
+                                  clef.shape="F"
+                                  key.mode="major"
+                                  keysig="0"
+                                  label="Klavier"
+                                  lines="5"
+                                  n="3"
+                                  xml:id="m-36"><!-- keyboard.piano.grand -->
+                           <instrDef midi.channel="1" midi.pan="53" midi.volume="100" xml:id="m-38"/>
+                        </staffDef>
+                     </staffGrp>
+                  </staffGrp>
+               </scoreDef>
+               <scoreDef keysig="3s" xml:id="m-747"/>
+               <section>
+                  <measure facs="#edirom_zone_64369918-e4df-4c95-b2b6-3098ff461915"
+                           label="0"
+                           n="1"
+                           type="upbeat"
+                           xml:id="edirom_measure_fa0d68e6-2a1f-41a3-9178-c86d1db3e6af"/>
+               </section>
+            </score>
+         </mdiv>
+         <mdiv label="Test Movement 2" xml:id="test-mdiv-2">
+            <score>
+               <scoreDef xml:id="m-40">
+                  <staffDef clef.line="2"
+                            clef.shape="G"
+                            key.mode="major"
+                            keysig="0"
+                            label="Stimme"
+                            lines="5"
+                            n="1"
+                            xml:id="m-41">
+                     <instrDef midi.channel="1" midi.pan="63" midi.volume="100" xml:id="m-43"/>
+                  </staffDef>
+               </scoreDef>
+               <section>
+                  <measure facs="#reference"
+                           label="0"
+                           n="1"
+                           type="upbeat"
+                           xml:id="test-measure-2"/>
+               </section>
+            </score>
+         </mdiv>
+      </body>
+   </music>
+</mei>

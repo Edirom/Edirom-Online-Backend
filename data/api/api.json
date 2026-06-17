@@ -1,0 +1,565 @@
+{
+	"openapi": "3.0.1",
+	"info": {
+		"title": "Edirom Online API",
+		"description": "This is the description and documentation of the Edirom-Online backend API.",
+		"licence": {
+			"name": "MIT"
+		},
+		"version": "2.0.0-alpha"
+	},
+	"servers": [
+		{
+			"description": "Local backend with EditionExample and Klarinettenquintett",
+			"url": "http://localhost:8080/exist/apps/Edirom-Online-Backend"
+		}
+	],
+	"tags": [
+		{
+			"name": "entry",
+			"description": "Entry endpoint"
+		},
+		{
+			"name": "collection",
+			"description": "Collection endpoint"
+		},
+		{
+			"name": "navigation",
+			"description": "Navigation endpoint"
+		},
+		{
+			"name": "document",
+			"description": "Document endpoint"
+		}
+	],
+	"components": {
+		"securitySchemes": {
+			"basicAuth": {
+				"type": "http",
+				"scheme": "basic"
+			},
+			"cookieAuth": {
+				"type": "apiKey",
+				"name": "example.com.login",
+				"in": "cookie"
+			}
+		}
+	},
+	"paths": {
+		"/api": {
+			"get": {
+				"summary": "API entry endpoint",
+				"description": "This is the entry point for the API.",
+				"operationId": "api:entryPoint",
+				"tags": ["entry"],
+				"responses": {
+					"200": {
+						"description": "Succesful response",
+						"content": {
+							"application/ld+json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not found"
+					},
+					"500": {
+						"description": "Internal server error"
+					}
+				}
+			}
+		},
+		"/api/document": {
+				"get": {
+					"summary": "Document endpoint",
+					"description": "This endpoint returns a document or part of a document.",
+					"operationId": "api:document",
+					"tags": ["document"],
+					"parameters": [
+						{
+							"name": "resource",
+							"in": "query",
+							"required": true,
+							"schema": {
+								"type": "string"
+							},
+							"examples": {
+								"Klarinettenquintett MEI": {
+									"summary": "Klarinettenquintett MEI",
+									"value": "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml"
+								},
+								"Klarinettenquintett source 1": {
+									"summary": "Klarinettenquintett source 1",
+									"value": "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-1.xml"
+								},
+								"Klarinettenquintett text 1": {
+									"summary": "Klarinettenquintett text 1",
+									"value": "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-1.xml"
+								},
+								"Test MEI score": {
+									"summary": "Test MEI score",
+									"value": "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-score.xml"
+								},
+								"Test MEI facsimilie": {
+									"summary": "Test MEI facsimile",
+									"value": "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-facsimile.xml"
+								},
+								"Test TEI": {
+									"summary": "Test TEI",
+									"value": "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml"
+								}
+							}
+						},
+						{
+							"name": "ref",
+							"in": "query",
+							"required": false,
+							"description": "NOT used with start and end",
+							"schema": {
+								"type": "string"
+							},
+							"examples": {
+								"Empty": {
+									"summary": "Empty",
+									"value": ""
+								},
+								"Allegro": {
+									"summary": "Allegro",
+									"value": "tf280fcd0-c18e-42b4-8ec3-8166ac51f7cf"
+								},
+								"Fantasia": {
+									"summary": "Fantasia",
+									"value": "x7a9f679a-a4d3-4d02-8a93-1f697f2f9ea2"
+								},
+								"Menuetto Capriccio": {
+									"summary": "Menuetto Capriccio",
+									"value": "x19d7fd5c-b8b4-47d8-8967-c6a27b5cd1a9"
+								},
+								"Rondo": {
+									"summary": "Rondo",
+									"value": "xf1c9b711-1ab7-47c5-afea-e0551799da6c"
+								},
+								"Measure 2": {
+									"summary": "Measure 2",
+									"value": "xb3589e15-7672-4a38-a0d5-406cd7de9a1f"
+								},
+								"Surface 3": {
+									"summary": "Surface 3",
+									"value": "facsimile-2001003"
+								},
+								"Zone": {
+									"summary": "Zone",
+									"value": "zone_bar-20037"
+								},
+								"Measure source 1 - 1": {
+									"summary": "Measure source 1 - 1",
+									"value": "bar-2001"
+								},
+								"Measure source 1 - 2": {
+									"summary": "Measure source 1 - 2",
+									"value": "bar-2002"
+								},
+								"meiHead": {
+									"summary": "meiHead",
+									"value": "meiHead"
+								},
+								"teiHeader": {
+									"summary": "teiHeader",
+									"value": "teiHeader"
+								},
+								"Page Break 1": {
+									"summary": "Page Break 1",
+									"value": "pb-1"
+								},
+								"Page Break 2": {
+									"summary": "Page Break 2",
+									"value": "pb-2"
+								},
+								"Page Break 3": {
+									"summary": "Page Break 3",
+									"value": "pb-3"
+								}
+							}
+						},
+						{
+							"name": "start",
+							"in": "query",
+							"required": false,
+							"description": "NOT used if a ref is specified, requires end as well",
+							"schema": {
+								"type": "string"
+							},
+							"examples": {
+								"Empty": {
+									"summary": "Empty",
+									"value": ""
+								},
+								"Allegro": {
+									"summary": "Allegro",
+									"value": "tf280fcd0-c18e-42b4-8ec3-8166ac51f7cf"
+								},
+								"Fantasia": {
+									"summary": "Fantasia",
+									"value": "x7a9f679a-a4d3-4d02-8a93-1f697f2f9ea2"
+								},
+								"Menuetto Capriccio": {
+									"summary": "Menuetto Capriccio",
+									"value": "x19d7fd5c-b8b4-47d8-8967-c6a27b5cd1a9"
+								},
+								"Rondo": {
+									"summary": "Rondo",
+									"value": "xf1c9b711-1ab7-47c5-afea-e0551799da6c"
+								},
+								"Measure 2 range start": {
+									"summary": "Measure 2 range start",
+									"value": "xb3589e15-7672-4a38-a0d5-406cd7de9a1f"
+								},
+								"Surface 3 range start": {
+									"summary": "Surface 3 range start",
+									"value": "facsimile-2001003"
+								},
+								"Zone range start": {
+									"summary": "Zone range start",
+									"value": "zone_bar-20037"
+								},
+								"Measure source 1 - 1": {
+									"summary": "Measure source 1 - 1",
+									"value": "bar-2001"
+								},
+								"Measure source 1 - 2": {
+									"summary": "Measure source 1 - 2",
+									"value": "bar-2002"
+								},
+								"Page Break 1": {
+									"summary": "Page Break 1",
+									"value": "pb-1"
+								},
+								"Page Break 2": {
+									"summary": "Page Break 2",
+									"value": "pb-2"
+								},
+								"Page Break 3": {
+									"summary": "Page Break 3",
+									"value": "pb-3"
+								}
+							}
+						},
+						{
+							"name": "end",
+							"in": "query",
+							"required": false,
+							"description": "NOT used if a ref is specified, requires start as well",
+							"schema": {
+								"type": "string"
+							},
+							"examples": {
+								"Empty": {
+									"summary": "Empty",
+									"value": ""
+								},
+								"Allegro": {
+									"summary": "Allegro",
+									"value": "tf280fcd0-c18e-42b4-8ec3-8166ac51f7cf"
+								},
+								"Fantasia": {
+									"summary": "Fantasia",
+									"value": "x7a9f679a-a4d3-4d02-8a93-1f697f2f9ea2"
+								},
+								"Menuetto Capriccio": {
+									"summary": "Menuetto Capriccio",
+									"value": "x19d7fd5c-b8b4-47d8-8967-c6a27b5cd1a9"
+								},
+								"Rondo": {
+									"summary": "Rondo",
+									"value": "xf1c9b711-1ab7-47c5-afea-e0551799da6c"
+								},
+								"Measure 6 range end": {
+									"summary": "Measure 6 range end",
+									"value": "x97e20158-6a2a-4ebc-9061-fccc379d2b58"
+								},
+								"Surface 9 range end": {
+									"summary": "Surface 9 range end",
+									"value": "facsimile-2001009"
+								},
+								"Zone range end": {
+									"summary": "Zone range end",
+									"value": "zone_bar-20047"
+								},
+								"Measure source 1 - 4": {
+									"summary": "Measure source 1 - 4",
+									"value": "bar-2004"
+								},
+								"Measure source 1 - 20": {
+									"summary": "Measure source 1 - 20",
+									"value": "bar-20020"
+								},
+								"Page Break 1": {
+									"summary": "Page Break 1",
+									"value": "pb-1"
+								},
+								"Page Break 2": {
+									"summary": "Page Break 2",
+									"value": "pb-2"
+								},
+								"Page Break 3": {
+									"summary": "Page Break 3",
+									"value": "pb-3"
+								}
+							}
+						},
+						{
+							"name": "tree",
+							"in": "query",
+							"required": false,
+							"schema": {
+								"type": "string",
+								"enum": [
+									"musicStructure",
+									"paginationStructure"
+								],
+								"default": "musicStructure"
+							},
+							"examples": {
+								"Empty": {
+									"summary": "Empty",
+									"value": ""
+								},
+								"musicStructure": {
+									"summary": "musicStructure",
+									"value": "musicStructure"
+								},
+								"paginationStructure": {
+									"summary": "paginationStructure",
+									"value": "paginationStructure"
+								}
+							}
+						},
+						{
+							"name": "mediaType",
+							"in": "query",
+							"required": false,
+							"schema": {
+								"type": "string",
+								"enum": [
+									"text/html",
+									"application/mei+xml",
+									"application/tei+xml",
+									"application/xml"
+								],
+								"default": "application/xml"
+							},
+							"examples": {
+								"mei": {
+									"summary": "mei",
+									"value": "application/mei+xml"
+								},
+								"tei": {
+									"summary": "tei",
+									"value": "application/tei+xml"
+								},
+								"html": {
+									"summary": "html",
+									"value": "text/html"
+								}
+							}
+						},
+						{
+							"name": "lang",
+							"in": "query",
+							"required": false,
+							"schema": {
+								"type": "string"
+							},
+							"examples": {
+								"Empty": {
+									"summary": "Empty",
+									"value": ""
+								},
+								"English": {
+									"summary": "English",
+									"value": "en"
+								},
+								"German": {
+									"summary": "German",
+									"value": "de"
+								}
+							}
+						},
+						{
+							"name": "idPrefix",
+							"in": "query",
+							"required": false,
+							"description": "Prefix to add to all ids in the returned document, used to prevent id conflicts when loading the same document multiple times",
+							"schema": {
+								"type": "string"
+							},
+							"examples": {
+								"Empty": {
+									"summary": "Empty",
+									"value": ""
+								},
+								"Prefix1": {
+									"summary": "Prefix1",
+									"value": "prefix1-"
+								},
+								"Prefix2": {
+									"summary": "Prefix2",
+									"value": "prefix2-"
+								}
+							}
+						},
+						{
+							"name": "autoHead",
+							"in": "query",
+							"required": false,
+							"description": "Whether to construct a heading for &lt;div&gt; elements with no &lt;head&gt; - by default, not.",
+							"schema": {
+								"type": "string",
+								"enum": [
+									"true",
+									"false"
+								],
+								"default": "false"
+							},
+							"examples": {
+								"True": {
+									"summary": "True",
+									"value": "true"
+								},
+								"False": {
+									"summary": "False",
+									"value": "false"
+								}
+							}
+						},
+						{
+							"name": "autoToc",
+							"in": "query",
+							"required": false,
+							"description": "Whether to automatically generate a table of contents for the returned document",
+							"schema": {
+								"type": "string",
+								"enum": [
+									"true",
+									"false"
+								],
+								"default": "false"
+							},
+							"examples": {
+								"True": {
+									"summary": "True",
+									"value": "true"
+								},
+								"False": {
+									"summary": "False",
+									"value": "false"
+								}
+							}
+						},
+						{
+							"name": "tocDepth",
+							"in": "query",
+							"required": false,
+							"description": "The depth of the table of contents in the returned document, only used if autoToc is true",
+							"schema": {
+								"type": "string",
+								"default": "1"
+							},
+							"examples": {
+								"1": {
+									"summary": "1",
+									"value": "1"
+								},
+								"2": {
+									"summary": "2",
+									"value": "2"
+								},
+								"3": {
+									"summary": "3",
+									"value": "3"
+								}
+							}
+						},
+						{
+							"name": "footnoteBackLink",
+							"in": "query",
+							"required": false,
+							"description": "Whether to add back links from footnotes to their references in the text",
+							"schema": {
+								"type": "string",
+								"enum": [
+									"true",
+									"false"
+								],
+								"default": "true"
+							},
+							"examples": {
+								"True": {
+									"summary": "True",
+									"value": "true"
+								},
+								"False": {
+									"summary": "False",
+									"value": "false"
+								}
+							}
+						},
+						{
+							"name": "numberHeadings",
+							"in": "query",
+							"required": false,
+							"description": "Whether to add numbers to headings in the returned document, both in the text and in the TOC.",
+							"schema": {
+								"type": "string",
+								"enum": [
+									"true",
+									"false"
+								],
+								"default": "false"
+							},
+							"examples": {
+								"True": {
+									"summary": "True",
+									"value": "true"
+								},
+								"False": {
+									"summary": "False",
+									"value": "false"
+								}
+							}
+						}
+					],
+				"responses": {
+					"200": {
+						"description": "Successful response"
+					},
+					"400": {
+						"description": "Bad request"
+					},
+					"404": {
+						"description": "Not found"
+					},
+					"500": {
+						"description": "Internal server error"
+					}
+				}
+			}
+		}
+	},
+	"security": [
+		{
+			"cookieAuth": []
+		},
+		{
+			"basicAuth": []
+		}
+	]
+}

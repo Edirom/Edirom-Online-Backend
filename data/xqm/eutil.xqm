@@ -6,9 +6,6 @@ xquery version "3.1";
 (:~
  : This module provides library utility functions
  :
- : @author <a href="mailto:roewenstrunk@edirom.de">Daniel Röwenstrunk</a>
- : @author <a href="mailto:roewenstrunk@edirom.de">Nikolaos Beer</a>
- : @author <a href="mailto:bohl@edirom.de">Benjamin W. Bohl</a>
  :)
 
 module namespace eutil = "http://www.edirom.de/xquery/eutil";
@@ -22,16 +19,46 @@ import module namespace functx = "http://www.functx.com";
 declare namespace edirom="http://www.edirom.de/ns/1.3";
 declare namespace mei="http://www.music-encoding.org/ns/mei";
 declare namespace request="http://exist-db.org/xquery/request";
+declare namespace session="http://exist-db.org/xquery/session";
 declare namespace system="http://exist-db.org/xquery/system";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace util="http://exist-db.org/xquery/util";
 declare namespace pref="http://www.edirom.de/ns/prefs/1.0";
+declare namespace xmldb="http://exist-db.org/xquery/xmldb";
 
 (: VARIABLE DECLARATIONS =================================================== :)
 
-declare variable $eutil:default-prefs-location as xs:string := '../prefs/edirom-prefs.xml';
-declare variable $eutil:lang as xs:string := eutil:getLanguage();
-declare variable $eutil:langDoc as document-node() := doc('../locale/edirom-lang-' || $eutil:lang || '.xml');
+(:
+    Determine the application root collection from the current module load path.
+:)
+declare variable $eutil:app-root as xs:string :=
+    let $rawPath := replace(system:get-module-load-path(), '/null/', '//')
+    let $modulePath :=
+        (: strip the xmldb: part :)
+        if (starts-with($rawPath, "xmldb:exist://")) then
+            if (starts-with($rawPath, "xmldb:exist://embedded-eXist-server")) then
+                substring($rawPath, 36)
+            else if (contains($rawPath, "/xmlrpc/")) then
+                substring-after($rawPath, "/xmlrpc")
+            else
+                substring($rawPath, 15)
+        else
+            $rawPath
+    return
+        substring-before($modulePath, "/data/xqm")
+;
+declare variable $eutil:INVALID_LANGUAGE_CODE := QName("http://www.edirom.de/xquery/eutil", "InvalidLanguageCodeError");
+declare variable $eutil:INVALID_DOCUMENT_URI := QName("http://www.edirom.de/xquery/eutil", "InvalidDocumentUriError");
+declare variable $eutil:default-prefs-location as xs:string := $eutil:app-root || '/data/prefs/edirom-prefs.xml';
+declare variable $eutil:xsltBase as xs:string := $eutil:app-root || '/data/xslt';
+declare variable $eutil:supported-languages :=
+    (: Extract supported languages from the provided langFiles :)
+    collection($eutil:app-root || '/data/locale')//langFile/data(lang);
+declare variable $eutil:langDoc :=
+    function($lang as xs:string?) as document-node()? {
+        collection($eutil:app-root || '/data/locale')//langFile/lang[.=eutil:getSetLanguage($lang)]/root()
+        (:eutil:getDoc('../locale/edirom-lang-' || eutil:getSetLanguage($lang) || '.xml'):)
+    };
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
@@ -64,7 +91,7 @@ declare function eutil:getNamespace($node as node()) as xs:string {
  :)
 declare function eutil:getLocalizedName($node as element()) as xs:string {
 
-    eutil:getLocalizedName($node, request:get-parameter('lang', ''))
+    eutil:getLocalizedName($node, eutil:getSetLanguage(()))
 
 };
 
@@ -188,17 +215,47 @@ declare function eutil:getLocalizedTitle($node as node(), $lang as xs:string?, $
 };
 
 (:~
- : Returns a document
+ : Returns a document from internal eXist-db paths only
  :
- : @param $uri The URIs of the documents to process
+ : @param $uri The URI of the document to process
  : @return The document
  :)
 declare function eutil:getDoc($uri as xs:string?) as document-node()? {
-    if(empty($uri) or ($uri eq ""))
-    then util:log("warn", "No document URI provided")
-    else if(doc-available($uri))
-    then doc($uri)
-    else util:log("warn", "Unable to load document at " || $uri)
+    let $normalizedUri := normalize-space($uri)
+    return
+        if($normalizedUri eq "")
+        then util:log("warn", "No document URI provided")
+        else
+            if (not(eutil:isInternalDbUri($normalizedUri)))
+            then error($eutil:INVALID_DOCUMENT_URI, concat('Blocked non-db URI: ', $normalizedUri))
+            else
+                if(doc-available($normalizedUri))
+                then doc($normalizedUri)
+                else util:log("warn", "Unable to load document at " || $normalizedUri)
+};
+
+(:~
+ : Returns whether a URI points to an internal eXist-db collection under `/db`
+ :
+ : @param $uri The URI to validate
+ : @return `true()` if the URI points to `/db`, otherwise `false()`
+ :)
+declare %private function eutil:isInternalDbUri($uri as xs:string) as xs:boolean {
+    (
+        starts-with(normalize-space($uri), '/db/')
+        or starts-with(normalize-space($uri), 'xmldb:exist://db/')
+        or starts-with(normalize-space($uri), 'xmldb:exist:///db/')
+        or starts-with(normalize-space($uri), 'xmldb:exist://embedded-eXist-server/db/')
+        or starts-with(normalize-space($uri), 'xmldb:exist:///embedded-eXist-server/db/')
+    )
+    and
+    not(
+    starts-with(normalize-space($uri), '/db/system/')
+        or starts-with(normalize-space($uri), 'xmldb:exist://db/system/')
+        or starts-with(normalize-space($uri), 'xmldb:exist:///db/system/')
+        or starts-with(normalize-space($uri), 'xmldb:exist://embedded-eXist-server/db/system/')
+        or starts-with(normalize-space($uri), 'xmldb:exist:///embedded-eXist-server/db/system/')
+    )
 };
 
 (:~
@@ -210,7 +267,7 @@ declare function eutil:getDoc($uri as xs:string?) as document-node()? {
  :)
 declare function eutil:getPartLabel($measureOrPerfRes as node(), $type as xs:string) as xs:string {
 
-    let $lang := $eutil:lang
+    let $lang := eutil:getSetLanguage(())
 
     let $part := $measureOrPerfRes/ancestor::mei:part
     let $voiceRef := $part//mei:staffDef/@decls
@@ -250,7 +307,7 @@ declare function eutil:getPartLabel($measureOrPerfRes as node(), $type as xs:str
  :)
 declare function eutil:getLanguageString($key as xs:string, $values as xs:string*) as xs:string? {
 
-    eutil:getLanguageString($key, $values, eutil:getLanguage())
+    eutil:getLanguageString($key, $values, eutil:getSetLanguage(()))
 };
 
 (:~
@@ -265,7 +322,7 @@ declare function eutil:getLanguageString($key as xs:string, $values as xs:string
  :)
 declare function eutil:getLanguageString($key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string? {
 
-    let $langString := $eutil:langDoc//entry[@key = $key]/string(@value)
+    let $langString := $eutil:langDoc($lang)//entry[@key = $key]/string(@value)
 
     return
         if($langString) 
@@ -288,9 +345,7 @@ declare function eutil:getLanguageString($key as xs:string, $values as xs:string
 declare function eutil:getLanguageString($langFileURI as xs:string, $key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string? {
 
     (: Try to load a custom language file :)
-    let $langFileCustom := 
-        try { doc($langFileURI) }
-        catch * { util:log-system-out('Failed to load the custom language file "' || $langFileURI || '"') }
+    let $langFileCustom := eutil:getDoc($langFileURI)
     
     let $langString :=
         (: If there is a value for the key in the custom language file :)
@@ -298,7 +353,7 @@ declare function eutil:getLanguageString($langFileURI as xs:string, $key as xs:s
             $langFileCustom//entry[@key = $key]/@value => string()
         (: If not, take the value for the key in the default language file :)
         else
-            $eutil:langDoc//entry[@key = $key]/@value => string()
+            $eutil:langDoc($lang)//entry[@key = $key]/@value => string()
     return
         if($langString) 
         (: replace placeholders in the language string with values provided to the function as parameter :)
@@ -316,9 +371,7 @@ declare function eutil:getLanguageString($langFileURI as xs:string, $key as xs:s
 declare function eutil:getPreference($key as xs:string, $preferencesURI as xs:string?) as xs:string? {
 
     (: Try to load a custom preferences file :)
-    let $prefFileCustom := 
-        try { doc($preferencesURI) }
-        catch * { util:log-system-out('Failed to load the custom preferences file') }
+    let $prefFileCustom := eutil:getDoc($preferencesURI)
     
     return
         (: If there is a value for the key in the custom preferences file :)
@@ -326,22 +379,57 @@ declare function eutil:getPreference($key as xs:string, $preferencesURI as xs:st
             $prefFileCustom//(pref:entry|entry)[@key = $key]/@value => string()
         (: If not, take the value for the key in the default preferences file :)
         else
-            try { doc($eutil:default-prefs-location)//(pref:entry|entry)[@key = $key]/@value => string() }
-            (: If the key is not in the default file, then there should be an error :)
-            catch * { util:log-system-out(concat('Failed to find the key `', $key, '` in default preferences file')) }
+            let $defaultPrefs := eutil:getDoc($eutil:default-prefs-location)
+            return
+                if($defaultPrefs//(pref:entry|entry)[@key = $key])
+                then $defaultPrefs//(pref:entry|entry)[@key = $key]/@value => string()
+                (: If the key is not in the default file, then there should be an error :)
+                else util:log-system-out(concat('Failed to find the key `', $key, '` in default preferences file'))
+
 };
 
 (:~
- : Return the application language
+ : Get and set the application language
  :
+ : If a `$lang` parameter is provided and it is supported by some langFile, the same value will be returned
+ :      and saved to the current session. If the provided value is not supported, an error will be raised.
+ : If no `$lang` parameter is provided (i.e. `$lang` equals the empty-sequence), the function will try
+ :      to determine the language in the following order:
+ : 1. from the HTTP request parameter "lang"
+ : 2. from the session attribute "lang"
+ : 3. from the preferred browser language as provided in the "Accept-Language" header
+ : 4. from the first supported language provided by `$eutil:supported-languages`
+ :
+ : @param $lang The language code (e.g. "de" or "en")
  : @return The language key
  :)
-declare function eutil:getLanguage() as xs:string {
-    
-    if (request:get-parameter("lang", "") != "") then
-        request:get-parameter("lang", "")
-    else    
-        'de'
+declare function eutil:getSetLanguage($lang as xs:string?) as xs:string? {
+
+    if ($lang)
+    then
+        if ($lang = $eutil:supported-languages)
+        then (
+            $lang,
+            session:set-attribute('lang', $lang)
+        )
+        else (
+            error($eutil:INVALID_LANGUAGE_CODE, 'Language code "' || $lang || '" is not supported. Please try with "' || string-join($eutil:supported-languages, '", "') || '".')
+        )
+    else if (request:get-parameter('lang', '') = $eutil:supported-languages)
+    then (
+        request:get-parameter('lang', ''),
+        session:set-attribute('lang', request:get-parameter('lang', ''))
+    )
+    else if(session:exists() and session:get-attribute('lang') = $eutil:supported-languages)
+    then
+        session:get-attribute('lang')
+    else if(eutil:request-lang-preferred-iso639() = $eutil:supported-languages)
+    then (
+        eutil:request-lang-preferred-iso639(),
+        session:set-attribute('lang', eutil:request-lang-preferred-iso639())
+    )
+    else
+        $eutil:supported-languages[1]
 };
 
 (:~
@@ -420,7 +508,7 @@ declare function eutil:iso3166-1-to-iso639($iso3166-1 as xs:string) as xs:string
  : @author Benjamin W. Bohl
  : @return xs:string ISO 639 language code
  :)
-declare function eutil:request-lang-preferred-iso639() as xs:string {
+declare function eutil:request-lang-preferred-iso639() as xs:string? {
 
     let $request.accept-language := request:get-header("Accept-Language")
     return
@@ -443,7 +531,7 @@ declare function eutil:request-lang-preferred-iso639() as xs:string {
                 eutil:iso3166-1-to-iso639($tokens.qmax.first)
         
         else
-            "en"
+            ()
 
 };
 
@@ -466,4 +554,46 @@ declare function eutil:joinAndNormalize($strings as xs:string*) as xs:string {
  :)
 declare function eutil:joinAndNormalize($strings as xs:string*, $separator as xs:string) as xs:string {
     $strings => string-join($separator) => normalize-space()
+};
+
+(:~
+ : Returns a copy of a document with xml:id attributes added to elements missing one
+ :
+ : @param $doc The document to be processed
+ : @return The copied document with xml:id attributes
+ :)
+declare function eutil:add-xml-ids(
+    $doc as document-node()
+) as document-node() {
+    document {
+        for $node in $doc/node()
+        return eutil:add-xml-id-to-node($node)
+    }
+};
+
+(:~
+ : Returns a copy of a node with xml:id attributes added recursively to elements missing one
+ :
+ : @param $node The node to be processed
+ : @return The copied node sequence with xml:id attributes
+ :)
+declare function eutil:add-xml-id-to-node(
+    $node as node()
+) as node()* {
+    typeswitch($node)
+
+        case element() return
+        element { node-name($node) } {
+            if ($node/@xml:id)
+            then $node/@*
+            else (
+                attribute xml:id { generate-id($node) },
+                $node/@*
+            ),
+            for $child in $node/node()
+                return eutil:add-xml-id-to-node($child)
+        }
+
+        default return
+            $node
 };

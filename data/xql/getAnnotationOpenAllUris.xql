@@ -6,6 +6,7 @@ xquery version "3.1";
 
 (: IMPORTS ================================================================= :)
 
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
 import module namespace source = "http://www.edirom.de/xquery/source" at "../xqm/source.xqm";
 import module namespace teitext = "http://www.edirom.de/xquery/teitext" at "../xqm/teitext.xqm";
 
@@ -13,6 +14,7 @@ import module namespace teitext = "http://www.edirom.de/xquery/teitext" at "../x
 
 declare namespace mei = "http://www.music-encoding.org/ns/mei";
 declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
+declare namespace request = "http://exist-db.org/xquery/request";
 
 (: OPTION DECLARATIONS ===================================================== :)
 
@@ -45,7 +47,7 @@ declare function local:getParticipants($annot as element()) as xs:string* {
 declare function local:getSourceParticipants($participants as xs:string*, $doc as xs:string) as xs:string* {
     let $elems := for $p in $participants
     let $id := substring-after($p, '#')
-    let $elem := doc($doc)/id($id)
+    let $elem := eutil:getDoc($doc)/id($id)
         order by count($elem/preceding::*)
     return
         $elem
@@ -75,7 +77,7 @@ declare function local:groupSourceParticipants($elems as node()*, $doc as xs:str
             (concat('?tstamp2=', $measureCount, 'm+0'))
         else
             ('')
-        let $isInPart := exists(doc($doc)/id($startId)/ancestor::mei:part)
+        let $isInPart := exists(eutil:getDoc($doc)/id($startId)/ancestor::mei:part)
         return
             if ($isInPart)
             then
@@ -100,7 +102,7 @@ declare function local:getStartIdsOfRange($elems as node()*, $pos as xs:integer,
 
 let $uri := request:get-parameter('uri', '')
 let $annotId := request:get-parameter('annotId', '')
-let $doc := doc($uri)
+let $doc := eutil:getDoc($uri)
 let $annot := $doc/id($annotId)
 
 return

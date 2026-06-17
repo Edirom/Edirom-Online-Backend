@@ -29,7 +29,7 @@ declare option output:media-type "text/html";
 
 (: VARIABLE DECLARATIONS =================================================== :)
 
-declare variable $lang := request:get-parameter('lang', '');
+declare variable $lang := eutil:getSetLanguage(());
 
 (: QUERY BODY ============================================================== :)
 
@@ -37,7 +37,7 @@ let $edition := request:get-parameter('edition', '')
 let $uri := request:get-parameter('uri', '')
 let $docUri := substring-before($uri, '#')
 let $internalId := substring-after($uri, '#')
-let $doc := doc($docUri)
+let $doc := eutil:getDoc($docUri)
 let $annot := $doc/id($internalId)
 
 return

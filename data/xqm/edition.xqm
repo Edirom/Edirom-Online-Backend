@@ -35,7 +35,7 @@ declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
  :)
 declare function edition:details($uri as xs:string) as map(*) {
     
-    let $edition := doc($uri)/edirom:edition
+    let $edition := eutil:getDoc($uri)/edirom:edition
     return
         map {
             "id": $edition/string(@xml:id),
@@ -88,7 +88,7 @@ declare function edition:findEditionUris() as xs:string* {
  :)
 declare function edition:getWorkUris($uri as xs:string) as xs:string* {
     
-    doc($uri)//edirom:work/@xlink:href ! string(.)
+    eutil:getDoc($uri)//edirom:work/@xlink:href ! string(.)
 };
 
 (:~
@@ -117,7 +117,7 @@ declare function edition:getLanguageFileURI($uri as xs:string, $lang as xs:strin
  :)
 declare function edition:getLanguageCodesSorted($uri as xs:string) as xs:string* {
     
-    let $languages := doc($uri)//edirom:language
+    let $languages := eutil:getDoc($uri)//edirom:language
 
     return
         (
@@ -151,9 +151,16 @@ declare function edition:getLanguage($edition as xs:string?) as xs:string {
  : @return The URI of the edition's preference file or the default edirom preferences as fallback
  :)
 declare function edition:getPreferencesURI($uri as xs:string?) as xs:string {
-    if(doc-available($uri) and doc($uri)//edirom:preferences/@xlink:href => string()) 
-    then(doc($uri)//edirom:preferences/@xlink:href => string()) 
-    else $eutil:default-prefs-location
+    let $edition :=
+        if($uri)
+        then
+            try { eutil:getDoc($uri) }
+            catch * {()}
+        else ()
+    return
+        if($edition//edirom:preferences/@xlink:href)
+        then $edition//edirom:preferences/@xlink:href => string()
+        else $eutil:default-prefs-location
 };
 
 (:~
@@ -175,21 +182,28 @@ declare function edition:getPreference($key as xs:string, $edition as xs:string?
  : @return The URI of the Edition file
  :)
 declare function edition:getEditionURI($editionIDorPath as xs:string?) as xs:string? {
-    (: $editionID is the empty sequence or the empty string :)
-    if(not($editionIDorPath))
-    then ()
+    let $edition :=
+        if($editionIDorPath)
+        then
+            try { eutil:getDoc($editionIDorPath) }
+            catch * {()}
+        else ()
+    return
+        (: $editionID is the empty sequence or the empty string :)
+        if(not($editionIDorPath))
+        then ()
 
-    (: $editionID is a resolvable file path with an edirom:edition root element :)
-    else if(doc-available($editionIDorPath))
-    then doc($editionIDorPath)/edirom:edition ! concat('xmldb:exist://', document-uri(./root()))
+        (: $editionID is a resolvable file path with an edirom:edition root element :)
+        else if($edition/edirom:edition)
+        then $edition/edirom:edition ! concat('xmldb:exist://', document-uri(./root()))
 
-    (: $editionID is a resolvable xml:id that points at an edirom:edition :)
-    (: since there are potentially multiple documents with the same xml:id we fall back to returning only the first one :)
-    else if (collection('/db/apps')/id($editionIDorPath)/self::edirom:edition)
-    then (collection('/db/apps')/id($editionIDorPath)/self::edirom:edition)[1] ! concat('xmldb:exist://', document-uri(./root()))
+        (: $editionID is a resolvable xml:id that points at an edirom:edition :)
+        (: since there are potentially multiple documents with the same xml:id we fall back to returning only the first one :)
+        else if (collection('/db/apps')/id($editionIDorPath)/self::edirom:edition)
+        then (collection('/db/apps')/id($editionIDorPath)/self::edirom:edition)[1] ! concat('xmldb:exist://', document-uri(./root()))
 
-    (: for everything else the empty sequence will be returned :)
-    else ()
+        (: for everything else the empty sequence will be returned :)
+        else ()
 };
 
 (:~
