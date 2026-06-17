@@ -55,10 +55,13 @@ return
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <forward url="{$exist:controller}/data/xql/api.xql">
                 <set-header name="Access-Control-Allow-Origin" value="*"/>
-                <set-header name="Access-Control-Allow-Credentials" value="true"/>
-                <set-header name="Access-Control-Allow-Methods" value="GET, OPTIONS"/>
-                <set-header name="Access-Control-Allow-Headers" value="Accept, Content-Type, Authorization, X-Start"/>
-                <set-header name="Cache-Control" value="no-cache"/>
+                <set-header name="Access-Control-Allow-Headers" value="*"/>
+                <set-header name="Access-Control-Allow-Methods" value="GET,OPTIONS"/>
+                <set-attribute name="exist:path" value="{$exist:path}"/>
+                <set-attribute name="exist:resource" value="{$exist:resource}"/>
+                <set-attribute name="exist:controller" value="{$exist:controller}"/>
+                <set-attribute name="exist:prefix" value="{$exist:prefix}"/>
+                <cache-control cache="yes"/>
             </forward>
         </dispatch>
     else
