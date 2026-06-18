@@ -28,7 +28,7 @@ let $mei := eutil:getDoc($uri)
 
 let $ret :=
     for $surface in $mei//mei:surface
-    (:let $image := doc($surface/mei:graphic[@type='facsimile']/string(@target))/img:image:)
+    (:let $image := eutil:getDoc($surface/mei:graphic[@type='facsimile']/string(@target))/img:image:)
     let $graphic := $surface/mei:graphic[@type = 'facsimile']
     return
             map {

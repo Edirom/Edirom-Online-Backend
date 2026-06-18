@@ -32,9 +32,9 @@ declare option output:indent "yes";
 let $mode := request:get-parameter('mode', '')
 let $edition := request:get-parameter('edition', '')
 
-let $file := doc($eutil:default-prefs-location)
+let $file := eutil:getDoc($eutil:default-prefs-location)
 
-let $projectFile := doc(edition:getPreferencesURI($edition))
+let $projectFile := eutil:getDoc(edition:getPreferencesURI($edition))
 
 return
     if ($mode = 'json') then (

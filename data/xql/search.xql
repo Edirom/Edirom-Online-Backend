@@ -13,6 +13,7 @@ import module namespace edition = "http://www.edirom.de/xquery/edition" at "../x
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
+declare namespace html = "http://www.w3.org/1999/xhtml";
 declare namespace mei = "http://www.music-encoding.org/ns/mei";
 declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace request = "http://exist-db.org/xquery/request";
@@ -85,6 +86,12 @@ let $return :=
                 | edition:collection($edition)//mei:title[ft:query(., $term)]/ancestor::mei:mei
                 | edition:collection($edition)//mei:annot[ft:query(., $term)][@type eq 'editorialComment']
                 | edition:collection($edition)//mei:annot[contains(@xml:id, $term)]
+                (: HTML documents — with XHTML namespace :)
+                | edition:collection($edition)//html:body[ft:query(., $term)]/ancestor::html:html
+                | edition:collection($edition)//html:title[ft:query(., $term)]/ancestor::html:html
+                (: HTML documents — without namespace (DOCTYPE html) :)
+                | edition:collection($edition)/html[ft:query(.//body, $term)]
+                | edition:collection($edition)/html[ft:query(.//title, $term)]
             ) else
                 ()
         return (
@@ -106,15 +113,39 @@ let $return :=
                 
                 (: Work :)
                 else if (exists($doc//mei:mei) and exists($doc//mei:work)) then
-                    (eutil:getLocalizedTitle($doc//mei:work/mei:titleStmt, $lang))
+                    (: MEI3: titleStmt exists inside mei:work :)
+                    if (exists($doc//mei:work/mei:titleStmt)) then
+                        eutil:getLocalizedTitle($doc//mei:work/mei:titleStmt, $lang)
+                    (: MEI4/5: title is a direct child of mei:work :)
+                    else if (exists($doc//mei:work/mei:title)) then
+                        eutil:getLocalizedTitle($doc//mei:work, $lang)
+                    (: fallback: use fileDesc/titleStmt :)
+                    else
+                        eutil:getLocalizedTitle($doc//mei:meiHead/mei:fileDesc/mei:titleStmt, $lang)
                 
                 (: Source / Score :)
                 else if (exists($doc//mei:mei) and exists($doc//mei:source)) then
-                    (eutil:getLocalizedTitle($doc//mei:source/mei:titleStmt, $lang))
+                    (: MEI3: titleStmt exists inside mei:source :)
+                    if (exists($doc//mei:source/mei:titleStmt)) then
+                        eutil:getLocalizedTitle($doc//mei:source/mei:titleStmt, $lang)
+                    (: MEI4/5: title is a direct child of mei:source :)
+                    else if (exists($doc//mei:source/mei:title)) then
+                        eutil:getLocalizedTitle($doc//mei:source, $lang)
+                    (: fallback: use fileDesc/titleStmt :)
+                    else
+                        eutil:getLocalizedTitle($doc//mei:meiHead/mei:fileDesc/mei:titleStmt, $lang)
                 
                 (: Text :)
                 else if (exists($doc/tei:TEI)) then
                     (eutil:getLocalizedTitle($doc//tei:titleStmt, $lang))
+                
+                (: HTML with XHTML namespace :)
+                else if (exists($doc/html:html)) then
+                    (string(($doc//html:title)[1]))
+                
+                (: HTML without namespace :)
+                else if (exists($doc/html)) then
+                    (string(($doc//title)[1]))
                 
                 else
                     (string('unknown'))

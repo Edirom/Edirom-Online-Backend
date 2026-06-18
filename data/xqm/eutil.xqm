@@ -48,7 +48,9 @@ declare variable $eutil:app-root as xs:string :=
         substring-before($modulePath, "/data/xqm")
 ;
 declare variable $eutil:INVALID_LANGUAGE_CODE := QName("http://www.edirom.de/xquery/eutil", "InvalidLanguageCodeError");
-declare variable $eutil:default-prefs-location as xs:string := '../prefs/edirom-prefs.xml';
+declare variable $eutil:INVALID_DOCUMENT_URI := QName("http://www.edirom.de/xquery/eutil", "InvalidDocumentUriError");
+declare variable $eutil:default-prefs-location as xs:string := $eutil:app-root || '/data/prefs/edirom-prefs.xml';
+declare variable $eutil:xsltBase as xs:string := $eutil:app-root || '/data/xslt';
 declare variable $eutil:supported-languages :=
     (: Extract supported languages from the provided langFiles :)
     collection($eutil:app-root || '/data/locale')//langFile/data(lang);
@@ -213,17 +215,47 @@ declare function eutil:getLocalizedTitle($node as node(), $lang as xs:string?, $
 };
 
 (:~
- : Returns a document
+ : Returns a document from internal eXist-db paths only
  :
- : @param $uri The URIs of the documents to process
+ : @param $uri The URI of the document to process
  : @return The document
  :)
 declare function eutil:getDoc($uri as xs:string?) as document-node()? {
-    if(empty($uri) or ($uri eq ""))
-    then util:log("warn", "No document URI provided")
-    else if(doc-available($uri))
-    then doc($uri)
-    else util:log("warn", "Unable to load document at " || $uri)
+    let $normalizedUri := normalize-space($uri)
+    return
+        if($normalizedUri eq "")
+        then util:log("warn", "No document URI provided")
+        else
+            if (not(eutil:isInternalDbUri($normalizedUri)))
+            then error($eutil:INVALID_DOCUMENT_URI, concat('Blocked non-db URI: ', $normalizedUri))
+            else
+                if(doc-available($normalizedUri))
+                then doc($normalizedUri)
+                else util:log("warn", "Unable to load document at " || $normalizedUri)
+};
+
+(:~
+ : Returns whether a URI points to an internal eXist-db collection under `/db`
+ :
+ : @param $uri The URI to validate
+ : @return `true()` if the URI points to `/db`, otherwise `false()`
+ :)
+declare %private function eutil:isInternalDbUri($uri as xs:string) as xs:boolean {
+    (
+        starts-with(normalize-space($uri), '/db/')
+        or starts-with(normalize-space($uri), 'xmldb:exist://db/')
+        or starts-with(normalize-space($uri), 'xmldb:exist:///db/')
+        or starts-with(normalize-space($uri), 'xmldb:exist://embedded-eXist-server/db/')
+        or starts-with(normalize-space($uri), 'xmldb:exist:///embedded-eXist-server/db/')
+    )
+    and
+    not(
+    starts-with(normalize-space($uri), '/db/system/')
+        or starts-with(normalize-space($uri), 'xmldb:exist://db/system/')
+        or starts-with(normalize-space($uri), 'xmldb:exist:///db/system/')
+        or starts-with(normalize-space($uri), 'xmldb:exist://embedded-eXist-server/db/system/')
+        or starts-with(normalize-space($uri), 'xmldb:exist:///embedded-eXist-server/db/system/')
+    )
 };
 
 (:~
@@ -313,9 +345,7 @@ declare function eutil:getLanguageString($key as xs:string, $values as xs:string
 declare function eutil:getLanguageString($langFileURI as xs:string, $key as xs:string, $values as xs:string*, $lang as xs:string) as xs:string? {
 
     (: Try to load a custom language file :)
-    let $langFileCustom := 
-        try { doc($langFileURI) }
-        catch * { util:log-system-out('Failed to load the custom language file "' || $langFileURI || '"') }
+    let $langFileCustom := eutil:getDoc($langFileURI)
     
     let $langString :=
         (: If there is a value for the key in the custom language file :)
@@ -341,9 +371,7 @@ declare function eutil:getLanguageString($langFileURI as xs:string, $key as xs:s
 declare function eutil:getPreference($key as xs:string, $preferencesURI as xs:string?) as xs:string? {
 
     (: Try to load a custom preferences file :)
-    let $prefFileCustom := 
-        try { doc($preferencesURI) }
-        catch * { util:log-system-out('Failed to load the custom preferences file') }
+    let $prefFileCustom := eutil:getDoc($preferencesURI)
     
     return
         (: If there is a value for the key in the custom preferences file :)
@@ -351,9 +379,13 @@ declare function eutil:getPreference($key as xs:string, $preferencesURI as xs:st
             $prefFileCustom//(pref:entry|entry)[@key = $key]/@value => string()
         (: If not, take the value for the key in the default preferences file :)
         else
-            try { doc($eutil:default-prefs-location)//(pref:entry|entry)[@key = $key]/@value => string() }
-            (: If the key is not in the default file, then there should be an error :)
-            catch * { util:log-system-out(concat('Failed to find the key `', $key, '` in default preferences file')) }
+            let $defaultPrefs := eutil:getDoc($eutil:default-prefs-location)
+            return
+                if($defaultPrefs//(pref:entry|entry)[@key = $key])
+                then $defaultPrefs//(pref:entry|entry)[@key = $key]/@value => string()
+                (: If the key is not in the default file, then there should be an error :)
+                else util:log-system-out(concat('Failed to find the key `', $key, '` in default preferences file'))
+
 };
 
 (:~
@@ -522,4 +554,46 @@ declare function eutil:joinAndNormalize($strings as xs:string*) as xs:string {
  :)
 declare function eutil:joinAndNormalize($strings as xs:string*, $separator as xs:string) as xs:string {
     $strings => string-join($separator) => normalize-space()
+};
+
+(:~
+ : Returns a copy of a document with xml:id attributes added to elements missing one
+ :
+ : @param $doc The document to be processed
+ : @return The copied document with xml:id attributes
+ :)
+declare function eutil:add-xml-ids(
+    $doc as document-node()
+) as document-node() {
+    document {
+        for $node in $doc/node()
+        return eutil:add-xml-id-to-node($node)
+    }
+};
+
+(:~
+ : Returns a copy of a node with xml:id attributes added recursively to elements missing one
+ :
+ : @param $node The node to be processed
+ : @return The copied node sequence with xml:id attributes
+ :)
+declare function eutil:add-xml-id-to-node(
+    $node as node()
+) as node()* {
+    typeswitch($node)
+
+        case element() return
+        element { node-name($node) } {
+            if ($node/@xml:id)
+            then $node/@*
+            else (
+                attribute xml:id { generate-id($node) },
+                $node/@*
+            ),
+            for $child in $node/node()
+                return eutil:add-xml-id-to-node($child)
+        }
+
+        default return
+            $node
 };
