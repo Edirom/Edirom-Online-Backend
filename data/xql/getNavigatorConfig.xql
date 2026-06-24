@@ -31,7 +31,7 @@ declare variable $lang := request:get-parameter('lang', '');
 
 (: HTML functions :)
 
-declare function local:getCategory-html($category, $depth) {
+declare function local:getCategory-html($category as element(edirom:navigatorCategory), $depth as xs:integer) as element(div) {
     <div
         class="navigatorCategory{
                 if ($depth = 1) then
@@ -84,7 +84,7 @@ declare function local:getCategory-html($category, $depth) {
     </div>
 };
 
-declare function local:getItem-html($item, $depth) {
+declare function local:getItem-html($item as element(edirom:navigatorItem), $depth as xs:integer) as element(div) {
     let $target := $item/replace(@targets, '\[.*\]', '')
     let $cfg := concat('{', replace(substring-before($item/substring-after(@targets, '['), ']'), '=', ':'), '}')
     let $target :=
@@ -105,11 +105,11 @@ declare function local:getItem-html($item, $depth) {
         </div>
 };
 
-declare function local:getSeparator-html() {
+declare function local:getSeparator-html() as element(div) {
     <div class="navigatorSeparator"></div>
 };
 
-declare function local:getDefinition-html($navConfig) {
+declare function local:getDefinition-html($navConfig as element(edirom:navigatorDefinition)) as element(div)* {
     let $elems := $navConfig/*
     
     for $elem in $elems
@@ -126,7 +126,7 @@ declare function local:getDefinition-html($navConfig) {
 
 (: JSON functions :)
 
-declare function local:getCategory-json($category) {
+declare function local:getCategory-json($category as element(edirom:navigatorCategory)) as map(*) {
     let $items :=
         for $elem in $category/edirom:navigatorItem | $category/edirom:navigatorCategory | $category/edirom:navigatorSeparator
         return
@@ -149,7 +149,7 @@ declare function local:getCategory-json($category) {
         }
 };
 
-declare function local:getItem-json($item) {
+declare function local:getItem-json($item as element(edirom:navigatorItem)) as map(*) {
     map {
         "type": "navigatorItem",
         "id": string($item/@xml:id),
@@ -159,13 +159,13 @@ declare function local:getItem-json($item) {
     }
 };
 
-declare function local:getSeparator-json() {
+declare function local:getSeparator-json() as map(*) {
     map {
         "type": "navigatorSeparator"
     }
 };
 
-declare function local:getDefinition-json($navConfig) {
+declare function local:getDefinition-json($navConfig as element(edirom:navigatorDefinition)) as array(*)? {
     let $elems := $navConfig/*
     
     return
