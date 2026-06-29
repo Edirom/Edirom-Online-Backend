@@ -126,7 +126,7 @@ show_help() {
 Usage: $(basename "$0") [COMMAND]
 
 Commands:
-  check       Run regression tests and compare results (development backend should be running on port 8090 and your test backend on port 8080)
+  check       Run regression tests and compare results (your test backend should be running on port 8080)
   reset       Download and reset expected results (development backend should be running on port 8090)
   help        Show this help message
 
