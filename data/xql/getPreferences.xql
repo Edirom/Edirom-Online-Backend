@@ -52,7 +52,7 @@ return
                     map:merge(
                         ($file//*[local-name() = 'web-component'], $projectFile//*[local-name() = 'web-component']) ! map:entry(./string(@key),
                             map:merge(
-                                .//option ! map:entry(./string(@key), ./string(@value))
+                                .//(pref:option|option) ! map:entry(./string(@key), ./string(@value))
                             )
                         )
                     )
