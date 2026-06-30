@@ -106,15 +106,15 @@
 								},
 								"Test MEI score": {
 									"summary": "Test MEI score",
-									"value": "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-score.xml"
+									"value": "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml"
 								},
 								"Test MEI facsimilie": {
 									"summary": "Test MEI facsimile",
-									"value": "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-facsimile.xml"
+									"value": "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml"
 								},
 								"Test TEI": {
 									"summary": "Test TEI",
-									"value": "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml"
+									"value": "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
 								}
 							}
 						},

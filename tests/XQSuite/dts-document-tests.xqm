@@ -380,7 +380,7 @@ declare
 declare
     %test:assertTrue
     function ddt:test-selectTEIPages-returns-something() {
-        let $document := doc("xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+        let $document := doc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
         let $document := eutil:add-xml-ids($document)
         let $result :=
         <result>
@@ -399,7 +399,7 @@ declare
 declare
     %test:assertTrue
     function ddt:test-selectTEIPages-with-endPb-selects-page-range() as xs:boolean {
-        let $document := doc("xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+        let $document := doc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
         let $document := eutil:add-xml-ids($document)
         let $result := 
         <result>
@@ -422,7 +422,7 @@ declare
 declare
     %test:assertTrue
     function ddt:test-selectTEIPages-with-empty-endPb-selects-current-page() as xs:boolean {
-        let $document := doc("xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+        let $document := doc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
         let $document := eutil:add-xml-ids($document)
         let $result := dts-document:selectTEIPages(
             $document,
@@ -453,13 +453,13 @@ declare
 declare
     (: Valid requests :)
     (: retrieve full mei :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-score.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref") %test:arg("start") %test:arg("end") %test:arg("tree")
     %test:arg("mediaType", "application/xml")
     %test:arg("lang")
     %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei[@xml:id='test-mei-score']")
     (: retrieve a specific mdiv by ref :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-score.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref", "test-mdiv-1")
     %test:arg("start") %test:arg("end")
     %test:arg("tree", "musicStructure")
@@ -467,7 +467,7 @@ declare
     %test:arg("lang", "de")
     %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.music-encoding.org/ns/mei}mdiv[@xml:id='test-mdiv-1']")
     (: retrieve a range of mdivs by start and end :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-score.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref")
     %test:arg("start", "test-mdiv-1")
     %test:arg("end", "test-mdiv-2")
@@ -477,7 +477,7 @@ declare
     %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.music-encoding.org/ns/mei}mdiv[@xml:id='test-mdiv-1']")
     %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.music-encoding.org/ns/mei}mdiv[@xml:id='test-mdiv-2']")
     (: retrieve a specific surface by ref :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-facsimile.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
     %test:arg("ref", "facsimile-2001002")
     %test:arg("start") %test:arg("end")
     %test:arg("tree", "paginationStructure")
@@ -485,7 +485,7 @@ declare
     %test:arg("lang")
     %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.music-encoding.org/ns/mei}surface[@xml:id='facsimile-2001002']")
     (:retrieve a range of surfaces by start and end :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-facsimile.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
     %test:arg("ref")
     %test:arg("start", "facsimile-2001002")
     %test:arg("end", "facsimile-2001004")
@@ -496,7 +496,7 @@ declare
     %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.music-encoding.org/ns/mei}surface[@xml:id='facsimile-2001003']")
     %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.music-encoding.org/ns/mei}surface[@xml:id='facsimile-2001004']")
     (: retrieve a specific zone by ref :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-facsimile.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
     %test:arg("ref", "zone_bar-2001")
     %test:arg("start") %test:arg("end")
     %test:arg("tree", "paginationStructure")
@@ -504,7 +504,7 @@ declare
     %test:arg("lang")
     %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.music-encoding.org/ns/mei}zone[@xml:id='zone_bar-2001']")
     (: retrieve a range of zones by start and end :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-facsimile.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
     %test:arg("ref")
     %test:arg("start", "zone_bar-20013")
     %test:arg("end", "zone_bar-20015")
@@ -515,7 +515,7 @@ declare
     %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.music-encoding.org/ns/mei}zone[@xml:id='zone_bar-20014']")
     %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.music-encoding.org/ns/mei}zone[@xml:id='zone_bar-20015']")
     (: retrieve meiHead by ref :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-score.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref", "meiHead")
     %test:arg("start") %test:arg("end")
     %test:arg("tree")
@@ -524,7 +524,7 @@ declare
     %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.music-encoding.org/ns/mei}meiHead")
     (: retrieve meiHead by ref as html :)
     (: TODO Implement this feature
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-score.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref", "meiHead")
     %test:arg("start") %test:arg("end")
     %test:arg("tree")
@@ -533,20 +533,20 @@ declare
     %test:assertXPath("/Q{http://www.w3.org/1999/xhtml}div[@class='meiHead']") (: TODO check this condition :)
     :)
     (: retrieve full tei :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref") %test:arg("start") %test:arg("end") %test:arg("tree")
     %test:arg("mediaType", "application/xml")
     %test:arg("lang")
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']")
     (: retrieve tei div :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "test-div-1")
     %test:arg("start") %test:arg("end") %test:arg("tree")
     %test:arg("mediaType", "application/xml")
     %test:arg("lang")
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-1']")
     (: retrieve range of tei divs :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref")
     %test:arg("start", "test-div-2")
     %test:arg("end", "test-div-3")
@@ -556,7 +556,7 @@ declare
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-2']")
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-3']")
     (: retrieve tei page :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "pb-1")
     %test:arg("start") %test:arg("end")
     %test:arg("tree", "paginationStructure")
@@ -565,7 +565,7 @@ declare
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.tei-c.org/ns/1.0}pb[@xml:id='pb-1']")
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-1']")
     (: retrieve tei page starting in the middle of div :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "pb-2")
     %test:arg("start") %test:arg("end")
     %test:arg("tree", "paginationStructure")
@@ -573,7 +573,7 @@ declare
     %test:arg("lang", "de")
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-1']/Q{http://www.tei-c.org/ns/1.0}pb[@xml:id='pb-2']")
     (: retrieve the last tei page worhout any pb after it :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "pb-3")
     %test:arg("start") %test:arg("end")
     %test:arg("tree", "paginationStructure")
@@ -582,7 +582,7 @@ declare
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper//Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-2']/Q{http://www.tei-c.org/ns/1.0}pb[@xml:id='pb-3']")
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper//Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-3']//Q{http://www.tei-c.org/ns/1.0}p[@rend='footer']")
     (: retieve range of tei pages :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref")
     %test:arg("start", "pb-1")
     %test:arg("end", "pb-2")
@@ -593,7 +593,7 @@ declare
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-1']")
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-1']/Q{http://www.tei-c.org/ns/1.0}pb[@xml:id='pb-2']")
     (: retrieve range of tei pages starting in the middle of div and ending with last pb :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref")
     %test:arg("start", "pb-2")
     %test:arg("end", "pb-3")
@@ -604,7 +604,7 @@ declare
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper//Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-2']/Q{http://www.tei-c.org/ns/1.0}pb[@xml:id='pb-3']")
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper//Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-3']//Q{http://www.tei-c.org/ns/1.0}p[@rend='footer']")
     (: retrieve teiHeader by ref :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "teiHeader")
     %test:arg("start") %test:arg("end") %test:arg("tree")
     %test:arg("mediaType", "application/xml")
@@ -612,7 +612,7 @@ declare
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.tei-c.org/ns/1.0}teiHeader")
     (: retrieve teiHeader by ref as html :)
     (: TODO: implement this feature
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "teiHeader")
     %test:arg("start") %test:arg("end") %test:arg("tree")
     %test:arg("mediaType", "text/html")
@@ -633,7 +633,7 @@ declare
     %test:assertXPath("//Q{http://www.w3.org/1999/xhtml}div[@class='titlePage']")
     (: Errors :)
     (: ask both for ref and start/end mei :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-score.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref", "test-mdiv-1")
     %test:arg("start", "test-mdiv-1")
     %test:arg("end", "test-mdiv-2")
@@ -642,7 +642,7 @@ declare
     %test:arg("lang")
     %test:assertError("errors:InvalidParametersError")
     (: ask both for non-existing ref mei :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-score.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref", "foo")
     %test:arg("start")
     %test:arg("end")
@@ -651,7 +651,7 @@ declare
     %test:arg("lang")
     %test:assertError("errors:NotFoundError")
     (: ask both for ref and start/end tei :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "test-div-1")
     %test:arg("start", "test-div-1")
     %test:arg("end", "test-div-2")
@@ -660,7 +660,7 @@ declare
     %test:arg("lang")
     %test:assertError("errors:InvalidParametersError")
     (: ask for start without end mei :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-score.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref")
     %test:arg("start", "test-mdiv-1")
     %test:arg("end")
@@ -669,7 +669,7 @@ declare
     %test:arg("lang")
     %test:assertError("errors:InvalidParametersError")
     (: ask for start without end tei :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref")
     %test:arg("start", "test-div-1")
     %test:arg("end")
@@ -678,7 +678,7 @@ declare
     %test:arg("lang")
     %test:assertError("errors:InvalidParametersError")
     (: ask for an mei element that is not in the tree and not in the always-included meiHead :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/mei-score.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref", "body")
     %test:arg("start") %test:arg("end")
     %test:arg("tree", "musicStructure")
@@ -686,7 +686,7 @@ declare
     %test:arg("lang")
     %test:assertError("errors:InvalidParametersError")
     (: ask for a tei element that is not in the tree and not in the always-included teiHead :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "text")
     %test:arg("start") %test:arg("end")
     %test:arg("tree")
@@ -712,7 +712,7 @@ declare
 
 declare
     (: retrieve tei page starting in the middle of div :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "pb-2")
     %test:arg("start") %test:arg("end")
     %test:arg("tree", "paginationStructure")
@@ -739,7 +739,7 @@ declare
 
 declare
     (: retrieve tei page starting in the middle of div :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml")
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref")
     %test:arg("start", "pb-2")
     %test:arg("end", "pb-3")
@@ -774,7 +774,7 @@ declare
     function ddt:test-document-tei-to-html-idPrefix(
         $idPrefix as xs:string
     ) {
-        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml"
+        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
         let $ref := ""
         let $start := ""
         let $end := ""
@@ -800,7 +800,7 @@ declare
     function ddt:test-document-tei-to-html-autoHead(
         $autoHead as xs:string
     ) {
-        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml"
+        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
         let $ref := ""
         let $start := ""
         let $end := ""
@@ -835,7 +835,7 @@ declare
     function ddt:test-document-tei-to-html-autoToc(
         $autoToc as xs:string
     ) {
-        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml"
+        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
         let $ref := ""
         let $start := ""
         let $end := ""
@@ -866,7 +866,7 @@ declare
     function ddt:test-document-tei-to-html-tocDepth(
         $tocDepth as xs:integer
     ) {
-        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml"
+        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
         let $ref := ""
         let $start := ""
         let $end := ""
@@ -906,7 +906,7 @@ declare
     function ddt:test-document-tei-to-html-footnoteBackLink(
         $footnoteBackLink as xs:string
     ) {
-        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml"
+        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
         let $ref := ""
         let $start := ""
         let $end := ""
@@ -937,7 +937,7 @@ declare
     function ddt:test-document-tei-to-html-numberHeadings(
         $numberHeadings as xs:string
     ) {
-        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/tei-document.xml"
+        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
         let $ref := ""
         let $start := ""
         let $end := ""
