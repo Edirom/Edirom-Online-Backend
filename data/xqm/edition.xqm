@@ -74,8 +74,8 @@ declare function edition:findEditionUris() as xs:string* {
     
     for $edition in collection('/db/apps')/edirom:edition
     let $document-uri := document-uri($edition/root())
-    (: exclude editions found within the testing collection :)
-    where not(contains($document-uri, 'testing/XQSuite/data'))
+    (: exclude editions found within the tests collection :)
+    where not(contains($document-uri, 'tests/XQSuite/data'))
     return
         'xmldb:exist://' || $document-uri
 };

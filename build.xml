@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="EdiromOnlineBackend" default="xar">
 
-    <import file="${basedir}/testing/ant-tests.xml"/>
+    <import file="${basedir}/tests/ant-tests.xml"/>
 
     <property name="project.version" value="1.3.0"/>
     <property name="project.app" value="Edirom-Online-Backend"/>
@@ -50,7 +50,7 @@
                 <exclude name="build*"/>
             </fileset>
             <fileset dir="${basedir}">
-                <include name="testing/**"/>
+                <include name="tests/**"/>
             </fileset>
             <filterset begintoken="@" endtoken="@">
                 <filter token="project.version" value="${project.version}"/>
