@@ -142,44 +142,6 @@
         </exec>
     </target>
 
-    <target name="docker-run-develop-image" depends="download-test-data">
-        <description>Pull and run the latest develop image</description>
-        <!-- Pull the image and create the container -->
-        <exec executable="docker" failonerror="true">
-            <arg value="create"/>
-            <arg value="-p"/>
-            <arg value="8090:8080"/>
-            <arg value="--pull"/>
-            <arg value="always"/>
-            <arg value="--rm"/>
-            <arg value="--name"/>
-            <arg value="edirom-online-backend-develop"/>
-            <arg value="edirom/edirom-online-backend:develop"/>
-        </exec>
-        <!-- Copy the clarinet test data into the containers -->
-        <exec executable="docker" failonerror="true">
-            <arg value="cp"/>
-            <arg value="${test-data-clarinet}"/>
-            <arg value="edirom-online-backend-develop:/opt/exist/autodeploy/"/>
-        </exec>
-        <!-- Start the container -->
-        <exec executable="docker" failonerror="true">
-            <arg value="start"/>
-            <arg value="edirom-online-backend-develop"/>
-        </exec>
-        <!-- Wait for container to be healthy -->
-        <exec executable="/bin/bash" failonerror="true">
-            <arg value="-c"/>
-            <arg value="
-                i=0 ;
-                while (! docker inspect edirom-online-backend-develop | grep -e Status....healthy) ;
-                do if ((i > 30)) ;
-                then echo ' **** timeout ... aborting **** ' ; exit 1 ;
-                else sleep 5 ; echo waiting for container ... ; i=$((i+1)) ;
-                fi ; done"/>
-        </exec>
-    </target>
-
     <target name="regression-tests">
         <description>Run the regression tests</description>
         <exec executable="./regression-test.sh" failonerror="true" dir="testing/regressionTests">
@@ -187,9 +149,10 @@
         </exec>
     </target>
 
-    <target name="regression-tests-reset" depends="docker-run-develop-image">
-        <description>Download and reset expected results from latest develop branch</description>
+    <target name="regression-tests-reset">
+        <description>Reset expected results from current branch</description>
         <exec executable="./regression-test.sh" failonerror="true" dir="testing/regressionTests">
+            <env key="REFERENCE_BASE" value="http://localhost:8080/exist/apps/Edirom-Online-Backend"/>
             <arg value="reset"/>
         </exec>
     </target>
@@ -198,7 +161,6 @@
         <description>Remove test container and remove temp files</description>
         <exec executable="docker" failonerror="false">
             <arg value="kill"/>
-            <arg value="edirom-online-backend-develop"/>
             <arg value="edirom-online-backend-test"/>
         </exec>
         <delete file="${test-data-clarinet}" failonerror="false" verbose="true"/>
