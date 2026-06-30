@@ -43,8 +43,8 @@ declare
 declare
     %test:arg("uri")                %test:assertEmpty
     %test:arg("uri", "")            %test:assertEmpty
-    %test:args("foo")               %test:assertEmpty
-    %test:args("https://edirom.de") %test:assertXPath("/html")
+    %test:args("foo")               %test:assertError (: non-db URIs are blocked :)
+    %test:args("https://edirom.de") %test:assertError (: non-db URIs are blocked :)
     %test:args("xmldb:exist://db/apps/Edirom-Online-Backend/data/locale/edirom-lang-de.xml")    %test:assertXPath("/langFile")
     %test:args("/db/apps/Edirom-Online-Backend/data/locale/edirom-lang-de.xml")                 %test:assertXPath("/langFile")
     function eut:test-getDoc($uri as xs:string?) as document-node()? {
