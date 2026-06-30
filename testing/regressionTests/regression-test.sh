@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
 #REFERENCE_BASE=https://klarinettenquintett.weber-gesamtausgabe.de
-REFERENCE_BASE=http://localhost:8090/exist/apps/Edirom-Online-Backend
-TEST_BASE=http://localhost:8080/exist/apps/Edirom-Online-Backend
+REFERENCE_BASE=${REFERENCE_BASE:-http://localhost:8090/exist/apps/Edirom-Online-Backend}
+TEST_BASE=${TEST_BASE:-http://localhost:8080/exist/apps/Edirom-Online-Backend}
 
 TEMP_FILES=()
 
@@ -127,7 +127,7 @@ Usage: $(basename "$0") [COMMAND]
 
 Commands:
   check       Run regression tests and compare results (your test backend should be running on port 8080)
-  reset       Download and reset expected results (development backend should be running on port 8090)
+  reset       Download and reset expected results (reference backend should be running on port 8090)
   help        Show this help message
 
 Examples:
