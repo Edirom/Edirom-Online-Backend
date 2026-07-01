@@ -32,7 +32,11 @@
         
         <!-- Parse the results and check for errors -->
         <exec executable="xmllint" outputproperty="error.count">
-            <arg line="--xpath &quot;count(//testcase[failure])&quot; ${xqunit-tests-results.file}"/>
+            <!--
+                "A test case is considered successful (passed) unless there is another result element underneath it."
+                https://github.com/testmoapp/junitxml
+            -->
+            <arg line="--xpath &quot;count(//testcase[*])&quot; ${xqunit-tests-results.file}"/>
         </exec>
         
         <!-- Load the results and output to the logs -->
