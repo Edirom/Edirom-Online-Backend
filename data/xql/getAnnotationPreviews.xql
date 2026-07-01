@@ -400,39 +400,49 @@ declare function local:getItemLabel($elems as element()*) as xs:string {
                     else
                         ()
 
+            let $item1Label := if ($items[1]/@label) then $items[1]/string(@label) else $items[1]/string(@n)
+
             let $itemLabelMultiRestSensitive :=
                 if ($items[1]//mei:multiRest) then
-                    ($items[1]/@n || '–' || number($items[1]/@n) + number($items[1]//mei:multiRest/@num) - 1)
+                    ($item1Label || '–' || number($items[1]/@n) + number($items[1]//mei:multiRest/@num) - 1)
                 else
-                    $items[1]/@n
+                    $item1Label
 
             return
                 if (local-name($items[1]) eq 'measure') then (
                     if (count($items) gt 1) then
-                        (eutil:getLanguageString('Bars_from_to', ($items[1]/@n, $items[last()]/@n), $language))
+                        (eutil:getLanguageString('Bars_from_to', ($item1Label, if ($items[last()]/@label) then $items[last()]/string(@label) else $items[last()]/string(@n)), $language))
                     else
                         (eutil:getLanguageString('Bar_n', $itemLabelMultiRestSensitive, $language))
                 ) else if (local-name($items[1]) eq 'staff') then (: TODO: $itemLabelMultiRestSensitive also for staffs? :) (
                     if (count($items) gt 1) then (
-                        let $measureNs := distinct-values($items/ancestor::mei:measure/@n)
+                        let $measureLabels := distinct-values(
+                            for $m in $items/ancestor::mei:measure
+                            return if ($m/@label) then $m/string(@label) else $m/string(@n)
+                        )
 
                         let $label :=
-                            if (count($measureNs) gt 1) then
-                                (concat(eutil:getLanguageString('Bars', (), $lang), ' ', $measureNs[1], '-', $measureNs[last()]))
+                            if (count($measureLabels) gt 1) then
+                                (concat(eutil:getLanguageString('Bars', (), $lang), ' ', $measureLabels[1], '-', $measureLabels[last()]))
                             else (
-                                concat(eutil:getLanguageString('Bar', (), $lang), ' ', $measureNs[1])
+                                concat(eutil:getLanguageString('Bar', (), $lang), ' ', $measureLabels[1])
                             )
 
                         return
                             concat($label, ' (', string-join($items/preceding::mei:staffDef[@n = $items[1]/@n][1]/@label.abbr, ', '), ')')
-                    ) else
-                        (concat(eutil:getLanguageString('Bar', (), $lang), ' ', $items[1]/ancestor::mei:measure/@n, ' (', $items[1]/preceding::mei:staffDef[@n = $items[1]/@n][1]/@label.abbr, ')'))
+                    ) else (
+                        let $m := $items[1]/ancestor::mei:measure
+                        return
+                            concat(eutil:getLanguageString('Bar', (), $lang), ' ', (if ($m/@label) then $m/string(@label) else $m/string(@n)), ' (', $items[1]/preceding::mei:staffDef[@n = $items[1]/@n][1]/@label.abbr, ')')
+                    )
 
                 ) else if (local-name($items[1]) eq 'zone') then (
                     if (count($items) gt 1) then (
                         (:Dieser Fall sollte nicht vorkommen, da freie zones nicht zusammengefasst werden dürfen:)
                     ) else (
-                        concat(eutil:getLanguageString('Detail', (), $lang), ' (', eutil:getLanguageString('Abbrev_page', (), $lang), ' ', $items[1]/parent::mei:surface/@n, ')')
+                        let $surf := $items[1]/parent::mei:surface
+                        return
+                            concat(eutil:getLanguageString('Detail', (), $lang), ' (', eutil:getLanguageString('Abbrev_page', (), $lang), ' ', (if ($surf/@label) then $surf/string(@label) else $surf/string(@n)), ')')
                     )
                 ) else ()
         ), ' ')
