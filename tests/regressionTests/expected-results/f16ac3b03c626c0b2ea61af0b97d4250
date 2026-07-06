@@ -1,5 +1,5 @@
 {
-  "count" : 226,
+  "count" : 254,
   "priorities" : [ {
     "id" : "ediromAnnotPrio1",
     "name" : "1"
@@ -34,5 +34,6 @@
   }, {
     "id" : "wega.annotation.category.verbal-instruction",
     "name" : "Spielanweisung"
-  } ]
+  } ],
+  "taxonomies" : [ ]
 }
