@@ -77,9 +77,9 @@
         <entry key="view.window.AnnotationView_Title" value="Anmerkungen"/>
         <entry key="view.window.AnnotationView_No" value="Nr."/>
         <entry key="view.window.AnnotationView_TitleLabel" value="Titel"/>
-        <entry key="ediromCategory_multiple" value="Kategorien"/>
-        <entry key="ediromCategory" value="Kategorie"/>
-        <entry key="ediromPriority" value="Priorität"/>
+        <entry key="view.window.AnnotationView_Categories" value="Kategorien"/>
+        <entry key="view.window.AnnotationView_Category" value="Kategorie"/>
+        <entry key="view.window.AnnotationView_Priority" value="Priorität"/>
         <entry key="view.window.AnnotationView_Participants" value="Subjekte"/>
         <entry key="view.window.AnnotationView_Source" value="Quelle"/>
         <entry key="view.window.AnnotationView_Sources" value="Quellen"/>
