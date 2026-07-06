@@ -323,15 +323,15 @@ let $participants := annotation:getParticipants($annot)
 
 let $priority := local:getPriority($annot)
 
-let $priorityLabel := eutil:getLanguageString('view.window.AnnotationView_Priority', (), $lang)
+let $priorityLabel := eutil:getLanguageString('view.window.AnnotationView_ediromPriority', (), $lang)
 
 let $categories := local:getCategories($annot)
 
 let $categoriesLabel :=
     if (count($categories) gt 1) then
-        eutil:getLanguageString('view.window.AnnotationView_Categories', (), $lang)
+        eutil:getLanguageString('view.window.AnnotationView_ediromCategories', (), $lang)
     else
-        eutil:getLanguageString('view.window.AnnotationView_Category', (), $lang)
+        eutil:getLanguageString('view.window.AnnotationView_ediromCategory', (), $lang)
 
 let $sources := doc:getDocumentsLabelsAsArray($participants, $edition)
 
