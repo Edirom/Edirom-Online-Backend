@@ -24,6 +24,11 @@
     <entries>
         <entry key="application_language" value="de"/>
         <entry key="annotation_layout" value="EdiromOnline.view.window.annotationLayouts.AnnotationLayout1"/>
+        <!-- annotation_hide_legacy_fields: hides legacy annotation fields (categories, priority) in the annotation grid
+             on initial render. Defaults to true since editions using ediromCategory/ediromPriority taxonomies would
+             otherwise show duplicate columns. Set to "false" in edition prefs to show legacy fields.
+             See app/controller/window/AnnotationView.js -->
+        <entry key="annotation_hide_legacy_fields" value="false"/>
         <entry key="image_prefix" value="../../../digilib/Scaler/"/>
         <entry key="image_server" value="digilib"/>
         <entry key="edition_path" value="/db/apps/contents"/>

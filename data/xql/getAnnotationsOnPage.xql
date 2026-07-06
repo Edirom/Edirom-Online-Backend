@@ -15,6 +15,7 @@ xquery version "3.1";
 
 import module namespace functx = "http://www.functx.com";
 
+import module namespace annotation = "http://www.edirom.de/xquery/annotation" at "../xqm/annotation.xqm";
 import module namespace edition = "http://www.edirom.de/xquery/edition" at "../xqm/edition.xqm";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
 
@@ -61,6 +62,8 @@ declare function local:getAnnotations($sourceUriSharp as xs:string, $surfaceId a
         
         let $cat := $annotation/mei:ptr[@type = "categories"]/replace(@target, '#', '') || string-join($classes[contains(., 'annotation.category.')], ' ')
         
+        let $taxonomyClasses := string-join(annotation:get-class-idrefs-as-sequence($annotation), ' ')
+
         let $plist.raw :=
             for $p in tokenize(normalize-space($annotation/@plist), ' ')
             let $p.noSharp := replace($p, '#', '')
@@ -84,7 +87,8 @@ declare function local:getAnnotations($sourceUriSharp as xs:string, $surfaceId a
                 'fn': 'loadLink("' || $uri || '")',
                 'uri': $uri,
                 'priority': $prio,
-                'categories': $cat
+                'categories': $cat,
+                'taxonomyClasses': $taxonomyClasses
             }
     }
 };
