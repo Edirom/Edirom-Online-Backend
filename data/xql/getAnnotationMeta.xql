@@ -60,7 +60,7 @@ let $priorityLabel := switch ($priority)
         case 1 return
              eutil:getLanguageString('ediromCategory', ()) || ' (legacy)'
         default return
-         eutil:getLanguageString('ediromCategory_multiple', ()) || ' (legacy)'
+         eutil:getLanguageString('view.window.AnnotationView_Categories', ()) || ' (legacy)'
 
 (: TODO deprecate above categories and priorities fields with Edirom-Online-API 2.0.0 :)
 
