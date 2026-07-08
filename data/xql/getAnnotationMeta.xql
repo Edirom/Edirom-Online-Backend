@@ -51,14 +51,14 @@ let $priorityLabel := switch ($priority)
          return
              ()
      default return
-         eutil:getLanguageString('ediromPriority', ()) || ' (legacy)'
+         eutil:getLanguageString('view.window.AnnotationView_Priority', ()) || ' (legacy)'
 
  let $categories := annotation:get-category-labels-as-sequence($annot)
  let $categoriesLabel :=
     switch (count($categories))
         case 0 return ()
         case 1 return
-             eutil:getLanguageString('ediromCategory', ()) || ' (legacy)'
+             eutil:getLanguageString('view.window.AnnotationView_Category', ()) || ' (legacy)'
         default return
          eutil:getLanguageString('view.window.AnnotationView_Categories', ()) || ' (legacy)'
 
