@@ -323,7 +323,7 @@ let $participants := annotation:getParticipants($annot)
 
 let $priority := local:getPriority($annot)
 
-let $priorityLabel := eutil:getLanguageString('view.window.AnnotationView_ediromPriority', (), $lang)
+let $priorityLabel := eutil:getLanguageString('view.window.AnnotationView_Priority', (), $lang)
 
 let $categories := local:getCategories($annot)
 
