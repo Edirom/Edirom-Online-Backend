@@ -59,7 +59,7 @@ let $emptyFields :=
     where every $annotation in $annotations satisfies (
         map:contains($annotation, $fieldName) and eutil:is-empty($annotation($fieldName))
     )
-    return $fieldName
+    return array { $fieldName }
 
 (: legacy fields are only superseded when taxonomy-derived fields are actually present in the data :)
 let $baseFields := ('id', 'title', 'categories', 'priority', 'pos', 'sigla')
