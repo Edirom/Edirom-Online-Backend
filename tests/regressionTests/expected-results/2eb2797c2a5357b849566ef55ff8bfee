@@ -1,6 +1,6 @@
 {
   "count" : 0,
-  "priorities" : null,
-  "categories" : null,
+  "priorities" : [ ],
+  "categories" : [ ],
   "taxonomies" : [ ]
 }
