@@ -52,13 +52,13 @@ declare function annotation:get-category-label-localized($node) {
  : @param $uri The document to process
  : @return The JSON representation
  :)
-declare function annotation:annotationsToJSON($uri as xs:string, $edition as xs:string) as map(*)* {
+declare function annotation:annotationsToJSON($uri as xs:string, $edition as xs:string, $mode as xs:string) as map(*)* {
     
     let $doc := eutil:getDoc($uri)
     let $annos := $doc//mei:annot[@type = 'editorialComment']
     return
         for $anno in $annos
-        return annotation:toJSON($anno, $edition)
+        return annotation:toJSON($anno, $edition, $mode)
 };
 
 (:~
@@ -67,7 +67,7 @@ declare function annotation:annotationsToJSON($uri as xs:string, $edition as xs:
  : @param $anno The Annotation to process
  : @return The JSON representation
  :)
-declare function annotation:toJSON($anno as element(), $edition as xs:string) as map(*) {
+declare function annotation:toJSON($anno as element(), $edition as xs:string, $mode as xs:string) as map(*) {
 
     let $id := $anno/string(@xml:id)
     let $lang := request:get-parameter('lang', '')
@@ -145,10 +145,15 @@ declare function annotation:toJSON($anno as element(), $edition as xs:string) as
     )
 
     return
-        map:merge((
-            $baseMap,
-            $taxonomiesMap
-        ))
+        if($mode eq 'taxonomies') then (            
+            map:merge((
+                $baseMap,
+                $taxonomiesMap
+            ))
+        )
+        else (
+            $baseMap
+        )
 };
 
 (:~
