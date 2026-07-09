@@ -104,7 +104,7 @@ let $annots :=
    fields are slated for removal with Edirom-Online-API 2.0.0 and are superseded by the
    'taxonomies' array; when migrating or removing them, route resolution through the shared
    resolver for consistency. :)
-let $categories :=
+let $categories := array {
     for $category in local:getDistinctCategories($annots)
     let $categoryElement := ($editionCollection/id($category)[mei:label or mei:name])[1]
     let $name := eutil:getLocalizedName($categoryElement, edition:getLanguage($edition))
@@ -114,8 +114,9 @@ let $categories :=
             'id': $category,
             'name': $name
         }
+}
 
-let $prios :=
+let $prios := array {
     for $priority in local:getDistinctPriorities($annots)
     let $name := annotation:getPriorityLabel(($editionCollection/id($priority)[mei:label or mei:name])[1])
     order by $name
@@ -124,6 +125,7 @@ let $prios :=
             'id': $priority,
             'name': $name
         }
+}
 
 let $taxonomiesArray :=
     annotation:get-referenced-categories-as-taxonomy-array($annots, ($mei, $editionCollection), $lang)
