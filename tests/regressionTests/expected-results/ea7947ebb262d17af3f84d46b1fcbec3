@@ -12,7 +12,7 @@
                     <div class="value">{string-join($sources, ', ')}</div>
                 </div>-->
         <div class="property sourceSiglums">
-            <div class="key">Quellensiglen</div>
+            <div class="key">Siglen</div>
             <div class="value">A, K/sv, ED₁</div>
         </div>
         <div class="property annotID">

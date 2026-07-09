@@ -3,8 +3,6 @@
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-2",
   "svgList" : [ ],
   "id" : "annotation-2",
-  "categories" : "wega.annotation.category.bogensetzung",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-2\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-2005",
@@ -27,14 +25,13 @@
     "ulx" : 1898,
     "uly" : 240
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio1 wega.annotation.category.bogensetzung"
+  "categories" : "wega.annotation.category.bogensetzung",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-2\")"
 }, {
   "priority" : "ediromAnnotPrio1",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-4",
   "svgList" : [ ],
   "id" : "annotation-4",
-  "categories" : "wega.annotation.category.bogensetzung wega.annotation.category.dynamics",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-4\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20013",
@@ -57,14 +54,13 @@
     "ulx" : 3388,
     "uly" : 240
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio1 wega.annotation.category.bogensetzung wega.annotation.category.dynamics"
+  "categories" : "wega.annotation.category.bogensetzung wega.annotation.category.dynamics",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-4\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-5",
   "svgList" : [ ],
   "id" : "annotation-5",
-  "categories" : "wega.annotation.category.bogensetzung",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-5\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20014",
@@ -80,14 +76,13 @@
     "ulx" : 3388,
     "uly" : 240
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.bogensetzung"
+  "categories" : "wega.annotation.category.bogensetzung",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-5\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-6",
   "svgList" : [ ],
   "id" : "annotation-6",
-  "categories" : "wega.annotation.category.bogensetzung",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-6\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20015",
@@ -103,14 +98,13 @@
     "ulx" : 576,
     "uly" : 1140
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.bogensetzung"
+  "categories" : "wega.annotation.category.bogensetzung",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-6\")"
 }, {
   "priority" : "ediromAnnotPrio1",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-9",
   "svgList" : [ ],
   "id" : "annotation-9",
-  "categories" : "wega.annotation.category.bogensetzung",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-9\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20016",
@@ -133,14 +127,13 @@
     "ulx" : 1192,
     "uly" : 1140
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio1 wega.annotation.category.bogensetzung"
+  "categories" : "wega.annotation.category.bogensetzung",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-9\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-10",
   "svgList" : [ ],
   "id" : "annotation-10",
-  "categories" : "wega.annotation.category.bogensetzung",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-10\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20020",
@@ -156,14 +149,13 @@
     "ulx" : 2062,
     "uly" : 1140
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.bogensetzung"
+  "categories" : "wega.annotation.category.bogensetzung",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-10\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-11",
   "svgList" : [ ],
   "id" : "annotation-11",
-  "categories" : "wega.annotation.category.bogensetzung wega.annotation.category.correction",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-11\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20023",
@@ -172,14 +164,13 @@
     "ulx" : 2598,
     "uly" : 1140
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.bogensetzung wega.annotation.category.correction"
+  "categories" : "wega.annotation.category.bogensetzung wega.annotation.category.correction",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-11\")"
 }, {
   "priority" : "ediromAnnotPrio1",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-12",
   "svgList" : [ ],
   "id" : "annotation-12",
-  "categories" : "wega.annotation.category.editorial-intervention wega.annotation.category.articulation",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-12\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20024",
@@ -188,14 +179,13 @@
     "ulx" : 2906,
     "uly" : 1140
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio1 wega.annotation.category.editorial-intervention wega.annotation.category.articulation"
+  "categories" : "wega.annotation.category.editorial-intervention wega.annotation.category.articulation",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-12\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-14",
   "svgList" : [ ],
   "id" : "annotation-14",
-  "categories" : "wega.annotation.category.articulation",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-14\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20025",
@@ -204,14 +194,13 @@
     "ulx" : 3130,
     "uly" : 1140
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.articulation"
+  "categories" : "wega.annotation.category.articulation",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-14\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-15",
   "svgList" : [ ],
   "id" : "annotation-15",
-  "categories" : "wega.annotation.category.correction",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-15\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20026",
@@ -220,14 +209,13 @@
     "ulx" : 3476,
     "uly" : 1140
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.correction"
+  "categories" : "wega.annotation.category.correction",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-15\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-16",
   "svgList" : [ ],
   "id" : "annotation-16",
-  "categories" : "wega.annotation.category.correction",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-16\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20027",
@@ -236,14 +224,13 @@
     "ulx" : 500,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.correction"
+  "categories" : "wega.annotation.category.correction",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-16\")"
 }, {
   "priority" : "ediromAnnotPrio1",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-17",
   "svgList" : [ ],
   "id" : "annotation-17",
-  "categories" : "wega.annotation.category.bogensetzung",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-17\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20027",
@@ -252,14 +239,13 @@
     "ulx" : 500,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio1 wega.annotation.category.bogensetzung"
+  "categories" : "wega.annotation.category.bogensetzung",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-17\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-18",
   "svgList" : [ ],
   "id" : "annotation-18",
-  "categories" : "wega.annotation.category.bogensetzung",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-18\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20027",
@@ -268,14 +254,13 @@
     "ulx" : 500,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.bogensetzung"
+  "categories" : "wega.annotation.category.bogensetzung",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-18\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-19",
   "svgList" : [ ],
   "id" : "annotation-19",
-  "categories" : "wega.annotation.category.articulation",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-19\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20028",
@@ -284,14 +269,13 @@
     "ulx" : 940,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.articulation"
+  "categories" : "wega.annotation.category.articulation",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-19\")"
 }, {
   "priority" : "ediromAnnotPrio3",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-20",
   "svgList" : [ ],
   "id" : "annotation-20",
-  "categories" : "wega.annotation.category.bogensetzung",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-20\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20028",
@@ -300,14 +284,13 @@
     "ulx" : 940,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio3 wega.annotation.category.bogensetzung"
+  "categories" : "wega.annotation.category.bogensetzung",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-20\")"
 }, {
   "priority" : "ediromAnnotPrio1",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-21",
   "svgList" : [ ],
   "id" : "annotation-21",
-  "categories" : "wega.annotation.category.dynamics wega.annotation.category.editorial-intervention",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-21\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20029",
@@ -316,14 +299,13 @@
     "ulx" : 1150,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio1 wega.annotation.category.dynamics wega.annotation.category.editorial-intervention"
+  "categories" : "wega.annotation.category.dynamics wega.annotation.category.editorial-intervention",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-21\")"
 }, {
   "priority" : "ediromAnnotPrio3",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-23",
   "svgList" : [ ],
   "id" : "annotation-23",
-  "categories" : "wega.annotation.category.correction",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-23\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20029",
@@ -332,14 +314,13 @@
     "ulx" : 1150,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio3 wega.annotation.category.correction"
+  "categories" : "wega.annotation.category.correction",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-23\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-22",
   "svgList" : [ ],
   "id" : "annotation-22",
-  "categories" : "wega.annotation.category.articulation",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-22\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20029",
@@ -348,14 +329,13 @@
     "ulx" : 1150,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.articulation"
+  "categories" : "wega.annotation.category.articulation",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-22\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-29",
   "svgList" : [ ],
   "id" : "annotation-29",
-  "categories" : "wega.annotation.category.bogensetzung",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-29\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20030",
@@ -364,14 +344,13 @@
     "ulx" : 1498,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.bogensetzung"
+  "categories" : "wega.annotation.category.bogensetzung",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-29\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-28",
   "svgList" : [ ],
   "id" : "annotation-28",
-  "categories" : "wega.annotation.category.bogensetzung",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-28\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20030",
@@ -387,14 +366,13 @@
     "ulx" : 1730,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.bogensetzung"
+  "categories" : "wega.annotation.category.bogensetzung",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-28\")"
 }, {
   "priority" : "ediromAnnotPrio1",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-26",
   "svgList" : [ ],
   "id" : "annotation-26",
-  "categories" : "wega.annotation.category.articulation",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-26\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20030",
@@ -403,14 +381,13 @@
     "ulx" : 1498,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio1 wega.annotation.category.articulation"
+  "categories" : "wega.annotation.category.articulation",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-26\")"
 }, {
   "priority" : "ediromAnnotPrio1",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-27",
   "svgList" : [ ],
   "id" : "annotation-27",
-  "categories" : "wega.annotation.category.dynamics",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-27\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20030",
@@ -426,14 +403,13 @@
     "ulx" : 1730,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio1 wega.annotation.category.dynamics"
+  "categories" : "wega.annotation.category.dynamics",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-27\")"
 }, {
   "priority" : "ediromAnnotPrio3",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-25",
   "svgList" : [ ],
   "id" : "annotation-25",
-  "categories" : "wega.annotation.category.articulation wega.annotation.category.correction",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-25\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20030",
@@ -442,14 +418,13 @@
     "ulx" : 1498,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio3 wega.annotation.category.articulation wega.annotation.category.correction"
+  "categories" : "wega.annotation.category.articulation wega.annotation.category.correction",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-25\")"
 }, {
   "priority" : "ediromAnnotPrio1",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-30",
   "svgList" : [ ],
   "id" : "annotation-30",
-  "categories" : "wega.annotation.category.articulation",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-30\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20030",
@@ -458,14 +433,13 @@
     "ulx" : 1498,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio1 wega.annotation.category.articulation"
+  "categories" : "wega.annotation.category.articulation",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-30\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-24",
   "svgList" : [ ],
   "id" : "annotation-24",
-  "categories" : "wega.annotation.category.bogensetzung wega.annotation.category.articulation",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-24\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20030",
@@ -474,14 +448,13 @@
     "ulx" : 1498,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.bogensetzung wega.annotation.category.articulation"
+  "categories" : "wega.annotation.category.bogensetzung wega.annotation.category.articulation",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-24\")"
 }, {
   "priority" : "ediromAnnotPrio3",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-32",
   "svgList" : [ ],
   "id" : "annotation-32",
-  "categories" : "wega.annotation.category.bogensetzung",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-32\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20031",
@@ -490,14 +463,13 @@
     "ulx" : 1730,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio3 wega.annotation.category.bogensetzung"
+  "categories" : "wega.annotation.category.bogensetzung",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-32\")"
 }, {
   "priority" : "ediromAnnotPrio1",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-33",
   "svgList" : [ ],
   "id" : "annotation-33",
-  "categories" : "wega.annotation.category.bogensetzung",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-33\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20031",
@@ -506,14 +478,13 @@
     "ulx" : 1730,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio1 wega.annotation.category.bogensetzung"
+  "categories" : "wega.annotation.category.bogensetzung",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-33\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-31",
   "svgList" : [ ],
   "id" : "annotation-31",
-  "categories" : "wega.annotation.category.dynamics",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-31\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20031",
@@ -522,14 +493,13 @@
     "ulx" : 1730,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.dynamics"
+  "categories" : "wega.annotation.category.dynamics",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-31\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-34",
   "svgList" : [ ],
   "id" : "annotation-34",
-  "categories" : "wega.annotation.category.articulation",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-34\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20032",
@@ -538,14 +508,13 @@
     "ulx" : 1998,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.articulation"
+  "categories" : "wega.annotation.category.articulation",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-34\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-35",
   "svgList" : [ ],
   "id" : "annotation-35",
-  "categories" : "wega.annotation.category.articulation",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-35\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20032",
@@ -554,14 +523,13 @@
     "ulx" : 1998,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.articulation"
+  "categories" : "wega.annotation.category.articulation",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-35\")"
 }, {
   "priority" : "ediromAnnotPrio1",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-38",
   "svgList" : [ ],
   "id" : "annotation-38",
-  "categories" : "wega.annotation.category.articulation",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-38\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20033",
@@ -570,14 +538,13 @@
     "ulx" : 2256,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio1 wega.annotation.category.articulation"
+  "categories" : "wega.annotation.category.articulation",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-38\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-39",
   "svgList" : [ ],
   "id" : "annotation-39",
-  "categories" : "wega.annotation.category.dynamics",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-39\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20033",
@@ -586,14 +553,13 @@
     "ulx" : 2256,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.dynamics"
+  "categories" : "wega.annotation.category.dynamics",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-39\")"
 }, {
   "priority" : "ediromAnnotPrio3",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-37",
   "svgList" : [ ],
   "id" : "annotation-37",
-  "categories" : "wega.annotation.category.notational-variant",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-37\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20033",
@@ -602,14 +568,13 @@
     "ulx" : 2256,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio3 wega.annotation.category.notational-variant"
+  "categories" : "wega.annotation.category.notational-variant",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-37\")"
 }, {
   "priority" : "ediromAnnotPrio2",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-36",
   "svgList" : [ ],
   "id" : "annotation-36",
-  "categories" : "wega.annotation.category.bogensetzung",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-36\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20033",
@@ -618,14 +583,13 @@
     "ulx" : 2256,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio2 wega.annotation.category.bogensetzung"
+  "categories" : "wega.annotation.category.bogensetzung",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-36\")"
 }, {
   "priority" : "ediromAnnotPrio1",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-40",
   "svgList" : [ ],
   "id" : "annotation-40",
-  "categories" : "wega.annotation.category.dynamics wega.annotation.category.editorial-intervention wega.annotation.category.correction",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-40\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20033",
@@ -634,14 +598,13 @@
     "ulx" : 2256,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio1 wega.annotation.category.dynamics wega.annotation.category.editorial-intervention wega.annotation.category.correction"
+  "categories" : "wega.annotation.category.dynamics wega.annotation.category.editorial-intervention wega.annotation.category.correction",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-40\")"
 }, {
   "priority" : "ediromAnnotPrio3",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-41",
   "svgList" : [ ],
   "id" : "annotation-41",
-  "categories" : "wega.annotation.category.correction",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-41\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20033",
@@ -650,14 +613,13 @@
     "ulx" : 2256,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio3 wega.annotation.category.correction"
+  "categories" : "wega.annotation.category.correction",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-41\")"
 }, {
   "priority" : "ediromAnnotPrio1",
   "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-42",
   "svgList" : [ ],
   "id" : "annotation-42",
-  "categories" : "wega.annotation.category.bogensetzung wega.annotation.category.articulation wega.annotation.category.correction",
-  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-42\")",
   "plist" : [ {
     "type" : "measure",
     "id" : "annotation__bar-20034",
@@ -680,5 +642,6 @@
     "ulx" : 3454,
     "uly" : 1930
   } ],
-  "taxonomyClasses" : "ediromAnnotPrio1 wega.annotation.category.bogensetzung wega.annotation.category.articulation wega.annotation.category.correction"
+  "categories" : "wega.annotation.category.bogensetzung wega.annotation.category.articulation wega.annotation.category.correction",
+  "fn" : "loadLink(\"xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-42\")"
 } ]
