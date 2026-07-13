@@ -7,41 +7,70 @@ xquery version "3.1";
 : Returns a JSON representation of all Annotations of a document.
 :
 : @author <a href="mailto:roewenstrunk@edirom.de">Daniel Röwenstrunk</a>
+: @author Benjamin W. Bohl <b.w.bohl@gmail.com>
 :)
+
 
 (: IMPORTS ================================================================= :)
 
 import module namespace annotation = "http://www.edirom.de/xquery/annotation" at "../xqm/annotation.xqm";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
 
+
 (: NAMESPACE DECLARATIONS ================================================== :)
 
-declare namespace request = "http://exist-db.org/xquery/request";
 declare namespace mei = "http://www.music-encoding.org/ns/mei";
+
 declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
+
+declare namespace request = "http://exist-db.org/xquery/request";
+
 
 (: OPTION DECLARATIONS ===================================================== :)
 
 declare option output:method "json";
+
 declare option output:media-type "application/json";
 
-let $edition := request:get-parameter('edition', '')
-let $uri := request:get-parameter('uri', '')
+
+(: VARIABLE DECLARATIONS =================================================== :)
+
+declare variable $EDITION := request:get-parameter('edition', '');
+
+declare variable $URI := request:get-parameter('uri', '');
+
+
+(: QUERY BODY ============================================================= :)
 
 let $uri :=
-    if (contains($uri, '#')) then
-        (substring-before($uri, '#'))
+    if (contains($URI, '#')) then
+        (substring-before($URI, '#'))
     else
-        ($uri)
+        ($URI)
 
 let $doc := eutil:getDoc($uri)
 
-let $map :=
+let $annotations := annotation:annotationsToJSON($uri, $EDITION)
+
+let $annotationFields := distinct-values(for $a in $annotations return map:keys($a))
+
+let $emptyFields :=
+    for $fieldName in $annotationFields
+    where every $annotation in $annotations satisfies (
+        map:contains($annotation, $fieldName) and eutil:is-empty($annotation($fieldName))
+    )
+    return $fieldName
+
+(: legacy fields are only superseded when taxonomy-derived fields are actually present in the data :)
+let $baseFields := ('id', 'title', 'categories', 'priority', 'pos', 'sigla')
+let $hasTaxonomyFields := some $f in $annotationFields satisfies not($f = $baseFields)
+
+return
     map {
         'success': true(),
         'total': count($doc//mei:annot[@type = 'editorialComment']),
-        'annotations': array {annotation:annotationsToJSON($uri, $edition)}
+        'annotations': array {$annotations},
+        'fields': $annotationFields,
+        'emptyFields': $emptyFields,
+        'legacyFields': array { if ($hasTaxonomyFields) then ('categories', 'priority') else () }
     }
-
-return
-    $map
