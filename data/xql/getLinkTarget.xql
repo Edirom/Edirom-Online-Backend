@@ -49,9 +49,9 @@ declare function local:getView($type as xs:string, $docUri as xs:string, $doc as
     (: optionally set label for some views:)
     let $labeled.map :=
         if ($type = 'mei_textView') then
-            (map:put($baseMap, 'label', 'Quellenbeschreibung'))
+            (map:put($baseMap, 'label', eutil:getLanguageString('sourceDescription', (), $lang)))
         else if ($type = 'desc_xmlView') then
-            (map:put($baseMap, 'label', 'XML Quellenbeschreibung'))
+            (map:put($baseMap, 'label', eutil:getLanguageString('xmlSourceDescription', (), $lang)))
         else
             ($baseMap)
             

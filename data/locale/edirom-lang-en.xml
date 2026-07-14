@@ -45,6 +45,8 @@
         <entry key="controller.window.Window_textView" value="Text"/>
         <entry key="controller.window.Window_xmlView" value="XML-View"/>
         <entry key="controller.window.Window_iFrameView" value="HTML-View"/>
+        <entry key="sourceDescription" value="Source Description"/>
+        <entry key="xmlSourceDescription" value="XML Source Description"/>
         
         <entry key="view.desktop.Desktop_Cascade" value="Cascade"/>
         <entry key="view.desktop.Desktop_Close" value="Close"/>
