@@ -417,122 +417,30 @@
 							}
 						},
 						{
-							"name": "autoHead",
+							"name": "htmlProfile",
 							"in": "query",
 							"required": false,
-							"description": "Whether to construct a heading for &lt;div&gt; elements with no &lt;head&gt; - by default, not.",
+							"description": "Profile to use for the returned HTML document, only used if mediaType is text/html",
 							"schema": {
 								"type": "string",
 								"enum": [
-									"true",
-									"false"
+									"edirom-text",
+									"edirom-help"
 								],
-								"default": "false"
+								"default": "edirom-text"
 							},
 							"examples": {
-								"True": {
-									"summary": "True",
-									"value": "true"
+								"Empty": {
+									"summary": "Empty",
+									"value": ""
 								},
-								"False": {
-									"summary": "False",
-									"value": "false"
-								}
-							}
-						},
-						{
-							"name": "autoToc",
-							"in": "query",
-							"required": false,
-							"description": "Whether to automatically generate a table of contents for the returned document",
-							"schema": {
-								"type": "string",
-								"enum": [
-									"true",
-									"false"
-								],
-								"default": "false"
-							},
-							"examples": {
-								"True": {
-									"summary": "True",
-									"value": "true"
+								"EdiromText": {
+									"summary": "EdiromText",
+									"value": "edirom-text"
 								},
-								"False": {
-									"summary": "False",
-									"value": "false"
-								}
-							}
-						},
-						{
-							"name": "tocDepth",
-							"in": "query",
-							"required": false,
-							"description": "The depth of the table of contents in the returned document, only used if autoToc is true",
-							"schema": {
-								"type": "string",
-								"default": "1"
-							},
-							"examples": {
-								"1": {
-									"summary": "1",
-									"value": "1"
-								},
-								"2": {
-									"summary": "2",
-									"value": "2"
-								},
-								"3": {
-									"summary": "3",
-									"value": "3"
-								}
-							}
-						},
-						{
-							"name": "footnoteBackLink",
-							"in": "query",
-							"required": false,
-							"description": "Whether to add back links from footnotes to their references in the text",
-							"schema": {
-								"type": "string",
-								"enum": [
-									"true",
-									"false"
-								],
-								"default": "true"
-							},
-							"examples": {
-								"True": {
-									"summary": "True",
-									"value": "true"
-								},
-								"False": {
-									"summary": "False",
-									"value": "false"
-								}
-							}
-						},
-						{
-							"name": "numberHeadings",
-							"in": "query",
-							"required": false,
-							"description": "Whether to add numbers to headings in the returned document, both in the text and in the TOC.",
-							"schema": {
-								"type": "string",
-								"enum": [
-									"true",
-									"false"
-								],
-								"default": "false"
-							},
-							"examples": {
-								"True": {
-									"summary": "True",
-									"value": "true"
-								},
-								"False": {
-									"summary": "False",
-									"value": "false"
+								"EdiromHelp": {
+									"summary": "EdiromHelp",
+									"value": "edirom-help"
 								}
 							}
 						}

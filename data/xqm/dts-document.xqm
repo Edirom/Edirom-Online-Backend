@@ -61,7 +61,33 @@ declare variable $dts-document:specialResources as map(xs:string, xs:string) := 
     There should be a collection also.
     Make them available to collection and navigation endopoints. :)
 
+declare variable $dts-document:defaultHTMLProfile as xs:string := "edirom-text";
+
+declare variable $dts-document:htmlProfiles as map(xs:string, element(param)*) := map {
+    "edirom-text": (
+        <param name="footnoteBackLink" value="true"/>,
+        <param name="autoHead" value="false"/>,
+        <param name="autoToc" value="false"/>,
+        <param name="numberHeadings" value="false"/>
+    ),
+    "edirom-help": (
+        <param name="tocDepth" value="1"/>
+    )
+};
+
 (: FUNCTION DECLARATIONS =================================================== :)
+
+declare function dts-document:htmlProfileParameters(
+    $htmlProfile as xs:string?
+) as element(param)* {
+    let $profile :=
+        if ($htmlProfile and map:contains($dts-document:htmlProfiles, $htmlProfile)) then
+            $htmlProfile
+        else
+            error($errors:INVALID_PARAMETERS, "The specified HTML profile is not supported. Supported profiles are: " || string-join(map:keys($dts-document:htmlProfiles), ", ") || ". Specified profile: " || $htmlProfile)
+    return
+        map:get($dts-document:htmlProfiles, $profile)
+};
 
 declare function dts-document:wrapSelection(
     $selection as element()*,
@@ -225,7 +251,7 @@ declare function dts-document:selectTEIPages(
         else
             ($startPb/ancestor-or-self::*[. intersect (($document//text())[last()])/ancestor-or-self::*])[last()]/@xml:id
     let $reduced :=
-        transform:transform($document, doc('../xslt/reduceToPageById.xsl'),
+        transform:transform($document, eutil:getDoc($eutil:xsltBase || '/reduceToPageById.xsl'),
             <parameters>
                 <param name="pb1_id" value="{$pb1}"/>
                 <param name="pb2_id" value="{$pb2}"/>
@@ -353,7 +379,6 @@ declare function dts-document:resolveResource(
 declare function dts-document:transformTEIToHTML(
     $xml as node(),
     $resource as xs:string?,
-    $xsltBase as xs:string,
     $xslInstruction as processing-instruction()?,
     $htmlParameters as map(xs:string, xs:string)
 ) as element() {
@@ -367,62 +392,55 @@ declare function dts-document:transformTEIToHTML(
             ()
 
     (: Remove DTS wrapper :)
-    let $xsl := doc('../xslt/removeDtsWrapper.xsl')
-    let $doc := transform:transform($doc, $xsl, <parameters/>)
+    let $xslUnwrap := eutil:getDoc($eutil:xsltBase || '/removeDtsWrapper.xsl')
+    let $doc := transform:transform($doc, $xslUnwrap, <parameters/>)
 
     (: Unpack html parameters :)
     let $lang := if (map:contains($htmlParameters, "lang")) then map:get($htmlParameters, "lang") else ""
     let $idPrefix := if (map:contains($htmlParameters, "idPrefix")) then map:get($htmlParameters, "idPrefix") else ""
-    let $autoHead := if (map:contains($htmlParameters, "autoHead")) then map:get($htmlParameters, "autoHead") else "false"
-    let $autoToc := if (map:contains($htmlParameters, "autoToc")) then map:get($htmlParameters, "autoToc") else "false"
-    let $tocDepth := if (map:contains($htmlParameters, "tocDepth")) then map:get($htmlParameters, "tocDepth") else "1"
-    let $footnoteBackLink := if (map:contains($htmlParameters, "footnoteBackLink")) then map:get($htmlParameters, "footnoteBackLink") else "true"
-    let $numberHeadings := if (map:contains($htmlParameters, "numberHeadings")) then map:get($htmlParameters, "numberHeadings") else "false"
+    let $htmlProfile := if (map:contains($htmlParameters, "htmlProfile")) then map:get($htmlParameters, "htmlProfile") else $dts-document:defaultHTMLProfile
 
     let $contextPath := request:get-scheme()|| "://" || request:get-server-name() || ":" || request:get-server-port() || request:get-context-path()
 
     (: Apply language replacement stylesheet to replace language-dependent elements :)
-    let $xsl := doc('../xslt/edirom_langReplacement.xsl')
+    let $xslLang := eutil:getDoc($eutil:xsltBase || '/edirom_langReplacement.xsl')
     let $doc := 
-        transform:transform($doc, $xsl,
+        transform:transform($doc, $xslLang,
             <parameters>
-                <param name="base" value="{$xsltBase}"/>
+                <param name="base" value="{concat($eutil:xsltBase, '/')}"/>
                 <param name="lang" value="{$lang}"/>
             </parameters>
         )
 
     (: Apply stylesheet to convert TEI to HTML :)
-    let $xsl :=
+    let $xslConvert :=
         if ($xslInstruction) then
             ($xslInstruction)
         else
-            ('../xslt/tei/profiles/edirom-body/teiBody2HTML.xsl')
+            eutil:getDoc($eutil:xsltBase || '/tei/profiles/edirom-body/teiBody2HTML.xsl')
 
-    let $params := (
+    let $standardParams := (
         (: parameters for teiBody2HTML stylesheet :)
         <param name="lang" value="{$lang}"/>,
         <param name="docUri" value="{$resource}"/>,
         <param name="contextPath" value="{$contextPath}"/>,
-        <param name="base" value="{$xsltBase}"/>,
-        <param name="footnoteBackLink" value="{$footnoteBackLink}"/>,
+        <param name="base" value="{$eutil:xsltBase}"/>,
         (: parameters for the TEI Stylesheets :)
-        <param name="autoHead" value="{$autoHead}"/>,
-        <param name="autoToc" value="{$autoToc}"/>,
-        <param name="tocDepth" value="{$tocDepth}"/>,
         <param name="documentationLanguage" value="{$lang}"/>,
-        <param name="numberHeadings" value="{$numberHeadings}"/>,
         <param name="pageLayout" value="CSS"/>
     )
+    let $profileParameters := dts-document:htmlProfileParameters($htmlProfile)
+    let $params := ($standardParams, $profileParameters)
 
-    let $doc := transform:transform($doc, doc($xsl), <parameters>{$params}</parameters>)
+    let $doc := transform:transform($doc, $xslConvert, <parameters>{$params}</parameters>)
 
     (: TODO: To be moved to the frontend: Do a second transformation to add edirom online ID prefixes for unique ID values if object is open multiple times :)
-    let $xsl := '../xslt/edirom_idPrefix.xsl'
+    let $xslPrefix := eutil:getDoc($eutil:xsltBase || '/edirom_idPrefix.xsl')
 
     let $params := (
         <param name="idPrefix" value="{$idPrefix}"/>
     )
-    let $doc := transform:transform($doc, doc($xsl), <parameters>{$params}</parameters>)
+    let $doc := transform:transform($doc, $xslPrefix, <parameters>{$params}</parameters>)
 
     return
         $doc
@@ -467,8 +485,8 @@ declare function dts-document:document(
                 error($errors:UNSUPPORTED_DOCUMENT_FORMAT, "The format of the requested document is not supported. Namespace: " || $namespace )
         
         (: TODO: transformations should be applied here only when edirom output is requested :)
-        let $xsltBase := concat(replace(system:get-module-load-path(), 'embedded-eXist-server', ''), '/../xslt/')
-        let $outputXml := transform:transform($outputXmlRaw, concat($xsltBase, 'edirom_prepareAnnotsForRendering.xsl'), <parameters/>)
+        let $xslPrepare := eutil:getDoc($eutil:xsltBase || '/edirom_prepareAnnotsForRendering.xsl')
+        let $outputXml := transform:transform($outputXmlRaw, $xslPrepare, <parameters/>)
 
         let $output :=
             if (contains($mediaType, "xml")) then
@@ -476,7 +494,7 @@ declare function dts-document:document(
             else if ($namespace eq "tei" and contains($mediaType, "html")) then
                 let $xslInstruction := $document//processing-instruction(xml-stylesheet)
                 return
-                    document { dts-document:transformTEIToHTML($outputXml, $resource, $xsltBase, $xslInstruction, $htmlParameters) }
+                    document { dts-document:transformTEIToHTML($outputXml, $resource, $xslInstruction, $htmlParameters) }
             (:
             else if ($namespace eq "mei" and contains($mediaType, "html") and $ref eq "meiHead") then
                 TODO

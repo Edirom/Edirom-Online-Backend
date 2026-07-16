@@ -765,7 +765,7 @@ declare
         return $document//tei:p[@xml:id = "not-in-p2-1"]
     };
 
-(: TODO test with differen html parameters, e.g. idPrefix :)
+(: Test with different html parameters, e.g. idPrefix :)
 
 declare
     (: Sample prefix :)
@@ -792,13 +792,13 @@ declare
 
 declare
     (: With Header :)
-    %test:arg("autoHead", "true")
+    %test:arg("htmlProfile", "edirom-text")
     %test:assertTrue
     (: Without Header :)
-    %test:arg("autoHead", "false")
+    %test:arg("htmlProfile", "edirom-help")
     %test:assertTrue
-    function ddt:test-document-tei-to-html-autoHead(
-        $autoHead as xs:string
+    function ddt:test-document-tei-to-html-htmlProfile(
+        $htmlProfile as xs:string
     ) {
         let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
         let $ref := ""
@@ -809,158 +809,72 @@ declare
         let $html-parameters := map {
             "lang": "de",
             "idPrefix": "",
-            "autoToc": "true",
-            "autoHead": $autoHead
+            "htmlProfile": $htmlProfile
         }
         let $document :=
             dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters)
         let $header-div4 := $document//xhtml:section[@id="test-div-4"]//xhtml:h1
         let $header-div4-in-toc := $document//xhtml:li/xhtml:a[@title="I am the only paragraph in the fourth div that does not have a heading."]
+        let $toc := $document//xhtml:ul[@class="toc toc_body"]
+        let $headingNumbers := $document//xhtml:span[@class="headingNumber"]
+        let $headingNumbersInTOC := $document//xhtml:ul[@class="toc toc_body"]//xhtml:span[@class="headingNumber"]
+        let $footnote := $document//xhtml:div[@id="note-1"]
         return
-            if ($autoHead eq "true") then
-                exists($header-div4)
-                and exists($header-div4-in-toc)
-            else
+            if ($htmlProfile eq "edirom-text") then
+                (: autoHead is false :)
                 empty($header-div4)
                 and empty($header-div4-in-toc)
-    };
-
-declare
-    (: With TOC :)
-    %test:arg("autoToc", "true")
-    %test:assertTrue
-    (: Without TOC :)
-    %test:arg("autoToc", "false")
-    %test:assertTrue
-    function ddt:test-document-tei-to-html-autoToc(
-        $autoToc as xs:string
-    ) {
-        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
-        let $ref := ""
-        let $start := ""
-        let $end := ""
-        let $tree := "paginationStructure"
-        let $mediaType := "text/html"
-        let $html-parameters := map {
-            "lang": "de",
-            "idPrefix": "",
-            "autoToc": $autoToc
-        }
-        let $document :=
-            dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters)
-        let $toc := $document//xhtml:ul[@class="toc toc_body"]
-        return
-            if ($autoToc eq "true") then
-                exists($toc)
-            else
-                empty($toc)
-    };
-
-declare
-    (: Depth 0 :)
-    %test:arg("tocDepth", 0)
-    %test:assertTrue
-    (: Depth 1 :)
-    %test:arg("tocDepth", 1)
-    %test:assertTrue
-    function ddt:test-document-tei-to-html-tocDepth(
-        $tocDepth as xs:integer
-    ) {
-        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
-        let $ref := ""
-        let $start := ""
-        let $end := ""
-        let $tree := "paginationStructure"
-        let $mediaType := "text/html"
-        let $html-parameters := map {
-            "lang": "de",
-            "idPrefix": "",
-            "autoToc": "true",
-            "tocDepth": $tocDepth
-        }
-        let $document :=
-            dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters)
-        let $toc := $document//xhtml:ul[@class="toc toc_body"]
-        return
-            if ($tocDepth eq 0) then
-                exists($toc//xhtml:a[@class='toc toc_0'])
-                and exists($toc//xhtml:a[@title='This is the header of the first div'])
-                and empty($toc//xhtml:a[@class='toc toc_1'])
-                and empty($toc//xhtml:a[@title='This is the header of the nested div (inside the first div)'])
-            else if ($tocDepth eq 1) then
-                exists($toc//xhtml:a[@class='toc toc_0'])
+                (: autoToc is false :)
+                and empty($toc)
+                (: numberHeading is false :)
+                and empty($headingNumbers)
+                and empty($headingNumbersInTOC)
+                (:footnoteBackLink is true :)
+                and exists($footnote//xhtml:a[@class="link_return"])
+            else if ($htmlProfile eq "edirom-help") then
+                (: autoHead is false :)
+                empty($header-div4-in-toc)
+                (: autoToc is true :)
+                and exists($toc)
+                (: tocDepth is 1 :)
+                and exists($toc//xhtml:a[@class='toc toc_0'])
                 and exists($toc//xhtml:a[@title='This is the header of the first div'])
                 and exists($toc//xhtml:a[@class='toc toc_1'])
                 and exists($toc//xhtml:a[@title='This is the header of the nested div (inside the first div)'])
+                (: footnoteBackLink is false :)
+                and empty($footnote//xhtml:a[@class="link_return"])
+                (: numberHeading is true :)
+                and exists($headingNumbers)
+                and exists($headingNumbersInTOC)
             else
                 false
     };
 
 declare
-    (: With footnote backlink :)
-    %test:arg("footnoteBackLink", "true")
     %test:assertTrue
-    (: Without footnote backlink :)
-    %test:arg("footnoteBackLink", "false")
-    %test:assertTrue
-    function ddt:test-document-tei-to-html-footnoteBackLink(
-        $footnoteBackLink as xs:string
-    ) {
-        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
-        let $ref := ""
-        let $start := ""
-        let $end := ""
-        let $tree := "paginationStructure"
-        let $mediaType := "text/html"
-        let $html-parameters := map {
-            "lang": "de",
-            "idPrefix": "",
-            "footnoteBackLink": $footnoteBackLink
-        }
-        let $document :=
-            dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters)
-        let $footnote := $document//xhtml:div[@id="note-1"]
+    function ddt:test-document-tei-to-html-edirom-text-profile-parameters() {
+        let $parameters := dts-document:htmlProfileParameters("edirom-text")
         return
-            if ($footnoteBackLink eq "true") then
-                exists($footnote//xhtml:a[@class="link_return"])
-            else
-                empty($footnote//xhtml:a[@class="link_return"])
+            count($parameters) eq 4
+            and $parameters[attribute(name) = "footnoteBackLink"]/attribute(value) eq "true"
+            and $parameters[attribute(name) = "autoHead"]/attribute(value) eq "false"
+            and $parameters[attribute(name) = "autoToc"]/attribute(value) eq "false"
+            and $parameters[attribute(name) = "numberHeadings"]/attribute(value) eq "false"
     };
 
 declare
-    (: Numbered headings :)
-    %test:arg("numberHeadings", "true")
     %test:assertTrue
-    (: Unnumbered headings :)
-    %test:arg("numberHeadings", "false")
-    %test:assertTrue
-    function ddt:test-document-tei-to-html-numberHeadings(
-        $numberHeadings as xs:string
-    ) {
-        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
-        let $ref := ""
-        let $start := ""
-        let $end := ""
-        let $tree := "paginationStructure"
-        let $mediaType := "text/html"
-        let $html-parameters := map {
-            "lang": "de",
-            "idPrefix": "",
-            "autoToc": "true",
-            "numberHeadings": $numberHeadings
-        }
-        let $document :=
-            dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters)
-        let $headingNumbers := $document//xhtml:span[@class="headingNumber"]
-        let $headingNumbersInTOC := $document//xhtml:ul[@class="toc toc_body"]//xhtml:span[@class="headingNumber"]
+    function ddt:test-document-tei-to-html-edirom-help-profile-parameters() {
+        let $parameters := dts-document:htmlProfileParameters("edirom-help")
         return
-            if ($numberHeadings eq "true") then
-                exists($headingNumbers)
-                and exists($headingNumbersInTOC)
-            else
-                empty($headingNumbers)
-                and empty($headingNumbersInTOC)
+            count($parameters) eq 1
+            and $parameters[attribute(name) = "tocDepth"]/attribute(value) eq "1"
+    };
+
+declare
+    %test:assertError("errors:InvalidParametersError")
+    function ddt:test-document-tei-to-html-unsupported-profile-raises-error() {
+        dts-document:htmlProfileParameters("unknown-profile")
     };
 
 (: TODO tests with json media type :)
-
