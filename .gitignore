@@ -4,3 +4,4 @@ build-tei
 .DS_Store
 .idea/
 .env
+.vscode
