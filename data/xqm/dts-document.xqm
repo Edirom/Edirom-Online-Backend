@@ -72,7 +72,8 @@ declare variable $dts-document:htmlProfiles as map(xs:string, element(param)*) :
     ),
     "edirom-help": (
         <param name="tocDepth" value="1"/>
-    )
+    ),
+    "edirom-header": ()
 };
 
 (: FUNCTION DECLARATIONS =================================================== :)
@@ -358,7 +359,7 @@ declare function dts-document:isMediaTypeCompatible(
     if (not($mediaType)) then
         true()
     else if ($namespace eq "mei") then
-        contains($mediaType, "application/xml") or contains($mediaType, "text/xml") or contains($mediaType, "application/mei+xml")
+        contains($mediaType, "application/xml") or contains($mediaType, "text/xml") or contains($mediaType, "application/mei+xml") or contains($mediaType, "text/html")
     else if ($namespace eq "tei") then
         contains($mediaType, "application/xml") or contains($mediaType, "text/xml") or contains($mediaType, "application/tei+xml") or contains($mediaType, "text/html")
     else if ($namespace eq "edirom") then
@@ -446,6 +447,41 @@ declare function dts-document:transformTEIToHTML(
         $doc
 };
 
+declare function dts-document:transformHeaderToHTML(
+    $xml as node(),
+    $namespace as xs:string?,
+    $htmlParameters as map(xs:string, xs:string)
+) as element() {
+    let $doc := $xml
+
+    (: Remove DTS wrapper :)
+    let $xslUnwrap := eutil:getDoc($eutil:xsltBase || '/removeDtsWrapper.xsl')
+    let $doc := transform:transform($doc, $xslUnwrap, <parameters/>)
+
+    (: Unpack html parameters :)
+    let $lang := if (map:contains($htmlParameters, "lang")) then map:get($htmlParameters, "lang") else ""
+
+    (: Stylesheet parameters :)
+    let $xslConvert :=
+        if ($namespace eq "mei") then
+            eutil:getDoc($eutil:xsltBase || '/meiHead2HTML.xsl')
+        (: Verify how to make the stylesheet work again. The stylesheet is importing files that are no longer available.
+        else if ($namespace eq "tei") then
+            eutil:getDoc($eutil:xsltBase || '/tei/profiles/edirom-header/teiHeader2HTML.xsl')
+        :)
+        else
+            error($errors:UNSUPPORTED_DOCUMENT_FORMAT, "The header cannot be converted to HTML for the requested document format. Namespace: " || $namespace)
+    let $parameters := (
+        <param name="base" value="{$eutil:xsltBase || '/'}"/>,
+        <param name="lang" value="{$lang}"/>
+    )
+    let $doc := transform:transform($doc, $xslConvert, <parameters>{$parameters}</parameters>)
+
+    return
+        $doc
+
+};
+
 declare function dts-document:document(
     $resource as xs:string?,
     $ref as xs:string?,
@@ -491,14 +527,12 @@ declare function dts-document:document(
         let $output :=
             if (contains($mediaType, "xml")) then
                 document { $outputXml }
+            else if (contains($mediaType, "html") and (map:contains($htmlParameters, "htmlProfile")) and map:get($htmlParameters, "htmlProfile") eq "edirom-header") then
+                document { dts-document:transformHeaderToHTML($outputXml, $namespace, $htmlParameters) }
             else if ($namespace eq "tei" and contains($mediaType, "html")) then
                 let $xslInstruction := $document//processing-instruction(xml-stylesheet)
                 return
                     document { dts-document:transformTEIToHTML($outputXml, $resource, $xslInstruction, $htmlParameters) }
-            (:
-            else if ($namespace eq "mei" and contains($mediaType, "html") and $ref eq "meiHead") then
-                TODO
-            :)
             else
                 error($errors:UNSUPPORTED_MEDIA_TYPE, "The requested media type is not supported. Media type: " || $mediaType || ", Namespace: " || $namespace || ", Ref: " || $ref)
         return

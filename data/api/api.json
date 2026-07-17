@@ -425,7 +425,8 @@
 								"type": "string",
 								"enum": [
 									"edirom-text",
-									"edirom-help"
+									"edirom-help",
+									"edirom-header"
 								],
 								"default": "edirom-text"
 							},
@@ -441,6 +442,10 @@
 								"EdiromHelp": {
 									"summary": "EdiromHelp",
 									"value": "edirom-help"
+								},
+								"EdiromHeader": {
+									"summary": "EdiromHeader",
+									"value": "edirom-header"
 								}
 							}
 						}
