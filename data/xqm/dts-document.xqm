@@ -461,7 +461,7 @@ declare function dts-document:transformHeaderToHTML(
     (: Unpack html parameters :)
     let $lang := if (map:contains($htmlParameters, "lang")) then map:get($htmlParameters, "lang") else ""
 
-    (: Stylesheet parameters :)
+    (: Convert to HTML :)
     let $xslConvert :=
         if ($namespace eq "mei") then
             eutil:getDoc($eutil:xsltBase || '/meiHead2HTML.xsl')
