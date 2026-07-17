@@ -681,49 +681,60 @@ declare
 
 declare
     (: retrieve meiHead by ref as html :)
-    (: TODO Implement this feature
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref", "meiHead")
     %test:arg("start") %test:arg("end")
-    %test:arg("tree")
-    %test:arg("mediaType", "text/html")
     %test:arg("lang")
-    %test:assertXPath("/Q{http://www.w3.org/1999/xhtml}div[@class='meiHead']") (: TODO check this condition :)
-    :)
+    %test:arg("idPrefix")
+    %test:arg("htmlProfile", "edirom-header")
+    %test:assertXPath("/Q{http://www.w3.org/1999/xhtml}div[@class='meiHead']")
     (: retrieve teiHeader by ref as html :)
-    (: TODO: implement this feature
+    (: TODO: once the teiBody2HTML.xsl stylesheet is reactivated
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "teiHeader")
-    %test:arg("start") %test:arg("end") %test:arg("tree")
-    %test:arg("mediaType", "text/html")
+    %test:arg("start") %test:arg("end")
     %test:arg("lang")
-    %test:assertXPath("//Q{http://www.w3.org/1999/xhtml}h1") (: TODO check this condition :)
+    %test:arg("idPrefix")
+    %test:arg("htmlProfile", "edirom-header")
+    %test:assertXPath("//Q{http://www.w3.org/1999/xhtml}div[@class='teiHeader']")
     :)
     (: get the help by resource=help :)
     %test:arg("resource", "help_en")
-    %test:arg("ref") %test:arg("start") %test:arg("end") %test:arg("tree")
-    %test:arg("mediaType", "text/html")
+    %test:arg("ref") %test:arg("start") %test:arg("end")
     %test:arg("lang", "en")
+    %test:arg("idPrefix")
+    %test:arg("htmlProfile", "edirom-help")
     %test:assertXPath("//Q{http://www.w3.org/1999/xhtml}div[@class='titlePage']")
     (: get the help by URI :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/help/help_en.xml")
-    %test:arg("ref") %test:arg("start") %test:arg("end") %test:arg("tree")
-    %test:arg("mediaType", "text/html")
-    %test:arg("lang")
+    %test:arg("ref") %test:arg("start") %test:arg("end")
+    %test:arg("lang", "en")
+    %test:arg("idPrefix")
+    %test:arg("htmlProfile", "edirom-help")
     %test:assertXPath("//Q{http://www.w3.org/1999/xhtml}div[@class='titlePage']")
+    (: Sample prefix :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("ref") %test:arg("start") %test:arg("end")
+    %test:arg("lang", "en")
+    %test:arg("idPrefix", "example_")
+    %test:arg("htmlProfile", "edirom-text")
+    %test:assertXPath("//Q{http://www.w3.org/1999/xhtml}p[starts-with(@id, 'example_')]")
     function ddt:test-document-html(
         $resource as xs:string,
         $ref as xs:string?,
         $start as xs:string?,
         $end as xs:string?,
-        $tree as xs:string?,
-        $mediaType as xs:string?,
-        $lang as xs:string?
+        $lang as xs:string?,
+        $idPrefix as xs:string?,
+        $htmlProfile as xs:string?
     ) as document-node() {
         let $html-parameters := map {
             "lang": if ($lang) then $lang else "de",
-            "idPrefix": ""
+            "idPrefix": if ($idPrefix) then $idPrefix else "",
+            "htmlProfile": if ($htmlProfile) then $htmlProfile else ""
         }
+        let $tree := ""
+        let $mediaType := "text/html"
         return
             dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters)
 };
@@ -783,39 +794,19 @@ declare
         return $document//tei:p[@xml:id = "not-in-p2-1"]
     };
 
-(: Test with different html parameters, e.g. idPrefix :)
-
 declare
-    (: Sample prefix :)
-    %test:arg("idPrefix", "example_")
-    %test:assertXPath("//Q{http://www.w3.org/1999/xhtml}p[starts-with(@id, 'example_')]")
-    function ddt:test-document-tei-to-html-idPrefix(
-        $idPrefix as xs:string
-    ) {
-        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
-        let $ref := ""
-        let $start := ""
-        let $end := ""
-        let $tree := "paginationStructure"
-        let $mediaType := "text/html"
-        let $html-parameters := map {
-            "lang": "de",
-            "idPrefix": $idPrefix
-        }
-        let $document :=
-            dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters)
-        return
-            $document
-    };
-
-declare
-    (: With Header :)
+    (: Edirom Text profile :)
     %test:arg("htmlProfile", "edirom-text")
     %test:assertTrue
-    (: Without Header :)
+    (: Edirom Help profile :)
     %test:arg("htmlProfile", "edirom-help")
     %test:assertTrue
-    function ddt:test-document-tei-to-html-htmlProfile(
+    (: Edirom Header profile :)
+    (: TODO: once the teiBody2HTML.xsl stylesheet is reactivated
+    %test:arg("htmlProfile", "edirom-header")
+    %test:assertTrue
+    :)
+    function ddt:test-document-html-htmlProfile(
         $htmlProfile as xs:string
     ) {
         let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
