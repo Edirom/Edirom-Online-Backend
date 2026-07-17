@@ -465,7 +465,7 @@ declare function dts-document:transformHeaderToHTML(
     let $xslConvert :=
         if ($namespace eq "mei") then
             eutil:getDoc($eutil:xsltBase || '/meiHead2HTML.xsl')
-        (: Verify how to make the stylesheet work again. The stylesheet is importing files that are no longer available.
+        (: TODO Verify how to make the stylesheet work again. The stylesheet is importing files that are no longer available.
         else if ($namespace eq "tei") then
             eutil:getDoc($eutil:xsltBase || '/tei/profiles/edirom-header/teiHeader2HTML.xsl')
         :)
