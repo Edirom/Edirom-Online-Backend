@@ -522,16 +522,6 @@ declare
     %test:arg("mediaType", "application/xml")
     %test:arg("lang")
     %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.music-encoding.org/ns/mei}meiHead")
-    (: retrieve meiHead by ref as html :)
-    (: TODO Implement this feature
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
-    %test:arg("ref", "meiHead")
-    %test:arg("start") %test:arg("end")
-    %test:arg("tree")
-    %test:arg("mediaType", "text/html")
-    %test:arg("lang")
-    %test:assertXPath("/Q{http://www.w3.org/1999/xhtml}div[@class='meiHead']") (: TODO check this condition :)
-    :)
     (: retrieve full tei :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref") %test:arg("start") %test:arg("end") %test:arg("tree")
@@ -610,27 +600,6 @@ declare
     %test:arg("mediaType", "application/xml")
     %test:arg("lang")
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.tei-c.org/ns/1.0}teiHeader")
-    (: retrieve teiHeader by ref as html :)
-    (: TODO: implement this feature
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
-    %test:arg("ref", "teiHeader")
-    %test:arg("start") %test:arg("end") %test:arg("tree")
-    %test:arg("mediaType", "text/html")
-    %test:arg("lang")
-    %test:assertXPath("//Q{http://www.w3.org/1999/xhtml}h1") (: TODO check this condition :)
-    :)
-    (: get the help by resource=help :)
-    %test:arg("resource", "help_en")
-    %test:arg("ref") %test:arg("start") %test:arg("end") %test:arg("tree")
-    %test:arg("mediaType", "text/html")
-    %test:arg("lang", "en")
-    %test:assertXPath("//Q{http://www.w3.org/1999/xhtml}div[@class='titlePage']")
-    (: get the help by URI :)
-    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/help/help_en.xml")
-    %test:arg("ref") %test:arg("start") %test:arg("end") %test:arg("tree")
-    %test:arg("mediaType", "text/html")
-    %test:arg("lang")
-    %test:assertXPath("//Q{http://www.w3.org/1999/xhtml}div[@class='titlePage']")
     (: Errors :)
     (: ask both for ref and start/end mei :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
@@ -693,7 +662,7 @@ declare
     %test:arg("mediaType", "application/xml")
     %test:arg("lang")
     %test:assertError("errors:InvalidParametersError")
-    function ddt:test-document(
+    function ddt:test-document-xml(
         $resource as xs:string,
         $ref as xs:string?,
         $start as xs:string?,
@@ -702,6 +671,55 @@ declare
         $mediaType as xs:string?,
         $lang as xs:string?
     ) as document-node() { 
+        let $html-parameters := map {
+            "lang": if ($lang) then $lang else "de",
+            "idPrefix": ""
+        }
+        return
+            dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters)
+};
+
+declare
+    (: retrieve meiHead by ref as html :)
+    (: TODO Implement this feature
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("ref", "meiHead")
+    %test:arg("start") %test:arg("end")
+    %test:arg("tree")
+    %test:arg("mediaType", "text/html")
+    %test:arg("lang")
+    %test:assertXPath("/Q{http://www.w3.org/1999/xhtml}div[@class='meiHead']") (: TODO check this condition :)
+    :)
+    (: retrieve teiHeader by ref as html :)
+    (: TODO: implement this feature
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("ref", "teiHeader")
+    %test:arg("start") %test:arg("end") %test:arg("tree")
+    %test:arg("mediaType", "text/html")
+    %test:arg("lang")
+    %test:assertXPath("//Q{http://www.w3.org/1999/xhtml}h1") (: TODO check this condition :)
+    :)
+    (: get the help by resource=help :)
+    %test:arg("resource", "help_en")
+    %test:arg("ref") %test:arg("start") %test:arg("end") %test:arg("tree")
+    %test:arg("mediaType", "text/html")
+    %test:arg("lang", "en")
+    %test:assertXPath("//Q{http://www.w3.org/1999/xhtml}div[@class='titlePage']")
+    (: get the help by URI :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/help/help_en.xml")
+    %test:arg("ref") %test:arg("start") %test:arg("end") %test:arg("tree")
+    %test:arg("mediaType", "text/html")
+    %test:arg("lang")
+    %test:assertXPath("//Q{http://www.w3.org/1999/xhtml}div[@class='titlePage']")
+    function ddt:test-document-html(
+        $resource as xs:string,
+        $ref as xs:string?,
+        $start as xs:string?,
+        $end as xs:string?,
+        $tree as xs:string?,
+        $mediaType as xs:string?,
+        $lang as xs:string?
+    ) as document-node() {
         let $html-parameters := map {
             "lang": if ($lang) then $lang else "de",
             "idPrefix": ""
