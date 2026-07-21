@@ -1,0 +1,13 @@
+<refsDecl xmlns:tei="http://www.tei-c.org/ns/1.0">
+    <citeStructure xml:id="basicStructure"
+                    unit="Paragraph"
+                    match="tei:div"
+                    use="@xml:id">
+    </citeStructure>
+
+    <citeStructure xml:id="paginationStructure"
+                    unit="Surface"
+                    match="tei:pb"
+                    use="@xml:id">
+    </citeStructure>
+</refsDecl>

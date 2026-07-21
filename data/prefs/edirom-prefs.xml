@@ -30,4 +30,13 @@
         <entry key="start_documents_uri" value=""/>
         <entry key="gotomenu_display" value="partwise"/>
     </entries>
+    <!-- <web-components>
+        <web-component key="edirom_keycloak_handler">
+            <option key="url" value="https://keycloak.edirom.de" />
+            <option key="realm" value="realmName" />
+            <option key="client_id" value="resource-name" />
+            <option key="script"
+                value="resources/web-components/edirom-keycloak-handler/keycloak-handler.js" />
+        </web-component>
+    </web-components> -->
 </prefs>

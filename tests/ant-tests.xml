@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir=".." name="EdiromOnlineTests">
+    
+    <property name="xqunit-url" value="http://localhost:8080/exist/apps/Edirom-Online-Backend/tests/XQSuite/run-unit-tests.xq"/>
+    <property name="test-data-clarinet" value="clarinet-test-data.xar"/>
+
+    <target name="run-all-tests" depends="xqunit-tests,check-language-files"/>
+    
+    <target name="-check-dependencies">
+        <description>Check for necessary executables</description>
+        <property environment="env" /> 
+        <available file="xmllint"  
+            filepath="${env.PATH}"  
+            property="xmllint.present"/>
+        <fail unless="${xmllint.present}" 
+            message="Missing executable 'xmllint'"/>
+    </target>
+    
+    <target name="xqunit-tests" depends="-check-dependencies" if="xmllint.present">
+        <description>Run the XQSuite unit tests. 
+            For general information about XQSuite see http://exist-db.org/exist/apps/doc/xqsuite.xml
+        </description>
+        
+        <!--
+            Creating a temporary file to store the results of the unit tests.
+            The file will be deleted on exit.
+        -->
+        <tempfile property="xqunit-tests-results.file" suffix=".xml" deleteonexit="true"/>
+        
+        <!-- Retrieve the unit tests from the eXistdb -->
+        <get src="${xqunit-url}" dest="${xqunit-tests-results.file}"/>
+        
+        <!-- Parse the results and check for errors -->
+        <exec executable="xmllint" outputproperty="error.count">
+            <!--
+                "A test case is considered successful (passed) unless there is another result element underneath it."
+                https://github.com/testmoapp/junitxml
+            -->
+            <arg line="--xpath &quot;count(//testcase[*])&quot; ${xqunit-tests-results.file}"/>
+        </exec>
+        
+        <!-- Load the results and output to the logs -->
+        <loadfile srcFile="${xqunit-tests-results.file}" property="xqunit-tests-results"/>
+        <echo>${xqunit-tests-results}</echo>
+        
+        <!-- Fail the build if errors are encountered -->
+        <fail message="XQSuite unit tests encountered erros">
+            <condition>
+                <not>
+                    <equals arg1="${error.count}" arg2="0"/>
+                </not>
+            </condition>
+        </fail>
+    </target>
+
+    <target name="check-language-files">
+        <description>Check alignment of language files and report missing entries</description>
+        <parallel>
+            <sequential>
+                <local name="xquery.result"/>
+                <java classname="net.sf.saxon.Query" failonerror="false" outputproperty="xquery.result">
+                    <arg value="tests/check-language-files.xq"/>
+                    <arg value="{http://www.edirom.de/ns/1.3}language-files-path=../data/locale?select=*.xml"/>
+                </java>
+                <fail>
+                    Missing entries in language files at /add/data/locale: &#10;${xquery.result}
+                    <condition>
+                        <!-- 
+                            If all goes well, "<results/>" will be returned of string-length=10
+                            Any errors reported will add to this string-length hence cause the test to fail
+                        -->
+                        <length string="${xquery.result}" when="greater" length="10"/>
+                    </condition>
+                </fail>
+            </sequential>
+            <sequential>
+                <local name="xquery.result"/>
+                <java classname="net.sf.saxon.Query" failonerror="false" outputproperty="xquery.result">
+                    <arg value="tests/check-language-files.xq"/>
+                    <arg value="{http://www.edirom.de/ns/1.3}language-files-path=../data/xslt/i18n?select=*.xml"/>
+                </java>
+                <fail>
+                    Missing entries in language files at /add/data/xslt/i18n: &#10;${xquery.result}
+                    <condition>
+                        <!--
+                            If all goes well, "<results/>" will be returned of string-length=10
+                            Any errors reported will add to this string-length hence cause the test to fail
+                        -->
+                        <length string="${xquery.result}" when="greater" length="10"/>
+                    </condition>
+                </fail>
+            </sequential>
+        </parallel>
+    </target>
+
+    <target name="download-test-data">
+        <description>Download clarinet data once and reuse local cache</description>
+        <available file="${test-data-clarinet}" property="test.data.exists"/>
+        <antcall target="-do-download-test-data"/>
+    </target>
+
+    <target name="-do-download-test-data" unless="test.data.exists">
+        <exec executable="curl" failonerror="true">
+            <arg value="-L"/>
+            <arg value="-s"/>
+            <arg value="-S"/>
+            <arg value="--fail"/>
+            <arg value="-o"/>
+            <arg value="${test-data-clarinet}"/>
+            <arg value="https://git.uni-paderborn.de/-/project/7894/uploads/0e0c97b029820cc94302d4c6151bec79/weber-klarinettenquintett-eol-emeritus.xar"/>
+        </exec>
+    </target>
+
+    <target name="docker-run-test-image" depends="download-test-data">
+        <description>Run the current test image</description>
+        <exec executable="docker" failonerror="true">
+            <arg value="create"/>
+            <arg value="-p"/>
+            <arg value="8080:8080"/>
+            <arg value="--rm"/>
+            <arg value="--name"/>
+            <arg value="edirom-online-backend-test"/>
+            <arg value="${test.image}"/>
+        </exec>
+        <!-- Copy the clarinet test data into the containers -->
+        <exec executable="docker" failonerror="true">
+            <arg value="cp"/>
+            <arg value="${test-data-clarinet}"/>
+            <arg value="edirom-online-backend-test:/opt/exist/autodeploy/"/>
+        </exec>
+        <!-- Start the container -->
+        <exec executable="docker" failonerror="true">
+            <arg value="start"/>
+            <arg value="edirom-online-backend-test"/>
+        </exec>
+        <!-- Wait for container to be healthy -->
+        <exec executable="/bin/bash" failonerror="true">
+            <arg value="-c"/>
+            <arg value="
+                i=0 ;
+                while (! docker inspect edirom-online-backend-test | grep -e Status....healthy) ;
+                do if ((i > 30)) ;
+                then echo ' **** timeout ... aborting **** ' ; exit 1 ;
+                else sleep 5 ; echo waiting for container ... ; i=$((i+1)) ;
+                fi ; done"/>
+        </exec>
+    </target>
+
+    <target name="regression-tests">
+        <description>Run the regression tests</description>
+        <exec executable="./regression-test.sh" failonerror="true" dir="tests/regressionTests">
+            <arg value="check"/>
+        </exec>
+    </target>
+
+    <target name="regression-tests-reset">
+        <description>Reset expected results from current branch</description>
+        <exec executable="./regression-test.sh" failonerror="true" dir="tests/regressionTests">
+            <env key="REFERENCE_BASE" value="http://localhost:8080/exist/apps/Edirom-Online-Backend"/>
+            <arg value="reset"/>
+        </exec>
+    </target>
+
+    <target name="test-cleanup">
+        <description>Remove test container and remove temp files</description>
+        <exec executable="docker" failonerror="false">
+            <arg value="kill"/>
+            <arg value="edirom-online-backend-test"/>
+        </exec>
+        <delete file="${test-data-clarinet}" failonerror="false" verbose="true"/>
+    </target>
+
+</project>

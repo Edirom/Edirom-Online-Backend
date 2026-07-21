@@ -12,6 +12,7 @@ xquery version "3.1";
 (: IMPORTS ================================================================= :)
 
 import module namespace work = "http://www.edirom.de/xquery/work" at "../xqm/work.xqm";
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -28,8 +29,9 @@ declare option output:method "text";
 
 let $uri := request:get-parameter('uri', '')
 let $workId := request:get-parameter('workId', '')
+let $doc := eutil:getDoc($uri)
 return
-    if (doc($uri)//edirom:work[@xml:id = $workId]) then
+    if ($doc//edirom:work[@xml:id = $workId]) then
         ($workId)
     else
         (work:findWorkID($uri))

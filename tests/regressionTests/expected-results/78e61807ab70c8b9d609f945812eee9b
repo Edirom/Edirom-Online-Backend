@@ -1,0 +1,124 @@
+{
+  "success" : true,
+  "participants" : [ {
+    "linkUri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-1.xml#bar-20016?tstamp2=7m+0",
+    "label" : "Takte 16 bis 23",
+    "source" : "Autograph A",
+    "type" : "measure",
+    "hiddenData" : {
+      "origW" : 3950,
+      "width" : 2364,
+      "height" : 894,
+      "origH" : 3107,
+      "y" : 1140,
+      "x" : 576
+    },
+    "content" : "",
+    "siglum" : "A",
+    "page" : "2",
+    "digilibSizeParams" : "&amp;wx=0.1458227848101266&amp;wy=0.3669134213067268&amp;ww=0.5984810126582278&amp;wh=0.2877373672352752&amp;mo=fit",
+    "part" : "",
+    "mdiv" : "",
+    "digilibBaseParams" : "https://content.staatsbibliothek-berlin.de/dc/69007087X-0002"
+  }, {
+    "linkUri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-2.xml#bar-879?tstamp2=6m+0",
+    "label" : "Takte 16 bis 22",
+    "source" : "Erstdruck I ED₁",
+    "type" : "measure",
+    "hiddenData" : {
+      "origW" : 3276,
+      "width" : 1448,
+      "height" : 224,
+      "origH" : 3801,
+      "y" : 616,
+      "x" : 1360
+    },
+    "content" : "",
+    "siglum" : "ED₁",
+    "page" : "Violine I – 1v",
+    "digilibSizeParams" : "&amp;wx=0.41514041514041516&amp;wy=0.16206261510128914&amp;ww=0.442002442002442&amp;wh=0.058931860036832415&amp;mo=fit",
+    "part" : "Violine 1",
+    "mdiv" : "",
+    "digilibBaseParams" : "/Scaler/IIIF/Erstdruck1!34_ED-st_I_012_Vl1_1v"
+  }, {
+    "linkUri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-2.xml#bar-886",
+    "label" : "Takt 23",
+    "source" : "Erstdruck I ED₁",
+    "type" : "measure",
+    "hiddenData" : {
+      "origW" : 3276,
+      "width" : 366,
+      "height" : 234,
+      "origH" : 3801,
+      "y" : 818,
+      "x" : 410
+    },
+    "content" : "",
+    "siglum" : "ED₁",
+    "page" : "Violine I – 1v",
+    "digilibSizeParams" : "&amp;wx=0.12515262515262515&amp;wy=0.2152065245987898&amp;ww=0.11172161172161173&amp;wh=0.06156274664561957&amp;mo=fit",
+    "part" : "Violine 1",
+    "mdiv" : "",
+    "digilibBaseParams" : "/Scaler/IIIF/Erstdruck1!34_ED-st_I_012_Vl1_1v"
+  }, {
+    "linkUri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-3.xml#bar-2002469?tstamp2=7m+0",
+    "label" : "Takte 16 bis 23",
+    "source" : "Stichvorlage K/sv",
+    "type" : "measure",
+    "hiddenData" : {
+      "origW" : 4986,
+      "width" : 4303,
+      "height" : 3475,
+      "origH" : 3982,
+      "y" : 101,
+      "x" : 340
+    },
+    "content" : "",
+    "siglum" : "K/sv",
+    "page" : "3",
+    "digilibSizeParams" : "&amp;wx=0.06819093461692739&amp;wy=0.025364138623807132&amp;ww=0.863016446048937&amp;wh=0.8726770467101959&amp;mo=fit",
+    "part" : "",
+    "mdiv" : "",
+    "digilibBaseParams" : "/Scaler/IIIF/Ksv_Satz1-3!0003.tif"
+  }, {
+    "linkUri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-5.xml#bar-172775?tstamp2=6m+0",
+    "label" : "Takte 16 bis 22",
+    "source" : "Erstdruck II ED₂",
+    "type" : "measure",
+    "hiddenData" : {
+      "origW" : 2643,
+      "width" : 1402,
+      "height" : 260,
+      "origH" : 3871,
+      "y" : 560,
+      "x" : 1056
+    },
+    "content" : "",
+    "siglum" : "ED₂",
+    "page" : "Violine I – 1v",
+    "digilibSizeParams" : "&amp;wx=0.3995459704880817&amp;wy=0.14466546112115733&amp;ww=0.5304578130911842&amp;wh=0.06716610694910875&amp;mo=fit",
+    "part" : "Violine 1",
+    "mdiv" : "",
+    "digilibBaseParams" : "/Scaler/IIIF/Erstdruck2!34_ED-st_II_010_Vl1_1v"
+  }, {
+    "linkUri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-5.xml#bar-172782",
+    "label" : "Takt 23",
+    "source" : "Erstdruck II ED₂",
+    "type" : "measure",
+    "hiddenData" : {
+      "origW" : 2643,
+      "width" : 368,
+      "height" : 200,
+      "origH" : 3871,
+      "y" : 808,
+      "x" : 86
+    },
+    "content" : "",
+    "siglum" : "ED₂",
+    "page" : "Violine I – 1v",
+    "digilibSizeParams" : "&amp;wx=0.03253878168747635&amp;wy=0.20873159390338414&amp;ww=0.1392357169882709&amp;wh=0.051666236114699046&amp;mo=fit",
+    "part" : "Violine 1",
+    "mdiv" : "",
+    "digilibBaseParams" : "/Scaler/IIIF/Erstdruck2!34_ED-st_II_010_Vl1_1v"
+  } ]
+}

@@ -72,7 +72,7 @@ declare function local:getSingleConnections($parent) as array(*)* {
 (: QUERY BODY ============================================================== :)
 
 let $id := request:get-parameter('id', '')
-let $mei := doc($id)/root()
+let $mei := eutil:getDoc($id)
 let $workId := request:get-parameter('workId', '')
 let $work := $mei/id($workId)
 let $concordances := $work//edirom:concordance

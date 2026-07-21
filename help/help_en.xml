@@ -71,7 +71,7 @@
                   The area in between is the <term type="ediromGui" key="view.desktop.Desktop"/>, within which all internal application windows are opened to display the content of an edition and gain access to additional functions. On the right is the <ptr target="#navigator"/>
                </p>
                <figure>
-                  <graphic url="help/images/fullscreen_en.png"/>
+                  <graphic url="images/fullscreen_en.png"/>
                   <head>An example view of the <term type="ediromGui" key="global_appName"/> window, which shows the <term type="ediromGui" key="view.desktop.TopBar"/> (top), the <term type="ediromGui" key="view.desktop.TaskBar"/> (bottom), the <term type="ediromGui" key="view.desktop.Desktop"/> and the <term type="ediromGui" key="view.navigator.Navigator"/> (right).</head>
                </figure>
                
@@ -86,7 +86,7 @@
                       On the right is the input for the <ptr target="#search"/>.
                    </p>
                   <figure>
-                     <graphic url="help/images/menubar_en.png"/>
+                     <graphic url="images/menubar_en.png"/>
                      <head>Detailed view of the <term type="ediromGui" key="view.desktop.TopBar"/> with <term type="ediromGui" key="view.desktop.TopBar_homeBtn"/> and <term type="ediromGui" key="comboBox"/> for the work selection (left) and the search field (right).</head>
                   </figure>
                   <div type="div3" xml:id="search">
@@ -96,14 +96,14 @@
                      <p>The <term type="ediromGui" key="view.desktop.TaskBar_search"/> window can be opened by clicking the <term type="ediromGui" key="view.desktop.TaskBar_search"/> button (magnifying glass) in the <term type="ediromGui" key="view.desktop.TopBar"/> or by entering a search query in the <term type="ediromGui" key="view.desktop.TopBar_searchField"/>.
                         A text-based search is performed on all content in the edition.</p>
                      <figure>
-                        <graphic url="help/images/searchField.png"/>
+                        <graphic url="images/searchField.png"/>
                         <head>Detailed view of the <term type="ediromGui" key="view.desktop.TopBar_searchField"/>: Clicking on the magnifying glass triggers the <term type="ediromGui" key="view.desktop.TaskBar_searchWin"/> command.</head>
                      </figure>
                      <p>After a search query is executed, all results are grouped with corresponding content, eg text document, annotation.
                         Individual search results may be highlighted separately.
                         If a search query results in more than three hits per entry, a <q>Show all hits</q> link appears.</p>
                      <figure>
-                        <graphic url="help/images/searchWindow_en.png"/>
+                        <graphic url="images/searchWindow_en.png"/>
                         <head>The <term type="ediromGui" key="view.window.search.SearchWindow_Title"/> window</head>
                      </figure>
                    </div>
@@ -118,7 +118,7 @@
                      The <term type="ediromGui" key="view.navigator.Navigator"/> contains an edition-specific list of objects that can be organized into categories. 
                      If an element in the list is clicked, the corresponding object opens in a window of the <term type="ediromGui" key="view.desktop.Desktop"/>.</p>
                   <figure>
-                     <graphic url="help/images/navigator_en.png"/>
+                     <graphic url="images/navigator_en.png"/>
                      <head>An exemplary <term type="ediromGui" key="view.navigator.Navigator"/></head>
                   </figure>
                   <p>If the <term type="ediromGui" key="view.navigator.Navigator"/> contains many objects, you can navigate through the contents using the scroll bar on the right edge of the window.
@@ -132,54 +132,54 @@
                   </head>
                   <p>Through the <term type="ediromGui" key="view.desktop.TaskBar"/> at the bottom of the <term type="ediromGui" key="view.desktop.Desktop"/> the global content-related functions can be accessed on the left and the meta functions on the right.</p>
                   <figure>
-                     <graphic url="help/images/taskBar_en.png"/>
+                     <graphic url="images/taskBar_en.png"/>
                      <head>Detailed view of the <term type="ediromGui" key="view.desktop.TaskBar"/></head>
                   </figure>
                   <p>The first three buttons on the left control the different arrangement of all open content windows on the <term type="ediromGui" key="view.desktop.Desktop"/>.</p>
                   <figure>
-                     <graphic url="help/images/arrangeButtons_grid.png"/>
+                     <graphic url="images/arrangeButtons_grid.png"/>
                      <head><term type="ediromGui" key="view.desktop.TaskBar_Sort_grid"/></head>
                   </figure>
                   <figure>
-                     <graphic url="help/images/arrangeButtons_horizontal.png"/>
+                     <graphic url="images/arrangeButtons_horizontal.png"/>
                      <head><term type="ediromGui" key="view.desktop.TaskBar_Sort_horizontal"/></head>
                   </figure>
                   <figure>
-                     <graphic url="help/images/arrangeButtons_vertical.png"/>
+                     <graphic url="images/arrangeButtons_vertical.png"/>
                      <head><term type="ediromGui" key="view.desktop.TaskBar_Sort_vertical"/></head>
                   </figure>
                   <p>The <term type="ediromGui" key="Bar"/>s of facsimiles and editions are usually provided with numbers; these can be shown and hidden for all open windows with musical content using the fourth button from the left.</p>
                   <figure>
-                     <graphic url="help/images/measureNumbers.png"/>
+                     <graphic url="images/measureNumbers.png"/>
                      <head><term type="ediromGui" key="view.desktop.TaskBar_measureNumbers"/></head>
                   </figure>
                   <p>Music editions or facsimiles and libretto editions can contain annotations that can be opened using annotation symbols.
                      With the speech bubble button you can <term type="ediromGui" key="view.desktop.TaskBar_annotations"/>.
                      Annotations can be assigned priorities and categories. Filtering annotations according to these priorities and annotations is not possible via the global button in the <term type="ediromGui" key="view.desktop.TaskBar"/>, but only via selection in an individual window.</p>
                   <figure>
-                     <graphic url="help/images/annotations.png"/>
+                     <graphic url="images/annotations.png"/>
                      <head><term type="ediromGui" key="view.desktop.TaskBar_annotations"/></head>
                   </figure>
                   <!-- Presently not in use ... -->
                   <!--
                   <p>The <term type="ediromGui" key="view.desktop.Desktop"/> button opens a new <term type="ediromGui" key="view.desktop.Desktop"/> in <term type="ediromGui" key ="global_appName"/>. This will open a completely new set of windows without changing the contents of the current desktop.</p>
                   <figure>
-                     <graphic url="help/images/workspace-switcher.png"/>
+                     <graphic url="images/workspace-switcher.png"/>
                      <head><term type="ediromGui" key="view.desktop.Desktop"/></head>
                   </figure>
                   -->
                   <p>The button with the two horizontal arrows triggers the <term type="ediromGui" key="view.desktop.TaskBar_concordanceNav"/> command, and the navigator for <ptr target="#concordanceNavigator"/> opens. Details on how to use the concordance navigator can be found in the corresponding section.</p>
                   <figure>
-                     <graphic url="help/images/concordanceNavigator.png"/>
+                     <graphic url="images/concordanceNavigator.png"/>
                      <head><term type="ediromGui" key="view.desktop.TaskBar_concordanceNav"/></head>
                   </figure>
                   <p>At the bottom right, you can use the i (as info) button that opens an <term type="ediromGui" key="view.desktop.TaskBar_about"/> window and the question mark button to open the <term type="ediromGui" key="view.desktop.TaskBar_help"/> or move it to the foreground.</p>
                   <figure>
-                     <graphic url="help/images/about.png"/>
+                     <graphic url="images/about.png"/>
                      <head><term type="ediromGui" key="view.desktop.TaskBar_about"/></head>
                   </figure>
                   <figure>
-                     <graphic url="help/images/help.png"/>
+                     <graphic url="images/help.png"/>
                      <head><term type="ediromGui" key="view.desktop.TaskBar_help"/></head>
                   </figure>
                </div>
@@ -195,8 +195,8 @@
                   However, the existence of the concordances in question depends on the respective edition.
                   If the selected concordance contains further subdivisions, such as sentences, a second drop-down menu will appear for selection.</p>
                <figure>
-                    <graphic url="help/images/concNav_en.png"/>
-                    <graphic url="help/images/concNav2_en.png"/>
+                    <graphic url="images/concNav_en.png"/>
+                    <graphic url="images/concNav2_en.png"/>
                     <head><term type="ediromGui" key="view.desktop.TaskBar_concordanceNav"/> with and without additional drop-down menu.</head>
                 </figure>
                 <p>Below the slider is the button <term type="ediromGui" key="view.window.concordanceNavigator.ConcordanceNavigator_Show"/>. 
@@ -218,7 +218,7 @@
                <head>
                   <term type="ediromGui" key="controller.window.Window_textView"/>
                </head>
-               <p>If the content of a window is text-based, e.g. a TEI file, the entry for <term type="ediromGui" key="controller.window.Window_textView"/> is within a <term><term type="ediromGui" key="view.window.TobBar_View"/>Menu</term> window available.
+               <p>If the content of a window is text-based, e.g. a TEI file, the entry for <term type="ediromGui" key="controller.window.Window_textView"/> is within a <term><term type="ediromGui" key="view.window.TopBar_View"/> Menu</term> window available.
                   The <term type="ediromGui" key="controller.window.Window_textView"/> appears in a similar form to a web page and may contain links to other content.
                </p>
             </div>
@@ -277,54 +277,54 @@
                   </head>
                   <p>The <term type="ediromGui" key="view.window.BottomBar"/> contains the following tools for navigation within the content of the sources:</p>
                   <figure>
-                     <graphic url="help/images/pageView.png"/>
+                     <graphic url="images/pageView.png"/>
                      <head><term type="ediromGui" key="view.window.source.SourceView_PageBasedView"/></head>
                      <p>This switches to page-based navigation of the source.</p>
                   </figure>
                   <figure>
-                     <graphic url="help/images/barView.png"/>
+                     <graphic url="images/barView.png"/>
                      <head><term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView"/></head>
                      <p>switches to <term type="ediromGui" key="Bar"/>-based navigation of the source. When this view is activated,slightly different tools appear in the <term type="ediromGui" key="view.window.BottomBar"/> as in the <term type="ediromGui" key="view.window.source.SourceView_PageBasedView"/> (see descriptions below).</p>
                   </figure>
                   <figure>
-                     <graphic url="help/images/prev-box-next.png"/>
+                     <graphic url="images/prev-box-next.png"/>
                      <head><term type="ediromGui" key="view.window.source.SourceView_PageBasedView_pageSpinner"/> or <term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView_measureSpinner"/></head>
                      <p>The number in the number field shows the current page number (<term type="ediromGui" key="view.window.source.SourceView_PageBasedView"/>) or <term type="ediromGui" key="Bar"/> number (<term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView"/>).
                         Switching to another page or <term type="ediromGui" key="Bar"/> is possible by clicking on the arrow heads or entering a number in the number field.
                         The possible numbers correspond to the source, so they do not always start with 1 and can also contain alphanumeric characters.</p>
                   </figure>
                   <figure>
-                     <graphic url="help/images/slider.png"/>
+                     <graphic url="images/slider.png"/>
                      <head><term type="ediromGui" key="view.window.source.SourceView_PageBasedView"/>, <term type="ediromGui" key="view.window.source.SourceView_zoomSlider"/></head>
                      <p>This sets the zoom level for the displayed source.</p>
                   </figure>
                   <figure>
-                     <graphic url="help/images/SourceView_measureBasedCombo.png"/>
+                     <graphic url="images/SourceView_measureBasedCombo.png"/>
                      <head><term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView"/>, <term type="ediromGui" key="view.window.source.SourceView_measureBasedCombo"/></head>
                      <p>The movement whose <term type="ediromGui" key="Bar"/>s should be displayed can be selected.</p>
                   </figure>
                   <figure>
-                     <graphic url="help/images/SourceView_measureBasedRange.png"/>
+                     <graphic url="images/SourceView_measureBasedRange.png"/>
                      <head><term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView"/>, <term type="ediromGui" key="view.window.source.SourceView_measureBasedRange"/></head>
                      <p>Enter a <term type="ediromGui" key="Bar"/> range through which you want to scroll.</p>
                   </figure>
                   <figure>
-                     <graphic url="help/images/selectVoices.png"/>
+                     <graphic url="images/selectVoices.png"/>
                      <head><term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView"/>, <term type="ediromGui" key="view.window.source.SourceView_MeasureBasedView_selectVoices"/></head>
                      <p>Individual parts can be selected. This tool is only available when different parts are in the encoding.</p>
                   </figure>
                   <figure>
-                     <graphic url="help/images/measureNumbers.png"/>
+                     <graphic url="images/measureNumbers.png"/>
                      <head><term type="ediromGui" key="view.desktop.TaskBar_measureNumbers"/></head>
                      <p>The <term type="ediromGui" key="Bar"/>s of facsimiles and editions are usually provided with numbers; these can be shown and hidden in the current window using this button. The window's setting will be overridden when the global <term type="ediromGui" key="view.desktop.TaskBar_measureNumbers"/> button is used.</p>
                   </figure>
                   <figure>
-                     <graphic url="help/images/annotations.png"/>
+                     <graphic url="images/annotations.png"/>
                      <head><term type="ediromGui" key="view.desktop.TaskBar_annotations"/></head>
                     <p>With the speech bubble button you can <term type="ediromGui" key="view.desktop.TaskBar_annotations"/> for the current window. The window's setting will be overridden when the global <term type="ediromGui" key="view.desktop.TaskBar_annotations"/> button is used.</p>
                   </figure>
                   <figure>
-                     <graphic url="help/images/zoom-fit.png"/>
+                     <graphic url="images/zoom-fit.png"/>
                      <head><term type="ediromGui" key="view.window.source.SourceView_fitView"/></head>
                      <p>This resizes the current source to fit the window.</p>
                   </figure>
@@ -358,7 +358,7 @@
                <head>
                   <term type="ediromGui" key="controller.window.Window_annotationView"/>
                </head>
-               <p>With the sub-item <term type="ediromGui" key="controller.window.Window_annotationView"/> from the <term type="ediromGui" key="view.window.TobBar_View"/> menu you can change the readings or the individual ones Open annotations from the critical report of this work.
+               <p>With the sub-item <term type="ediromGui" key="controller.window.Window_annotationView"/> from the <term type="ediromGui" key="view.window.TopBar_View"/> menu you can change the readings or the individual ones Open annotations from the critical report of this work.
                   Some editions also offer an entry to the critical report as a topic in the <term type="ediromGui" key="view.navigator.Navigator"/>.
                   The header of the critical report can have the following entries.
                   <list type="gloss">
@@ -396,23 +396,23 @@
                </p><lb/>
                <p>The <term type="ediromGui" key="view.window.BottomBar"/> contains the following tools.</p>
                <figure>
-                  <graphic url="help/images/view-list-details-symbolic.png"/>
+                  <graphic url="images/view-list-details-symbolic.png"/>
                   <head>(Return to) <term type="ediromGui" key="view.window.AnnotationView_ListView"/></head>
                </figure>
                <figure>
-                  <graphic url="help/images/go-previous.png"/>
+                  <graphic url="images/go-previous.png"/>
                   <head><term type="ediromGui" key="view.window.AnnotationView_PreviousAnnotation"/> from the annotation list.</head>
                </figure>
                <figure>
-                  <graphic url="help/images/go-next.png"/>
+                  <graphic url="images/go-next.png"/>
                   <head><term type="ediromGui" key="view.window.AnnotationView_NextAnnotation"/> from the annotation list.</head>
                </figure>
                <figure>
-                  <graphic url="help/images/openAllWindows.png"/>
+                  <graphic url="images/openAllWindows.png"/>
                   <head><term type="ediromGui" key="view.window.AnnotationView_OpenAll"/>: Opens the detailed view of all sources related to the currently selected annotation.</head>
                </figure>
                <figure>
-                  <graphic url="help/images/closeAllWindows.png"/>
+                  <graphic url="images/closeAllWindows.png"/>
                   <head><term type="ediromGui" key="view.window.AnnotationView_CloseAll"/>: Only available if <term type="ediromGui" key="view.window.AnnotationView_OpenAll"/> was previously run.</head>
                </figure>
             </div>
@@ -423,12 +423,12 @@
               <head>Working with Annotations</head>
               <p>Annotations that come from an edition's Critical Report can be opened in different ways in <term type="ediromGui" key="global_appName"/>.
                  <lb/>(1) Symbols that are already displayed in the source already provide a wide range of information. The complete critical report can also be accessed by double-clicking.
-                 <lb/>(2) The complete critical report of an edition is usually available as <ptr type="ediromGui" target="#annotationView"/> under the menu item <term key="view.window.TobBar_View"/> in the <term type="ediromGui" key="view.window.TopBar"/> available. As already mentioned above, some editions also offer an entry into the critical report as a topic in the <term type="ediromGui" key="view.navigator.Navigator"/>.</p>
+                 <lb/>(2) The complete critical report of an edition is usually available as <ptr type="ediromGui" target="#annotationView"/> under the menu item <term type="ediromGui" key="view.window.TopBar_View"/> in the <term type="ediromGui" key="view.window.TopBar"/> available. As already mentioned above, some editions also offer an entry into the critical report as a topic in the <term type="ediromGui" key="view.navigator.Navigator"/>.</p>
               <p>Furthermore, <term type="ediromGui" key="global_appName"/> provides the option to create annotations in <term type="ediromGui" key="view.window.AnnotationView_Categories"/> and <term type="ediromGui" key="view.window.AnnotationView_Priority"/>.
                  The use of these options depends on the edition guidelines (e.g. the categories that were actually used). 
                  Therefore, the following description should not be viewed as a complete documentation, but rather as an introduction to the basic concepts of this consideration.</p>
               <figure>
-                 <graphic url="help/images/annotationOverview.png"/>
+                 <graphic url="images/annotationOverview.png"/>
                  <head>An example screenshot of an annotation icon, showing the tooltip of a single annotation.</head>
               </figure>
               
@@ -438,15 +438,15 @@
                  <p>A <term type="ediromGui" key="view.window.AnnotationView_Priority"/> gives an indication of the importance of the annotation.
                     The visualization of the <term type="ediromGui" key="view.window.AnnotationView_Priority"/> in the <ptr target="#facsimileView"/> is achieved by color coding the symbols:</p>
                  <figure>
-                    <graphic url="help/images/annotGeneric1.png"/>
+                    <graphic url="images/annotGeneric1.png"/>
                     <p><hi rend="italic">Priority 1</hi> Annotations refer to the edition-specific key issues and are marked red.</p>
                  </figure>
                  <figure>
-                    <graphic url="help/images/annotGeneric2.png"/>
+                    <graphic url="images/annotGeneric2.png"/>
                     <p><hi rend="italic">Priority 2</hi> Annotations refer to important aspects of the edition that are not of the utmost importance for the edition and are marked orange.</p>
                  </figure>
                  <figure>
-                    <graphic url="help/images/annotGeneric3.png"/>
+                    <graphic url="images/annotGeneric3.png"/>
                     <p><hi rend="italic">Priority 3</hi> Annotations contain editorial observations that are normally only of interest to the document sources. These annotations are marked yellow.</p>
                  </figure>
               </div>
@@ -469,9 +469,9 @@
                           <cell>score</cell>
                           <cell>
                              <figure>
-                                <graphic url="help/images/annotNotation1.png"/>
-                                <graphic url="help/images/annotNotation2.png"/>
-                                <graphic url="help/images/annotNotation3.png"/>
+                                <graphic url="images/annotNotation1.png"/>
+                                <graphic url="images/annotNotation2.png"/>
+                                <graphic url="images/annotNotation3.png"/>
                              </figure>
                           </cell>
                        </row>
@@ -479,9 +479,9 @@
                           <cell>Expressive labeling</cell>
                           <cell>
                              <figure>
-                                <graphic url="help/images/annotExpr1.png"/>
-                                <graphic url="help/images/annotExpr2.png"/>
-                                <graphic url="help/images/annotExpr3.png"/>
+                                <graphic url="images/annotExpr1.png"/>
+                                <graphic url="images/annotExpr2.png"/>
+                                <graphic url="images/annotExpr3.png"/>
                              </figure>
                           </cell>
                        </row>
@@ -489,9 +489,9 @@
                           <cell>Choral Text</cell>
                           <cell>
                              <figure>
-                                <graphic url="help/images/annotText1.png"/>
-                                <graphic url="help/images/annotText2.png"/>
-                                <graphic url="help/images/annotText3.png"/>
+                                <graphic url="images/annotText1.png"/>
+                                <graphic url="images/annotText2.png"/>
+                                <graphic url="images/annotText3.png"/>
                              </figure>
                           </cell>
                        </row>
@@ -499,9 +499,9 @@
                           <cell>Combination of different categories</cell>
                           <cell>
                              <figure>
-                                <graphic url="help/images/annotGeneric1.png"/>
-                                <graphic url="help/images/annotGeneric2.png"/>
-                                <graphic url="help/images/annotGeneric3.png"/>
+                                <graphic url="images/annotGeneric1.png"/>
+                                <graphic url="images/annotGeneric2.png"/>
+                                <graphic url="images/annotGeneric3.png"/>
                              </figure>
                           </cell>
                        </row>

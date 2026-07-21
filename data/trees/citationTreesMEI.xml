@@ -1,0 +1,19 @@
+<refsDecl xmlns:mei="http://www.music-encoding.org/ns/mei">
+    <citeStructure xml:id="musicStructure"
+                    unit="Movement"
+                    match="mei:mdiv"
+                    use="@xml:id">
+        <citeStructure unit="Measure"
+                    match="mei:measure"
+                    use="@xml:id"/>
+    </citeStructure>
+
+    <citeStructure xml:id="paginationStructure"
+                    unit="Surface"
+                    match="mei:surface"
+                    use="@xml:id">
+        <citeStructure unit="Zone"
+                    match="mei:zone"
+                    use="@xml:id"/>
+    </citeStructure>
+</refsDecl>

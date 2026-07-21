@@ -7,11 +7,12 @@ xquery version "3.1";
 
 import module namespace functx = "http://www.functx.com";
 
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
+
 (: NAMESPACE DECLARATIONS ================================================== :)
 
 declare namespace mei = "http://www.music-encoding.org/ns/mei";
 declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
-
 declare namespace request = "http://exist-db.org/xquery/request";
 declare namespace xlink = "http://www.w3.org/1999/xlink";
 declare namespace xmldb = "http://exist-db.org/xquery/xmldb";
@@ -38,7 +39,7 @@ let $measureId :=
     else
         ($measureId)
 
-let $mei := doc($id)/root()
+let $mei := eutil:getDoc($id)
 
 let $movementId := $mei/id($measureId)/ancestor::mei:mdiv[1]/string(@xml:id)
 

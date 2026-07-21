@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?><?xml-model href="http://www.tei-c.org/Vault/P5/4.2.2/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?><?xml-model href="http://www.tei-c.org/Vault/P5/4.2.2/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?><TEI xmlns="http://www.tei-c.org/ns/1.0" xml:id="test-tei-document">
+   <teiHeader>
+      <fileDesc>
+         <titleStmt>
+            <title>Sample tei file</title>
+            <author>Some Author</author>
+            <author>Another Author</author>
+         </titleStmt>
+         <publicationStmt>
+            <p/>
+         </publicationStmt>
+         <sourceDesc>
+            <p/>
+         </sourceDesc>
+      </fileDesc>
+      <encodingDesc>
+         <tagsDecl>
+            <rendition xml:id="superscript" scheme="css">vertical-align: super;</rendition>
+            <rendition xml:id="italic" scheme="css">font-style: italic;</rendition>
+         </tagsDecl>
+      </encodingDesc>
+      <revisionDesc>
+         <change n="1">
+            <persName ref="https://github.com/fmacca">Francesco Maccarini</persName>
+            <date when="2026-06"/>
+            <p>Hello this is a paragraph</p>
+         </change>
+      </revisionDesc>
+   </teiHeader>
+   <text>
+      <body>
+         <pb n="1" xml:id="pb-1"/>
+         <head>This is the main header</head>
+         <div xml:id="test-div-1">
+            <head>This is the header of the first div</head>
+            <p>Hello this is a paragraph</p>
+            <p xml:id="not-in-p2-1">This paragraph is not in page 2<emph>Hello this is a paragraph</emph>Hello this is a paragraph<hi rendition="#italic">Hello this is a paragraph</hi>Hello this is a paragraph<hi rendition="#italic">Hello this is a paragraph</hi>Hello this is a paragraph</p>
+               <pb n="2" xml:id="pb-2"/>
+            <p>Hello this is a paragraph<emph>Hello this is a paragraph</emph>Hello this is a paragraph</p>
+            <div xml:id="nested-div">
+               <head>This is the header of the nested div (inside the first div)</head>
+            </div>
+            <p>Hello this is a paragraph<note xml:id="note-1" place="foot">I am a footnote</note><emph>Hello this is a paragraph</emph>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph<emph>Hello this is a paragraph</emph>Hello this is a paragraph<hi rend="#superscript">Hello this is a paragraph</hi>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph<emph>Hello this is a paragraph</emph>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph<lb/>Hello this is a paragraph<lb/>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph<lb/>Hello this is a paragraph<lb/>Hello this is a paragraph<lb/>Hello this is a paragraph</p>
+         </div>
+         <div xml:id="test-div-2">
+            <head>I am the header of the second div</head>
+            <p xml:id="yes-in-p2-1">This paragraph is in page 2</p>
+            <pb n="3" xml:id="pb-3"/>
+            <p xml:id="not-in-p2-2">This paragraph is not in page 2</p>
+            <p>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph<lb/>Hello this is a paragraph<lb/>Hello this is a paragraph<lb/><lb/>Hello this is a paragraph<ref n="Internetseite des Edirom-Projekts im Browser öffnen" target="https://www.edirom.de">Hello this is a paragraph</ref>Hello this is a paragraph<ref n="Internetseite der Weber-Ausgabe im Browser öffnen" target="https://www.weber-gesamtausgabe.de">Hello this is a paragraph</ref><lb/>Hello this is a paragraph<ref n="E-Mail an Edirom schreiben" target="mailto:info@edirom.de">Hello this is a paragraph</ref>Hello this is a paragraph<ref n="E-Mail an die Weber-Ausgabe schreiben" target="mailto:info@weber-gesamtausgabe.de">Hello this is a paragraph</ref></p>
+         </div>
+         <div xml:id="test-div-3">
+            <head>I am the header of the third div</head>
+            <p>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph<emph>Hello this is a paragraph</emph>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph</p>
+            <p>Hello this is a paragraph</p>
+            <p rend="footer">Hello this is a paragraph<lb/>Hello this is a paragraph<lb/>Hello this is a paragraph</p>
+         </div>
+         <div xml:id="test-div-4">
+            <p>I am the only paragraph in the fourth div, that does not have a heading.</p>
+         </div>
+      </body>
+   </text>
+</TEI>
