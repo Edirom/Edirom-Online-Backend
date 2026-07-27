@@ -30,6 +30,7 @@ declare option output:media-type "application/json";
 declare variable $uri := request:get-parameter('uri', '');
 declare variable $edition := request:get-parameter('edition', '');
 declare variable $lang := request:get-parameter('lang', '');
+declare variable $mode := request:get-parameter('mode', '');
 
 
 (: FUNCTION DECLARATIONS =================================================== :)
@@ -127,15 +128,29 @@ let $prios := array {
         }
 }
 
-let $taxonomiesArray :=
-    annotation:get-referenced-categories-as-taxonomy-array($annots, ($mei, $editionCollection), $lang)
+let $baseMap := map {
+    (: TODO deprecate categories field with Edirom-Online-API 2.0.0 :)
+    'categories': $categories,
+    (: TODO deprecate priorities field with Edirom-Online-API 2.0.0 :)
+    'priorities': $prios,
+    'count': count($annots)    
+}
 
+
+let $taxonomiesArray := annotation:get-referenced-categories-as-taxonomy-array($annots, ($mei, $editionCollection), $lang)
+
+let $taxonomiesMap := map {
+    'taxonomies': $taxonomiesArray
+}
+
+(: Return the appropriate result based on the mode :)
 return
-    map {
-        (: TODO deprecate categories field with Edirom-Online-API 2.0.0 :)
-        'categories': $categories,
-        (: TODO deprecate priorities field with Edirom-Online-API 2.0.0 :)
-        'priorities': $prios,
-        'count': count($annots),
-        'taxonomies': $taxonomiesArray
-    }
+    if($mode eq 'taxonomies') then (            
+        map:merge((
+            $baseMap,
+            $taxonomiesMap
+        ))
+    )
+    else (
+        $baseMap
+    )

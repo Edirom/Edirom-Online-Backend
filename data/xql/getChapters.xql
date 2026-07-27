@@ -56,7 +56,7 @@ let $ret as array(*)* :=
             $tei//tei:div1 | $tei//tei:milestone[@unit = 'number'] |
             $tei//tei:div[@type = 'act']
         let $pageId :=
-            if ($mode = 'pageMode') then
+            if ($mode eq 'pageMode') then
                 (substring-after($elem/preceding::tei:pb[1]/@facs, '#'))
             else
                 ('-1')
@@ -111,7 +111,7 @@ let $ret as array(*)* :=
                         else
                             ($label)
                     let $pageId :=
-                        if ($mode = 'pageMode') then
+                        if ($mode eq 'pageMode') then
                             (substring-after($scene/preceding::tei:pb[1]/@facs, '#'))
                         else
                             ('-1')
