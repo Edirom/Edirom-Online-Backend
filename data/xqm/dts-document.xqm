@@ -262,6 +262,14 @@ declare function dts-document:selectTEIPages(
         $reduced/descendant-or-self::*[@xml:id = $commonAncestorID]/*
 };
 
+declare function dts-document:selectBasedOnCiteStructure(
+    $document as node(),
+    $ref as xs:string?,
+    $citationTree as element(citeStructure)*
+) as node()* {
+    $document/id($ref)
+};
+
 declare function dts-document:selectElementOrRange(
     $document as node(),
     $ref as xs:string?,
@@ -270,10 +278,10 @@ declare function dts-document:selectElementOrRange(
     $citationTree as element(citeStructure)*
 ) as node()* {
     if ($ref) then
-        let $idSelection := $document/id($ref)
+        let $citeStructureSelection := dts-document:selectBasedOnCiteStructure($document, $ref, $citationTree)
         let $candidateSelection :=
-            if ($idSelection) then
-                $idSelection
+            if ($citeStructureSelection) then
+                $citeStructureSelection
             else
                 $document//*[local-name() = $ref]
         return
@@ -295,8 +303,8 @@ declare function dts-document:selectElementOrRange(
             else
                 error($errors:NOT_FOUND, "The specified citable units did not match any element in the document.")
     else if ($start and $end) then
-        let $candidateStartNode := $document/id($start)
-        let $candidateEndNode := $document/id($end)
+        let $candidateStartNode := dts-document:selectBasedOnCiteStructure($document, $start, $citationTree)
+        let $candidateEndNode := dts-document:selectBasedOnCiteStructure($document, $end, $citationTree)
         let $startNode :=
             if (
                 $candidateStartNode and
