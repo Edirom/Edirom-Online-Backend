@@ -325,7 +325,7 @@ declare function dts-document:selectElementOrRange(
             else if ($candidateSelection) then
                 error($errors:INVALID_PARAMETERS, "The selected citable units are not part of the citation tree specified for this document and are not part of the always preserved elements." || "Citation tree: " || string-join($citationTree/@xml:id, ", ") || ". Selected element: " || node-name($candidateSelection[1]) || ", Selected element @xml:id: " || $candidateSelection[1]/@xml:id)
             else
-                error($errors:NOT_FOUND, "The specified citable units did not match any element in the document.")
+                error($errors:NOT_FOUND, "The specified citable units did not match any element in the document for the specified citation tree.")
     else if ($start and $end) then
         let $candidateStartNode := dts-document:selectBasedOnCiteStructure($document, $start, $citationTree)
         let $candidateEndNode := dts-document:selectBasedOnCiteStructure($document, $end, $citationTree)
@@ -338,7 +338,7 @@ declare function dts-document:selectElementOrRange(
             else if ($candidateStartNode) then
                 error($errors:INVALID_PARAMETERS, "The selected start citable unit is not part of the citation tree specified for this document." || "Citation tree: " || string-join($citationTree/@xml:id, ", ") || ". Selected element: " || node-name($candidateStartNode[1]) || ", Selected element @xml:id: " || $candidateStartNode[1]/@xml:id)
             else
-                error($errors:NOT_FOUND, "The specified start citable unit did not match any element in the document.")
+                error($errors:NOT_FOUND, "The specified start citable unit did not match any element in the document for the specified citation tree.")
         let $endNode :=
             if (
                 $candidateEndNode and
@@ -348,7 +348,7 @@ declare function dts-document:selectElementOrRange(
             else if ($candidateEndNode) then
                 error($errors:INVALID_PARAMETERS, "The selected end citable unit is not part of the citation tree specified for this document." || "Citation tree: " || string-join($citationTree/@xml:id, ", ") || ". Selected element: " || node-name($candidateEndNode[1]) || ", Selected element @xml:id: " || $candidateEndNode[1]/@xml:id)
             else
-                error($errors:NOT_FOUND, "The specified end citable unit did not match any element in the document.")
+                error($errors:NOT_FOUND, "The specified end citable unit did not match any element in the document for the specified citation tree.")
         
         return
             if (node-name($startNode[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb")
