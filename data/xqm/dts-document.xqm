@@ -267,7 +267,31 @@ declare function dts-document:selectBasedOnCiteStructure(
     $ref as xs:string?,
     $citationTree as element(citeStructure)*
 ) as node()* {
-    $document/id($ref)
+    let $citeStructures := ($citationTree, $citationTree//citeStructure)
+    for $citeStructure in $citeStructures
+    let $match := normalize-space($citeStructure/@match)
+    let $use := normalize-space($citeStructure/@use)
+    let $matchName :=
+        if (not($match)) then
+            ()
+        else
+            resolve-QName($match, $citeStructure)
+    let $selected :=
+        if (not($match) or not($use) or not($ref)) then
+            ()
+        else
+            let $attributeName :=
+                if (starts-with($use, "@")) then
+                    substring($use, 2)
+                else
+                    ()
+            return
+                if ($attributeName) then
+                    $document//*[node-name(.) eq $matchName and string(@*[string(node-name(.)) eq $attributeName]) = $ref][1]
+                else
+                    ()
+    return
+        $selected
 };
 
 declare function dts-document:selectElementOrRange(

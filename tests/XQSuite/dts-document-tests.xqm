@@ -21,7 +21,7 @@ declare function ddt:citationTree(
                         use="@xml:id">
             <citeStructure unit="Measure"
                             match="mei:measure"
-                            use="@xml:id"/>
+                            use="@n"/>
         </citeStructure>
         <citeStructure xml:id="paginationStructure"
                         unit="Surface"
@@ -34,6 +34,54 @@ declare function ddt:citationTree(
     </refsDecl>/citeStructure[
         not($tree) or @xml:id = $tree
     ]
+};
+
+declare
+    %test:assertEquals("movement-1")
+    function ddt:test-selectBasedOnCiteStructure-selects-by-xml-id() as xs:string {
+        let $document := document {
+            <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.0.0">
+                <meiHead/>
+                <music>
+                    <body>
+                        <mdiv xml:id="movement-1">
+                            <score>
+                                <section>
+                                    <measure n="42"/>
+                                </section>
+                            </score>
+                        </mdiv>
+                    </body>
+                </music>
+            </mei>
+        }
+        let $citationTree := ddt:citationTree("musicStructure")
+        let $selected := dts-document:selectBasedOnCiteStructure($document, "movement-1", $citationTree)
+        return string($selected/@xml:id)
+};
+
+declare
+    %test:assertEquals("42")
+    function ddt:test-selectBasedOnCiteStructure-selects-by-n() as xs:string {
+        let $document := document {
+            <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.0.0">
+                <meiHead/>
+                <music>
+                    <body>
+                        <mdiv xml:id="movement-1">
+                            <score>
+                                <section>
+                                    <measure n="42"/>
+                                </section>
+                            </score>
+                        </mdiv>
+                    </body>
+                </music>
+            </mei>
+        }
+        let $citationTree := ddt:citationTree("musicStructure")
+        let $selected := dts-document:selectBasedOnCiteStructure($document, "42", $citationTree)
+        return string($selected/@n)
 };
 
 declare
