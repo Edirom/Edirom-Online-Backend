@@ -36,6 +36,7 @@ declare option output:media-type "text/html";
 let $lang := request:get-parameter('lang', '')
 let $edition := request:get-parameter('edition', '')
 let $uri := request:get-parameter('uri', '')
+let $mode := request:get-parameter('mode', '')
 let $docUri := substring-before($uri, '#')
 let $internalId := substring-after($uri, '#')
 let $doc := eutil:getDoc($docUri)
@@ -45,26 +46,33 @@ let $participants := annotation:getParticipants($annot)
 
 (: TODO deprecate below categories and priorities fields with Edirom-Online-API 2.0.0 :)
 let $hideLegacyFields := xs:boolean(edition:getPreference('annotation_hide_legacy_fields', $edition))
+let $legacyStringSuffix := if($mode eq 'taxonomies') then ' (legacy)' else ''
 let $priority := annotation:getPriorityLabel($annot)
 let $priorityLabel := switch ($priority)
      case ""
          return
              ()
      default return
-         eutil:getLanguageString('view.window.AnnotationView_Priority', ()) || ' (legacy)'
+         eutil:getLanguageString('view.window.AnnotationView_Priority', ()) || $legacyStringSuffix
 
  let $categories := annotation:get-category-labels-as-sequence($annot)
  let $categoriesLabel :=
     switch (count($categories))
         case 0 return ()
         case 1 return
-             eutil:getLanguageString('view.window.AnnotationView_Category', ()) || ' (legacy)'
+             eutil:getLanguageString('view.window.AnnotationView_Category', ()) || $legacyStringSuffix
         default return
-         eutil:getLanguageString('view.window.AnnotationView_Categories', ()) || ' (legacy)'
+         eutil:getLanguageString('view.window.AnnotationView_Categories', ()) || $legacyStringSuffix
 
 (: TODO deprecate above categories and priorities fields with Edirom-Online-API 2.0.0 :)
 
-let $taxonomiesArray := annotation:get-referenced-categories-as-taxonomy-array($annot, $doc, $lang)
+let $taxonomiesArray := if($mode eq 'taxonomies') 
+    then 
+        (: return taxonomy array :)
+        annotation:get-referenced-categories-as-taxonomy-array($annot, $doc, $lang) 
+    else 
+        (: return empty array :)
+        array {}
 
 let $sigla := source:getSiglaAsArray($participants)
 let $siglaLabel := switch (count($sigla))

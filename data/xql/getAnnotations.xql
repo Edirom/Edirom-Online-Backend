@@ -36,8 +36,8 @@ declare option output:media-type "application/json";
 (: VARIABLE DECLARATIONS =================================================== :)
 
 declare variable $EDITION := request:get-parameter('edition', '');
-
 declare variable $URI := request:get-parameter('uri', '');
+declare variable $MODE := request:get-parameter('mode', '');
 
 
 (: QUERY BODY ============================================================= :)
@@ -50,7 +50,7 @@ let $uri :=
 
 let $doc := eutil:getDoc($uri)
 
-let $annotations := annotation:annotationsToJSON($uri, $EDITION)
+let $annotations := annotation:annotationsToJSON($uri, $EDITION, $MODE)
 
 let $annotationFields := distinct-values(for $a in $annotations return map:keys($a))
 
@@ -65,12 +65,27 @@ let $emptyFields :=
 let $baseFields := ('id', 'title', 'categories', 'priority', 'pos', 'sigla')
 let $hasTaxonomyFields := some $f in $annotationFields satisfies not($f = $baseFields)
 
+
+let $baseMap := map {
+    'success': true(),
+    'total': count($doc//mei:annot[@type = 'editorialComment']),
+    'annotations': array {$annotations}
+}
+
+let $taxonomiesMap := map {
+    'fields': $annotationFields,
+    'emptyFields': $emptyFields,
+    'legacyFields': array { if ($hasTaxonomyFields) then ('categories', 'priority') else () }
+} 
+
+(: Return the appropriate result based on the mode :)
 return
-    map {
-        'success': true(),
-        'total': count($doc//mei:annot[@type = 'editorialComment']),
-        'annotations': array {$annotations},
-        'fields': $annotationFields,
-        'emptyFields': $emptyFields,
-        'legacyFields': array { if ($hasTaxonomyFields) then ('categories', 'priority') else () }
-    }
+    if($MODE eq 'taxonomies') then (
+        map:merge((
+            $baseMap,
+            $taxonomiesMap
+        ))
+    )
+    else (
+        $baseMap
+    )

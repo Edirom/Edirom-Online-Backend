@@ -37,6 +37,14 @@ declare option output:method "json";
 declare option output:media-type "application/json";
 
 
+(: VARIABLE DECLARATIONS =================================================== :)
+
+declare variable $sourceUri := request:get-parameter('uri', '');
+declare variable $edition := request:get-parameter('edition', '');
+declare variable $surfaceId := request:get-parameter('pageId', '');
+declare variable $mode := request:get-parameter('mode', '');
+
+
 (: FUNCTION DECLARATIONS =================================================== :)
 
 (:~
@@ -78,20 +86,34 @@ declare function local:getAnnotations($sourceUriSharp as xs:string, $surfaceId a
         let $svgList as array(*)* := local:getAnnotSVGs($id, $plist.raw, $elems)
         
         let $plist as array(*)* := local:getParticipants($id, $plist.raw, $elems)
+
+        let $baseMap := map {
+            'id': $id,
+            'plist': $plist,
+            'svgList': $svgList,
+            'fn': 'loadLink("' || $uri || '")',
+            'uri': $uri,
+            'priority': $prio,
+            'categories': $cat            
+        }
+
+        let $taxonomiesMap := map {
+            'taxonomyClasses': $taxonomyClasses
+        }
         
         return
-            map {
-                'id': $id,
-                'plist': $plist,
-                'svgList': $svgList,
-                'fn': 'loadLink("' || $uri || '")',
-                'uri': $uri,
-                'priority': $prio,
-                'categories': $cat,
-                'taxonomyClasses': $taxonomyClasses
-            }
+            if($mode eq 'taxonomies') then (
+                map:merge((
+                    $baseMap,
+                    $taxonomiesMap
+                ))
+            )
+            else (
+                $baseMap
+            )
     }
 };
+
 
 (:~
  : Returns all annotations in all works of an edirom-edition containing references to a list of IDs from one source
@@ -214,15 +236,9 @@ declare function local:getCoordinates($participant as element()) as xs:integer+ 
 
 (: QUERY BODY ============================================================== :)
 
-let $edition := request:get-parameter('edition', '')
-
-let $sourceUri := request:get-parameter('uri', '')
-
 let $sourceUriSharp := concat($sourceUri, '#')
 
 let $mei := eutil:getDoc($sourceUri)
-
-let $surfaceId := request:get-parameter('pageId', '')
 
 let $surface := $mei/id($surfaceId)
 
