@@ -5,7 +5,7 @@
                     use="@xml:id">
         <citeStructure unit="Measure"
                     match="mei:measure"
-                    use="@n"/>
+                    use="@xml:id"/>
     </citeStructure>
 
     <citeStructure xml:id="paginationStructure"

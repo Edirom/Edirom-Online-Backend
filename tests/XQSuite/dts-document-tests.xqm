@@ -21,6 +21,31 @@ declare function ddt:citationTree(
                         use="@xml:id">
             <citeStructure unit="Measure"
                             match="mei:measure"
+                            use="@xml:id"/>
+        </citeStructure>
+        <citeStructure xml:id="paginationStructure"
+                        unit="Surface"
+                        match="mei:surface"
+                        use="@xml:id">
+            <citeStructure unit="Zone"
+                            match="mei:zone"
+                            use="@xml:id"/>
+        </citeStructure>
+    </refsDecl>/citeStructure[
+        not($tree) or @xml:id = $tree
+    ]
+};
+
+declare function ddt:alternativeCitationTree(
+    $tree as xs:string?
+) as element(citeStructure)* {
+    <refsDecl xmlns:mei="http://www.music-encoding.org/ns/mei">
+        <citeStructure xml:id="musicStructure"
+                        unit="Movement"
+                        match="mei:mdiv"
+                        use="@xml:id">
+            <citeStructure unit="Measure"
+                            match="mei:measure"
                             use="@n"/>
         </citeStructure>
         <citeStructure xml:id="paginationStructure"
@@ -55,7 +80,7 @@ declare
                 </music>
             </mei>
         }
-        let $citationTree := ddt:citationTree("musicStructure")
+        let $citationTree := ddt:alternativeCitationTree("musicStructure")
         let $selected := dts-document:selectBasedOnCiteStructure($document, "movement-1", $citationTree)
         return string($selected/@xml:id)
 };
@@ -79,7 +104,7 @@ declare
                 </music>
             </mei>
         }
-        let $citationTree := ddt:citationTree("musicStructure")
+        let $citationTree := ddt:alternativeCitationTree("musicStructure")
         let $selected := dts-document:selectBasedOnCiteStructure($document, "42", $citationTree)
         return string($selected/@n)
 };
