@@ -29,4 +29,15 @@
         </xsl:copy>
     </xsl:template>
 
+    <xd:doc scope="component">
+        <xd:desc>Copy mei:measure and add an mdivId attribute with the xml:id of the enclosing mei:mdiv element.</xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:measure">
+        <xsl:variable name="mdiv" select="ancestor::mei:mdiv[1]"/>
+        <xsl:copy>
+            <xsl:attribute name="mdivId" select="string($mdiv/@xml:id)"/>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
+    </xsl:template>
+
 </xsl:stylesheet>
