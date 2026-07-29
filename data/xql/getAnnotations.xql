@@ -61,22 +61,19 @@ let $emptyFields :=
     )
     return array { $fieldName }
 
-(: legacy fields are only superseded when taxonomy-derived fields are actually present in the data :)
-let $baseFields := ('id', 'title', 'categories', 'priority', 'pos', 'sigla')
-let $hasTaxonomyFields := some $f in $annotationFields satisfies not($f = $baseFields)
-
-
 let $baseMap := map {
     'success': true(),
     'total': count($doc//mei:annot[@type = 'editorialComment']),
     'annotations': array {$annotations}
 }
 
+(: the flattened 'categories'/'priority' fields are omitted by annotation:annotationsToJSON
+   whenever the document's classification is fully expressible as taxonomy fields, so their
+   presence in 'fields' is the signal for consumers — no separate 'legacyFields' key needed :)
 let $taxonomiesMap := map {
     'fields': $annotationFields,
-    'emptyFields': $emptyFields,
-    'legacyFields': array { if ($hasTaxonomyFields) then ('categories', 'priority') else () }
-} 
+    'emptyFields': $emptyFields
+}
 
 (: Return the appropriate result based on the mode :)
 return

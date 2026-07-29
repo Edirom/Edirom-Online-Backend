@@ -45,7 +45,9 @@ let $annot := $doc/id($internalId)
 let $participants := annotation:getParticipants($annot)
 
 (: TODO deprecate below categories and priorities fields with Edirom-Online-API 2.0.0 :)
-let $hideLegacyFields := xs:boolean(edition:getPreference('annotation_hide_legacy_fields', $edition))
+(: omit the flattened fields only when this annotation's classification is fully expressible
+   as taxonomy fields, mirroring annotation:annotationsToJSON :)
+let $hideLegacyFields := $mode eq 'taxonomies' and annotation:is-fully-taxonomised($annot)
 let $legacyStringSuffix := if($mode eq 'taxonomies') then ' (legacy)' else ''
 let $priority := annotation:getPriorityLabel($annot)
 let $priorityLabel := switch ($priority)
