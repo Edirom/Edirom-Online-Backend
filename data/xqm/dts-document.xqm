@@ -576,6 +576,15 @@ declare function dts-document:transformWrappedXMLToMap(
     return $documentMap
 };
 
+declare function dts-document:addAttributesForJSONOutput(
+    $xml as node()
+) as node() {
+    let $xslAddAttributes := eutil:getDoc($eutil:xsltBase || '/edirom_addAttributesForJSONOutput.xsl')
+    let $doc := transform:transform($xml, $xslAddAttributes, <parameters/>)
+    return
+        $doc
+};
+
 declare function dts-document:document(
     $resource as xs:string?,
     $ref as xs:string?,
@@ -628,7 +637,9 @@ declare function dts-document:document(
                 return
                     document { dts-document:transformTEIToHTML($outputXml, $resource, $xslInstruction, $htmlParameters) }
             else if ($namespace eq "mei" and contains($mediaType, "json")) then
-                dts-document:transformWrappedXMLToMap($outputXml)
+                let $processedXML := dts-document:addAttributesForJSONOutput($outputXml)
+                return
+                    dts-document:transformWrappedXMLToMap($processedXML)
             else
                 error($errors:UNSUPPORTED_MEDIA_TYPE, "The requested media type is not supported. Media type: " || $mediaType || ", Namespace: " || $namespace || ", Ref: " || $ref)
         return

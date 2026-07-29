@@ -1072,27 +1072,30 @@ declare
     (: retrieve a specific zone by ref :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
     %test:arg("ref", "zone_bar-2001")
-    %test:arg("tree", "paginationStructure")
     %test:arg("expectedUlx", "478")
+    %test:arg("expectedSurfaceId", "facsimile-2001002")
     %test:assertTrue
     function ddt:test-document-json-zone-ref(
         $resource as xs:string,
         $ref as xs:string?,
-        $tree as xs:string?,
-        $expectedUlx as xs:string?
+        $expectedUlx as xs:string?,
+        $expectedSurfaceId as xs:string?
     ) { 
         let $html-parameters := map {
             "lang": "de",
             "idPrefix": ""
         }
         let $mediaType := "application/json"
+        let $tree := "paginationStructure"
         let $response := dts-document:document($resource, $ref, (), (), $tree, $mediaType, $html-parameters)
         let $zoneId := $response?zone?zoneId
         let $ulx := $response?zone?ulx
+        let $surfaceId := $response?zone?surfaceId
         return
             map:contains($response, "zone")
             and $zoneId = $ref
             and $ulx = $expectedUlx
+            and $surfaceId = $expectedSurfaceId
 };
 
 declare
@@ -1100,32 +1103,37 @@ declare
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
     %test:arg("start", "zone_bar-20013")
     %test:arg("end", "zone_bar-20015")
-    %test:arg("tree", "paginationStructure")
     %test:arg("expectedZoneCount", 3)
     %test:arg("expectedUlxStart", "2926")
+    %test:arg("expectedSurfaceId", "facsimile-2001002")
     %test:assertTrue
     function ddt:test-document-json-zone-start-end(
         $resource as xs:string,
         $start as xs:string?,
         $end as xs:string?,
-        $tree as xs:string?,
         $expectedZoneCount as xs:integer?,
-        $expectedUlxStart as xs:string?
+        $expectedUlxStart as xs:string?,
+        $expectedSurfaceId as xs:string?
     ) { 
         let $html-parameters := map {
             "lang": "de",
             "idPrefix": ""
         }
+        let $tree := "paginationStructure"
         let $mediaType := "application/json"
         let $response := dts-document:document($resource, (), $start, $end, $tree, $mediaType, $html-parameters)
         let $zoneIdFirst := $response?zone(1)?zoneId
         let $zoneIdLast := $response?zone(array:size($response?zone))?zoneId
         let $ulxStart := $response?zone(1)?ulx
+        let $surfaceIdStart := $response?zone(1)?surfaceId
+        let $surfaceIdEnd := $response?zone(array:size($response?zone))?surfaceId
         return
             map:contains($response, "zone")
             and ($zoneIdFirst eq $start)
             and ($zoneIdLast eq $end)
             and ($ulxStart eq $expectedUlxStart)
+            and ($surfaceIdStart eq $expectedSurfaceId)
+            and ($surfaceIdEnd eq $expectedSurfaceId)
             and (array:size($response?zone) eq $expectedZoneCount)
 
 };
