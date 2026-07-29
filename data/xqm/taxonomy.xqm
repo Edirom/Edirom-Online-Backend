@@ -236,11 +236,14 @@ as map ( * )
  :     2. @label
  :     3. first of all mei:label child elements (only possible on mei:category)
  :     4. the element's own @xml:id
- :     5. the parent taxonomy's identifying string
  :
- : Note: a mei:category that is referenced from mei:annot/@class is always resolvable by id()
- : and therefore always carries an @xml:id, so step 5 is only ever reached for a mei:taxonomy
- : that lacks its own @xml:id.
+ : Note: this is a display-label path and deliberately does NOT fall back to
+ : taxonomy:get-parent-taxonomy-identifying-string(). That is a grouping-key function whose
+ : 'as xs:string' signature is a fail-fast contract for malformed data; since every member of
+ : the fallback sequence above is evaluated before [1] selects one, calling it here raised
+ : XPTY0004 for a mei:taxonomy carrying neither @class nor @xml:id — even when step 4 had
+ : already matched. Callers that need an identifier when no label resolves supply the grouping
+ : key themselves (see annotation:get-referenced-categories-as-taxonomy-array).
  :
  : @param $element a mei:taxonomy or mei:category element
  : @param $languages array(*) an array with language codes
@@ -276,9 +279,7 @@ as map ( * )
                                 (: the first mei:label – only available in mei :category :)
                                 ( $element/mei:label )[ 1 ],
                                 (: the element’s xml:id :)
-                                $element/@xml:id,
-                                (: the parent taxonomy’s identifying string :)
-                                taxonomy:get-parent-taxonomy-identifying-string( $element ) )[ 1 ] => normalize-space() )
+                                $element/@xml:id )[ 1 ] => normalize-space() )
                     default return
                       map:entry( $lang, $element/mei:label[ @xml:lang = $lang ] => normalize-space() )
         )

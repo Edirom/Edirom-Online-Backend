@@ -25,6 +25,7 @@ declare namespace mei="http://www.music-encoding.org/ns/mei";
 declare namespace request="http://exist-db.org/xquery/request";
 declare namespace system="http://exist-db.org/xquery/system";
 declare namespace transform="http://exist-db.org/xquery/transform";
+declare namespace util="http://exist-db.org/xquery/util";
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
@@ -430,5 +431,14 @@ declare function annotation:get-referenced-categories-as-taxonomy-array(
                         }
                     }
             }
-        } catch * {[]}
+        } catch * {
+            (: degrade to an empty array so a single malformed taxonomy does not take down the
+               whole view, but leave a trace — silently returning [] made a data defect look
+               like an annotation without any classification :)
+            let $_ :=
+                util:log('warn',
+                    'annotation:get-referenced-categories-as-taxonomy-array failed for ' ||
+                    string-join($annots/@xml:id, ' ') || ': ' || $err:description)
+            return []
+        }
 };

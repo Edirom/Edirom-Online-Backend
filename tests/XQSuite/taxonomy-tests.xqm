@@ -125,6 +125,26 @@ function tax:label-localized-empty() {
     taxonomy:get-label-localized-as-string(())
 };
 
+(:~ A mei:taxonomy with no label, no @label and no @xml:id has no label of its own — it
+   resolves to the empty sequence rather than raising XPTY0004. This is the display-label
+   path; it must not fall back to the grouping-key function, whose 'as xs:string' contract
+   deliberately fails fast on such data. Callers supply the grouping key themselves. :)
+declare
+    %test:assertEmpty
+function tax:label-localized-taxonomy-without-xmlid() {
+    taxonomy:get-label-localized-as-string(
+        <mei:taxonomy><mei:category xml:id="c" class="#someGroup"/></mei:taxonomy>)
+};
+
+(:~ The grouping-key contract itself is unchanged: a category naming its group via @class
+   still resolves, even when the enclosing taxonomy carries no @xml:id. :)
+declare
+    %test:assertEquals("someGroup")
+function tax:parent-id-without-taxonomy-xmlid() as xs:string {
+    let $t := <mei:taxonomy><mei:category xml:id="c" class="#someGroup"/></mei:taxonomy>
+    return taxonomy:get-parent-taxonomy-identifying-string($t//mei:category)
+};
+
 
 (: taxonomy:taxonomy-or-category-test ===================================== :)
 
