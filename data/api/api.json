@@ -352,7 +352,8 @@
 									"text/html",
 									"application/mei+xml",
 									"application/tei+xml",
-									"application/xml"
+									"application/xml",
+									"application/json"
 								],
 								"default": "application/xml"
 							},
@@ -368,6 +369,10 @@
 								"html": {
 									"summary": "html",
 									"value": "text/html"
+								},
+								"json": {
+									"summary": "json",
+									"value": "application/json"
 								}
 							}
 						},

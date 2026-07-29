@@ -1004,3 +1004,129 @@ declare
     };
 
 (: TODO tests with json media type :)
+
+declare
+    %test:assertTrue
+    function ddt:test-transformWrappedXMLToMap-resolves-references-and-arrays() as xs:boolean {
+        let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
+                <dts:wrapper>
+                    <parent xml:id="p1" ref="#linked">
+                        <child>one</child>
+                        <child>two</child>
+                    </parent>
+                </dts:wrapper>
+                <linked xml:id="linked">
+                    <name>LinkedName</name>
+                </linked>
+            </root>
+        (:
+        map {
+            "parent": map {
+                "child": ["one","two"],
+                "ref": map {
+                    "linkedId": "linked",
+                    "name": "LinkedName"
+                },
+                "parentId": "p1"
+            }
+        }
+        :)
+        let $m := dts-document:transformWrappedXMLToMap($xml)
+        let $parent := map:get($m, "parent")
+        let $parentId := map:get($parent, "parentId")
+        let $children := map:get($parent, "child")
+        let $refMap := map:get($parent, "ref")
+        return
+            map:contains($m, "parent")
+            and $parentId = "p1"
+            and string-join($children, " ") = "one two"
+            and map:get($refMap, "name") = "LinkedName"
+};
+
+declare
+    %test:assertTrue
+    function ddt:test-transformWrappedXMLToMap-single-child-returns-single-value() as xs:boolean {
+        let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
+                <dts:wrapper>
+                    <item xml:id="i1">
+                        <value>only</value>
+                    </item>
+                </dts:wrapper>
+            </root>
+        (:
+        map {
+            "item": map {
+                "itemId": "i1",
+                "value": "only"
+            }
+        }
+        :)
+        let $m := dts-document:transformWrappedXMLToMap($xml)
+        let $item := map:get($m, "item")
+        return
+            map:get($item, "itemId") = "i1"
+            and map:get($item, "value") = "only"
+};
+
+declare
+    (: retrieve a specific zone by ref :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
+    %test:arg("ref", "zone_bar-2001")
+    %test:arg("tree", "paginationStructure")
+    %test:arg("expectedUlx", "478")
+    %test:assertTrue
+    function ddt:test-document-json-zone-ref(
+        $resource as xs:string,
+        $ref as xs:string?,
+        $tree as xs:string?,
+        $expectedUlx as xs:string?
+    ) { 
+        let $html-parameters := map {
+            "lang": "de",
+            "idPrefix": ""
+        }
+        let $mediaType := "application/json"
+        let $response := dts-document:document($resource, $ref, (), (), $tree, $mediaType, $html-parameters)
+        let $zoneId := $response?zone?zoneId
+        let $ulx := $response?zone?ulx
+        return
+            map:contains($response, "zone")
+            and $zoneId = $ref
+            and $ulx = $expectedUlx
+};
+
+declare
+    (: retrieve a range of zones by start and end :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
+    %test:arg("start", "zone_bar-20013")
+    %test:arg("end", "zone_bar-20015")
+    %test:arg("tree", "paginationStructure")
+    %test:arg("expectedZoneCount", 3)
+    %test:arg("expectedUlxStart", "2926")
+    %test:assertTrue
+    function ddt:test-document-json-zone-start-end(
+        $resource as xs:string,
+        $start as xs:string?,
+        $end as xs:string?,
+        $tree as xs:string?,
+        $expectedZoneCount as xs:integer?,
+        $expectedUlxStart as xs:string?
+    ) { 
+        let $html-parameters := map {
+            "lang": "de",
+            "idPrefix": ""
+        }
+        let $mediaType := "application/json"
+        let $response := dts-document:document($resource, (), $start, $end, $tree, $mediaType, $html-parameters)
+        let $zoneIdFirst := $response?zone(1)?zoneId
+        let $zoneIdLast := $response?zone(array:size($response?zone))?zoneId
+        let $ulxStart := $response?zone(1)?ulx
+        return
+            map:contains($response, "zone")
+            and ($zoneIdFirst eq $start)
+            and ($zoneIdLast eq $end)
+            and ($ulxStart eq $expectedUlxStart)
+            and (array:size($response?zone) eq $expectedZoneCount)
+
+};
+

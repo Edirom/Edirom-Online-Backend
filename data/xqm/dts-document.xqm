@@ -391,7 +391,11 @@ declare function dts-document:isMediaTypeCompatible(
     if (not($mediaType)) then
         true()
     else if ($namespace eq "mei") then
-        contains($mediaType, "application/xml") or contains($mediaType, "text/xml") or contains($mediaType, "application/mei+xml") or contains($mediaType, "text/html")
+        contains($mediaType, "application/xml")
+        or contains($mediaType, "text/xml")
+        or contains($mediaType, "application/mei+xml")
+        or contains($mediaType, "text/html")
+        or contains($mediaType, "application/json")
     else if ($namespace eq "tei") then
         contains($mediaType, "application/xml") or contains($mediaType, "text/xml") or contains($mediaType, "application/tei+xml") or contains($mediaType, "text/html")
     else if ($namespace eq "edirom") then
@@ -514,6 +518,64 @@ declare function dts-document:transformHeaderToHTML(
 
 };
 
+declare function local:to-map(
+    $document as element(),
+    $element as element()
+) as map(*) {
+
+    map:merge((
+        (: Attributes :)
+        for $attribute in $element/@*
+        let $attributeName := node-name($attribute)
+        let $key :=
+            if (string($attributeName) eq "xml:id") then
+                concat(node-name($element), "Id")
+            else
+                $attributeName
+        let $attributeValue := string($attribute)
+        let $value :=
+            if (starts-with($attributeValue, "#")) then
+                let $referenceId := substring($attributeValue, 2)
+                return
+                    local:to-map($document, $document/id($referenceId))
+            else
+                $attributeValue
+        return
+            map:entry(
+                string($key),
+                $value
+            ),
+
+        (: Child elements, grouped by name :)
+        for $key in distinct-values($element/*/node-name(.))
+        let $children := $element/*[node-name(.) = $key]
+        let $values :=
+            for $child in $children
+            return
+                if (exists($child/*) or exists($child/@*)) then
+                    local:to-map($document, $child)
+                else
+                    string($child)
+
+        return
+            map:entry(
+                string($key),
+                if (count($values) = 1) then
+                    $values[1]
+                else
+                    array { $values }
+            )
+    ))
+};
+
+declare function dts-document:transformWrappedXMLToMap(
+    $xml as node()
+) as map(*) {
+    let $wrapped := $xml//dts:wrapper
+    let $documentMap := local:to-map($xml, $wrapped)
+    return $documentMap
+};
+
 declare function dts-document:document(
     $resource as xs:string?,
     $ref as xs:string?,
@@ -522,7 +584,7 @@ declare function dts-document:document(
     $tree as xs:string?,
     $mediaType as xs:string?,
     $htmlParameters as map(xs:string, xs:string)
-) as document-node() {
+) as item() {
     if ($ref and ($start or $end)) then
         error($errors:INVALID_PARAMETERS, "The 'ref' parameter cannot be used together with 'start' or 'end'.")
     else if (($start and not($end)) or ($end and not($start))) then
@@ -565,6 +627,8 @@ declare function dts-document:document(
                 let $xslInstruction := $document//processing-instruction(xml-stylesheet)
                 return
                     document { dts-document:transformTEIToHTML($outputXml, $resource, $xslInstruction, $htmlParameters) }
+            else if ($namespace eq "mei" and contains($mediaType, "json")) then
+                dts-document:transformWrappedXMLToMap($outputXml)
             else
                 error($errors:UNSUPPORTED_MEDIA_TYPE, "The requested media type is not supported. Media type: " || $mediaType || ", Namespace: " || $namespace || ", Ref: " || $ref)
         return
