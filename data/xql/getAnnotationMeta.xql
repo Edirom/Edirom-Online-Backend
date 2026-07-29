@@ -126,7 +126,10 @@ return
                         }</div>
                         <div class="value">{string-join($t('items')?*?name, ', ')}</div>
                     </div>
-            }
+            }<!--<div class="property sourceLabel">
+                <div class="key">{$sourcesLabel}</div>
+                <div class="value">{string-join($sources, ', ')}</div>
+            </div>-->
             <div class="property sourceSiglums">
                 <div class="key">{$siglaLabel}</div>
                 <div class="value">{string-join($sigla, ', ')}</div>
