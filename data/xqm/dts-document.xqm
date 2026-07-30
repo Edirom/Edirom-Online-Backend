@@ -97,8 +97,9 @@ declare function dts-document:wrapSelection(
     let $alwaysPreserved := $document//*[node-name(.) = $dts-document:alwaysPreserveMEIElements or node-name(.) = $dts-document:alwaysPreserveTEIElements]
     let $baseFullCopyNodes := ($selection, $alwaysPreserved)
     let $referencedNodes := dts-document:referenceClosure($document, $baseFullCopyNodes)
-    let $preserveIfPrecedingSiblings := dts-document:preserveIfPrecedingSiblingNodes(($referencedNodes, $referencedNodes/ancestor::*))
-    let $fullCopyNodes := dts-document:referenceClosure($document, ($referencedNodes, $preserveIfPrecedingSiblings))
+    let $referencingMeasures := dts-document:getMeasuresReferencingSelectedZones($document, $selection)
+    let $preserveIfPrecedingSiblings := dts-document:preserveIfPrecedingSiblingNodes(($referencedNodes, $referencedNodes/ancestor::*, $referencingMeasures, $referencingMeasures))
+    let $fullCopyNodes := dts-document:referenceClosure($document, ($referencedNodes, $referencingMeasures, $preserveIfPrecedingSiblings))
     let $keptNodes := ($fullCopyNodes, $fullCopyNodes/ancestor::*)
     return
         dts-document:copySelection($document/*, $selection, $fullCopyNodes, $keptNodes)
@@ -199,6 +200,21 @@ declare function dts-document:copySelectedChildren(
             ()
         else
             dts-document:copySelection($child, $selection, $fullCopyNodes, $keptNodes)
+};
+
+declare function dts-document:getMeasuresReferencingSelectedZones(
+    $document as node(),
+    $selection as element()*
+) as element()* {
+    for $zone in $selection//mei:zone[@type = 'measure']
+    let $zoneRef := concat('#', $zone/@xml:id)
+    (:
+        The first predicate with `contains` is just a rough estimate to narrow down the result set.
+        It uses the index and is fast while the second (exact) predicate is generally too slow
+    :)
+    let $measures := $document//mei:measure[contains(@facs, $zoneRef)][$zoneRef = tokenize(@facs, '\s+')]
+    return
+        $measures
 };
 
 declare function dts-document:isInCitationTree(

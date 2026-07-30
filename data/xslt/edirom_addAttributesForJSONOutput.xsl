@@ -15,17 +15,60 @@
     </xsl:template>
 
     <xd:doc scope="component">
+        <xd:desc>Create a `zoneType` attribute from the `mei:zone/@type` to distinguish from `measureType`.</xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:zone/@type">
+        <xsl:attribute name="zoneType">
+            <xsl:value-of select="."/>
+        </xsl:attribute>
+    </xsl:template>
+
+    <xd:doc scope="component">
         <xd:desc>Copy mei:zone and add surfaceId, width, height, and target attributes from the enclosing mei:surface and its sibling mei:graphic.</xd:desc>
     </xd:doc>
     <xsl:template match="mei:zone">
         <xsl:variable name="surface" select="ancestor::mei:surface[1]"/>
         <xsl:variable name="graphic" select="$surface/mei:graphic[@type = 'facsimile']"/>
+        <!-- Identify measures that reference this zone via their @facs attribute -->
+        <xsl:variable name="zoneRef" select="concat('#', string(@xml:id))"/>
+        <!-- The first predicate with `contains` is just a rough estimate to narrow down the result set.
+        It uses the index and is fast while the second (exact) predicate is generally too slow -->
+        <xsl:variable name="measures" select="/*//mei:measure[contains(@facs, $zoneRef)][ $zoneRef = tokenize(@facs, '\s+') ]"/>
         <xsl:copy>
             <xsl:attribute name="surfaceId" select="string($surface/@xml:id)"/>
             <xsl:attribute name="width" select="string($graphic/@width)"/>
             <xsl:attribute name="height" select="string($graphic/@height)"/>
             <xsl:attribute name="target" select="string($graphic/@target)"/>
-            <xsl:apply-templates select="@*|node()"/>
+            <xsl:apply-templates select="@*"/>
+            <xsl:if test="$measures">
+                <xsl:for-each select="$measures">
+                    <xsl:variable name="lbl">
+                        <xsl:choose>
+                            <xsl:when test="@label"><xsl:value-of select="string(@label)"/></xsl:when>
+                            <xsl:otherwise><xsl:value-of select="string(@n)"/></xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:variable>
+                    <xsl:variable name="name">
+                        <xsl:choose>
+                            <xsl:when test=".//mei:multiRest">
+                                <xsl:value-of select="concat($lbl, '–', number($lbl) + number(.//mei:multiRest/@num) - 1)"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="$lbl"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:variable>
+                    <xsl:variable name="rest">
+                        <xsl:choose>
+                            <xsl:when test=".//mei:mRest">1</xsl:when>
+                            <xsl:when test=".//mei:multiRest"><xsl:value-of select="string(.//mei:multiRest/@num)"/></xsl:when>
+                            <xsl:otherwise>0</xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:variable>
+                    <measure measureId="{@xml:id}" name="{$name}" measureType="{string(@type)}" rest="{$rest}"/>
+                </xsl:for-each>
+            </xsl:if>
+            <xsl:apply-templates select="node()"/>
         </xsl:copy>
     </xsl:template>
 
