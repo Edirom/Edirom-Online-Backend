@@ -568,6 +568,58 @@ declare function local:to-map(
     ))
 };
 
+declare function dts-document:selectTopLevelCitationTreeElements(
+    $xml as node(),
+    $citationTree as element(citeStructure)*
+) as element()* {
+    let $topLevel := $citationTree[1]
+    let $match := normalize-space($topLevel/@match)
+    let $matchName :=
+        if ($match) then
+            resolve-QName($match, $topLevel)
+        else
+            ()
+    let $selection :=
+        if (exists($matchName)) then
+            $xml//*[node-name(.) eq $matchName]
+        else
+            ()
+    let $startNode := $selection[1]
+    let $endNode := $selection[last()]
+    let $start := $startNode/@xml:id
+    let $end := $endNode/@xml:id
+    return
+        if ($start eq $end) then
+            $startNode
+        else if (not($startNode/parent::* is $endNode/parent::*)) then
+            error($errors:INVALID_PARAMETERS, "The citation tree does not match the document structure.")
+        else if ($startNode << $endNode) then
+            (
+                $startNode,
+                $startNode/following-sibling::*[
+                    . << $endNode
+                ],
+                $endNode
+            )
+        else
+            error($errors:INVALID_PARAMETERS, "The citation tree does not match the document structure.")
+};
+
+declare function dts-document:ensureWrappedCitationTree(
+    $xml as node(),
+    $citationTree as element(citeStructure)*
+) as node() {
+    if (exists($xml//dts:wrapper)) then
+        $xml
+    else
+        let $selection := dts-document:selectTopLevelCitationTreeElements($xml, $citationTree)
+        return
+            if (exists($selection)) then
+                dts-document:wrapSelection($selection, $xml)
+            else
+                error($errors:INVALID_PARAMETERS, "The citation tree specified for this document does not match any elements in the document. Citation tree: " || string-join($citationTree/@xml:id, ", "))
+};
+
 declare function dts-document:transformOutputToMap(
     $xml as node()
 ) as map(*) {
@@ -616,10 +668,12 @@ declare function dts-document:document(
         let $outputXmlRaw := 
             if (not($mediaTypeCompatible)) then
                 error($errors:UNSUPPORTED_MEDIA_TYPE, "The requested media type is not compatible with the document format. Media type: " || $mediaType || ", Namespace: " || $namespace)
+            else if (not($ref) and not($start) and not($end) and $mediaType eq "application/json") then
+                dts-document:ensureWrappedCitationTree($document, $citationTree)
             else if (not($ref) and not($start) and not($end)) then
                 $document/*
             else if ($namespace eq "mei" or $namespace eq "tei") then
-                dts-document:selectAndWrap($document, $ref, $start, $end, $citationTree)                    
+                dts-document:selectAndWrap($document, $ref, $start, $end, $citationTree)             
             else
                 error($errors:UNSUPPORTED_DOCUMENT_FORMAT, "The format of the requested document is not supported. Namespace: " || $namespace )
         

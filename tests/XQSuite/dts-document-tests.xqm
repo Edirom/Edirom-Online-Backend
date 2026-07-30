@@ -1007,7 +1007,7 @@ declare
 
 declare
     %test:assertTrue
-    function ddt:test-trnasformOutputToMap-resolves-references-and-arrays() as xs:boolean {
+    function ddt:test-transformOutputToMap-resolves-references-and-arrays() as xs:boolean {
         let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
                 <dts:wrapper>
                     <parent xml:id="p1" ref="#linked">
@@ -1031,7 +1031,7 @@ declare
             }
         }
         :)
-        let $m := dts-document:trnasformOutputToMap($xml)
+        let $m := dts-document:transformOutputToMap($xml)
         let $parent := map:get($m, "parent")
         let $parentId := map:get($parent, "parentId")
         let $children := map:get($parent, "child")
@@ -1045,7 +1045,7 @@ declare
 
 declare
     %test:assertTrue
-    function ddt:test-trnasformOutputToMap-single-child-returns-single-value() as xs:boolean {
+    function ddt:test-transformOutputToMap-single-child-returns-single-value() as xs:boolean {
         let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
                 <dts:wrapper>
                     <item xml:id="i1">
@@ -1061,7 +1061,7 @@ declare
             }
         }
         :)
-        let $m := dts-document:trnasformOutputToMap($xml)
+        let $m := dts-document:transformOutputToMap($xml)
         let $item := map:get($m, "item")
         return
             map:get($item, "itemId") = "i1"
@@ -1287,4 +1287,26 @@ declare
             and $measureCount = $expectedMeasureCount
             and $ulxFirst = $expectedUlxFirst
             and $ulxLast = $expectedUlxLast
+};
+
+declare
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
+    %test:arg("tree", "musicStructure")
+    %test:assertTrue
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
+    %test:arg("tree", "paginationStructure")
+    %test:assertTrue
+    function ddt:test-document-json-full-document(
+        $resource as xs:string,
+        $tree as xs:string?
+    ) as xs:boolean {
+        let $html-parameters := map {
+            "lang": "de",
+            "idPrefix": ""
+        }
+        let $mediaType := "application/json"
+        let $response := dts-document:document($resource, (), (), (), $tree, $mediaType, $html-parameters)
+        return
+            $response instance of map(*)
+            and map:size($response) gt 0
 };
