@@ -1007,7 +1007,7 @@ declare
 
 declare
     %test:assertTrue
-    function ddt:test-transformWrappedXMLToMap-resolves-references-and-arrays() as xs:boolean {
+    function ddt:test-trnasformOutputToMap-resolves-references-and-arrays() as xs:boolean {
         let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
                 <dts:wrapper>
                     <parent xml:id="p1" ref="#linked">
@@ -1031,7 +1031,7 @@ declare
             }
         }
         :)
-        let $m := dts-document:transformWrappedXMLToMap($xml)
+        let $m := dts-document:trnasformOutputToMap($xml)
         let $parent := map:get($m, "parent")
         let $parentId := map:get($parent, "parentId")
         let $children := map:get($parent, "child")
@@ -1045,7 +1045,7 @@ declare
 
 declare
     %test:assertTrue
-    function ddt:test-transformWrappedXMLToMap-single-child-returns-single-value() as xs:boolean {
+    function ddt:test-trnasformOutputToMap-single-child-returns-single-value() as xs:boolean {
         let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
                 <dts:wrapper>
                     <item xml:id="i1">
@@ -1061,7 +1061,7 @@ declare
             }
         }
         :)
-        let $m := dts-document:transformWrappedXMLToMap($xml)
+        let $m := dts-document:trnasformOutputToMap($xml)
         let $item := map:get($m, "item")
         return
             map:get($item, "itemId") = "i1"

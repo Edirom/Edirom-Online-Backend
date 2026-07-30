@@ -568,7 +568,7 @@ declare function local:to-map(
     ))
 };
 
-declare function dts-document:transformWrappedXMLToMap(
+declare function dts-document:transformOutputToMap(
     $xml as node()
 ) as map(*) {
     let $wrapped := $xml//dts:wrapper
@@ -639,7 +639,7 @@ declare function dts-document:document(
             else if ($namespace eq "mei" and contains($mediaType, "json")) then
                 let $processedXML := dts-document:addAttributesForJSONOutput($outputXml)
                 return
-                    dts-document:transformWrappedXMLToMap($processedXML)
+                    dts-document:transformOutputToMap($processedXML)
             else
                 error($errors:UNSUPPORTED_MEDIA_TYPE, "The requested media type is not supported. Media type: " || $mediaType || ", Namespace: " || $namespace || ", Ref: " || $ref)
         return
