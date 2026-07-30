@@ -1003,7 +1003,7 @@ declare
         dts-document:htmlProfileParameters("unknown-profile")
     };
 
-(: TODO tests with json media type :)
+(: Tests with json media type :)
 
 declare
     %test:assertTrue
@@ -1138,3 +1138,153 @@ declare
 
 };
 
+declare
+    (: retrieve a specific surface by ref :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
+    %test:arg("ref", "facsimile-2001003")
+    %test:arg("expectedUlxFirst", "296")
+    %test:arg("expectedWidth", "3950")
+    %test:assertTrue
+    function ddt:test-document-json-surface-ref(
+        $resource as xs:string,
+        $ref as xs:string?,
+        $expectedUlxFirst as xs:string?,
+        $expectedWidth as xs:string?
+    ) { 
+        let $html-parameters := map {
+            "lang": "de",
+            "idPrefix": ""
+        }
+        let $mediaType := "application/json"
+        let $tree := "paginationStructure"
+        let $response := dts-document:document($resource, $ref, (), (), $tree, $mediaType, $html-parameters)
+        let $zoneFirst := $response?surface?zone(1)
+        let $zoneSecond := $response?surface?zone(2)
+        let $ulx := $zoneFirst?ulx
+        let $surfaceId := $zoneFirst?surfaceId
+        let $widthFirst := $zoneFirst?width
+        let $widthSecond := $zoneSecond?width
+        return
+            map:contains($response, "surface")
+            and $ulx = $expectedUlxFirst
+            and $surfaceId = $ref
+            and $widthFirst = $expectedWidth
+            and $widthSecond = $expectedWidth
+
+};
+
+declare
+    (: retrieve a range of zones by start and end :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
+    %test:arg("start", "facsimile-2001003")
+    %test:arg("end", "facsimile-2001004")
+    %test:arg("expectedSurfaceCount", 2)
+    %test:arg("expectedUlxFirst", "296")
+    %test:arg("expectedWidthFirst", "3950")
+    %test:assertTrue
+    function ddt:test-document-json-surface-start-end(
+        $resource as xs:string,
+        $start as xs:string?,
+        $end as xs:string?,
+        $expectedSurfaceCount as xs:integer?,
+        $expectedUlxFirst as xs:string?,
+        $expectedWidthFirst as xs:string?
+    ) { 
+        let $html-parameters := map {
+            "lang": "de",
+            "idPrefix": ""
+        }
+        let $tree := "paginationStructure"
+        let $mediaType := "application/json"
+        let $response := dts-document:document($resource, (), $start, $end, $tree, $mediaType, $html-parameters)
+        let $zoneFirst := $response?surface(1)?zone(1)
+        let $zoneLast := $response?surface(array:size($response?surface))?zone(1)
+        let $ulx := $zoneFirst?ulx
+        let $surfaceIdFirst := $zoneFirst?surfaceId
+        let $surfaceIdLast := $zoneLast?surfaceId
+        let $widthFirst := $zoneFirst?width
+        return
+            map:contains($response, "surface")
+            and $ulx = $expectedUlxFirst
+            and $surfaceIdFirst = $start
+            and $surfaceIdLast = $end
+            and $widthFirst = $expectedWidthFirst
+            and (array:size($response?surface) eq $expectedSurfaceCount)
+
+};
+
+declare
+    (: retrieve a specific measure by ref :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
+    %test:arg("ref", "bar-2003")
+    %test:arg("expectedMdivId", "part-1")
+    %test:arg("expectedZoneId", "zone_bar-2003")
+    %test:arg("expectedSurfaceId", "facsimile-2001002")
+    %test:arg("expectedUlx", "1332")
+    %test:assertTrue
+    function ddt:test-document-json-measure-ref(
+        $resource as xs:string,
+        $ref as xs:string?,
+        $expectedMdivId as xs:string?,
+        $expectedZoneId as xs:string?,
+        $expectedSurfaceId as xs:string?,
+        $expectedUlx as xs:string?
+    ) { 
+        let $html-parameters := map {
+            "lang": "de",
+            "idPrefix": ""
+        }
+        let $mediaType := "application/json"
+        let $tree := "musicStructure"
+        let $response := dts-document:document($resource, $ref, (), (), $tree, $mediaType, $html-parameters)
+        let $measure := $response?measure
+        let $mdivId := $measure?mdivId
+        let $facsimile := $measure?facs
+        let $zoneId := $facsimile?zoneId
+        let $surfaceId := $facsimile?surfaceId
+        let $ulx := $facsimile?ulx
+        return
+            map:contains($response, "measure")
+            and $mdivId = $expectedMdivId
+            and $zoneId = $expectedZoneId
+            and $surfaceId = $expectedSurfaceId
+            and $ulx = $expectedUlx
+
+};
+
+declare
+    (: retrieve a range of measures by start and end :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
+    %test:arg("start", "bar-20010")
+    %test:arg("end", "bar-20013")
+    %test:arg("expectedMeasureCount", 4)
+    %test:arg("expectedUlxFirst", "2458")
+    %test:arg("expectedUlxLast", "2926")
+    %test:assertTrue
+    function ddt:test-document-json-measure-start-end(
+        $resource as xs:string,
+        $start as xs:string?,
+        $end as xs:string?,
+        $expectedMeasureCount as xs:integer?,
+        $expectedUlxFirst as xs:string?,
+        $expectedUlxLast as xs:string?
+    ) { 
+        let $html-parameters := map {
+            "lang": "de",
+            "idPrefix": ""
+        }
+        let $tree := "musicStructure"
+        let $mediaType := "application/json"
+        let $response := dts-document:document($resource, (), $start, $end, $tree, $mediaType, $html-parameters)
+        let $measures := $response?measure
+        let $measureCount := array:size($measures)
+        let $measureFirst := $measures(1)
+        let $measureLast := $measures($measureCount)
+        let $ulxFirst := $measureFirst?facs?ulx
+        let $ulxLast := $measureLast?facs?ulx
+        return
+            map:contains($response, "measure")
+            and $measureCount = $expectedMeasureCount
+            and $ulxFirst = $expectedUlxFirst
+            and $ulxLast = $expectedUlxLast
+};
