@@ -206,7 +206,7 @@ declare function dts-document:getMeasuresReferencingSelectedZones(
     $document as node(),
     $selection as element()*
 ) as element()* {
-    for $zone in $selection//mei:zone[@type = 'measure']
+    for $zone in ($selection[self::mei:zone[@type = 'measure']] | $selection//mei:zone[@type = 'measure'])
     let $zoneRef := concat('#', $zone/@xml:id)
     (:
         The first predicate with `contains` is just a rough estimate to narrow down the result set.
@@ -645,10 +645,16 @@ declare function dts-document:transformOutputToMap(
 };
 
 declare function dts-document:addAttributesForJSONOutput(
-    $xml as node()
+    $xml as node(),
+    $addMeasuresToZones as xs:boolean
 ) as node() {
     let $xslAddAttributes := eutil:getDoc($eutil:xsltBase || '/edirom_addAttributesForJSONOutput.xsl')
-    let $doc := transform:transform($xml, $xslAddAttributes, <parameters/>)
+
+    let $params := (
+        <param name="addMeasuresToZones" value="{$addMeasuresToZones}"/>
+    )
+
+    let $doc := transform:transform($xml, $xslAddAttributes, <parameters>{$params}</parameters>)
     return
         $doc
 };
@@ -707,7 +713,12 @@ declare function dts-document:document(
                 return
                     document { dts-document:transformTEIToHTML($outputXml, $resource, $xslInstruction, $htmlParameters) }
             else if ($namespace eq "mei" and contains($mediaType, "json")) then
-                let $processedXML := dts-document:addAttributesForJSONOutput($outputXml)
+                let $addMeasuresToZones :=
+                    if (dts-document:isInCitationTree(element mei:measure { }, $citationTree)) then
+                        false()
+                    else
+                        true()
+                let $processedXML := dts-document:addAttributesForJSONOutput($outputXml, $addMeasuresToZones)
                 return
                     dts-document:transformOutputToMap($processedXML)
             else

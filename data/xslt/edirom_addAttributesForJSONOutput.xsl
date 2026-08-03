@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:mei="http://www.music-encoding.org/ns/mei" xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" exclude-result-prefixes="xd" version="2.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:mei="http://www.music-encoding.org/ns/mei" xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xd xs" version="2.0">
+
+    <xsl:param name="addMeasuresToZones" select="true()" as="xs:boolean"/>
 
     <xd:doc scope="stylesheet">
         <xd:desc>This stylesheet prepares an XML selection with additional elements and attributes before conversion to JSON , so that the JSON output has the desired structure.</xd:desc>
@@ -40,7 +42,7 @@
             <xsl:attribute name="height" select="string($graphic/@height)"/>
             <xsl:attribute name="target" select="string($graphic/@target)"/>
             <xsl:apply-templates select="@*"/>
-            <xsl:if test="$measures">
+            <xsl:if test="$addMeasuresToZones and $measures">
                 <xsl:for-each select="$measures">
                     <xsl:variable name="lbl">
                         <xsl:choose>
