@@ -552,8 +552,12 @@ declare function local:to-map(
         let $value :=
             if (starts-with($attributeValue, "#")) then
                 let $referenceId := substring($attributeValue, 2)
+                let $target := $document/id($referenceId)
                 return
-                    local:to-map($document, $document/id($referenceId))
+                    if (exists($target)) then
+                        local:to-map($document, $target)
+                    else
+                        $attributeValue
             else
                 $attributeValue
         return
