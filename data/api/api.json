@@ -151,13 +151,21 @@
 									"summary": "Klarinettenquintett MEI - Measure 2",
 									"value": "xb3589e15-7672-4a38-a0d5-406cd7de9a1f"
 								},
-								"Klarinettenquintett source 1 -Surface 3": {
+								"Klarinettenquintett source 1 - Surface 3": {
 									"summary": "Klarinettenquintett source 1 - Surface 3",
 									"value": "facsimile-2001003"
 								},
 								"Klarinettenquintett source 1 - Zone": {
 									"summary": "Klarinettenquintett source 1 - Zone",
 									"value": "zone_bar-20037"
+								},
+								"Klarinettenquintett source 1 - Mdiv part-1": {
+									"summary": "Klarinettenquintett source 1 - Mdiv part-1",
+									"value": "part-1"
+								},
+								"Klarinettenquintett source 1 - Mdiv part-3": {
+									"summary": "Klarinettenquintett source 1 - Mdiv part-3",
+									"value": "part-3"
 								},
 								"Klarinettenquintett source 1 - Measure 1": {
 									"summary": "Klarinettenquintett source 1 - Measure 1",
@@ -222,13 +230,17 @@
 									"summary": "Klarinettenquintett MEI - Measure 2 range start",
 									"value": "xb3589e15-7672-4a38-a0d5-406cd7de9a1f"
 								},
-								"Klarinettenquintett source 1 -Surface 3 range start": {
+								"Klarinettenquintett source 1 - Surface 3 range start": {
 									"summary": "Klarinettenquintett source 1 - Surface 3 range start",
 									"value": "facsimile-2001003"
 								},
 								"Klarinettenquintett source 1 - Zone range start": {
 									"summary": "Klarinettenquintett source 1 - Zone range start",
 									"value": "zone_bar-20037"
+								},
+								"Klarinettenquintett source 1 - Mdiv part-1": {
+									"summary": "Klarinettenquintett source 1 - Mdiv part-1",
+									"value": "part-1"
 								},
 								"Klarinettenquintett source 1 - Measure 1": {
 									"summary": "Klarinettenquintett source 1 - Measure 1",
@@ -292,6 +304,10 @@
 								"Klarinettenquintett source 1 - Zone range end": {
 									"summary": "Klarinettenquintett source 1 - Zone range end",
 									"value": "zone_bar-20047"
+								},
+								"Klarinettenquintett source 1 - Mdiv part-3": {
+									"summary": "Klarinettenquintett source 1 - Mdiv part-3",
+									"value": "part-3"
 								},
 								"Klarinettenquintett source 1 - Measure 4": {
 									"summary": "Klarinettenquintett source 1 - Measure 4",
