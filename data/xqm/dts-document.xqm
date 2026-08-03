@@ -50,7 +50,7 @@ declare variable $dts-document:preserveIfPrecedingSiblingsMEIElements as xs:QNam
     QName("http://www.music-encoding.org/ns/mei", "graphic")
 );
 
-declare variable $dts-document:referenceAttributes as xs:QName* := (
+declare variable $dts-document:followReferenceAttributes as xs:QName* := (
     QName("", "facs")
 );
 
@@ -142,7 +142,7 @@ declare function dts-document:localReferenceIds(
     $nodes as element()*
 ) as xs:string* {
     distinct-values(
-        for $attribute in ($nodes/@*, $nodes//@*)[node-name(.) = $dts-document:referenceAttributes]
+        for $attribute in ($nodes/@*, $nodes//@*)[node-name(.) = $dts-document:followReferenceAttributes]
         return dts-document:localReferenceIdsFromAttributes($attribute)
     )
 };
@@ -556,8 +556,10 @@ declare function local:to-map(
                 return
                     if (exists($target)) then
                         local:to-map($document, $target)
-                    else
+                    else if (not($attributeName = $dts-document:followReferenceAttributes)) then
                         $attributeValue
+                    else
+                        error($errors:NOT_FOUND, "The referenced element with @xml:id='" || $referenceId || "' was not found in the document. Referenced by " || node-name($element ) || " element with @xml:id='" || $element/@xml:id || "'.")
             else
                 $attributeValue
         return
