@@ -1010,7 +1010,7 @@ declare
     function ddt:test-transformOutputToMap-resolves-references-and-arrays() as xs:boolean {
         let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
                 <dts:wrapper>
-                    <parent xml:id="p1" ref="#linked">
+                    <parent xml:id="p1" facs="#linked">
                         <child>one</child>
                         <child>two</child>
                     </parent>
@@ -1023,7 +1023,7 @@ declare
         map {
             "parent": map {
                 "child": ["one","two"],
-                "ref": map {
+                "facs": map {
                     "linkedId": "linked",
                     "name": "LinkedName"
                 },
@@ -1035,12 +1035,91 @@ declare
         let $parent := map:get($m, "parent")
         let $parentId := map:get($parent, "parentId")
         let $children := map:get($parent, "child")
-        let $refMap := map:get($parent, "ref")
+        let $refMap := map:get($parent, "facs")
         return
             map:contains($m, "parent")
             and $parentId = "p1"
             and string-join($children, " ") = "one two"
             and map:get($refMap, "name") = "LinkedName"
+};
+
+declare
+    %test:assertTrue
+    function ddt:test-transformOutputToMap-resolves-multiple-facs-references-as-array() as xs:boolean {
+        let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
+                <dts:wrapper>
+                    <measure xml:id="m1" facs="#linked1 #linked2">
+                        <name>Measure1</name>
+                    </measure>
+                </dts:wrapper>
+                <linked1 xml:id="linked1">
+                    <title>LinkOne</title>
+                </linked1>
+                <linked2 xml:id="linked2">
+                    <title>LinkTwo</title>
+                </linked2>
+            </root>
+        let $m := dts-document:transformOutputToMap($xml)
+        let $measure := map:get($m, "measure")
+        let $facs := map:get($measure, "facs")
+        return
+            map:contains($m, "measure")
+            and array:size($facs) = 2
+            and map:get($facs(1), "title") = "LinkOne"
+            and map:get($facs(2), "title") = "LinkTwo"
+};
+
+declare
+    %test:assertError("errors:NotFoundError")
+    function ddt:test-transformOutputToMap-raises-error-for-missing-facs() as xs:boolean {
+        let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
+                <dts:wrapper>
+                    <measure xml:id="m1" facs="#linked1 #missing #linked2">
+                        <name>Measure1</name>
+                    </measure>
+                </dts:wrapper>
+                <linked1 xml:id="linked1">
+                    <title>LinkOne</title>
+                </linked1>
+                <linked2 xml:id="linked2">
+                    <title>LinkTwo</title>
+                </linked2>
+            </root>
+        let $m := dts-document:transformOutputToMap($xml)
+        let $measure := map:get($m, "measure")
+        let $facs := map:get($measure, "facs")
+        return
+            map:contains($m, "measure")
+            and array:size($facs) = 3
+            and map:get($facs(1), "title") = "LinkOne"
+            and $facs(2) = "#missing"
+            and map:get($facs(3), "title") = "LinkTwo"
+};
+
+declare
+    %test:assertTrue
+    function ddt:test-transformOutputToMap-preserves-references-not-to-be-followed() as xs:boolean {
+        let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
+                <dts:wrapper>
+                    <measure xml:id="m1" refNotToFollow="#linked1 #linked2">
+                        <name>Measure1</name>
+                    </measure>
+                </dts:wrapper>
+                <linked1 xml:id="linked1">
+                    <title>LinkOne</title>
+                </linked1>
+                <linked2 xml:id="linked2">
+                    <title>LinkTwo</title>
+                </linked2>
+            </root>
+        let $m := dts-document:transformOutputToMap($xml)
+        let $measure := map:get($m, "measure")
+        let $refNotToFollow := map:get($measure, "refNotToFollow")
+        return
+            map:contains($m, "measure")
+            and array:size($refNotToFollow) = 2
+            and $refNotToFollow(1) = "#linked1"
+            and $refNotToFollow(2) = "#linked2"
 };
 
 declare

@@ -549,19 +549,30 @@ declare function local:to-map(
             else
                 $attributeName
         let $attributeValue := string($attribute)
+        let $tokens := tokenize(normalize-space($attributeValue), "\s+")
+        let $tokenValues :=
+            for $token in $tokens
+            return
+                if (starts-with($token, "#")) then
+                    let $referenceId := substring($token, 2)
+                    let $target := $document/id($referenceId)
+                    return
+                        if ($attributeName = $dts-document:followReferenceAttributes and exists($target)) then
+                            local:to-map($document, $target)
+                        else if (not($attributeName = $dts-document:followReferenceAttributes)) then
+                            $token
+                        else
+                            error($errors:NOT_FOUND, "The referenced element with @xml:id='" || $referenceId || "' was not found in the document. Referenced by " || node-name($element) || " element with @xml:id='" || $element/@xml:id || "'.")
+            
+                else
+                    $token
         let $value :=
-            if (starts-with($attributeValue, "#")) then
-                let $referenceId := substring($attributeValue, 2)
-                let $target := $document/id($referenceId)
-                return
-                    if (exists($target)) then
-                        local:to-map($document, $target)
-                    else if (not($attributeName = $dts-document:followReferenceAttributes)) then
-                        $attributeValue
-                    else
-                        error($errors:NOT_FOUND, "The referenced element with @xml:id='" || $referenceId || "' was not found in the document. Referenced by " || node-name($element ) || " element with @xml:id='" || $element/@xml:id || "'.")
+            if (empty($tokens)) then
+                ''
+            else if (count($tokenValues) = 1) then
+                $tokenValues[1]
             else
-                $attributeValue
+                array { $tokenValues }
         return
             map:entry(
                 string($key),
