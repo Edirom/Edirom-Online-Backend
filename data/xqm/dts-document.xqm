@@ -27,14 +27,23 @@ declare namespace request = "http://exist-db.org/xquery/request";
 
 (: VARIABLE DECLARATIONS ================================================== :)
 
+(:~
+ : Lists MEI elements that must always be preserved for every endpoint request.
+ :)
 declare variable $dts-document:alwaysPreserveMEIElements as xs:QName* := (
     QName("http://www.music-encoding.org/ns/mei", "meiHead")
 );
 
+(:~
+ : Lists TEI elements that must always be preserved for every endpoint request.
+ :)
 declare variable $dts-document:alwaysPreserveTEIElements as xs:QName* := (
     QName("http://www.tei-c.org/ns/1.0", "teiHeader")
 );
 
+(:~
+ : Lists MEI elements that are preserved when they precede a selected sibling structure.
+ :)
 declare variable $dts-document:preserveIfPrecedingSiblingsMEIElements as xs:QName* := (
     QName("http://www.music-encoding.org/ns/mei", "scoreDef"),
     QName("http://www.music-encoding.org/ns/mei", "staffGrp"),
@@ -50,19 +59,33 @@ declare variable $dts-document:preserveIfPrecedingSiblingsMEIElements as xs:QNam
     QName("http://www.music-encoding.org/ns/mei", "graphic")
 );
 
+(:~
+ : Lists attributes whose referenced target elements should be followed.
+ : In an xml response, the elements referenced by these attributes will be included in the result set of the document endpoint even if outside the selection wrapped by dts:wrapper.
+ : In a json response, the references will be resolved and the referenced elements will be included in the result set of the document endpoint in place.
+ :)
 declare variable $dts-document:followReferenceAttributes as xs:QName* := (
     QName("", "facs")
 );
 
-declare variable $dts-document:specialResources as map(xs:string, xs:string) := map {
+(:~
+ : Maps special resource aliases to internal application resources.
+ :)
+declare variable $dts-document:specialResourcesAliases as map(xs:string, xs:string) := map {
     "help_en": "xmldb:exist:///db/apps/Edirom-Online-Backend/help/help_en.xml",
     "help_de": "xmldb:exist:///db/apps/Edirom-Online-Backend/help/help_de.xml"
 }; (: TODO: this is a temporary solution.
     There should be a collection also.
     Make them available to collection and navigation endopoints. :)
 
+(:~
+ : Denotes the default HTML profile used when no profile is requested.
+ :)
 declare variable $dts-document:defaultHTMLProfile as xs:string := "edirom-text";
 
+(:~
+ : Maps HTML profile identifiers to the transformation parameters used for them.
+ :)
 declare variable $dts-document:htmlProfiles as map(xs:string, element(param)*) := map {
     "edirom-text": (
         <param name="footnoteBackLink" value="true"/>,
@@ -78,6 +101,12 @@ declare variable $dts-document:htmlProfiles as map(xs:string, element(param)*) :
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
+(:~
+ : Returns the parameter nodes for the requested HTML profile.
+ :
+ : @param $htmlProfile The requested HTML profile name
+ : @return The parameters associated with the requested profile
+ :)
 declare function dts-document:htmlProfileParameters(
     $htmlProfile as xs:string?
 ) as element(param)* {
@@ -90,6 +119,13 @@ declare function dts-document:htmlProfileParameters(
         map:get($dts-document:htmlProfiles, $profile)
 };
 
+(:~
+ : Wraps the selected nodes in place while preserving any required surrounding or referenced content.
+ :
+ : @param $selection The selected elements to wrap
+ : @param $document The source document containing the selection
+ : @return The wrapped document fragment with the selected content kept in its original location and any required context preserved outside the wrapper
+ :)
 declare function dts-document:wrapSelection(
     $selection as element()*,
     $document as node()
@@ -105,6 +141,14 @@ declare function dts-document:wrapSelection(
         dts-document:copySelection($document/*, $selection, $fullCopyNodes, $keptNodes)
 };
 
+(:~
+ : Tests whether a node matches one of the supplied candidate nodes by identity or XML id.
+ : This is used while copying and wrapping a selection.
+ :
+ : @param $node The node to test
+ : @param $candidates The candidate nodes to compare against
+ : @return `true()` when the node matches a candidate, otherwise `false()`
+ :)
 declare function dts-document:matchesNode(
     $node as element(),
     $candidates as element()*
@@ -118,12 +162,25 @@ declare function dts-document:matchesNode(
         )
 };
 
+(:~
+ : Collects sibling elements that must be preserved because they precede the kept nodes.
+ :
+ : @param $keptNodes The nodes that remain in the wrapped result
+ : @return The preceding sibling nodes that need to be preserved
+ :)
 declare function dts-document:preserveIfPrecedingSiblingNodes(
     $keptNodes as element()*
 ) as element()* {
     $keptNodes/preceding-sibling::*[node-name(.) = $dts-document:preserveIfPrecedingSiblingsMEIElements]
 };
 
+(:~
+ : Recursively includes referenced nodes in the result set until no new references remain.
+ :
+ : @param $document The source document
+ : @param $nodes The initial nodes to expand
+ : @return The closure of the supplied nodes and their referenced targets
+ :)
 declare function dts-document:referenceClosure(
     $document as node(),
     $nodes as element()*
@@ -138,6 +195,12 @@ declare function dts-document:referenceClosure(
             dts-document:referenceClosure($document, ($nodes, $referencedNodes))
 };
 
+(:~
+ : Extracts local reference identifiers from the supplied nodes and their attributes.
+ :
+ : @param $nodes The nodes from which to collect references
+ : @return The distinct local reference ids found in the selected attributes
+ :)
 declare function dts-document:localReferenceIds(
     $nodes as element()*
 ) as xs:string* {
@@ -147,6 +210,12 @@ declare function dts-document:localReferenceIds(
     )
 };
 
+(:~
+ : Extracts local reference identifiers from a sequence of attributes.
+ :
+ : @param $attributes The attributes to inspect for fragment references
+ : @return The distinct local reference ids found in those attributes
+ :)
 declare function dts-document:localReferenceIdsFromAttributes(
     $attributes as attribute()*
 ) as xs:string* {
@@ -158,6 +227,15 @@ declare function dts-document:localReferenceIdsFromAttributes(
     )
 };
 
+(:~
+ : Copies a selection tree while retaining the required nodes and wrapping selected children.
+ :
+ : @param $node The current node in the source tree
+ : @param $selection The selected elements to copy
+ : @param $fullCopyNodes Nodes that should be reproduced in full
+ : @param $keptNodes Nodes that should be retained as context
+ : @return The copied node tree for the selection
+ :)
 declare function dts-document:copySelection(
     $node as node(),
     $selection as element()*,
@@ -180,6 +258,15 @@ declare function dts-document:copySelection(
             $node
 };
 
+(:~
+ : Copies the children of a node and wraps the first selected child with a DTS wrapper.
+ :
+ : @param $node The parent element whose children are being processed
+ : @param $selection The selected elements to expose
+ : @param $fullCopyNodes Nodes that should be reproduced in full
+ : @param $keptNodes Nodes that should be retained as context
+ : @return The copied child nodes with wrappers where needed
+ :)
 declare function dts-document:copySelectedChildren(
     $node as element(),
     $selection as element()*,
@@ -202,6 +289,13 @@ declare function dts-document:copySelectedChildren(
             dts-document:copySelection($child, $selection, $fullCopyNodes, $keptNodes)
 };
 
+(:~
+ : Finds measures that reference the selected zones and therefore need to be preserved.
+ :
+ : @param $document The source document
+ : @param $selection The selected elements, potentially including zones
+ : @return The measures that reference the selected zones
+ :)
 declare function dts-document:getMeasuresReferencingSelectedZones(
     $document as node(),
     $selection as element()*
@@ -217,6 +311,13 @@ declare function dts-document:getMeasuresReferencingSelectedZones(
         $measures
 };
 
+(:~
+ : Checks whether the supplied elements match a citation structure in the given citation tree.
+ :
+ : @param $elements The elements to test
+ : @param $citationTree The citation tree to check against
+ : @return `true()` when the elements are part of the citation tree, otherwise `false()`
+ :)
 declare function dts-document:isInCitationTree(
     $elements as element()*,
     $citationTree as element(citeStructure)*
@@ -225,12 +326,25 @@ declare function dts-document:isInCitationTree(
         satisfies dts-document:matchesCitationStructure($elements, $citeStructure)
 };
 
+(:~
+ : Tests whether a selection consists only of elements that should always be preserved.
+ :
+ : @param $elements The elements to test
+ : @return `true()` if all supplied elements are in the list of always preserved elements, otherwise `false()`
+ :)
 declare function dts-document:isAlwaysPreservedSelection(
     $elements as element()*
 ) as xs:boolean {
     every $node in $elements satisfies node-name($node) = $dts-document:alwaysPreserveMEIElements or node-name($node) = $dts-document:alwaysPreserveTEIElements
 };
 
+(:~
+ : Tests whether the supplied elements match a single citation structure definition.
+ :
+ : @param $elements The elements to test
+ : @param $citeStructure The citation structure definition to compare against
+ : @return `true()` when the elements match the citation structure, otherwise `false()`
+ :)
 declare function dts-document:matchesCitationStructure(
     $elements as element()*,
     $citeStructure as element(citeStructure)
@@ -245,8 +359,14 @@ declare function dts-document:matchesCitationStructure(
         exists($matchName)
         and (every $node in $elements satisfies node-name($node) eq $matchName)
 };
-
-declare function dts-document:selectTEIPages(
+(:~
+ : Selects a TEI page range between the supplied page breaks.
+ :
+ : @param $document The source document
+ : @param $startPb The starting page break element
+ : @param $endPb The ending page break element, if present
+ : @return The page content selected between the supplied boundaries
+ :)declare function dts-document:selectTEIPages(
     $document as node(),
     $startPb as node()*,
     $endPb as node()*
@@ -278,6 +398,14 @@ declare function dts-document:selectTEIPages(
         $reduced/descendant-or-self::*[@xml:id = $commonAncestorID]/*
 };
 
+(:~
+ : Selects nodes from the document only for those references that are actually covered by the supplied citation structure.
+ :
+ : @param $document The source document
+ : @param $ref The reference value to resolve
+ : @param $citationTree The citation tree used to locate matching nodes
+ : @return The selected nodes matching the supplied citation definition
+ :)
 declare function dts-document:selectBasedOnCiteStructure(
     $document as node(),
     $ref as xs:string?,
@@ -310,6 +438,16 @@ declare function dts-document:selectBasedOnCiteStructure(
         $selected
 };
 
+(:~
+ : Resolves a document selection from a reference or a start/end pair, matching a given citation structure.
+ :
+ : @param $document The source document
+ : @param $ref An optional reference to select a single unit
+ : @param $start The optional start reference of a range
+ : @param $end The optional end reference of a range
+ : @param $citationTree The citation tree used to validate the selection
+ : @return The selected nodes or range content
+ :)
 declare function dts-document:selectElementOrRange(
     $document as node(),
     $ref as xs:string?,
@@ -388,6 +526,16 @@ declare function dts-document:selectElementOrRange(
         ()
 };
 
+(:~
+ : Selects content according to the supplied parameters and wraps it for DTS output.
+ :
+ : @param $document The source document
+ : @param $ref An optional reference to select a single unit
+ : @param $start The optional start reference of a range
+ : @param $end The optional end reference of a range
+ : @param $citationTree The citation tree used to validate the selection
+ : @return The wrapped selection ready for output
+ :)
 declare function dts-document:selectAndWrap(
     $document as node(),
     $ref as xs:string?,
@@ -400,6 +548,13 @@ declare function dts-document:selectAndWrap(
         dts-document:wrapSelection($selection, $document)
 };
 
+(:~
+ : Checks whether the supplied media type can be used with the document namespace.
+ :
+ : @param $mediaType The requested media type
+ : @param $namespace The document namespace identifier
+ : @return `true()` when the media type is compatible, otherwise `false()`
+ :)
 declare function dts-document:isMediaTypeCompatible(
     $mediaType as xs:string?,
     $namespace as xs:string
@@ -420,15 +575,30 @@ declare function dts-document:isMediaTypeCompatible(
         false()
 };
 
-declare function dts-document:resolveResource(
+(:~
+ : Resolves special resource aliases to their backing application resources.
+ :
+ : @param $resource The requested resource identifier
+ : @return The resolved resource URI
+ :)
+declare function dts-document:resolveSpecialResourceAlias(
     $resource as xs:string?
 ) as xs:string {
-    if (map:contains($dts-document:specialResources, $resource)) then
-        map:get($dts-document:specialResources, $resource)
+    if (map:contains($dts-document:specialResourcesAliases, $resource)) then
+        map:get($dts-document:specialResourcesAliases, $resource)
     else
         $resource
 };
 
+(:~
+ : Transforms a TEI document fragment into HTML using the configured XSLT pipeline.
+ :
+ : @param $xml The TEI source document fragment
+ : @param $resource The resource identifier used for the transformation context
+ : @param $xslInstruction An optional stylesheet processing instruction
+ : @param $htmlParameters The HTML rendering parameters
+ : @return The transformed HTML fragment
+ :)
 declare function dts-document:transformTEIToHTML(
     $xml as node(),
     $resource as xs:string?,
@@ -499,6 +669,14 @@ declare function dts-document:transformTEIToHTML(
         $doc
 };
 
+(:~
+ : Converts a document header to HTML for display in the application.
+ :
+ : @param $xml The header XML to transform
+ : @param $namespace The document namespace identifier
+ : @param $htmlParameters The HTML rendering parameters
+ : @return The transformed HTML header fragment
+ :)
 declare function dts-document:transformHeaderToHTML(
     $xml as node(),
     $namespace as xs:string?,
@@ -534,6 +712,13 @@ declare function dts-document:transformHeaderToHTML(
 
 };
 
+(:~
+ : Converts an XML element into a map representation for JSON-style output.
+ :
+ : @param $document The source document used to resolve references
+ : @param $element The XML element to convert
+ : @return A map representation of the supplied element
+ :)
 declare function local:to-map(
     $document as element(),
     $element as element()
@@ -601,7 +786,14 @@ declare function local:to-map(
     ))
 };
 
-declare function dts-document:selectTopLevelCitationTreeElements(
+(:~
+ : Selects the root-level citation tree elements from the supplied XML document.
+ :
+ : @param $xml The source document
+ : @param $citationTree The citation tree to evaluate
+ : @return The selected citation-tree root elements
+ :)
+declare function dts-document:selectCitationTreeRootElements(
     $xml as node(),
     $citationTree as element(citeStructure)*
 ) as element()* {
@@ -638,14 +830,22 @@ declare function dts-document:selectTopLevelCitationTreeElements(
             error($errors:INVALID_PARAMETERS, "The citation tree does not match the document structure.")
 };
 
-declare function dts-document:ensureWrappedCitationTree(
+(:~
+ : Ensures that the supplied document contains a dts:wrapper element.
+ : If no wrapper is present, the whole citation tree is selected and wrapped in a dts:wrapper element.
+ :
+ : @param $xml The source document
+ : @param $citationTree The citation tree used to determine the wrapping
+ : @return The document, wrapped if necessary
+ :)
+declare function dts-document:enforceWrapping(
     $xml as node(),
     $citationTree as element(citeStructure)*
 ) as node() {
     if (exists($xml//dts:wrapper)) then
         $xml
     else
-        let $selection := dts-document:selectTopLevelCitationTreeElements($xml, $citationTree)
+        let $selection := dts-document:selectCitationTreeRootElements($xml, $citationTree)
         return
             if (exists($selection)) then
                 dts-document:wrapSelection($selection, $xml)
@@ -653,6 +853,12 @@ declare function dts-document:ensureWrappedCitationTree(
                 error($errors:INVALID_PARAMETERS, "The citation tree specified for this document does not match any elements in the document. Citation tree: " || string-join($citationTree/@xml:id, ", "))
 };
 
+(:~
+ : Converts the wrapped subtree of an MEI element into a map representation for JSON output.
+ :
+ : @param $xml The MEI element
+ : @return A map representation of the wrapped subtree
+ :)
 declare function dts-document:wrappedMEIToMap(
     $xml as node()
 ) as map(*) {
@@ -661,6 +867,13 @@ declare function dts-document:wrappedMEIToMap(
     return $documentMap
 };
 
+(:~
+ : Prepares MEI content for JSON output by adding any required attributes.
+ :
+ : @param $xml The source MEI document
+ : @param $addMeasuresToZones Whether measure information should be attached to zones in the output
+ : @return The processed document suitable for JSON output
+ :)
 declare function dts-document:processForJSON(
     $xml as node(),
     $addMeasuresToZones as xs:boolean
@@ -676,6 +889,18 @@ declare function dts-document:processForJSON(
         $doc
 };
 
+(:~
+ : Returns the requested document representation for the supplied selection and output format.
+ :
+ : @param $resource The resource identifier to load
+ : @param $ref An optional reference to select a single unit
+ : @param $start The optional start reference of a range
+ : @param $end The optional end reference of a range
+ : @param $tree The optional citation tree identifier to use
+ : @param $mediaType The requested output media type
+ : @param $htmlParameters HTML rendering parameters for the response
+ : @return The document content in the requested representation
+ :)
 declare function dts-document:document(
     $resource as xs:string?,
     $ref as xs:string?,
@@ -690,7 +915,7 @@ declare function dts-document:document(
     else if (($start and not($end)) or ($end and not($start))) then
         error($errors:INVALID_PARAMETERS, "Both 'start' and 'end' parameters must be provided together.")
     else
-        let $resource := dts-document:resolveResource($resource)
+        let $resource := dts-document:resolveSpecialResourceAlias($resource)
         let $document := eutil:getDoc($resource)/root()
         let $document :=
             if ($document) then
@@ -708,7 +933,7 @@ declare function dts-document:document(
             if (not($mediaTypeCompatible)) then
                 error($errors:UNSUPPORTED_MEDIA_TYPE, "The requested media type is not compatible with the document format. Media type: " || $mediaType || ", Namespace: " || $namespace)
             else if (not($ref) and not($start) and not($end) and $mediaType eq "application/json") then
-                dts-document:ensureWrappedCitationTree($document, $citationTree)
+                dts-document:enforceWrapping($document, $citationTree)
             else if (not($ref) and not($start) and not($end)) then
                 $document/*
             else if ($namespace eq "mei" or $namespace eq "tei") then
