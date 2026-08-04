@@ -1007,7 +1007,7 @@ declare
 
 declare
     %test:assertTrue
-    function ddt:test-transformOutputToMap-resolves-references-and-arrays() as xs:boolean {
+    function ddt:test-wrappedMEIToMap-resolves-references-and-arrays() as xs:boolean {
         let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
                 <dts:wrapper>
                     <parent xml:id="p1" facs="#linked">
@@ -1031,7 +1031,7 @@ declare
             }
         }
         :)
-        let $m := dts-document:transformOutputToMap($xml)
+        let $m := dts-document:wrappedMEIToMap($xml)
         let $parent := map:get($m, "parent")
         let $parentId := map:get($parent, "parentId")
         let $children := map:get($parent, "child")
@@ -1045,7 +1045,7 @@ declare
 
 declare
     %test:assertTrue
-    function ddt:test-transformOutputToMap-resolves-multiple-facs-references-as-array() as xs:boolean {
+    function ddt:test-wrappedMEIToMap-resolves-multiple-facs-references-as-array() as xs:boolean {
         let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
                 <dts:wrapper>
                     <measure xml:id="m1" facs="#linked1 #linked2">
@@ -1059,7 +1059,7 @@ declare
                     <title>LinkTwo</title>
                 </linked2>
             </root>
-        let $m := dts-document:transformOutputToMap($xml)
+        let $m := dts-document:wrappedMEIToMap($xml)
         let $measure := map:get($m, "measure")
         let $facs := map:get($measure, "facs")
         return
@@ -1071,7 +1071,7 @@ declare
 
 declare
     %test:assertError("errors:NotFoundError")
-    function ddt:test-transformOutputToMap-raises-error-for-missing-facs() as xs:boolean {
+    function ddt:test-wrappedMEIToMap-raises-error-for-missing-facs() as xs:boolean {
         let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
                 <dts:wrapper>
                     <measure xml:id="m1" facs="#linked1 #missing #linked2">
@@ -1085,7 +1085,7 @@ declare
                     <title>LinkTwo</title>
                 </linked2>
             </root>
-        let $m := dts-document:transformOutputToMap($xml)
+        let $m := dts-document:wrappedMEIToMap($xml)
         let $measure := map:get($m, "measure")
         let $facs := map:get($measure, "facs")
         return
@@ -1098,7 +1098,7 @@ declare
 
 declare
     %test:assertTrue
-    function ddt:test-transformOutputToMap-preserves-references-not-to-be-followed() as xs:boolean {
+    function ddt:test-wrappedMEIToMap-preserves-references-not-to-be-followed() as xs:boolean {
         let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
                 <dts:wrapper>
                     <measure xml:id="m1" refNotToFollow="#linked1 #linked2">
@@ -1112,7 +1112,7 @@ declare
                     <title>LinkTwo</title>
                 </linked2>
             </root>
-        let $m := dts-document:transformOutputToMap($xml)
+        let $m := dts-document:wrappedMEIToMap($xml)
         let $measure := map:get($m, "measure")
         let $refNotToFollow := map:get($measure, "refNotToFollow")
         return
@@ -1124,7 +1124,7 @@ declare
 
 declare
     %test:assertTrue
-    function ddt:test-transformOutputToMap-single-child-returns-single-value() as xs:boolean {
+    function ddt:test-wrappedMEIToMap-single-child-returns-single-value() as xs:boolean {
         let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
                 <dts:wrapper>
                     <item xml:id="i1">
@@ -1140,7 +1140,7 @@ declare
             }
         }
         :)
-        let $m := dts-document:transformOutputToMap($xml)
+        let $m := dts-document:wrappedMEIToMap($xml)
         let $item := map:get($m, "item")
         return
             map:get($item, "itemId") = "i1"

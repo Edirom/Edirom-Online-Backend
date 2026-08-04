@@ -653,7 +653,7 @@ declare function dts-document:ensureWrappedCitationTree(
                 error($errors:INVALID_PARAMETERS, "The citation tree specified for this document does not match any elements in the document. Citation tree: " || string-join($citationTree/@xml:id, ", "))
 };
 
-declare function dts-document:transformOutputToMap(
+declare function dts-document:wrappedMEIToMap(
     $xml as node()
 ) as map(*) {
     let $wrapped := $xml//dts:wrapper
@@ -661,11 +661,11 @@ declare function dts-document:transformOutputToMap(
     return $documentMap
 };
 
-declare function dts-document:addAttributesForJSONOutput(
+declare function dts-document:processForJSON(
     $xml as node(),
     $addMeasuresToZones as xs:boolean
 ) as node() {
-    let $xslAddAttributes := eutil:getDoc($eutil:xsltBase || '/edirom_addAttributesForJSONOutput.xsl')
+    let $xslAddAttributes := eutil:getDoc($eutil:xsltBase || '/edirom_processMEIForJSONOutput.xsl')
 
     let $params := (
         <param name="addMeasuresToZones" value="{$addMeasuresToZones}"/>
@@ -735,9 +735,9 @@ declare function dts-document:document(
                         false()
                     else
                         true()
-                let $processedXML := dts-document:addAttributesForJSONOutput($outputXml, $addMeasuresToZones)
+                let $processedXML := dts-document:processForJSON($outputXml, $addMeasuresToZones)
                 return
-                    dts-document:transformOutputToMap($processedXML)
+                    dts-document:wrappedMEIToMap($processedXML)
             else
                 error($errors:UNSUPPORTED_MEDIA_TYPE, "The requested media type is not supported. Media type: " || $mediaType || ", Namespace: " || $namespace || ", Ref: " || $ref)
         return
