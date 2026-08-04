@@ -1175,6 +1175,18 @@ declare
             and $zoneId = $ref
             and $ulx = $expectedUlx
             and $surfaceId = $expectedSurfaceId
+            (: response structure :)
+            and map:contains($response?zone, "measure")
+            and map:contains($response?zone, "ulx")
+            and map:contains($response?zone, "uly")
+            and map:contains($response?zone, "lrx")
+            and map:contains($response?zone, "lry")
+            and map:contains($response?zone, "surfaceId")
+            and map:contains($response?zone, "zoneId")
+            and map:contains($response?zone, "zoneType")
+            and map:contains($response?zone, "target")
+            and map:contains($response?zone, "height")
+            and map:contains($response?zone, "width")
 };
 
 declare
@@ -1202,10 +1214,11 @@ declare
         let $mediaType := "application/json"
         let $response := dts-document:document($resource, (), $start, $end, $tree, $mediaType, $html-parameters)
         let $zoneIdFirst := $response?zone(1)?zoneId
-        let $zoneIdLast := $response?zone(array:size($response?zone))?zoneId
+        let $zoneCount := array:size($response?zone)
+        let $zoneIdLast := $response?zone($zoneCount)?zoneId
         let $ulxStart := $response?zone(1)?ulx
         let $surfaceIdStart := $response?zone(1)?surfaceId
-        let $surfaceIdEnd := $response?zone(array:size($response?zone))?surfaceId
+        let $surfaceIdEnd := $response?zone($zoneCount)?surfaceId
         return
             map:contains($response, "zone")
             and ($zoneIdFirst eq $start)
@@ -1213,7 +1226,30 @@ declare
             and ($ulxStart eq $expectedUlxStart)
             and ($surfaceIdStart eq $expectedSurfaceId)
             and ($surfaceIdEnd eq $expectedSurfaceId)
-            and (array:size($response?zone) eq $expectedZoneCount)
+            and ($zoneCount eq $expectedZoneCount)
+            (: response structure :)
+            and map:contains($response?zone(1), "measure")
+            and map:contains($response?zone(1), "ulx")
+            and map:contains($response?zone(1), "uly")
+            and map:contains($response?zone(1), "lrx")
+            and map:contains($response?zone(1), "lry")
+            and map:contains($response?zone(1), "surfaceId")
+            and map:contains($response?zone(1), "zoneId")
+            and map:contains($response?zone(1), "zoneType")
+            and map:contains($response?zone(1), "target")
+            and map:contains($response?zone(1), "height")
+            and map:contains($response?zone(1), "width")
+            and map:contains($response?zone($zoneCount), "measure")
+            and map:contains($response?zone($zoneCount), "ulx")
+            and map:contains($response?zone($zoneCount), "uly")
+            and map:contains($response?zone($zoneCount), "lrx")
+            and map:contains($response?zone($zoneCount), "lry")
+            and map:contains($response?zone($zoneCount), "surfaceId")
+            and map:contains($response?zone($zoneCount), "zoneId")
+            and map:contains($response?zone($zoneCount), "zoneType")
+            and map:contains($response?zone($zoneCount), "target")
+            and map:contains($response?zone($zoneCount), "height")
+            and map:contains($response?zone($zoneCount), "width")
 
 };
 
@@ -1249,11 +1285,16 @@ declare
             and $surfaceId = $ref
             and $widthFirst = $expectedWidth
             and $widthSecond = $expectedWidth
+            (: response structure :)
+            and map:contains($response?surface, "zone")
+            and map:contains($response?surface?zone(1), "measure")
+            and map:contains($response?surface?zone(1), "target")
+
 
 };
 
 declare
-    (: retrieve a range of zones by start and end :)
+    (: retrieve a range of surfaces by start and end :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
     %test:arg("start", "facsimile-2001003")
     %test:arg("end", "facsimile-2001004")
@@ -1289,6 +1330,10 @@ declare
             and $surfaceIdLast = $end
             and $widthFirst = $expectedWidthFirst
             and (array:size($response?surface) eq $expectedSurfaceCount)
+            (: response structure :)
+            and map:contains($response?surface(1), "zone")
+            and map:contains($response?surface(1)?zone(1), "measure")
+            and map:contains($response?surface(1)?zone(1), "target")
 
 };
 
@@ -1328,6 +1373,14 @@ declare
             and $zoneId = $expectedZoneId
             and $surfaceId = $expectedSurfaceId
             and $ulx = $expectedUlx
+            (: response structure :)
+            and map:contains($response?measure, "measureId")
+            and map:contains($response?measure, "facs")
+            and map:contains($response?measure, "mdivId")
+            and map:contains($response?measure?facs, "zoneId")
+            and map:contains($response?measure?facs, "surfaceId")
+            and map:contains($response?measure?facs, "target")
+            and map:contains($response?measure?facs, "ulx")
 
 };
 
@@ -1366,6 +1419,14 @@ declare
             and $measureCount = $expectedMeasureCount
             and $ulxFirst = $expectedUlxFirst
             and $ulxLast = $expectedUlxLast
+            (: response structure :)
+            and map:contains($response?measure(1), "measureId")
+            and map:contains($response?measure(1), "facs")
+            and map:contains($response?measure(1), "mdivId")
+            and map:contains($response?measure(1)?facs, "zoneId")
+            and map:contains($response?measure(1)?facs, "surfaceId")
+            and map:contains($response?measure(1)?facs, "target")
+            and map:contains($response?measure(1)?facs, "ulx")
 };
 
 declare
@@ -1385,7 +1446,27 @@ declare
         }
         let $mediaType := "application/json"
         let $response := dts-document:document($resource, (), (), (), $tree, $mediaType, $html-parameters)
+        let $checkResponseStructure := 
+            if ($tree eq "musicStructure") then
+                map:contains($response, "mdiv")
+                and map:contains($response?mdiv?score?section, "measure")
+                and map:contains($response?mdiv?score?section?measure(1), "measureId")
+                and map:contains($response?mdiv?score?section?measure(1), "facs")
+                and map:contains($response?mdiv?score?section?measure(1), "mdivId")
+                and map:contains($response?mdiv?score?section?measure(1)?facs, "zoneId")
+                and map:contains($response?mdiv?score?section?measure(1)?facs, "surfaceId")
+                and map:contains($response?mdiv?score?section?measure(1)?facs, "target")
+                and map:contains($response?mdiv?score?section?measure(1)?facs, "ulx")
+            else if ($tree eq "paginationStructure") then
+                map:contains($response, "surface")
+                and map:contains($response?surface(3), "zone")
+                and map:contains($response?surface(3), "surfaceId")
+                and map:contains($response?surface(3)?zone(1), "measure")
+                and map:contains($response?surface(3)?zone(1), "ulx")
+            else
+                false
         return
             $response instance of map(*)
             and map:size($response) gt 0
+            and $checkResponseStructure
 };
