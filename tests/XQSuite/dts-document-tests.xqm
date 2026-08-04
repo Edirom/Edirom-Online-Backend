@@ -1154,6 +1154,12 @@ declare
     %test:arg("expectedUlx", "478")
     %test:arg("expectedSurfaceId", "facsimile-2001002")
     %test:assertTrue
+    (: retrieve a specific zone by ref :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile-parts.xml")
+    %test:arg("ref", "zone_barGroup-1083")
+    %test:arg("expectedUlx", "820")
+    %test:arg("expectedSurfaceId", "facsimile-3713")
+    %test:assertTrue
     function ddt:test-document-json-zone-ref(
         $resource as xs:string,
         $ref as xs:string?,
@@ -1346,6 +1352,14 @@ declare
     %test:arg("expectedSurfaceId", "facsimile-2001002")
     %test:arg("expectedUlx", "1332")
     %test:assertTrue
+    (: retrieve a specific measure by ref (parts file):)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile-parts.xml")
+    %test:arg("ref", "bar-1269")
+    %test:arg("expectedMdivId", "x2eb1eec1-5284-429c-9a80-c16ebe4e8233")
+    %test:arg("expectedZoneId", "zone_bar-1269")
+    %test:arg("expectedSurfaceId", "facsimile-3715")
+    %test:arg("expectedUlx", "2194")
+    %test:assertTrue
     function ddt:test-document-json-measure-ref(
         $resource as xs:string,
         $ref as xs:string?,
@@ -1392,6 +1406,14 @@ declare
     %test:arg("expectedMeasureCount", 4)
     %test:arg("expectedUlxFirst", "2458")
     %test:arg("expectedUlxLast", "2926")
+    %test:assertTrue
+    (: retrieve a range of measures by start and end (parts file):)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile-parts.xml")
+    %test:arg("start", "bar-5021")
+    %test:arg("end", "bar-5025")
+    %test:arg("expectedMeasureCount", 5)
+    %test:arg("expectedUlxFirst", "458")
+    %test:arg("expectedUlxLast", "1700")
     %test:assertTrue
     function ddt:test-document-json-measure-start-end(
         $resource as xs:string,

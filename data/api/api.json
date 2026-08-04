@@ -100,6 +100,10 @@
 									"summary": "Klarinettenquintett source 1",
 									"value": "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-1.xml"
 								},
+								"Klarinettenquintett source 2 (with parts)": {
+									"summary": "Klarinettenquintett source 2 (with parts)",
+									"value": "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-2.xml"
+								},
 								"Klarinettenquintett text 1": {
 									"summary": "Klarinettenquintett text 1",
 									"value": "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-1.xml"
@@ -174,6 +178,34 @@
 								"Klarinettenquintett source 1 - Measure 2": {
 									"summary": "Klarinettenquintett source 1 - Measure 2",
 									"value": "bar-2002"
+								},
+								"Klarinettenquintett source 2 (with parts) - Surface 3": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Surface 3",
+									"value": "facsimile-3713"
+								},
+								"Klarinettenquintett source 2 (with parts) - Zone": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Zone",
+									"value": "zone_bar-1087"
+								},
+								"Klarinettenquintett source 2 (with parts) - Zone with rest": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Zone with rest",
+									"value": "zone_barGroup-1278"
+								},
+								"Klarinettenquintett source 2 (with parts) - Mdiv Allegro": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Mdiv Allegro",
+									"value": "x2eb1eec1-5284-429c-9a80-c16ebe4e8233"
+								},
+								"Klarinettenquintett source 2 (with parts) - Mdiv Menuetto. Capricio Presto": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Mdiv Menuetto. Capricio Presto",
+									"value": "x3859654b-1897-47bf-abee-983d69896d2b"
+								},
+								"Klarinettenquintett source 2 (with parts) - Measure 1 Klarinette (multiRest 4)": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Measure 1 Klarinette (multiRest 4)",
+									"value": "barGroup-1278"
+								},
+								"Klarinettenquintett source 2 (with parts) - Measure 5 Viola": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Measure 5 Viola",
+									"value": "bar-4382"
 								},
 								"meiHead": {
 									"summary": "meiHead",
@@ -250,6 +282,30 @@
 									"summary": "Klarinettenquintett source 1 - Measure 2",
 									"value": "bar-2002"
 								},
+								"Klarinettenquintett source 2 (with parts) - Surface 3": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Surface 3",
+									"value": "facsimile-3713"
+								},
+								"Klarinettenquintett source 2 (with parts) - Zone": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Zone",
+									"value": "zone_bar-1087"
+								},
+								"Klarinettenquintett source 2 (with parts) - Mdiv Allegro": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Mdiv Allegro",
+									"value": "x2eb1eec1-5284-429c-9a80-c16ebe4e8233"
+								},
+								"Klarinettenquintett source 2 (with parts) - Mdiv Menuetto. Capricio Presto": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Mdiv Menuetto. Capricio Presto",
+									"value": "x3859654b-1897-47bf-abee-983d69896d2b"
+								},
+								"Klarinettenquintett source 2 (with parts) - Measure 1 Klarinette (multiRest 4)": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Measure 1 Klarinette (multiRest 4)",
+									"value": "barGroup-1278"
+								},
+								"Klarinettenquintett source 2 (with parts) - Measure 5 Viola": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Measure 5 Viola",
+									"value": "bar-4382"
+								},
 								"Page Break 1": {
 									"summary": "Page Break 1",
 									"value": "pb-1"
@@ -316,6 +372,30 @@
 								"Klarinettenquintett source 1 - Measure 20": {
 									"summary": "Klarinettenquintett source 1 - Measure 20",
 									"value": "bar-20020"
+								},
+								"Klarinettenquintett source 2 (with parts) - Surface 16": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Surface 16",
+									"value": "facsimile-37116"
+								},
+								"Klarinettenquintett source 2 (with parts) - Zone Larter": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Zone Larter",
+									"value": "zone_bar-1089"
+								},
+								"Klarinettenquintett source 2 (with parts) - Mdiv Allegro": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Mdiv Allegro",
+									"value": "x2eb1eec1-5284-429c-9a80-c16ebe4e8233"
+								},
+								"Klarinettenquintett source 2 (with parts) - Mdiv Menuetto. Capricio Presto": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Mdiv Menuetto. Capricio Presto",
+									"value": "x3859654b-1897-47bf-abee-983d69896d2b"
+								},
+								"Klarinettenquintett source 2 (with parts) - Measure 8 Klarinette": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Measure 8 Klarinette",
+									"value": "bar-1282"
+								},
+								"Klarinettenquintett source 2 (with parts) - Measure 11 Viola": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Measure 11 Viola",
+									"value": "bar-4388"
 								},
 								"Page Break 1": {
 									"summary": "Page Break 1",
