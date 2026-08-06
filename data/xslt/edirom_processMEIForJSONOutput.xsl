@@ -2,18 +2,37 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:mei="http://www.music-encoding.org/ns/mei" xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xd xs" version="2.0">
 
     <xsl:param name="addMeasuresToZones" select="true()" as="xs:boolean"/>
+    <xsl:param name="followReferenceAttributes" select="()" as="xs:string*"/>
+    <xsl:variable name="followReferenceAttributeNames" as="xs:string*" select="for $name in tokenize(normalize-space(string-join($followReferenceAttributes, ' ')), '\s+') return normalize-space($name)"/>
 
     <xd:doc scope="stylesheet">
         <xd:desc>This stylesheet prepares an XML selection with additional elements and attributes before conversion to JSON , so that the JSON output has the desired structure.</xd:desc>
     </xd:doc>
 
     <xd:doc scope="component">
-        <xd:desc>Identity transform.</xd:desc>
+        <xd:desc>Identity transform for elements and nodes.</xd:desc>
     </xd:doc>
-    <xsl:template match="@*|node()">
+    <xsl:template match="*">
         <xsl:copy>
-            <xsl:apply-templates select="@*|node()"/>
+            <xsl:for-each select="@*[not(name() = $followReferenceAttributeNames)]">
+                <xsl:attribute name="{name()}" select="."/>
+            </xsl:for-each>
+            <xsl:for-each select="@*[name() = $followReferenceAttributeNames]">
+                <xsl:element name="{name()}">
+                    <xsl:attribute name="hello" select="'world'"/>
+                    <xsl:attribute name="placeholder" select="'true'"/>
+                </xsl:element>
+            </xsl:for-each>
+            <xsl:apply-templates select="node()"/>
         </xsl:copy>
+    </xsl:template>
+
+    <xsl:template match="@*">
+        <xsl:attribute name="{name()}" select="."/>
+    </xsl:template>
+
+    <xsl:template match="text()|comment()|processing-instruction()">
+        <xsl:copy/>
     </xsl:template>
 
     <xd:doc scope="component">
@@ -41,7 +60,15 @@
             <xsl:attribute name="width" select="string($graphic/@width)"/>
             <xsl:attribute name="height" select="string($graphic/@height)"/>
             <xsl:attribute name="target" select="string($graphic/@target)"/>
-            <xsl:apply-templates select="@*"/>
+            <xsl:for-each select="@*[not(name() = $followReferenceAttributeNames)]">
+                <xsl:attribute name="{name()}" select="."/>
+            </xsl:for-each>
+            <xsl:for-each select="@*[name() = $followReferenceAttributeNames]">
+                <xsl:element name="{name()}">
+                    <xsl:attribute name="hello" select="'world'"/>
+                    <xsl:attribute name="placeholder" select="'true'"/>
+                </xsl:element>
+            </xsl:for-each>
             <xsl:if test="$addMeasuresToZones and $measures">
                 <xsl:for-each select="$measures">
                     <xsl:variable name="lbl">
@@ -81,7 +108,16 @@
         <xsl:variable name="mdiv" select="ancestor::mei:mdiv[1]"/>
         <xsl:copy>
             <xsl:attribute name="mdivId" select="string($mdiv/@xml:id)"/>
-            <xsl:apply-templates select="@*|node()"/>
+            <xsl:for-each select="@*[not(name() = $followReferenceAttributeNames)]">
+                <xsl:attribute name="{name()}" select="."/>
+            </xsl:for-each>
+            <xsl:for-each select="@*[name() = $followReferenceAttributeNames]">
+                <xsl:element name="{name()}">
+                    <xsl:attribute name="hello" select="'world'"/>
+                    <xsl:attribute name="placeholder" select="'true'"/>
+                </xsl:element>
+            </xsl:for-each>
+            <xsl:apply-templates select="node()"/>
         </xsl:copy>
     </xsl:template>
 
