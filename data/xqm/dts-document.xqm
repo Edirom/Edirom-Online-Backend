@@ -876,12 +876,16 @@ declare function dts-document:wrappedMEIToMap(
  :)
 declare function dts-document:processForJSON(
     $xml as node(),
-    $addMeasuresToZones as xs:boolean
+    $addMeasuresToZones as xs:boolean,
+    $followReferenceAttributes as xs:QName*
 ) as node() {
     let $xslAddAttributes := eutil:getDoc($eutil:xsltBase || '/edirom_processMEIForJSONOutput.xsl')
 
+    let $followReferenceAttributesStrings := for $attr in $followReferenceAttributes return string($attr)
+
     let $params := (
-        <param name="addMeasuresToZones" value="{$addMeasuresToZones}"/>
+        <param name="addMeasuresToZones" value="{$addMeasuresToZones}"/>,
+        <param name="followReferenceAttributes" value="{$followReferenceAttributesStrings}"/>
     )
 
     let $doc := transform:transform($xml, $xslAddAttributes, <parameters>{$params}</parameters>)
@@ -960,7 +964,7 @@ declare function dts-document:document(
                         false()
                     else
                         true()
-                let $processedXML := dts-document:processForJSON($outputXml, $addMeasuresToZones)
+                let $processedXML := dts-document:processForJSON($outputXml, $addMeasuresToZones, $dts-document:followReferenceAttributes)
                 return
                     dts-document:wrappedMEIToMap($processedXML)
             else
