@@ -1,0 +1,38 @@
+{
+  "count" : 226,
+  "priorities" : [ {
+    "id" : "ediromAnnotPrio1",
+    "name" : "1"
+  }, {
+    "id" : "ediromAnnotPrio2",
+    "name" : "2"
+  }, {
+    "id" : "ediromAnnotPrio3",
+    "name" : "3"
+  } ],
+  "categories" : [ {
+    "id" : "wega.annotation.category.articulation",
+    "name" : "Artikulation"
+  }, {
+    "id" : "wega.annotation.category.bogensetzung",
+    "name" : "Bogensetzung"
+  }, {
+    "id" : "wega.annotation.category.dynamics",
+    "name" : "Dynamik"
+  }, {
+    "id" : "wega.annotation.category.editorial-intervention",
+    "name" : "Editorischer Eingriff"
+  }, {
+    "id" : "wega.annotation.category.correction",
+    "name" : "Korrektur"
+  }, {
+    "id" : "wega.annotation.category.notational-variant",
+    "name" : "Notation"
+  }, {
+    "id" : "wega.annotation.category.rhythm",
+    "name" : "Rhythmus"
+  }, {
+    "id" : "wega.annotation.category.verbal-instruction",
+    "name" : "Spielanweisung"
+  } ]
+}

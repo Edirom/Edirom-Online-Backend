@@ -12,6 +12,7 @@ xquery version "3.1";
 (: IMPORTS ================================================================= :)
 
 import module namespace edition = "http://www.edirom.de/xquery/edition" at "../xqm/edition.xqm";
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -27,15 +28,11 @@ declare option output:indent "yes";
 
 (: QUERY BODY ============================================================== :)
 
-let $lang := request:get-parameter('lang', '')
+let $lang := eutil:getSetLanguage(())
 let $mode := request:get-parameter('mode', '')
 let $edition := request:get-parameter('edition', '')
-
-(:let $base := concat('file:', system:get-module-load-path())
-let $file := doc(concat($base, '/../locale/edirom-lang-', $lang, '.xml'))
-:)
-let $file := doc(concat('../locale/edirom-lang-', $lang, '.xml'))
-let $projectFile := doc(edition:getLanguageFileURI($edition, $lang))
+let $file := $eutil:langDoc($lang)
+let $projectFile := eutil:getDoc(edition:getLanguageFileURI($edition, $lang))
 
 return
     if ($mode = 'json') then (
@@ -46,10 +43,10 @@ return
             </output:serialization-parameters>
         let $data := 
             map {
-                "lang": $file/langFile/lang => normalize-space(),
+                "lang": $lang,
                 "version": $file/langFile/version => normalize-space(),
                 "keys": map:merge((
-                    $file//entry ! map:entry(./string(@key), ./string(@value)), 
+                    $file//entry ! map:entry(./string(@key), ./string(@value)),
                     $projectFile//entry ! map:entry(./string(@key), ./string(@value))
                 ))
             }

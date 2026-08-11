@@ -1,0 +1,23 @@
+<div class="annotView">
+    <div class="metaBox">
+        <div class="property priority">
+            <div class="key">Priorität</div>
+            <div class="value">1</div>
+        </div>
+        <div class="property categories">
+            <div class="key">Kategorie</div>
+            <div class="value">Bogensetzung</div>
+        </div><!--<div class="property sourceLabel">
+                <div class="key">{$sourcesLabel}</div>
+                <div class="value">{string-join($sources, ', ')}</div>
+            </div>-->
+        <div class="property sourceSiglums">
+            <div class="key">Quellen</div>
+            <div class="value">A, K/sv, ED₁</div>
+        </div>
+        <div class="property annotID">
+            <div class="key">Annot.-ID</div>
+            <div class="value">annotation-2</div>
+        </div>
+    </div>
+</div>

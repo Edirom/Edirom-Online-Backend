@@ -9,6 +9,10 @@ xquery version "3.1";
     @author <a href="mailto:roewenstrunk@edirom.de">Daniel Röwenstrunk</a>
 :)
 
+(: IMPORTS ================================================================= :)
+
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
+
 (: NAMESPACE DECLARATIONS ================================================== :)
 
 declare namespace mei = "http://www.music-encoding.org/ns/mei";
@@ -82,7 +86,7 @@ let $uri := request:get-parameter('uri', '')
 
 let $surfaceId := request:get-parameter('pageId', '')
 
-let $mei := doc($uri)/root()
+let $mei := eutil:getDoc($uri)
 
 let $surface := $mei/id($surfaceId)
 

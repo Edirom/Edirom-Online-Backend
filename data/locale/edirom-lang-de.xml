@@ -45,6 +45,8 @@
         <entry key="controller.window.Window_textView" value="Text"/>
         <entry key="controller.window.Window_xmlView" value="XML-Ansicht"/>
         <entry key="controller.window.Window_iFrameView" value="HTML-Ansicht"/>
+        <entry key="sourceDescription" value="Quellenbeschreibung"/>
+        <entry key="xmlSourceDescription" value="XML Quellenbeschreibung"/>
         
         <entry key="view.desktop.Desktop_Cascade" value="Überlappen"/>
         <entry key="view.desktop.Desktop_Close" value="Schließen"/>
@@ -96,7 +98,7 @@
         <entry key="view.window.AnnotationView_OpenAll" value="Alle Quellen öffnen"/>
         <entry key="view.window.AnnotationView_CloseAll" value="Alle Quellen schließen"/>
         <entry key="view.window.HelpWindow_Title" value="Hilfe"/>
-        <entry key="view.window.TobBar_View" value="Ansicht"/>
+        <entry key="view.window.TopBar_View" value="Ansicht"/>
         
         <entry key="view.window.concordanceNavigator.ConcordanceNavigator_Title" value="Konkordanzen"/>
         <entry key="view.window.concordanceNavigator.ConcordanceNavigator_Show" value="Anzeigen"/>
