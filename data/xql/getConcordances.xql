@@ -27,6 +27,15 @@ declare variable $lang := eutil:getSetLanguage(());
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
+declare function local:getId($element as element()) as xs:string {
+    let $id := $element/string(@xml:id)
+    return
+        if (normalize-space($id) != "") then
+            $id
+        else
+            generate-id($element)
+};
+
 declare function local:getGroups($parent) as map(*)? {
     if ($parent/edirom:groups) then (
         map {
@@ -42,6 +51,7 @@ declare function local:getSingleGroups($parent) as array(*)* {
         for $group in $parent/edirom:group
         return
             map {
+                "id": local:getId($group),
                 "name": eutil:getLocalizedName($group, $lang),
                 "connections": local:getConnections($group)
             }
@@ -62,18 +72,11 @@ declare function local:getSingleConnections($parent) as array(*)* {
     array {
         for $connection in $parent/edirom:connection
         return
-            map:merge((
-                if ($connection/@xml:id and normalize-space($connection/string(@xml:id)) != "") then
-                    map {
-                        "id": $connection/string(@xml:id)
-                    }
-                else
-                    map {},
-                map {
-                    "name": $connection/string(@name),
-                    "plist": $connection/string(@plist)
-                }
-            ))
+            map {
+                "id": local:getId($connection),
+                "name": $connection/string(@name),
+                "plist": $connection/string(@plist)
+            }
     }
 };
 
@@ -90,6 +93,7 @@ return (
         for $concordance in $concordances
         return
             map {
+                "id": local:getId($concordance),
                 "name": eutil:getLocalizedName($concordance, $lang),
                 "groups": local:getGroups($concordance),
                 "connections": local:getConnections($concordance)
