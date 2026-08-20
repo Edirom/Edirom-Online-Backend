@@ -726,11 +726,7 @@ declare function local:to-map(
         (: Attributes :)
         for $attribute in $element/@*
         let $attributeName := node-name($attribute)
-        let $key :=
-            if (string($attributeName) eq "xml:id") then
-                concat(node-name($element), "Id")
-            else
-                $attributeName
+        let $key := $attributeName
         let $attributeValue := string($attribute)
         return
             map:entry(

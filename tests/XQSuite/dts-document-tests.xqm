@@ -1105,14 +1105,14 @@ declare
     function ddt:test-wrappedMEIToMap-preserves-references-not-to-be-followed() as xs:boolean {
         let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
                 <dts:wrapper>
-                    <measure xml:id="m1" refNotToFollow="#linked1 #linked2">
+                    <measure measureId="m1" refNotToFollow="#linked1 #linked2">
                         <name>Measure1</name>
                     </measure>
                 </dts:wrapper>
-                <linked1 xml:id="linked1">
+                <linked1 linked1Id="linked1">
                     <title>LinkOne</title>
                 </linked1>
-                <linked2 xml:id="linked2">
+                <linked2 linked2Id="linked2">
                     <title>LinkTwo</title>
                 </linked2>
             </root>
@@ -1129,7 +1129,7 @@ declare
     function ddt:test-wrappedMEIToMap-single-text-child-uses-text-property() as xs:boolean {
         let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
                 <dts:wrapper>
-                    <item xml:id="i1">
+                    <item itemId="i1">
                         <value>only</value>
                     </item>
                 </dts:wrapper>

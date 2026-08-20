@@ -13,20 +13,18 @@
     <xsl:variable name="followReferenceAttributeNames" as="xs:string*" select="for $name in tokenize(normalize-space(string-join($followReferenceAttributes, ' ')), '\s+') return normalize-space($name)"/>
 
     <xd:doc scope="stylesheet">
-        <xd:desc>This stylesheet prepares an XML selection with additional elements and attributes before conversion to JSON , so that the JSON output has the desired structure.</xd:desc>
+        <xd:desc>Prepares an MEI XML selection for JSON conversion. It preserves the input structure while renaming XML identifiers, expanding selected local fragment references into processed target elements, and adding JSON-oriented metadata to zones and measures.</xd:desc>
     </xd:doc>
 
     <xd:doc scope="component">
         <xd:desc>Identity transform for elements and nodes.</xd:desc>
     </xd:doc>
     <xd:doc scope="component">
-        <xd:desc>Copies ordinary attributes. For each attribute listed in followReferenceAttributes, creates an element with the same name for every referenced token beginning with '#', and copies the referenced element's attributes and children into it.</xd:desc>
+        <xd:desc>Copies ordinary attributes. For each attribute listed in followReferenceAttributes, creates an element with the same name for every referenced token beginning with '#', and copies the processed referenced element's attributes and children into it.</xd:desc>
     </xd:doc>
     <xsl:template match="*">
         <xsl:copy>
-            <xsl:for-each select="@*[not(name() = $followReferenceAttributeNames)]">
-                <xsl:attribute name="{name()}" select="."/>
-            </xsl:for-each>
+            <xsl:apply-templates select="@*[not(name() = $followReferenceAttributeNames)]"/>
             <xsl:for-each select="@*[name() = $followReferenceAttributeNames]">
                 <xsl:variable name="attributeName" select="name()"/>
                 <xsl:variable name="sourceDocument" select="root(.)"/>
@@ -36,7 +34,9 @@
                     <xsl:element name="{$attributeName}">
                         <xsl:choose>
                             <xsl:when test="$referencedElement">
-                                <xsl:copy-of select="$referencedElement/@* | $referencedElement/node()"/>
+                                <xsl:call-template name="copy-processed-reference-content">
+                                    <xsl:with-param name="referencedElement" select="$referencedElement"/>
+                                </xsl:call-template>
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:value-of select="."/>
@@ -49,12 +49,36 @@
         </xsl:copy>
     </xsl:template>
 
+    <xd:doc scope="component">
+        <xd:desc>Copy an attribute unchanged unless a more specific attribute template applies.</xd:desc>
+    </xd:doc>
     <xsl:template match="@*">
         <xsl:attribute name="{name()}" select="."/>
     </xsl:template>
 
+    <xd:doc scope="component">
+        <xd:desc>Rename XML identifiers to an attribute based on their parent element's local name, for example `mei:zone/@xml:id` becomes `zoneId`.</xd:desc>
+    </xd:doc>
+    <xsl:template match="@xml:id">
+        <xsl:attribute name="{concat(local-name(parent::*), 'Id')}" select="."/>
+    </xsl:template>
+
+    <xd:doc scope="component">
+        <xd:desc>Copy text, comments, and processing instructions unchanged.</xd:desc>
+    </xd:doc>
     <xsl:template match="text()|comment()|processing-instruction()">
         <xsl:copy/>
+    </xsl:template>
+
+    <xd:doc scope="component">
+        <xd:desc>Processes a referenced element with the normal templates, then copies its resulting attributes and children into the reference wrapper. This lets specialised element templates also affect referenced elements.</xd:desc>
+    </xd:doc>
+    <xsl:template name="copy-processed-reference-content">
+        <xsl:param name="referencedElement" as="element()?"/>
+        <xsl:variable name="processedReference">
+            <xsl:apply-templates select="$referencedElement"/>
+        </xsl:variable>
+        <xsl:copy-of select="$processedReference/*[1]/@* | $processedReference/*[1]/node()"/>
     </xsl:template>
 
     <xd:doc scope="component">
@@ -82,9 +106,7 @@
             <xsl:attribute name="width" select="string($graphic/@width)"/>
             <xsl:attribute name="height" select="string($graphic/@height)"/>
             <xsl:attribute name="target" select="string($graphic/@target)"/>
-            <xsl:for-each select="@*[not(name() = $followReferenceAttributeNames)]">
-                <xsl:attribute name="{name()}" select="."/>
-            </xsl:for-each>
+            <xsl:apply-templates select="@*[not(name() = $followReferenceAttributeNames)]"/>
             <xsl:for-each select="@*[name() = $followReferenceAttributeNames]">
                 <xsl:variable name="attributeName" select="name()"/>
                 <xsl:variable name="sourceDocument" select="root(.)"/>
@@ -94,7 +116,9 @@
                     <xsl:element name="{$attributeName}">
                         <xsl:choose>
                             <xsl:when test="$referencedElement">
-                                <xsl:copy-of select="$referencedElement/@* | $referencedElement/node()"/>
+                                <xsl:call-template name="copy-processed-reference-content">
+                                    <xsl:with-param name="referencedElement" select="$referencedElement"/>
+                                </xsl:call-template>
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:value-of select="."/>
@@ -142,9 +166,7 @@
         <xsl:variable name="mdiv" select="ancestor::mei:mdiv[1]"/>
         <xsl:copy>
             <xsl:attribute name="mdivId" select="string($mdiv/@xml:id)"/>
-            <xsl:for-each select="@*[not(name() = $followReferenceAttributeNames)]">
-                <xsl:attribute name="{name()}" select="."/>
-            </xsl:for-each>
+            <xsl:apply-templates select="@*[not(name() = $followReferenceAttributeNames)]"/>
             <xsl:for-each select="@*[name() = $followReferenceAttributeNames]">
                 <xsl:variable name="attributeName" select="name()"/>
                 <xsl:variable name="sourceDocument" select="root(.)"/>
@@ -154,7 +176,9 @@
                     <xsl:element name="{$attributeName}">
                         <xsl:choose>
                             <xsl:when test="$referencedElement">
-                                <xsl:copy-of select="$referencedElement/@* | $referencedElement/node()"/>
+                                <xsl:call-template name="copy-processed-reference-content">
+                                    <xsl:with-param name="referencedElement" select="$referencedElement"/>
+                                </xsl:call-template>
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:value-of select="."/>
