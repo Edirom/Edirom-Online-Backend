@@ -715,12 +715,10 @@ declare function dts-document:transformHeaderToHTML(
 (:~
  : Converts an XML element into a map representation for JSON-style output.
  :
- : @param $document The source document used to resolve references
  : @param $element The XML element to convert
  : @return A map representation of the supplied element
  :)
 declare function local:to-map(
-    $document as element(),
     $element as element()
 ) as map(*) {
 
@@ -735,22 +733,7 @@ declare function local:to-map(
                 $attributeName
         let $attributeValue := string($attribute)
         let $tokens := tokenize(normalize-space($attributeValue), "\s+")
-        let $tokenValues :=
-            for $token in $tokens
-            return
-                if (starts-with($token, "#")) then
-                    let $referenceId := substring($token, 2)
-                    let $target := $document/id($referenceId)
-                    return
-                        if ($attributeName = $dts-document:followReferenceAttributes and exists($target)) then
-                            local:to-map($document, $target)
-                        else if (not($attributeName = $dts-document:followReferenceAttributes)) then
-                            $token
-                        else
-                            error($errors:NOT_FOUND, "The referenced element with @xml:id='" || $referenceId || "' was not found in the document. Referenced by " || node-name($element) || " element with @xml:id='" || $element/@xml:id || "'.")
-            
-                else
-                    $token
+        let $tokenValues := $tokens
         let $value :=
             if (empty($tokens)) then
                 ''
@@ -771,7 +754,7 @@ declare function local:to-map(
             for $child in $children
             return
                 if (exists($child/*) or exists($child/@*)) then
-                    local:to-map($document, $child)
+                    local:to-map($child)
                 else
                     string($child)
 
@@ -863,15 +846,19 @@ declare function dts-document:wrappedMEIToMap(
     $xml as node()
 ) as map(*) {
     let $wrapped := $xml//dts:wrapper
-    let $documentMap := local:to-map($xml, $wrapped)
+    let $documentMap := local:to-map($wrapped)
     return $documentMap
 };
 
 (:~
- : Prepares MEI content for JSON output by adding any required attributes.
+ : Prepares MEI content for JSON output by adding any required attributes and
+ : expanding configured reference attributes into elements containing copies
+ : of their referenced targets.
  :
  : @param $xml The source MEI document
  : @param $addMeasuresToZones Whether measure information should be attached to zones in the output
+ : @param $followReferenceAttributes Attribute QNames whose whitespace-separated
+ : fragment references are expanded into copied target elements
  : @return The processed document suitable for JSON output
  :)
 declare function dts-document:processForJSON(

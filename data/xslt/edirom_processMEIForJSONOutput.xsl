@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:mei="http://www.music-encoding.org/ns/mei" xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xd xs" version="2.0">
 
+    <xd:doc scope="param">
+        <xd:desc>Whether measure metadata should be added to zones.</xd:desc>
+    </xd:doc>
     <xsl:param name="addMeasuresToZones" select="true()" as="xs:boolean"/>
+
+    <xd:doc scope="param">
+        <xd:desc>Names of attributes whose whitespace-separated local fragment references should be expanded into copied target elements.</xd:desc>
+    </xd:doc>
     <xsl:param name="followReferenceAttributes" select="()" as="xs:string*"/>
     <xsl:variable name="followReferenceAttributeNames" as="xs:string*" select="for $name in tokenize(normalize-space(string-join($followReferenceAttributes, ' ')), '\s+') return normalize-space($name)"/>
 
@@ -12,16 +19,24 @@
     <xd:doc scope="component">
         <xd:desc>Identity transform for elements and nodes.</xd:desc>
     </xd:doc>
+    <xd:doc scope="component">
+        <xd:desc>Copies ordinary attributes. For each attribute listed in followReferenceAttributes, creates an element with the same name for every referenced token beginning with '#', and copies the element identified by that token's xml:id into it.</xd:desc>
+    </xd:doc>
     <xsl:template match="*">
         <xsl:copy>
             <xsl:for-each select="@*[not(name() = $followReferenceAttributeNames)]">
                 <xsl:attribute name="{name()}" select="."/>
             </xsl:for-each>
             <xsl:for-each select="@*[name() = $followReferenceAttributeNames]">
-                <xsl:element name="{name()}">
-                    <xsl:attribute name="hello" select="'world'"/>
-                    <xsl:attribute name="placeholder" select="'true'"/>
-                </xsl:element>
+                <xsl:variable name="attributeName" select="name()"/>
+                <xsl:variable name="sourceDocument" select="root(.)"/>
+                <xsl:for-each select="tokenize(normalize-space(string(.)), '\s+')[starts-with(., '#')]">
+                    <xsl:variable name="referenceId" select="substring-after(., '#')"/>
+                    <xsl:variable name="referencedElement" select="$sourceDocument//*[@xml:id = $referenceId][1]"/>
+                    <xsl:element name="{$attributeName}">
+                        <xsl:copy-of select="$referencedElement"/>
+                    </xsl:element>
+                </xsl:for-each>
             </xsl:for-each>
             <xsl:apply-templates select="node()"/>
         </xsl:copy>
@@ -64,10 +79,15 @@
                 <xsl:attribute name="{name()}" select="."/>
             </xsl:for-each>
             <xsl:for-each select="@*[name() = $followReferenceAttributeNames]">
-                <xsl:element name="{name()}">
-                    <xsl:attribute name="hello" select="'world'"/>
-                    <xsl:attribute name="placeholder" select="'true'"/>
-                </xsl:element>
+                <xsl:variable name="attributeName" select="name()"/>
+                <xsl:variable name="sourceDocument" select="root(.)"/>
+                <xsl:for-each select="tokenize(normalize-space(string(.)), '\s+')[starts-with(., '#')]">
+                    <xsl:variable name="referenceId" select="substring-after(., '#')"/>
+                    <xsl:variable name="referencedElement" select="$sourceDocument//*[@xml:id = $referenceId][1]"/>
+                    <xsl:element name="{$attributeName}">
+                        <xsl:copy-of select="$referencedElement"/>
+                    </xsl:element>
+                </xsl:for-each>
             </xsl:for-each>
             <xsl:if test="$addMeasuresToZones and $measures">
                 <xsl:for-each select="$measures">
@@ -112,10 +132,15 @@
                 <xsl:attribute name="{name()}" select="."/>
             </xsl:for-each>
             <xsl:for-each select="@*[name() = $followReferenceAttributeNames]">
-                <xsl:element name="{name()}">
-                    <xsl:attribute name="hello" select="'world'"/>
-                    <xsl:attribute name="placeholder" select="'true'"/>
-                </xsl:element>
+                <xsl:variable name="attributeName" select="name()"/>
+                <xsl:variable name="sourceDocument" select="root(.)"/>
+                <xsl:for-each select="tokenize(normalize-space(string(.)), '\s+')[starts-with(., '#')]">
+                    <xsl:variable name="referenceId" select="substring-after(., '#')"/>
+                    <xsl:variable name="referencedElement" select="$sourceDocument//*[@xml:id = $referenceId][1]"/>
+                    <xsl:element name="{$attributeName}">
+                        <xsl:copy-of select="$referencedElement"/>
+                    </xsl:element>
+                </xsl:for-each>
             </xsl:for-each>
             <xsl:apply-templates select="node()"/>
         </xsl:copy>
