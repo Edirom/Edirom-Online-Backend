@@ -86,6 +86,10 @@ normalize_file() {
   local file="$1"
   # replace host and port number with xxxx to avoid false positives
   sed "${SED_OPTION[@]}" 's/localhost:[0-9]+/xxxx/g' "$file"
+
+  # replace IDs starting with PD123N with PDxxxN to avoid false positives
+  # see https://github.com/Edirom/Edirom-Online-Backend/pull/210
+  sed "${SED_OPTION[@]}" 's/PD[0-9]+N/PDxxxN/g' "$file"
 }
 
 # Main function to check the endpoints against the expected results.
