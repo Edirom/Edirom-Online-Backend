@@ -20,7 +20,7 @@
         <xd:desc>Identity transform for elements and nodes.</xd:desc>
     </xd:doc>
     <xd:doc scope="component">
-        <xd:desc>Copies ordinary attributes. For each attribute listed in followReferenceAttributes, creates an element with the same name for every referenced token beginning with '#', and copies the element identified by that token's xml:id into it.</xd:desc>
+        <xd:desc>Copies ordinary attributes. For each attribute listed in followReferenceAttributes, creates an element with the same name for every referenced token beginning with '#', and copies the referenced element's attributes and children into it.</xd:desc>
     </xd:doc>
     <xsl:template match="*">
         <xsl:copy>
@@ -34,7 +34,14 @@
                     <xsl:variable name="referenceId" select="substring-after(., '#')"/>
                     <xsl:variable name="referencedElement" select="$sourceDocument//*[@xml:id = $referenceId][1]"/>
                     <xsl:element name="{$attributeName}">
-                        <xsl:copy-of select="$referencedElement"/>
+                        <xsl:choose>
+                            <xsl:when test="$referencedElement">
+                                <xsl:copy-of select="$referencedElement/@* | $referencedElement/node()"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="."/>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:element>
                 </xsl:for-each>
             </xsl:for-each>
@@ -85,7 +92,14 @@
                     <xsl:variable name="referenceId" select="substring-after(., '#')"/>
                     <xsl:variable name="referencedElement" select="$sourceDocument//*[@xml:id = $referenceId][1]"/>
                     <xsl:element name="{$attributeName}">
-                        <xsl:copy-of select="$referencedElement"/>
+                        <xsl:choose>
+                            <xsl:when test="$referencedElement">
+                                <xsl:copy-of select="$referencedElement/@* | $referencedElement/node()"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="."/>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:element>
                 </xsl:for-each>
             </xsl:for-each>
@@ -138,7 +152,14 @@
                     <xsl:variable name="referenceId" select="substring-after(., '#')"/>
                     <xsl:variable name="referencedElement" select="$sourceDocument//*[@xml:id = $referenceId][1]"/>
                     <xsl:element name="{$attributeName}">
-                        <xsl:copy-of select="$referencedElement"/>
+                        <xsl:choose>
+                            <xsl:when test="$referencedElement">
+                                <xsl:copy-of select="$referencedElement/@* | $referencedElement/node()"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="."/>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:element>
                 </xsl:for-each>
             </xsl:for-each>

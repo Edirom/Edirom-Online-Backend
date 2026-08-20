@@ -1031,16 +1031,18 @@ declare
             }
         }
         :)
-        let $m := dts-document:wrappedMEIToMap($xml)
-        let $parent := map:get($m, "parent")
+        let $processed := dts-document:processForJSON($xml, true(), QName("", "facs"))
+        let $m := dts-document:wrappedMEIToMap($processed)
+        let $parent := map:get($m, "parent")(1)
         let $parentId := map:get($parent, "parentId")
         let $children := map:get($parent, "child")
-        let $refMap := map:get($parent, "facs")
+        let $refMap := map:get($parent, "facs")(1)
         return
             map:contains($m, "parent")
             and $parentId = "p1"
-            and string-join($children, " ") = "one two"
-            and map:get($refMap, "name") = "LinkedName"
+            and map:get($children(1), "text") = "one"
+            and map:get($children(2), "text") = "two"
+            and map:get(map:get($refMap, "name")(1), "text") = "LinkedName"
 };
 
 declare
@@ -1059,19 +1061,20 @@ declare
                     <title>LinkTwo</title>
                 </linked2>
             </root>
-        let $m := dts-document:wrappedMEIToMap($xml)
-        let $measure := map:get($m, "measure")
+        let $processed := dts-document:processForJSON($xml, true(), QName("", "facs"))
+        let $m := dts-document:wrappedMEIToMap($processed)
+        let $measure := map:get($m, "measure")(1)
         let $facs := map:get($measure, "facs")
         return
             map:contains($m, "measure")
             and array:size($facs) = 2
-            and map:get($facs(1), "title") = "LinkOne"
-            and map:get($facs(2), "title") = "LinkTwo"
+            and map:get(map:get($facs(1), "title")(1), "text") = "LinkOne"
+            and map:get(map:get($facs(2), "title")(1), "text") = "LinkTwo"
 };
 
 declare
-    %test:assertError("errors:NotFoundError")
-    function ddt:test-wrappedMEIToMap-raises-error-for-missing-facs() as xs:boolean {
+    %test:assertTrue
+    function ddt:test-wrappedMEIToMap-preserves-missing-facs() as xs:boolean {
         let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
                 <dts:wrapper>
                     <measure xml:id="m1" facs="#linked1 #missing #linked2">
@@ -1085,15 +1088,16 @@ declare
                     <title>LinkTwo</title>
                 </linked2>
             </root>
-        let $m := dts-document:wrappedMEIToMap($xml)
-        let $measure := map:get($m, "measure")
+        let $processed := dts-document:processForJSON($xml, true(), QName("", "facs"))
+        let $m := dts-document:wrappedMEIToMap($processed)
+        let $measure := map:get($m, "measure")(1)
         let $facs := map:get($measure, "facs")
         return
             map:contains($m, "measure")
             and array:size($facs) = 3
-            and map:get($facs(1), "title") = "LinkOne"
-            and $facs(2) = "#missing"
-            and map:get($facs(3), "title") = "LinkTwo"
+            and map:get(map:get($facs(1), "title")(1), "text") = "LinkOne"
+            and map:get($facs(2), "text") = "#missing"
+            and map:get(map:get($facs(3), "title")(1), "text") = "LinkTwo"
 };
 
 declare
@@ -1113,18 +1117,16 @@ declare
                 </linked2>
             </root>
         let $m := dts-document:wrappedMEIToMap($xml)
-        let $measure := map:get($m, "measure")
+        let $measure := map:get($m, "measure")(1)
         let $refNotToFollow := map:get($measure, "refNotToFollow")
         return
             map:contains($m, "measure")
-            and array:size($refNotToFollow) = 2
-            and $refNotToFollow(1) = "#linked1"
-            and $refNotToFollow(2) = "#linked2"
+            and $refNotToFollow = "#linked1 #linked2"
 };
 
 declare
     %test:assertTrue
-    function ddt:test-wrappedMEIToMap-single-child-returns-single-value() as xs:boolean {
+    function ddt:test-wrappedMEIToMap-single-text-child-uses-text-property() as xs:boolean {
         let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
                 <dts:wrapper>
                     <item xml:id="i1">
@@ -1136,15 +1138,49 @@ declare
         map {
             "item": map {
                 "itemId": "i1",
-                "value": "only"
+                "value": [{"text": "only"}]
             }
         }
         :)
         let $m := dts-document:wrappedMEIToMap($xml)
-        let $item := map:get($m, "item")
+        let $item := map:get($m, "item")(1)
+        let $values := map:get($item, "value")
         return
             map:get($item, "itemId") = "i1"
-            and map:get($item, "value") = "only"
+            and map:get($values(1), "text") = "only"
+};
+
+declare
+    %test:assertTrue
+    function ddt:test-wrappedMEIToMap-preserves-text-with-attributes-and-children() as xs:boolean {
+        let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
+                <dts:wrapper>
+                    <item type="example">Before <emph>middle</emph> after</item>
+                </dts:wrapper>
+            </root>
+        let $m := dts-document:wrappedMEIToMap($xml)
+        let $item := map:get($m, "item")(1)
+        let $emphases := map:get($item, "emph")
+        return
+            map:get($item, "type") = "example"
+            and map:get($item, "text") = "Before  after"
+            and map:get($emphases(1), "text") = "middle"
+};
+
+declare
+    %test:assertTrue
+    function ddt:test-wrappedMEIToMap-omits-whitespace-only-text() as xs:boolean {
+        let $xml := <root xmlns:dts="https://w3id.org/dts/api#">
+                <dts:wrapper>
+                    <item>
+                        <child/>
+                    </item>
+                </dts:wrapper>
+            </root>
+        let $m := dts-document:wrappedMEIToMap($xml)
+        let $item := map:get($m, "item")(1)
+        return
+            not(map:contains($item, "text"))
 };
 
 declare
@@ -1173,26 +1209,27 @@ declare
         let $mediaType := "application/json"
         let $tree := "paginationStructure"
         let $response := dts-document:document($resource, $ref, (), (), $tree, $mediaType, $html-parameters)
-        let $zoneId := $response?zone?zoneId
-        let $ulx := $response?zone?ulx
-        let $surfaceId := $response?zone?surfaceId
+        let $zone := $response?zone(1)
+        let $zoneId := $zone?zoneId
+        let $ulx := $zone?ulx
+        let $surfaceId := $zone?surfaceId
         return
             map:contains($response, "zone")
             and $zoneId = $ref
             and $ulx = $expectedUlx
             and $surfaceId = $expectedSurfaceId
             (: response structure :)
-            and map:contains($response?zone, "measure")
-            and map:contains($response?zone, "ulx")
-            and map:contains($response?zone, "uly")
-            and map:contains($response?zone, "lrx")
-            and map:contains($response?zone, "lry")
-            and map:contains($response?zone, "surfaceId")
-            and map:contains($response?zone, "zoneId")
-            and map:contains($response?zone, "zoneType")
-            and map:contains($response?zone, "target")
-            and map:contains($response?zone, "height")
-            and map:contains($response?zone, "width")
+            and map:contains($zone, "measure")
+            and map:contains($zone, "ulx")
+            and map:contains($zone, "uly")
+            and map:contains($zone, "lrx")
+            and map:contains($zone, "lry")
+            and map:contains($zone, "surfaceId")
+            and map:contains($zone, "zoneId")
+            and map:contains($zone, "zoneType")
+            and map:contains($zone, "target")
+            and map:contains($zone, "height")
+            and map:contains($zone, "width")
 };
 
 declare
@@ -1279,8 +1316,9 @@ declare
         let $mediaType := "application/json"
         let $tree := "paginationStructure"
         let $response := dts-document:document($resource, $ref, (), (), $tree, $mediaType, $html-parameters)
-        let $zoneFirst := $response?surface?zone(1)
-        let $zoneSecond := $response?surface?zone(2)
+        let $surface := $response?surface(1)
+        let $zoneFirst := $surface?zone(1)
+        let $zoneSecond := $surface?zone(2)
         let $ulx := $zoneFirst?ulx
         let $surfaceId := $zoneFirst?surfaceId
         let $widthFirst := $zoneFirst?width
@@ -1292,9 +1330,9 @@ declare
             and $widthFirst = $expectedWidth
             and $widthSecond = $expectedWidth
             (: response structure :)
-            and map:contains($response?surface, "zone")
-            and map:contains($response?surface?zone(1), "measure")
-            and map:contains($response?surface?zone(1), "target")
+            and map:contains($surface, "zone")
+            and map:contains($zoneFirst, "measure")
+            and map:contains($zoneFirst, "target")
 
 
 };
@@ -1375,9 +1413,9 @@ declare
         let $mediaType := "application/json"
         let $tree := "musicStructure"
         let $response := dts-document:document($resource, $ref, (), (), $tree, $mediaType, $html-parameters)
-        let $measure := $response?measure
+        let $measure := $response?measure(1)
         let $mdivId := $measure?mdivId
-        let $facsimile := $measure?facs
+        let $facsimile := $measure?facs(1)
         let $zoneId := $facsimile?zoneId
         let $surfaceId := $facsimile?surfaceId
         let $ulx := $facsimile?ulx
@@ -1388,13 +1426,13 @@ declare
             and $surfaceId = $expectedSurfaceId
             and $ulx = $expectedUlx
             (: response structure :)
-            and map:contains($response?measure, "measureId")
-            and map:contains($response?measure, "facs")
-            and map:contains($response?measure, "mdivId")
-            and map:contains($response?measure?facs, "zoneId")
-            and map:contains($response?measure?facs, "surfaceId")
-            and map:contains($response?measure?facs, "target")
-            and map:contains($response?measure?facs, "ulx")
+            and map:contains($measure, "measureId")
+            and map:contains($measure, "facs")
+            and map:contains($measure, "mdivId")
+            and map:contains($facsimile, "zoneId")
+            and map:contains($facsimile, "surfaceId")
+            and map:contains($facsimile, "target")
+            and map:contains($facsimile, "ulx")
 
 };
 
@@ -1434,8 +1472,8 @@ declare
         let $measureCount := array:size($measures)
         let $measureFirst := $measures(1)
         let $measureLast := $measures($measureCount)
-        let $ulxFirst := $measureFirst?facs?ulx
-        let $ulxLast := $measureLast?facs?ulx
+        let $ulxFirst := $measureFirst?facs(1)?ulx
+        let $ulxLast := $measureLast?facs(1)?ulx
         return
             map:contains($response, "measure")
             and $measureCount = $expectedMeasureCount
@@ -1445,10 +1483,10 @@ declare
             and map:contains($response?measure(1), "measureId")
             and map:contains($response?measure(1), "facs")
             and map:contains($response?measure(1), "mdivId")
-            and map:contains($response?measure(1)?facs, "zoneId")
-            and map:contains($response?measure(1)?facs, "surfaceId")
-            and map:contains($response?measure(1)?facs, "target")
-            and map:contains($response?measure(1)?facs, "ulx")
+            and map:contains($response?measure(1)?facs(1), "zoneId")
+            and map:contains($response?measure(1)?facs(1), "surfaceId")
+            and map:contains($response?measure(1)?facs(1), "target")
+            and map:contains($response?measure(1)?facs(1), "ulx")
 };
 
 declare
@@ -1471,14 +1509,14 @@ declare
         let $checkResponseStructure := 
             if ($tree eq "musicStructure") then
                 map:contains($response, "mdiv")
-                and map:contains($response?mdiv?score?section, "measure")
-                and map:contains($response?mdiv?score?section?measure(1), "measureId")
-                and map:contains($response?mdiv?score?section?measure(1), "facs")
-                and map:contains($response?mdiv?score?section?measure(1), "mdivId")
-                and map:contains($response?mdiv?score?section?measure(1)?facs, "zoneId")
-                and map:contains($response?mdiv?score?section?measure(1)?facs, "surfaceId")
-                and map:contains($response?mdiv?score?section?measure(1)?facs, "target")
-                and map:contains($response?mdiv?score?section?measure(1)?facs, "ulx")
+                and map:contains($response?mdiv(1)?score(1)?section(1), "measure")
+                and map:contains($response?mdiv(1)?score(1)?section(1)?measure(1), "measureId")
+                and map:contains($response?mdiv(1)?score(1)?section(1)?measure(1), "facs")
+                and map:contains($response?mdiv(1)?score(1)?section(1)?measure(1), "mdivId")
+                and map:contains($response?mdiv(1)?score(1)?section(1)?measure(1)?facs(1), "zoneId")
+                and map:contains($response?mdiv(1)?score(1)?section(1)?measure(1)?facs(1), "surfaceId")
+                and map:contains($response?mdiv(1)?score(1)?section(1)?measure(1)?facs(1), "target")
+                and map:contains($response?mdiv(1)?score(1)?section(1)?measure(1)?facs(1), "ulx")
             else if ($tree eq "paginationStructure") then
                 map:contains($response, "surface")
                 and map:contains($response?surface(3), "zone")

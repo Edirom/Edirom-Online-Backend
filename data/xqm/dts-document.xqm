@@ -732,19 +732,23 @@ declare function local:to-map(
             else
                 $attributeName
         let $attributeValue := string($attribute)
-        let $tokens := tokenize(normalize-space($attributeValue), "\s+")
-        let $tokenValues := $tokens
-        let $value :=
-            if (empty($tokens)) then
-                ''
-            else if (count($tokenValues) = 1) then
-                $tokenValues[1]
-            else
-                array { $tokenValues }
         return
             map:entry(
                 string($key),
-                $value
+                $attributeValue
+            ),
+
+        (: Direct text nodes :)
+        let $textNodes := $element/text()[normalize-space(.)]
+        where exists($textNodes)
+        return
+            map:entry(
+                "text",
+                string-join(
+                    for $textNode in $textNodes
+                    return string($textNode),
+                    ""
+                )
             ),
 
         (: Child elements, grouped by name :)
@@ -753,18 +757,12 @@ declare function local:to-map(
         let $values :=
             for $child in $children
             return
-                if (exists($child/*) or exists($child/@*)) then
-                    local:to-map($child)
-                else
-                    string($child)
+                local:to-map($child)
 
         return
             map:entry(
                 string($key),
-                if (count($values) = 1) then
-                    $values[1]
-                else
-                    array { $values }
+                array { $values }
             )
     ))
 };
