@@ -41,18 +41,21 @@ authors:
   - given-names: Silke
     family-names: Reich
     orcid: https://orcid.org/0009-0007-8817-0299
+  - given-names: Francesco
+    family-names: Maccarini
+    orcid: https://orcid.org/0000-0002-0219-5898
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.19450673
+    value: 10.5281/zenodo.21394092
     description: Edirom Online Backend
 repository-code: https://github.com/Edirom/Edirom-Online-Backend
-commit: 146c2770a513cb7e9353704de4d833027431e846
+commit: fbfb27ab1415b6e3f24b43f22cbe8551e21abebf
 abstract: >-
   Edirom-Online Backend is the backend for the Edirom 
   Online which is used for the presentation and
   analysis of critical musical editions in a digital format,
   particularly in the fields of musicology and philology.
 license: GPL-3.0
-version: v1.3.0
-date-released: 2026-04-08
+version: v1.4.0
+date-released: 2026-07-21
 
