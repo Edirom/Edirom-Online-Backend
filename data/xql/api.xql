@@ -17,6 +17,7 @@ import module namespace roaster="http://e-editiones.org/roaster";
 
 import module namespace errors="http://www.edirom.de/xquery/errors" at "../xqm/errors.xqm";
 import module namespace dts-document="http://www.edirom.de/api/dts-document" at "../xqm/dts-document.xqm";
+import module namespace dts-navigation="http://www.edirom.de/api/dts-navigation" at "../xqm/dts-navigation.xqm";
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
@@ -50,9 +51,24 @@ declare function api:collection ($request as map(*)) {
 };
 
 declare function api:navigation ($request as map(*)) {
-    map {
-        "message": "This is a navigation endpoint."
-     }
+    let $resource := xs:string($request?parameters?resource)
+    let $mediaType := "application/ld+json"
+    return
+        try {
+            let $navigation := dts-navigation:navigation(
+                $resource,
+                if (exists($request?parameters?ref)) then xs:string($request?parameters?ref) else "",
+                if (exists($request?parameters?start)) then xs:string($request?parameters?start) else "",
+                if (exists($request?parameters?end)) then xs:string($request?parameters?end) else "",
+                if (exists($request?parameters?down)) then xs:integer($request?parameters?down) else (),
+                if (exists($request?parameters?tree)) then xs:string($request?parameters?tree) else "",
+                if (exists($request?parameters?page)) then xs:integer($request?parameters?page) else ()
+            )
+            return
+                roaster:response(200, $mediaType, $navigation)
+        } catch * {
+            errors:sendResponse($err:code, $err:description)
+        }
 };
 
 declare function api:document ($request as map(*)) {

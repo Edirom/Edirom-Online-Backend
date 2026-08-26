@@ -418,7 +418,8 @@
 							"description": "If down is not provided only retrieve information about the queried CitableUnit",
 							"schema": {
 								"type": "int",
-								"minimum": -1
+								"minimum": -1,
+								"default": -1
 							},
 							"examples": {
 								"Empty": {
