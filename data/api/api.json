@@ -471,40 +471,6 @@
 							}
 						},
 						{
-							"name": "mediaType",
-							"in": "query",
-							"required": false,
-							"schema": {
-								"type": "string",
-								"enum": [
-									"text/html",
-									"application/mei+xml",
-									"application/tei+xml",
-									"application/xml",
-									"application/json"
-								],
-								"default": "application/xml"
-							},
-							"examples": {
-								"mei": {
-									"summary": "mei",
-									"value": "application/mei+xml"
-								},
-								"tei": {
-									"summary": "tei",
-									"value": "application/tei+xml"
-								},
-								"html": {
-									"summary": "html",
-									"value": "text/html"
-								},
-								"json": {
-									"summary": "json",
-									"value": "application/json"
-								}
-							}
-						},
-						{
 							"name": "page",
 							"in": "query",
 							"required": false,
