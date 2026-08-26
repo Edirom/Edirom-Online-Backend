@@ -77,6 +77,476 @@
 				}
 			}
 		},
+		"/api/navigation": {
+			"get": {
+				"summary": "Navigation endpoint",
+				"description": "This endpoint returns a navigation structure for a given resource.",
+				"operationId": "api:navigation",
+				"tags": ["navigation"],
+				"parameters": [
+					{
+							"name": "resource",
+							"in": "query",
+							"required": true,
+							"schema": {
+								"type": "string"
+							},
+							"examples": {
+								"Klarinettenquintett MEI": {
+									"summary": "Klarinettenquintett MEI",
+									"value": "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml"
+								},
+								"Klarinettenquintett source 1": {
+									"summary": "Klarinettenquintett source 1",
+									"value": "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-1.xml"
+								},
+								"Klarinettenquintett source 2 (with parts)": {
+									"summary": "Klarinettenquintett source 2 (with parts)",
+									"value": "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-2.xml"
+								},
+								"Klarinettenquintett text 1": {
+									"summary": "Klarinettenquintett text 1",
+									"value": "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-1.xml"
+								},
+								"Test MEI score": {
+									"summary": "Test MEI score",
+									"value": "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml"
+								},
+								"Test MEI facsimilie": {
+									"summary": "Test MEI facsimile",
+									"value": "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml"
+								},
+								"Test TEI": {
+									"summary": "Test TEI",
+									"value": "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
+								}
+							}
+						},
+						{
+							"name": "ref",
+							"in": "query",
+							"required": false,
+							"description": "NOT used with start and end",
+							"schema": {
+								"type": "string"
+							},
+							"examples": {
+								"Empty": {
+									"summary": "Empty",
+									"value": ""
+								},
+								"Klarinettenquintett MEI - Allegro": {
+									"summary": "Klarinettenquintett MEI - Allegro",
+									"value": "tf280fcd0-c18e-42b4-8ec3-8166ac51f7cf"
+								},
+								"Klarinettenquintett MEI - Fantasia": {
+									"summary": "Klarinettenquintett MEI - Fantasia",
+									"value": "x7a9f679a-a4d3-4d02-8a93-1f697f2f9ea2"
+								},
+								"Klarinettenquintett MEI - Menuetto Capriccio": {
+									"summary": "Klarinettenquintett MEI - Menuetto Capriccio",
+									"value": "x19d7fd5c-b8b4-47d8-8967-c6a27b5cd1a9"
+								},
+								"Klarinettenquintett MEI - Rondo": {
+									"summary": "Klarinettenquintett MEI - Rondo",
+									"value": "xf1c9b711-1ab7-47c5-afea-e0551799da6c"
+								},
+								"Klarinettenquintett MEI - Measure 2": {
+									"summary": "Klarinettenquintett MEI - Measure 2",
+									"value": "xb3589e15-7672-4a38-a0d5-406cd7de9a1f"
+								},
+								"Klarinettenquintett source 1 - Surface 3": {
+									"summary": "Klarinettenquintett source 1 - Surface 3",
+									"value": "facsimile-2001003"
+								},
+								"Klarinettenquintett source 1 - Zone": {
+									"summary": "Klarinettenquintett source 1 - Zone",
+									"value": "zone_bar-20037"
+								},
+								"Klarinettenquintett source 1 - Mdiv part-1": {
+									"summary": "Klarinettenquintett source 1 - Mdiv part-1",
+									"value": "part-1"
+								},
+								"Klarinettenquintett source 1 - Mdiv part-3": {
+									"summary": "Klarinettenquintett source 1 - Mdiv part-3",
+									"value": "part-3"
+								},
+								"Klarinettenquintett source 1 - Measure 1": {
+									"summary": "Klarinettenquintett source 1 - Measure 1",
+									"value": "bar-2001"
+								},
+								"Klarinettenquintett source 1 - Measure 2": {
+									"summary": "Klarinettenquintett source 1 - Measure 2",
+									"value": "bar-2002"
+								},
+								"Klarinettenquintett source 2 (with parts) - Surface 3": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Surface 3",
+									"value": "facsimile-3713"
+								},
+								"Klarinettenquintett source 2 (with parts) - Zone": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Zone",
+									"value": "zone_bar-1087"
+								},
+								"Klarinettenquintett source 2 (with parts) - Zone with rest": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Zone with rest",
+									"value": "zone_barGroup-1278"
+								},
+								"Klarinettenquintett source 2 (with parts) - Mdiv Allegro": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Mdiv Allegro",
+									"value": "x2eb1eec1-5284-429c-9a80-c16ebe4e8233"
+								},
+								"Klarinettenquintett source 2 (with parts) - Mdiv Menuetto. Capricio Presto": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Mdiv Menuetto. Capricio Presto",
+									"value": "x3859654b-1897-47bf-abee-983d69896d2b"
+								},
+								"Klarinettenquintett source 2 (with parts) - Measure 1 Klarinette (multiRest 4)": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Measure 1 Klarinette (multiRest 4)",
+									"value": "barGroup-1278"
+								},
+								"Klarinettenquintett source 2 (with parts) - Measure 5 Viola": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Measure 5 Viola",
+									"value": "bar-4382"
+								},
+								"meiHead": {
+									"summary": "meiHead",
+									"value": "meiHead"
+								},
+								"teiHeader": {
+									"summary": "teiHeader",
+									"value": "teiHeader"
+								},
+								"Page Break 1": {
+									"summary": "Page Break 1",
+									"value": "pb-1"
+								},
+								"Page Break 2": {
+									"summary": "Page Break 2",
+									"value": "pb-2"
+								},
+								"Page Break 3": {
+									"summary": "Page Break 3",
+									"value": "pb-3"
+								}
+							}
+						},
+						{
+							"name": "start",
+							"in": "query",
+							"required": false,
+							"description": "NOT used if a ref is specified, requires end as well",
+							"schema": {
+								"type": "string"
+							},
+							"examples": {
+								"Empty": {
+									"summary": "Empty",
+									"value": ""
+								},
+								"Klarinettenquintett MEI - Allegro": {
+									"summary": "Klarinettenquintett MEI - Allegro",
+									"value": "tf280fcd0-c18e-42b4-8ec3-8166ac51f7cf"
+								},
+								"Klarinettenquintett MEI - Fantasia": {
+									"summary": "Klarinettenquintett MEI - Fantasia",
+									"value": "x7a9f679a-a4d3-4d02-8a93-1f697f2f9ea2"
+								},
+								"Klarinettenquintett MEI - Menuetto Capriccio": {
+									"summary": "Klarinettenquintett MEI - Menuetto Capriccio",
+									"value": "x19d7fd5c-b8b4-47d8-8967-c6a27b5cd1a9"
+								},
+								"Klarinettenquintett MEI - Rondo": {
+									"summary": "Klarinettenquintett MEI - Rondo",
+									"value": "xf1c9b711-1ab7-47c5-afea-e0551799da6c"
+								},
+								"Klarinettenquintett MEI - Measure 2 range start": {
+									"summary": "Klarinettenquintett MEI - Measure 2 range start",
+									"value": "xb3589e15-7672-4a38-a0d5-406cd7de9a1f"
+								},
+								"Klarinettenquintett source 1 - Surface 3 range start": {
+									"summary": "Klarinettenquintett source 1 - Surface 3 range start",
+									"value": "facsimile-2001003"
+								},
+								"Klarinettenquintett source 1 - Zone range start": {
+									"summary": "Klarinettenquintett source 1 - Zone range start",
+									"value": "zone_bar-20037"
+								},
+								"Klarinettenquintett source 1 - Mdiv part-1": {
+									"summary": "Klarinettenquintett source 1 - Mdiv part-1",
+									"value": "part-1"
+								},
+								"Klarinettenquintett source 1 - Measure 1": {
+									"summary": "Klarinettenquintett source 1 - Measure 1",
+									"value": "bar-2001"
+								},
+								"Klarinettenquintett source 1 - Measure 2": {
+									"summary": "Klarinettenquintett source 1 - Measure 2",
+									"value": "bar-2002"
+								},
+								"Klarinettenquintett source 2 (with parts) - Surface 3": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Surface 3",
+									"value": "facsimile-3713"
+								},
+								"Klarinettenquintett source 2 (with parts) - Zone": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Zone",
+									"value": "zone_bar-1087"
+								},
+								"Klarinettenquintett source 2 (with parts) - Mdiv Allegro": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Mdiv Allegro",
+									"value": "x2eb1eec1-5284-429c-9a80-c16ebe4e8233"
+								},
+								"Klarinettenquintett source 2 (with parts) - Mdiv Menuetto. Capricio Presto": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Mdiv Menuetto. Capricio Presto",
+									"value": "x3859654b-1897-47bf-abee-983d69896d2b"
+								},
+								"Klarinettenquintett source 2 (with parts) - Measure 1 Klarinette (multiRest 4)": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Measure 1 Klarinette (multiRest 4)",
+									"value": "barGroup-1278"
+								},
+								"Klarinettenquintett source 2 (with parts) - Measure 5 Viola": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Measure 5 Viola",
+									"value": "bar-4382"
+								},
+								"Page Break 1": {
+									"summary": "Page Break 1",
+									"value": "pb-1"
+								},
+								"Page Break 2": {
+									"summary": "Page Break 2",
+									"value": "pb-2"
+								},
+								"Page Break 3": {
+									"summary": "Page Break 3",
+									"value": "pb-3"
+								}
+							}
+						},
+						{
+							"name": "end",
+							"in": "query",
+							"required": false,
+							"description": "NOT used if a ref is specified, requires start as well",
+							"schema": {
+								"type": "string"
+							},
+							"examples": {
+								"Empty": {
+									"summary": "Empty",
+									"value": ""
+								},
+								"Klarinettenquintett MEI - Allegro": {
+									"summary": "Klarinettenquintett MEI - Allegro",
+									"value": "tf280fcd0-c18e-42b4-8ec3-8166ac51f7cf"
+								},
+								"Klarinettenquintett MEI - Fantasia": {
+									"summary": "Klarinettenquintett MEI - Fantasia",
+									"value": "x7a9f679a-a4d3-4d02-8a93-1f697f2f9ea2"
+								},
+								"Klarinettenquintett MEI - Menuetto Capriccio": {
+									"summary": "Klarinettenquintett MEI - Menuetto Capriccio",
+									"value": "x19d7fd5c-b8b4-47d8-8967-c6a27b5cd1a9"
+								},
+								"Klarinettenquintett MEI - Rondo": {
+									"summary": "Klarinettenquintett MEI - Rondo",
+									"value": "xf1c9b711-1ab7-47c5-afea-e0551799da6c"
+								},
+								"Klarinettenquintett MEI - Measure 6 range end": {
+									"summary": "Klarinettenquintett MEI - Measure 6 range end",
+									"value": "x97e20158-6a2a-4ebc-9061-fccc379d2b58"
+								},
+								"Klarinettenquintett source 1 - Surface 9 range end": {
+									"summary": "Klarinettenquintett source 1 - Surface 9 range end",
+									"value": "facsimile-2001009"
+								},
+								"Klarinettenquintett source 1 - Zone range end": {
+									"summary": "Klarinettenquintett source 1 - Zone range end",
+									"value": "zone_bar-20047"
+								},
+								"Klarinettenquintett source 1 - Mdiv part-3": {
+									"summary": "Klarinettenquintett source 1 - Mdiv part-3",
+									"value": "part-3"
+								},
+								"Klarinettenquintett source 1 - Measure 4": {
+									"summary": "Klarinettenquintett source 1 - Measure 4",
+									"value": "bar-2004"
+								},
+								"Klarinettenquintett source 1 - Measure 20": {
+									"summary": "Klarinettenquintett source 1 - Measure 20",
+									"value": "bar-20020"
+								},
+								"Klarinettenquintett source 2 (with parts) - Surface 16": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Surface 16",
+									"value": "facsimile-37116"
+								},
+								"Klarinettenquintett source 2 (with parts) - Zone Larter": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Zone Larter",
+									"value": "zone_bar-1089"
+								},
+								"Klarinettenquintett source 2 (with parts) - Mdiv Allegro": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Mdiv Allegro",
+									"value": "x2eb1eec1-5284-429c-9a80-c16ebe4e8233"
+								},
+								"Klarinettenquintett source 2 (with parts) - Mdiv Menuetto. Capricio Presto": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Mdiv Menuetto. Capricio Presto",
+									"value": "x3859654b-1897-47bf-abee-983d69896d2b"
+								},
+								"Klarinettenquintett source 2 (with parts) - Measure 8 Klarinette": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Measure 8 Klarinette",
+									"value": "bar-1282"
+								},
+								"Klarinettenquintett source 2 (with parts) - Measure 11 Viola": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Measure 11 Viola",
+									"value": "bar-4388"
+								},
+								"Page Break 1": {
+									"summary": "Page Break 1",
+									"value": "pb-1"
+								},
+								"Page Break 2": {
+									"summary": "Page Break 2",
+									"value": "pb-2"
+								},
+								"Page Break 3": {
+									"summary": "Page Break 3",
+									"value": "pb-3"
+								}
+							}
+						},
+						{
+							"name": "down",
+							"in": "query",
+							"required": false,
+							"description": "If down is not provided only retrieve information about the queried CitableUnit",
+							"schema": {
+								"type": "int",
+								"minimum": -1
+							},
+							"examples": {
+								"Empty": {
+									"summary": "Empty",
+									"value": ""
+								},
+								"0": {
+									"summary": "0",
+									"value": 0
+								},
+								"1": {
+									"summary": "1",
+									"value": 1
+								},
+								"5": {
+									"summary": "5",
+									"value": 5
+								},
+								"-1": {
+									"summary": "-1",
+									"value": -1
+								}
+							}
+						},
+						{
+							"name": "tree",
+							"in": "query",
+							"required": false,
+							"schema": {
+								"type": "string",
+								"enum": [
+									"musicStructure",
+									"paginationStructure"
+								],
+								"default": "musicStructure"
+							},
+							"examples": {
+								"Empty": {
+									"summary": "Empty",
+									"value": ""
+								},
+								"musicStructure": {
+									"summary": "musicStructure",
+									"value": "musicStructure"
+								},
+								"paginationStructure": {
+									"summary": "paginationStructure",
+									"value": "paginationStructure"
+								}
+							}
+						},
+						{
+							"name": "mediaType",
+							"in": "query",
+							"required": false,
+							"schema": {
+								"type": "string",
+								"enum": [
+									"text/html",
+									"application/mei+xml",
+									"application/tei+xml",
+									"application/xml",
+									"application/json"
+								],
+								"default": "application/xml"
+							},
+							"examples": {
+								"mei": {
+									"summary": "mei",
+									"value": "application/mei+xml"
+								},
+								"tei": {
+									"summary": "tei",
+									"value": "application/tei+xml"
+								},
+								"html": {
+									"summary": "html",
+									"value": "text/html"
+								},
+								"json": {
+									"summary": "json",
+									"value": "application/json"
+								}
+							}
+						},
+						{
+							"name": "page",
+							"in": "query",
+							"required": false,
+							"schema": {
+								"type": "int"
+							},
+							"examples": {
+								"Empty": {
+									"summary": "Empty",
+									"value": ""
+								},
+								"1": {
+									"summary": "1",
+									"value": 1
+								},
+								"2": {
+									"summary": "2",
+									"value": 2
+								},
+								"3": {
+									"summary": "3",
+									"value": 3
+								}
+							}
+						}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response"
+					},
+					"400": {
+						"description": "Bad request"
+					},
+					"404": {
+						"description": "Not found"
+					},
+					"500": {
+						"description": "Internal server error"
+					}
+				}
+			}
+		},
 		"/api/document": {
 				"get": {
 					"summary": "Document endpoint",
