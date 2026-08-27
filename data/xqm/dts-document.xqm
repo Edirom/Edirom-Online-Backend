@@ -14,6 +14,7 @@ module namespace dts-document = "http://www.edirom.de/api/dts-document";
 
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 import module namespace errors = "http://www.edirom.de/xquery/errors" at "errors.xqm";
+import module namespace dts-common = "http://www.edirom.de/api/dts-common" at "dts-common.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -67,16 +68,6 @@ declare variable $dts-document:preserveIfPrecedingSiblingsMEIElements as xs:QNam
 declare variable $dts-document:followReferenceAttributes as xs:QName* := (
     QName("", "facs")
 );
-
-(:~
- : Maps special resource aliases to internal application resources.
- :)
-declare variable $dts-document:specialResourcesAliases as map(xs:string, xs:string) := map {
-    "help_en": "xmldb:exist:///db/apps/Edirom-Online-Backend/help/help_en.xml",
-    "help_de": "xmldb:exist:///db/apps/Edirom-Online-Backend/help/help_de.xml"
-}; (: TODO: this is a temporary solution.
-    There should be a collection also.
-    Make them available to collection and navigation endopoints. :)
 
 (:~
  : Denotes the default HTML profile used when no profile is requested.
@@ -576,21 +567,6 @@ declare function dts-document:isMediaTypeCompatible(
 };
 
 (:~
- : Resolves special resource aliases to their backing application resources.
- :
- : @param $resource The requested resource identifier
- : @return The resolved resource URI
- :)
-declare function dts-document:resolveSpecialResourceAlias(
-    $resource as xs:string?
-) as xs:string {
-    if (map:contains($dts-document:specialResourcesAliases, $resource)) then
-        map:get($dts-document:specialResourcesAliases, $resource)
-    else
-        $resource
-};
-
-(:~
  : Transforms a TEI document fragment into HTML using the configured XSLT pipeline.
  :
  : @param $xml The TEI source document fragment
@@ -900,7 +876,7 @@ declare function dts-document:document(
     else if (($start and not($end)) or ($end and not($start))) then
         error($errors:INVALID_PARAMETERS, "Both 'start' and 'end' parameters must be provided together.")
     else
-        let $resource := dts-document:resolveSpecialResourceAlias($resource)
+        let $resource := dts-common:resolveSpecialResourceAlias($resource)
         let $document := eutil:getDoc($resource)/root()
         let $document :=
             if ($document) then
