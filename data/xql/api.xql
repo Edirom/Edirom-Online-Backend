@@ -16,6 +16,7 @@ import module namespace request="http://exist-db.org/xquery/request";
 import module namespace roaster="http://e-editiones.org/roaster";
 
 import module namespace errors="http://www.edirom.de/xquery/errors" at "../xqm/errors.xqm";
+import module namespace dts-common="http://www.edirom.de/api/dts-common" at "../xqm/dts-common.xqm";
 import module namespace dts-document="http://www.edirom.de/api/dts-document" at "../xqm/dts-document.xqm";
 import module namespace dts-navigation="http://www.edirom.de/api/dts-navigation" at "../xqm/dts-navigation.xqm";
 
@@ -38,9 +39,9 @@ declare function api:entryPoint ($request as map(*)) {
         "dtsVersion": "1.0",
         "@id": concat($base-url, "/api/"),
         "@type": "EntryPoint",
-        "collection": concat($base-url, "/api/collection/{?id,page,nav}"),
-        "navigation" : concat($base-url, "/api/navigation/{?resource,ref,start,end,down,tree,page}"),
-        "document": concat($base-url, "/api/document/{?resource,ref,start,end,tree,mediaType,lang,idPrefix,htmlProfile}")
+        "collection": dts-common:buildCollectionURI($base-url, (), (), ()),
+        "navigation" : dts-common:buildNavigationURI($base-url, (), (), (), (), (), (), ()),
+        "document": dts-common:buildDocumentURI($base-url, (), (), (), (), (), (), (), (), ())
     }
 };
 

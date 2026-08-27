@@ -37,9 +37,9 @@ declare function dts-navigation:buildResourceObject($document as document-node()
     let $resourceObject := map {
         "@id": $resource,
         "@type": "Resource",
-        "collection": concat($base-url, "/api/collection/?id=", $resource, "{&amp;page,nav}"),
-        "navigation": concat($base-url, "/api/navigation/?resource=", $resource, "{&amp;ref,start,end,down,tree,page}"),
-        "document": concat($base-url, "/api/document/{?resource=", $resource, "{&amp;ref,start,end,tree,mediaType,lang,idPrefix,htmlProfile}"),
+        "collection": dts-common:buildCollectionURI($base-url, $resource, (), ()),
+        "navigation": dts-common:buildNavigationURI($base-url, $resource, (), (), (), (), (), ()),
+        "document": dts-common:buildDocumentURI($base-url, $resource, (), (), (), (), (), (), (), ()),
         "citationTrees": "TODO"
     }
     return $resourceObject
