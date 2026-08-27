@@ -14,6 +14,7 @@ module namespace dts-navigation = "http://www.edirom.de/api/dts-navigation";
 
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 import module namespace errors = "http://www.edirom.de/xquery/errors" at "errors.xqm";
+import module namespace dts-common = "http://www.edirom.de/api/dts-common" at "dts-common.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -27,6 +28,22 @@ declare namespace request = "http://exist-db.org/xquery/request";
 
 
 (: FUNCTION DECLARATIONS =================================================== :)
+
+declare function dts-navigation:buildResourceObject($document as document-node(),
+    $resource as xs:string
+) as map(*) {
+    let $base-url := substring-before(request:get-url(), "/api")
+    let $namespace := eutil:getNamespace($document/*)
+    let $resourceObject := map {
+        "@id": $resource,
+        "@type": "Resource",
+        "collection": concat($base-url, "/api/collection/?id=", $resource, "{&amp;page,nav}"),
+        "navigation": concat($base-url, "/api/navigation/?resource=", $resource, "{&amp;ref,start,end,down,tree,page}"),
+        "document": concat($base-url, "/api/document/{?resource=", $resource, "{&amp;ref,start,end,tree,mediaType,lang,idPrefix,htmlProfile}"),
+        "citationTrees": "TODO"
+    }
+    return $resourceObject
+};
 
 (:~
  : Returns the navigation structure for a given resource.
@@ -57,13 +74,26 @@ declare function dts-navigation:navigation(
     else if ($down eq 0 and not($ref)) then
         error($errors:INVALID_PARAMETERS, "The 'down' parameter cannot be 0 when no 'ref' parameter is provided.")
     else
+        let $resource := dts-common:resolveSpecialResourceAlias($resource)
+        let $document := eutil:getDoc($resource)/root()
+        let $document :=
+            if ($document) then
+                eutil:add-xml-ids($document)
+            else
+                error($errors:NOT_FOUND, "The requested resource was not found.")
+        let $namespace := eutil:getNamespace($document/*)
+        let $citationTree := eutil:getDoc($eutil:app-root || '/data/trees/citationTrees' || upper-case($namespace) || '.xml')/refsDecl/citeStructure[
+            not($tree) or @xml:id = $tree
+        ]
+
+        let $resourceObject := dts-navigation:buildResourceObject($document, $resource)
         let $output := map {
             "@context": "https://dtsapi.org/context/v1.0.json",
             "dtsVersion": "1.0",
             "@id": request:get-url(),
             "@type": "Navigation",
-            "resource": "TODO"
+            "resource": $resourceObject
         }
-        
+
         return $output
 };
