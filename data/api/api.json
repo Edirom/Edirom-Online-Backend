@@ -60,10 +60,31 @@
 								"schema": {
 									"type": "object",
 									"properties": {
-										"message": {
+										"@context": {
+											"type": "string",
+											"format": "uri"
+										},
+										"dtsVersion": {
+											"type": "string"
+										},
+										"@id": {
+											"type": "string",
+											"format": "uri"
+										},
+										"@type": {
+											"type": "string"
+										},
+										"collection": {
+											"type": "string"
+										},
+										"navigation": {
+											"type": "string"
+										},
+										"document": {
 											"type": "string"
 										}
-									}
+									},
+									"required": ["@context", "dtsVersion", "@id", "@type", "collection", "navigation", "document"]
 								}
 							}
 						}
