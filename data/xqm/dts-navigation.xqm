@@ -57,7 +57,13 @@ declare function dts-navigation:navigation(
     else if ($down eq 0 and not($ref)) then
         error($errors:INVALID_PARAMETERS, "The 'down' parameter cannot be 0 when no 'ref' parameter is provided.")
     else
-        map {
-            "message": "This is the navigation endpoint."
+        let $output := map {
+            "@context": "https://dtsapi.org/context/v1.0.json",
+            "dtsVersion": "1.0",
+            "@id": request:get-url(),
+            "@type": "Navigation",
+            "resource": "TODO"
         }
+        
+        return $output
 };
