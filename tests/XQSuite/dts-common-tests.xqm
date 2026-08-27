@@ -6,6 +6,19 @@ import module namespace dts-common = "http://www.edirom.de/api/dts-common" at "x
 
 declare namespace test = "http://exist-db.org/xquery/xqsuite";
 
+declare variable $dct:openAPI := json-doc("xmldb:exist:///db/apps/Edirom-Online-Backend/data/api/api.json");
+
+
+declare %private function dct:uriTemplateParameterNames($uri as xs:string) as xs:string* {
+    tokenize(substring-before(substring-after($uri, "{?"), "}"), ",")
+};
+
+declare %private function dct:openAPIQueryParameterNames($path as xs:string) as xs:string* {
+    for $parameter in $dct:openAPI?paths?($path)?get?parameters?*
+    where $parameter?in eq "query"
+    return xs:string($parameter?name)
+};
+
 
 declare
     %test:assertEquals("https://example.org/api/collection/{?id,page,nav}")
@@ -41,4 +54,33 @@ declare
     %test:assertEquals("https://example.org/api/document/?resource=resource&amp;ref=1&amp;mediaType=text/html{&amp;start,end,tree,lang,idPrefix,htmlProfile}")
     function dct:test-buildDocumentURI-assignments() as xs:string {
         dts-common:buildDocumentURI("https://example.org", "resource", "1", (), (), (), "text/html", (), (), ())
+};
+
+(: TODO: Create openapi specification for the collection endpoint
+declare
+    %test:assertTrue
+    function dct:test-buildCollectionURI-parameters-match-openAPI() as xs:boolean {
+        deep-equal(
+            dct:uriTemplateParameterNames(dts-common:buildCollectionURI("https://example.org", (), (), ())),
+            dct:openAPIQueryParameterNames("/api/collection")
+        )
+};
+:)
+
+declare
+    %test:assertTrue
+    function dct:test-buildNavigationURI-parameters-match-openAPI() as xs:boolean {
+        deep-equal(
+            dct:uriTemplateParameterNames(dts-common:buildNavigationURI("https://example.org", (), (), (), (), (), (), ())),
+            dct:openAPIQueryParameterNames("/api/navigation")
+        )
+};
+
+declare
+    %test:assertTrue
+    function dct:test-buildDocumentURI-parameters-match-openAPI() as xs:boolean {
+        deep-equal(
+            dct:uriTemplateParameterNames(dts-common:buildDocumentURI("https://example.org", (), (), (), (), (), (), (), (), ())),
+            dct:openAPIQueryParameterNames("/api/document")
+        )
 };
