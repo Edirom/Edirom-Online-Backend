@@ -43,12 +43,22 @@ let $mei := eutil:getDoc($id)
 
 let $measure := $mei/id($measureId)
 
-(: Specific handling of virtual measure IDs for parts in OPERA project :)
-let $movementId :=
-    if (starts-with($measureId, 'measure_') and $mei//mei:parts) then
+(: Edirom Online uses virtual measure IDs for sources containing parts.
+   Instead of referencing the IDs of all measures with a certain measure number
+   from all parts, this allows for a single reference. The format of this reference
+   is: measure_[mdiv ID]_[measure label], where the label is @label, falling back
+   to @n — cf. local:get-measure-ids() in getMeasures.xql.
+
+   Only applied when $measureId does not resolve to a real element, since measure
+   @xml:id values may themselves start with 'measure_'.
+ :)
+let $movementId as xs:string :=
+    if (exists($measure)) then
+        (($measure/ancestor::mei:mdiv[1]/string(@xml:id), '')[1])
+    else if (starts-with($measureId, 'measure_') and $mei//mei:parts) then
         (functx:substring-before-last(substring-after($measureId, 'measure_'), '_'))
     else
-        ($movementId)
+        ('')
 
 return
     map {
