@@ -191,4 +191,45 @@
         </xsl:copy>
     </xsl:template>
 
+    <xd:doc scope="component">
+        <xd:desc>Copy mei:recording and add the title, composer, work, and cover metadata.</xd:desc>
+    </xd:doc>
+    <xsl:template match="mei:recording">
+        <xsl:variable name="document" select="root(.)"/>
+        <xsl:variable name="recordingSourceId" select="substring-after(string(@decls), '#')"/>
+        <xsl:variable name="recordingSource" select="$document//mei:source[@xml:id = $recordingSourceId][1]"/>
+        <xsl:variable name="title" select="string-join($recordingSource/mei:titleStmt/mei:title, '; ')"/>
+        <xsl:variable name="composer" select="string($document//mei:titleStmt/mei:respStmt/mei:persName[@role = 'artist'][1])"/>
+        <xsl:variable name="work" select="string($document//mei:meiHead/mei:fileDesc/mei:sourceDesc/mei:source[1]/mei:titleStmt/mei:title[1])"/>
+        <xsl:variable name="cover" select="string($document//mei:graphic[@type = 'cover'][1]/@target)"/>
+        <xsl:copy>
+            <xsl:attribute name="title" select="$title"/>
+            <xsl:attribute name="composer" select="$composer"/>
+            <xsl:attribute name="work" select="$work"/>
+            <xsl:attribute name="cover" select="$cover"/>
+            <xsl:apply-templates select="@*[not(name() = $followReferenceAttributeNames) and local-name() != 'decls']"/>
+            <xsl:for-each select="@*[name() = $followReferenceAttributeNames and local-name() != 'decls']">
+                <xsl:variable name="attributeName" select="name()"/>
+                <xsl:variable name="sourceDocument" select="root(.)"/>
+                <xsl:for-each select="tokenize(normalize-space(string(.)), '\s+')[starts-with(., '#')]">
+                    <xsl:variable name="referenceId" select="substring-after(., '#')"/>
+                    <xsl:variable name="referencedElement" select="$sourceDocument//*[@xml:id = $referenceId][1]"/>
+                    <xsl:element name="{$attributeName}">
+                        <xsl:choose>
+                            <xsl:when test="$referencedElement">
+                                <xsl:call-template name="copy-processed-reference-content">
+                                    <xsl:with-param name="referencedElement" select="$referencedElement"/>
+                                </xsl:call-template>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="."/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:element>
+                </xsl:for-each>
+            </xsl:for-each>
+            <xsl:apply-templates select="node()"/>
+        </xsl:copy>
+    </xsl:template>
+
 </xsl:stylesheet>
