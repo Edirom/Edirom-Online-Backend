@@ -29,11 +29,24 @@ declare namespace request = "http://exist-db.org/xquery/request";
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
+declare function dts-navigation:getCitationTrees($document as document-node()) as element()* {
+    let $namespace := eutil:getNamespace($document/*)
+    let $allTrees := eutil:getDoc($eutil:app-root || '/data/trees/citationTrees' || upper-case($namespace) || '.xml')/refsDecl/citeStructure
+    for $tree in $allTrees
+    let $matchNames :=
+        for $citeStructure in ($tree, $tree//citeStructure)
+        let $match := normalize-space($citeStructure/@match)
+        where $match
+        return resolve-QName($match, $citeStructure)
+    where $document//*[node-name(.) = $matchNames]
+    return $tree
+};
+
 declare function dts-navigation:buildResourceObject($document as document-node(),
     $resource as xs:string
 ) as map(*) {
     let $base-url := substring-before(request:get-url(), "/api")
-    let $namespace := eutil:getNamespace($document/*)
+    (:let $citationTreesXML := dts-navigation:getCitationTrees($document):)
     let $resourceObject := map {
         "@id": $resource,
         "@type": "Resource",
@@ -58,11 +71,11 @@ declare function dts-navigation:buildResourceObject($document as document-node()
  :)
 declare function dts-navigation:navigation(
     $resource as xs:string,
-    $ref as xs:string,
-    $start as xs:string,
-    $end as xs:string,
+    $ref as xs:string?,
+    $start as xs:string?,
+    $end as xs:string?,
     $down as xs:integer?,
-    $tree as xs:string,
+    $tree as xs:string?,
     $page as xs:integer?
 ) as map(*) {
     if ($ref and ($start or $end)) then

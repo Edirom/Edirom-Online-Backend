@@ -12,11 +12,13 @@ import module namespace eut="http://www.edirom.de/xquery/xqsuite/eutil-tests" at
 import module namespace edt="http://www.edirom.de/xquery/xqsuite/edition-tests" at "edition-tests.xqm";
 import module namespace ddt="http://www.edirom.de/xquery/xqsuite/dts-document-tests" at "dts-document-tests.xqm";
 import module namespace dct="http://www.edirom.de/xquery/xqsuite/dts-common-tests" at "dts-common-tests.xqm";
+import module namespace dnt="http://www.edirom.de/xquery/xqsuite/dts-navigation-tests" at "dts-navigation-tests.xqm";
 
 (: the test:suite() function will run all the test-annotated functions in the module whose namespace URI you provide :)
 test:suite((
     util:list-functions("http://www.edirom.de/xquery/xqsuite/eutil-tests"),
     util:list-functions("http://www.edirom.de/xquery/xqsuite/edition-tests"),
     util:list-functions("http://www.edirom.de/xquery/xqsuite/dts-document-tests"),
-    util:list-functions("http://www.edirom.de/xquery/xqsuite/dts-common-tests")
+    util:list-functions("http://www.edirom.de/xquery/xqsuite/dts-common-tests"),
+    util:list-functions("http://www.edirom.de/xquery/xqsuite/dts-navigation-tests")
 ))
