@@ -6,6 +6,7 @@ xquery version "3.1";
 (: NAMESPACE DECLARATIONS ================================================== :)
 
 declare namespace api="http://www.edirom.de/api";
+declare namespace json="http://www.json.org";
 declare namespace output="http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace svg="http://www.w3.org/2000/svg";
 declare namespace exist="http://exist.sourceforge.net/NS/exist";
@@ -34,15 +35,15 @@ declare variable $api:definitions := ("data/api/api.json");
 declare function api:entryPoint ($request as map(*)) {
     let $base-url := substring-before(request:get-url(), "/api")
     return
-    map {
-        "@context": "https://dtsapi.org/context/v1.0.json",
-        "dtsVersion": "1.0",
-        "@id": concat($base-url, "/api/"),
-        "@type": "EntryPoint",
-        "collection": dts-common:buildCollectionURI($base-url, (), (), ()),
-        "navigation" : dts-common:buildNavigationURI($base-url, (), (), (), (), (), (), ()),
-        "document": dts-common:buildDocumentURI($base-url, (), (), (), (), (), (), (), (), ())
-    }
+        <json:value>
+            <context json:name="@context">https://dtsapi.org/context/v1.0.json</context>
+            <dtsVersion>1.0</dtsVersion>
+            <id json:name="@id">{concat($base-url, "/api/")}</id>
+            <type json:name="@type">EntryPoint</type>
+            <collection>{dts-common:buildCollectionURI($base-url, (), (), ())}</collection>
+            <navigation>{dts-common:buildNavigationURI($base-url, (), (), (), (), (), (), ())}</navigation>
+            <document>{dts-common:buildDocumentURI($base-url, (), (), (), (), (), (), (), (), ())}</document>
+        </json:value>
 };
 
 declare function api:collection ($request as map(*)) {

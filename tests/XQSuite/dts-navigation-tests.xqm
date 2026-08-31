@@ -4,9 +4,8 @@ module namespace dnt = "http://www.edirom.de/xquery/xqsuite/dts-navigation-tests
 
 import module namespace dts-navigation = "http://www.edirom.de/api/dts-navigation" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/dts-navigation.xqm";
 
-declare namespace array = "http://www.w3.org/2005/xpath-functions/array";
 declare namespace errors = "http://www.edirom.de/xquery/errors";
-declare namespace map = "http://www.w3.org/2005/xpath-functions/map";
+declare namespace json = "http://www.json.org";
 declare namespace test = "http://exist-db.org/xquery/xqsuite";
 
 
@@ -72,48 +71,48 @@ declare
 
 declare
     %test:assertTrue
-    function dnt:test-convertCitationTreesToMap-converts-nested-structures() as xs:boolean {
+    function dnt:test-buildCitationTreesObjects-converts-nested-structures() as xs:boolean {
         let $citationTrees :=
             <citeStructure xml:id="journalStructure" unit="Chapter">
                 <citeStructure unit="Journal Entry">
                     <citeStructure unit="Paragraph"/>
                 </citeStructure>
             </citeStructure>
-        let $result := dts-navigation:convertCitationTreesToMap($citationTrees)
-        let $citationTree := array:get($result, 1)
-        let $chapter := array:get($citationTree?citeStructure, 1)
-        let $journalEntry := array:get($chapter?citeStructure, 1)
-        let $paragraph := array:get($journalEntry?citeStructure, 1)
+        let $result := dts-navigation:buildCitationTreesObjects($citationTrees)
+        let $citationTree := $result[1]
+        let $chapter := $citationTree/citeStructure[1]
+        let $journalEntry := $chapter/citeStructure[1]
+        let $paragraph := $journalEntry/citeStructure[1]
         return
-            array:size($result) eq 1
-            and $citationTree?('@type') eq "CitationTree"
-            and $citationTree?identifier eq "journalStructure"
-            and $chapter?('@type') eq "CiteStructure"
-            and $chapter?citeType eq "Chapter"
-            and $journalEntry?citeType eq "Journal Entry"
-            and $paragraph?citeType eq "Paragraph"
-            and not(map:contains($paragraph, "citeStructure"))
+            count($result) eq 1
+            and $citationTree/type[@json:name = "@type"] eq "CitationTree"
+            and $citationTree/identifier eq "journalStructure"
+            and $chapter/type[@json:name = "@type"] eq "CiteStructure"
+            and $chapter/citeType eq "Chapter"
+            and $journalEntry/citeType eq "Journal Entry"
+            and $paragraph/citeType eq "Paragraph"
+            and empty($paragraph/citeStructure)
 };
 
 declare
     %test:assertEquals("Movement", "Surface")
-    function dnt:test-convertCitationTreesToMap-preserves-multiple-trees() as xs:string* {
+    function dnt:test-buildCitationTreesObjects-preserves-multiple-trees() as xs:string* {
         let $citationTrees := (
             <citeStructure unit="Movement"/>,
             <citeStructure unit="Surface"/>
         )
-        let $result := dts-navigation:convertCitationTreesToMap($citationTrees)
-        for $citationTree in $result?*
-        return array:get($citationTree?citeStructure, 1)?citeType
+        let $result := dts-navigation:buildCitationTreesObjects($citationTrees)
+        for $citationTree in $result
+        return $citationTree/citeStructure[1]/citeType/string()
 };
 
 declare
     %test:assertFalse
-    function dnt:test-convertCitationTreesToMap-omits-missing-identifier() as xs:boolean {
-        let $result := dts-navigation:convertCitationTreesToMap(
+    function dnt:test-buildCitationTreesObjects-omits-missing-identifier() as xs:boolean {
+        let $result := dts-navigation:buildCitationTreesObjects(
             <citeStructure unit="Movement"/>
         )
-        return map:contains(array:get($result, 1), "identifier")
+        return exists($result[1]/identifier)
 };
 
 declare
@@ -123,13 +122,13 @@ declare
         let $document := doc($resource)
         let $result := dts-navigation:buildResourceObject($document, $resource)
         return
-            $result?('@id') eq $resource
-            and $result?('@type') eq "Resource"
-            and contains($result?collection, "/api/collection/?id=" || $resource)
-            and contains($result?navigation, "/api/navigation/?resource=" || $resource)
-            and contains($result?document, "/api/document/?resource=" || $resource)
-            and array:get($result?citationTrees, 1)?('@type') eq "CitationTree"
-            and array:get(array:get($result?citationTrees, 1)?citeStructure, 1)?citeType eq "Movement"
+            $result/id[@json:name = "@id"] eq $resource
+            and $result/type[@json:name = "@type"] eq "Resource"
+            and contains($result/collection, "/api/collection/?id=" || $resource)
+            and contains($result/navigation, "/api/navigation/?resource=" || $resource)
+            and contains($result/document, "/api/document/?resource=" || $resource)
+            and $result/citationTrees[1]/type[@json:name = "@type"] eq "CitationTree"
+            and $result/citationTrees[1]/citeStructure[1]/citeType eq "Movement"
 };
 
 declare
@@ -158,11 +157,11 @@ declare
     ) as xs:boolean {
         let $result := dts-navigation:navigation($resource, $ref, $start, $end, $down, $tree, $page)
         return
-            $result?('@context') eq "https://dtsapi.org/context/v1.0.json"
-            and $result?dtsVersion eq "1.0"
-            and $result?('@type') eq "Navigation"
-            and $result?resource?('@id') eq $resource
-            and $result?resource?('@type') eq "Resource"
+            $result/context[@json:name = "@context"] eq "https://dtsapi.org/context/v1.0.json"
+            and $result/dtsVersion eq "1.0"
+            and $result/type[@json:name = "@type"] eq "Navigation"
+            and $result/resource/id[@json:name = "@id"] eq $resource
+            and $result/resource/type[@json:name = "@type"] eq "Resource"
 };
 
 declare
@@ -205,13 +204,13 @@ declare
         $down as xs:integer?,
         $tree as xs:string?,
         $page as xs:integer?
-    ) as map(*) {
+    ) as element(json:value) {
         dts-navigation:navigation($resource, $ref, $start, $end, $down, $tree, $page)
 };
 
 declare
     %test:assertError("errors:NotFoundError")
-    function dnt:test-navigation-errors-for-missing-resource() as map(*) {
+    function dnt:test-navigation-errors-for-missing-resource() as element(json:value) {
         dts-navigation:navigation(
             "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/missing.xml",
             "ref",
