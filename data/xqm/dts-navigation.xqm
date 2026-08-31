@@ -18,6 +18,8 @@ import module namespace dts-common = "http://www.edirom.de/api/dts-common" at "d
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
+declare namespace array = "http://www.w3.org/2005/xpath-functions/array";
+declare namespace map = "http://www.w3.org/2005/xpath-functions/map";
 declare namespace dts = "https://w3id.org/dts/api#";
 declare namespace mei = "http://www.music-encoding.org/ns/mei";
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
@@ -32,28 +34,73 @@ declare namespace request = "http://exist-db.org/xquery/request";
 declare function dts-navigation:getCitationTrees($document as document-node()) as element()* {
     let $namespace := eutil:getNamespace($document/*)
     let $allTrees := eutil:getDoc($eutil:app-root || '/data/trees/citationTrees' || upper-case($namespace) || '.xml')/refsDecl/citeStructure
-    for $tree in $allTrees
-    let $matchNames :=
-        for $citeStructure in ($tree, $tree//citeStructure)
-        let $match := normalize-space($citeStructure/@match)
-        where $match
-        return resolve-QName($match, $citeStructure)
-    where $document//*[node-name(.) = $matchNames]
-    return $tree
+    return $allTrees
+};
+
+declare function dts-navigation:convertCiteStructureToMap(
+    $citeStructure as element(citeStructure)
+) as item() {
+    let $result := map:merge((
+        map:entry("@type", "CiteStructure"),
+        map:entry("citeType", string($citeStructure/@unit))
+    ))
+    return
+        if ($citeStructure/citeStructure) then
+            map:put(
+                $result,
+                "citeStructure",
+                array:join(
+                    $citeStructure/citeStructure ! [dts-navigation:convertCiteStructureToMap(.)]
+                )
+            )
+        else
+            $result
+};
+
+declare function dts-navigation:convertCitationTreesToMap(
+    $citationTrees as element(citeStructure)*
+) as item() {
+    array:join(
+        for $citationTree in $citationTrees
+        return [
+            map:merge((
+                map:entry("@type", "CitationTree"),
+                if ($citationTree/@xml:id) then
+                    map:entry("identifier", string($citationTree/@xml:id))
+                else
+                    (),
+                (:
+                TODO: According to DTS specifications,
+                the behaiour of the identifier must be changed here
+                and in the document endpoint.
+
+                If a Resource has a single CitationTree,
+                that CitationTree object cannot have an identifier.
+                If a Resource has multiple CitationTrees,
+                then the first listed in citationTrees
+                is the default CitationTree and cannot have an identifier.
+                :)
+                map:entry(
+                    "citeStructure",
+                    [dts-navigation:convertCiteStructureToMap($citationTree)]
+                )
+            ))
+        ]
+    )
 };
 
 declare function dts-navigation:buildResourceObject($document as document-node(),
     $resource as xs:string
 ) as map(*) {
     let $base-url := substring-before(request:get-url(), "/api")
-    (:let $citationTreesXML := dts-navigation:getCitationTrees($document):)
+    let $citationTreesXML := dts-navigation:getCitationTrees($document)
     let $resourceObject := map {
         "@id": $resource,
         "@type": "Resource",
         "collection": dts-common:buildCollectionURI($base-url, $resource, (), ()),
         "navigation": dts-common:buildNavigationURI($base-url, $resource, (), (), (), (), (), ()),
         "document": dts-common:buildDocumentURI($base-url, $resource, (), (), (), (), (), (), (), ()),
-        "citationTrees": "TODO"
+        "citationTrees": dts-navigation:convertCitationTreesToMap($citationTreesXML)
     }
     return $resourceObject
 };

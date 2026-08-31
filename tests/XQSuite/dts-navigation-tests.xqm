@@ -4,13 +4,15 @@ module namespace dnt = "http://www.edirom.de/xquery/xqsuite/dts-navigation-tests
 
 import module namespace dts-navigation = "http://www.edirom.de/api/dts-navigation" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/dts-navigation.xqm";
 
+declare namespace array = "http://www.w3.org/2005/xpath-functions/array";
 declare namespace errors = "http://www.edirom.de/xquery/errors";
+declare namespace map = "http://www.w3.org/2005/xpath-functions/map";
 declare namespace test = "http://exist-db.org/xquery/xqsuite";
 
 
 declare
     %test:assertEquals("musicStructure", "paginationStructure")
-    function dnt:test-getCitationTrees-returns-matching-mei-trees() as xs:string* {
+    function dnt:test-getCitationTrees-returns-standard-mei-trees() as xs:string* {
         let $document := document {
             <mei xmlns="http://www.music-encoding.org/ns/mei">
                 <music>
@@ -27,8 +29,8 @@ declare
 };
 
 declare
-    %test:assertEquals("musicStructure")
-    function dnt:test-getCitationTrees-returns-only-matching-mei-tree() as xs:string* {
+    %test:assertEquals("musicStructure", "paginationStructure")
+    function dnt:test-getCitationTrees-returns-all-mei-trees-with-partial-content() as xs:string* {
         let $document := document {
             <mei xmlns="http://www.music-encoding.org/ns/mei">
                 <music>
@@ -43,7 +45,7 @@ declare
 
 declare
     %test:assertEquals("basicStructure", "paginationStructure")
-    function dnt:test-getCitationTrees-returns-matching-tei-trees() as xs:string* {
+    function dnt:test-getCitationTrees-returns-standard-tei-trees() as xs:string* {
         let $document := document {
             <TEI xmlns="http://www.tei-c.org/ns/1.0">
                 <text>
@@ -58,14 +60,60 @@ declare
 };
 
 declare
-    %test:assertEmpty
-    function dnt:test-getCitationTrees-returns-empty-without-matches() as element()* {
+    %test:assertEquals("musicStructure", "paginationStructure")
+    function dnt:test-getCitationTrees-returns-all-mei-trees-without-matching-content() as xs:string* {
         let $document := document {
             <mei xmlns="http://www.music-encoding.org/ns/mei">
                 <meiHead/>
             </mei>
         }
-        return dts-navigation:getCitationTrees($document)
+        return dts-navigation:getCitationTrees($document)/string(@xml:id)
+};
+
+declare
+    %test:assertTrue
+    function dnt:test-convertCitationTreesToMap-converts-nested-structures() as xs:boolean {
+        let $citationTrees :=
+            <citeStructure xml:id="journalStructure" unit="Chapter">
+                <citeStructure unit="Journal Entry">
+                    <citeStructure unit="Paragraph"/>
+                </citeStructure>
+            </citeStructure>
+        let $result := dts-navigation:convertCitationTreesToMap($citationTrees)
+        let $citationTree := array:get($result, 1)
+        let $chapter := array:get($citationTree?citeStructure, 1)
+        let $journalEntry := array:get($chapter?citeStructure, 1)
+        let $paragraph := array:get($journalEntry?citeStructure, 1)
+        return
+            array:size($result) eq 1
+            and $citationTree?('@type') eq "CitationTree"
+            and $citationTree?identifier eq "journalStructure"
+            and $chapter?('@type') eq "CiteStructure"
+            and $chapter?citeType eq "Chapter"
+            and $journalEntry?citeType eq "Journal Entry"
+            and $paragraph?citeType eq "Paragraph"
+            and not(map:contains($paragraph, "citeStructure"))
+};
+
+declare
+    %test:assertEquals("Movement", "Surface")
+    function dnt:test-convertCitationTreesToMap-preserves-multiple-trees() as xs:string* {
+        let $citationTrees := (
+            <citeStructure unit="Movement"/>,
+            <citeStructure unit="Surface"/>
+        )
+        let $result := dts-navigation:convertCitationTreesToMap($citationTrees)
+        for $citationTree in $result?*
+        return array:get($citationTree?citeStructure, 1)?citeType
+};
+
+declare
+    %test:assertFalse
+    function dnt:test-convertCitationTreesToMap-omits-missing-identifier() as xs:boolean {
+        let $result := dts-navigation:convertCitationTreesToMap(
+            <citeStructure unit="Movement"/>
+        )
+        return map:contains(array:get($result, 1), "identifier")
 };
 
 declare
@@ -80,7 +128,8 @@ declare
             and contains($result?collection, "/api/collection/?id=" || $resource)
             and contains($result?navigation, "/api/navigation/?resource=" || $resource)
             and contains($result?document, "/api/document/?resource=" || $resource)
-            and $result?citationTrees eq "TODO"
+            and array:get($result?citationTrees, 1)?('@type') eq "CitationTree"
+            and array:get(array:get($result?citationTrees, 1)?citeStructure, 1)?citeType eq "Movement"
 };
 
 declare
