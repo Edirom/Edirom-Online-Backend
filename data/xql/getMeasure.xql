@@ -41,7 +41,7 @@ let $measureId :=
 
 let $mei := eutil:getDoc($id)
 
-let $movementId := $mei/id($measureId)/ancestor::mei:mdiv[1]/string(@xml:id)
+let $measure := $mei/id($measureId)
 
 (: Specific handling of virtual measure IDs for parts in OPERA project :)
 let $movementId :=
