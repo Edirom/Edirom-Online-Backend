@@ -1,6 +1,7 @@
 build-xar
 build
 build-tei
+clarinet-test-data.xar
 .DS_Store
 .idea/
 .env
