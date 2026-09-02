@@ -31,9 +31,28 @@ declare function local:findMeasure($mei, $movementId, $measureIdName) as element
         else
          (($mei/id($movementId)//mei:measure[source:label-or-n(.) eq $measureIdName])[1])
 };
-declare function local:getMeasure($mei, $measure, $movementId) as map(*) {
+(:~
+    Returns one map per zone the measure is linked to.
+
+    A measure broken across two systems or pages is encoded as a single measure
+    referencing two or more zones - see docs/data-creation-workflow.md, "ensure that a
+    single measure is linked to two or more zones, rather than creating separate
+    measures". @facs is therefore a whitespace-separated list of IDREFs, and each of its
+    zones needs its own entry so the viewer can lay the fragments out side by side.
+
+    The maps are emitted in @facs order, which the caller relies on to tell the fragments
+    apart: it starts a new viewer wherever a zone's @ulx moves back to the left of its
+    predecessor.
+
+    @param $mei The sourcefile
+    @param $measure The measure to process
+    @param $movementId The ID of the mdiv the measure belongs to
+    @returns One json object per zone, or none if $measure is empty
+:)
+declare function local:getMeasure($mei, $measure, $movementId) as map(*)* {
     let $measureId := $measure/string(@xml:id)
-    let $zoneId := substring-after($measure/string(@facs), '#')
+    for $zoneRef in tokenize(normalize-space($measure/@facs), '\s+')
+    let $zoneId := substring-after($zoneRef, '#')
     let $zone := $mei/id($zoneId)
     let $surface := $zone/parent::mei:surface
     let $graphic := $surface/mei:graphic[@type = 'facsimile']
