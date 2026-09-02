@@ -23,13 +23,22 @@ declare option output:media-type "application/json";
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
+(:~
+    Resolves the 'measure' parameter, which is either a measure @xml:id or a plain measure
+    designation to be looked up within $movementId.
+
+    Only ONE measure is wanted even where a designation occurs once per part: the caller
+    fires one request per part, each feeding its own viewer. The [1] therefore lives here,
+    at the point where that constraint originates, rather than inside the lookup.
+
+    @param $mei The sourcefile
+    @param $movementId The ID of the mdiv to look in
+    @param $measureIdName A measure @xml:id or a measure designation
+    @returns The measure, or the empty sequence if neither resolves
+:)
 declare function local:findMeasure($mei, $movementId, $measureIdName) as element(mei:measure)? {
-    let $m := $mei/id($measureIdName)
-    return
-        if ($m) then
-            ($m)
-        else
-         (($mei/id($movementId)//mei:measure[source:label-or-n(.) eq $measureIdName])[1])
+    ($mei/id($measureIdName)[self::mei:measure],
+     source:resolve-measure-in-mdiv($mei, $movementId, $measureIdName))[1]
 };
 (:~
     Returns one map per zone the measure is linked to.
