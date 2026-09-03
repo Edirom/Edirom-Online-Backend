@@ -51,10 +51,18 @@ declare function annotation:get-category-label-localized($node) {
  : Tests whether an Annotation's classification is fully expressible as taxonomy fields
  :
  : True when the Annotation carries no legacy mei:ptr classification and every @class token
- : resolves into a mei:taxonomy. Annotations without any classification are trivially true —
- : there is nothing that could get lost. Legacy priorities modelled as mei:term inside
- : mei:classification/mei:termList resolve outside mei:taxonomy and therefore yield false,
- : as do dangling @class references.
+ : resolves to a mei:taxonomy or into one. Annotations without any classification are
+ : trivially true — there is nothing that could get lost. Legacy priorities modelled as
+ : mei:term inside mei:classification/mei:termList resolve outside mei:taxonomy and therefore
+ : yield false, as do dangling @class references.
+ :
+ : A token may reference a mei:taxonomy itself rather than a mei:category within one, to mark
+ : scheme membership, to carry global styling, or as a fallback in the class hierarchy. Such a
+ : reference appears in neither classification representation — the flattened field selects on
+ : the substring 'annotation.category.', and the taxonomy field keeps only elements that are a
+ : mei:category — so it cannot be lost by omitting the flattened fields. Testing for an
+ : ancestor alone would exclude it, since a taxonomy is not its own ancestor, and would report
+ : every such Annotation as unexpressible.
  :
  : @param $anno The Annotation to process
  : @return true() if omitting the flattened 'categories'/'priority' fields loses no information
@@ -64,7 +72,7 @@ declare function annotation:is-fully-taxonomised($anno as element()) as xs:boole
     let $legacyPtrs := $anno/mei:ptr[@type = ('categories', 'priority')]
     let $unresolved :=
         tokenize(normalize-space($anno/@class), ' ')[. != '']
-            [not(eutil:get-referenced-element($anno, .)[ancestor::mei:taxonomy])]
+            [not(eutil:get-referenced-element($anno, .)[self::mei:taxonomy or ancestor::mei:taxonomy])]
 
     return empty($legacyPtrs) and empty($unresolved)
 };
