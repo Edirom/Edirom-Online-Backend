@@ -5,8 +5,6 @@ xquery version "3.1";
 
 (: IMPORTS ================================================================= :)
 
-import module namespace functx = "http://www.functx.com";
-
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
 import module namespace source = "http://www.edirom.de/xquery/source" at "../xqm/source.xqm";
 
@@ -22,41 +20,6 @@ declare option output:method "json";
 declare option output:media-type "application/json";
 
 (: FUNCTION DECLARATIONS =================================================== :)
-
-(:~
- : Analyzes measure labels and expands ranges like "1–4" into individual labels.
- :
- : @param $labels The measure labels to analyze
- : @return A sequence of individual labels as xs:string*
- :)
-declare function local:analyze-labels($labels as xs:string*) as xs:string* {
-    for $label in $labels
-    return
-        if (contains($label, '–')) then (
-            let $first := substring-before($label, '–')
-            let $last := substring-after($label, '–')
-            let $steps := xs:integer(number($last) - number($first) + 1)
-            for $i in 1 to $steps
-            return string(number($first) + $i - 1)
-        ) else $label
-};
-
-(:~
- : Determines the measure IDs (either from @label or @n).
- : Ranges in @label are expanded into individual IDs.
- :
- : @param $measure The measure element
- : @return A sequence of measure IDs as xs:string*
- :)
-declare function local:get-measure-ids($measure as element(mei:measure)) as xs:string* {
-    let $designation := source:label-or-n($measure)
-    return
-        (: Range expansion applies to @label only; @n is a plain running count. :)
-        if ($measure/@label) then
-            local:analyze-labels($designation)
-        else
-            $designation
-};
 
 (:~
  : Creates measure maps from parts.
@@ -99,39 +62,26 @@ declare function local:get-score-measures($measures as element(mei:measure)*) as
  :)
 declare function local:getMeasures($mdiv as element(mei:mdiv)?, $mdivID as xs:string?, $hasParts as xs:boolean) as array(*)* {
     array {
-        for $measure in $mdiv//mei:measure
-        group by $measureN := local:get-measure-ids($measure)
+        (: One tuple per measure and designation, so that a measure standing for several of
+           them - a range label, or a multiRest - contributes to each. Grouping on the
+           unexpanded value is not an option: a measure yielding more than one designation
+           would make the grouping key a sequence, which raises err:XPTY0004. :)
+        for $measure in source:effective-measures($mdiv)
+        for $designation in source:measure-designations($measure)
+        group by $designation
         let $measures :=
             if($hasParts)
             then local:get-part-measures($measure)
             else local:get-score-measures($measure)
-        order by eutil:compute-measure-sort-key($measureN)
+        order by eutil:compute-measure-sort-key($designation)
         return
             map {
-                "id": (if (count($measures) eq 1) then (map:get($measures[1], 'id')) else ('measure_' || $mdivID || '_' || $measureN) ),
+                "id": source:measure-reference($measure, $designation),
                 "measures": array { $measures },
                 "mdivs": array { $mdivID },
-                "name": $measureN
+                "name": $designation
             }
     }
-};
-
-(:~
- : Returns measures containing multiRests for an mdiv and a measure number.
- :
- : @param $mdiv The mdiv element
- : @param $measureN The measure number
- : @return A sequence of measure elements with multiRest
- :)
-declare function local:multiRestMeasures($mdiv as element(mei:mdiv), $measureN as xs:string) as element(mei:measure)* {
-    if($mdiv//mei:multiRest)
-    then
-        if ($mdiv//mei:measure/@label)
-        then
-            ($mdiv//mei:measure[.//mei:multiRest][number(substring-before(@label, '–')) <= number($measureN)][.//mei:multiRest/number(@num) gt (number($measureN) - number(substring-before(@label, '–')))])
-        else
-            ($mdiv//mei:measure[.//mei:multiRest][number(@n) lt number($measureN)][.//mei:multiRest/number(@num) gt (number($measureN) - number(@n))])
-    else ()
 };
 
 (: QUERY BODY ============================================================== :)
