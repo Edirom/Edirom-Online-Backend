@@ -3,11 +3,14 @@ xquery version "3.1";
 (:~
  : XQSuite unit tests for the annotation module (data/xqm/annotation.xqm).
  :
- : Scope: the pure / structural functions that can be exercised with in-memory
- : constructed MEI. The reference-resolving functions (toJSON, getPriority /
- : getPriorityLabel via eutil:get-referenced-element, get-referenced-category-elements,
- : get-referenced-categories-as-taxonomy-array) depend on id()/doc() resolution and
- : require stored fixtures; they are covered separately.
+ : Scope: primarily the pure / structural functions that can be exercised with in-memory
+ : constructed MEI. is-fully-taxonomised is the exception — it resolves @class tokens via
+ : eutil:get-referenced-element, so it uses the stored fixture data/mei-annotations.xml,
+ : since eXist resolves id() only on stored documents.
+ :
+ : Still uncovered, all for the same reason and all needing that fixture extended: toJSON,
+ : getPriority / getPriorityLabel, get-referenced-category-elements, and
+ : get-referenced-categories-as-taxonomy-array.
  :)
 module namespace ann = "http://www.edirom.de/xquery/xqsuite/annotation-tests";
 
@@ -66,4 +69,36 @@ declare
     %test:assertEquals("rend")
 function ann:category-label-default() as xs:string {
     annotation:get-category-label-localized(<mei:rend/>)
+};
+
+
+(: annotation:is-fully-taxonomised ======================================= :)
+
+(:~
+ : This function resolves @class tokens through eutil:get-referenced-element, which uses
+ : id() — and eXist resolves id() only on stored documents. The cases below therefore
+ : address annotations in the stored fixture rather than constructing them inline.
+ :)
+declare variable $ann:annotations := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-annotations.xml";
+
+declare
+    (: a token resolving to a category inside a taxonomy :)
+    %test:args("test.annot.category-only")          %test:assertEquals("true")
+    (: an annotation with no classification loses nothing by dropping the legacy fields :)
+    %test:args("test.annot.unclassified")           %test:assertEquals("true")
+    (: a reference to a taxonomy ITSELF. Editions use one to mark scheme membership, for
+       global styling, and as a fallback in the class hierarchy. It appears in neither the
+       legacy nor the taxonomy field, so it cannot be lost - but a taxonomy is not its own
+       ancestor, so an ancestor-only test wrongly reports the annotation as unexpressible. :)
+    %test:args("test.annot.taxonomy-root")          %test:assertEquals("true")
+    %test:args("test.annot.taxonomy-root-only")     %test:assertEquals("true")
+    (: a dangling @class reference may name a classification the taxonomy fields cannot
+       express, so the legacy fields have to stay :)
+    %test:args("test.annot.dangling")               %test:assertEquals("false")
+    (: a legacy mei:ptr classification :)
+    %test:args("test.annot.legacy-ptr")             %test:assertEquals("false")
+    (: a legacy priority modelled as mei:term in a termList resolves outside any taxonomy :)
+    %test:args("test.annot.term-outside-taxonomy")  %test:assertEquals("false")
+    function ann:is-fully-taxonomised($annotId as xs:string) as xs:string {
+        string(annotation:is-fully-taxonomised(doc($ann:annotations)/id($annotId)))
 };
