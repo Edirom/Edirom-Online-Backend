@@ -61,11 +61,19 @@
                </scoreDef>
                <scoreDef keysig="3s" xml:id="m-747"/>
                <section>
-                  <measure facs="#edirom_zone_64369918-e4df-4c95-b2b6-3098ff461915"
-                           label="0"
+                  <measure label="0"
                            n="1"
                            type="upbeat"
-                           xml:id="edirom_measure_fa0d68e6-2a1f-41a3-9178-c86d1db3e6af"/>
+                           xml:id="test-measure-1"/>
+                  <measure label="1"
+                           n="2"
+                           xml:id="test-measure-2"/>
+                  <measure label="2"
+                           n="3"
+                           xml:id="test-measure-3"/>
+                  <measure label="3"
+                           n="4"
+                           xml:id="test-measure-4"/>
                </section>
             </score>
          </mdiv>
@@ -84,8 +92,7 @@
                   </staffDef>
                </scoreDef>
                <section>
-                  <measure facs="#reference"
-                           label="0"
+                  <measure label="0"
                            n="1"
                            type="upbeat"
                            xml:id="test-measure-2"/>

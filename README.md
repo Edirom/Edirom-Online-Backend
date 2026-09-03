@@ -53,6 +53,9 @@ Some useful information regarding documentation is captured in the [docs](https:
 * Setup Edirom Online on a local machine
 * a data creation workflow for the Edirom-Online
 
+Additional documentation on backend testing is available:
+* [Regression tests](tests/regressionTests/README.md)
+
 ## Dependencies
 
 Edirom-Online Backend depends on the following libraries:

@@ -39,7 +39,7 @@ declare function api:entryPoint ($request as map(*)) {
         "@type": "EntryPoint",
         "collection": concat($base-url, "/api/collection/{?id,page,nav}"),
         "navigation" : concat($base-url, "/api/navigation/{?resource,ref,start,end,down,tree,page}"),
-        "document": concat($base-url, "/api/document/{?resource,ref,start,end,tree,mediaType,lang,idPrefix,autoHead,autoToc,tocDepth,footnoteBackLink,numberHeadings}")
+        "document": concat($base-url, "/api/document/{?resource,ref,start,end,tree,mediaType,lang,idPrefix,htmlProfile}")
     }
 };
 
@@ -65,11 +65,7 @@ declare function api:document ($request as map(*)) {
     let $htmlParameters := map {
         "lang": if (exists($request?parameters?lang)) then xs:string($request?parameters?lang) else "",
         "idPrefix": if (exists($request?parameters?idPrefix)) then xs:string($request?parameters?idPrefix) else "",
-        "autoHead": if (exists($request?parameters?autoHead)) then xs:string($request?parameters?autoHead) else "false",
-        "autoToc": if (exists($request?parameters?autoToc)) then xs:string($request?parameters?autoToc) else "false",
-        "tocDepth": if (exists($request?parameters?tocDepth)) then xs:string($request?parameters?tocDepth) else "1",
-        "footnoteBackLink": if (exists($request?parameters?footnoteBackLink)) then xs:string($request?parameters?footnoteBackLink) else "true",
-        "numberHeadings": if (exists($request?parameters?numberHeadings)) then xs:string($request?parameters?numberHeadings) else "false"
+        "htmlProfile": if (exists($request?parameters?htmlProfile)) then xs:string($request?parameters?htmlProfile) else $dts-document:defaultHTMLProfile
     }
     return
         try {
