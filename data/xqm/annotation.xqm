@@ -86,7 +86,6 @@ declare function annotation:is-fully-taxonomised($anno as element()) as xs:boole
  : @return The JSON representation
  :)
 declare function annotation:annotationsToJSON($uri as xs:string, $edition as xs:string, $mode as xs:string) as map(*)* {
-
     let $doc := eutil:getDoc($uri)
     let $annos := $doc//mei:annot[@type = 'editorialComment']
 
