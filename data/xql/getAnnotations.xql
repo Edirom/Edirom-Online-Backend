@@ -59,7 +59,7 @@ let $emptyFields :=
     where every $annotation in $annotations satisfies (
         map:contains($annotation, $fieldName) and eutil:is-empty($annotation($fieldName))
     )
-    return array { $fieldName }
+    return $fieldName
 
 let $baseMap := map {
     'success': true(),
@@ -71,8 +71,8 @@ let $baseMap := map {
    whenever the document's classification is fully expressible as taxonomy fields, so their
    presence in 'fields' is the signal for consumers — no separate 'legacyFields' key needed :)
 let $taxonomiesMap := map {
-    'fields': $annotationFields,
-    'emptyFields': $emptyFields
+    'fields': array { $annotationFields },
+    'emptyFields': array { $emptyFields }
 }
 
 (: Return the appropriate result based on the mode :)
