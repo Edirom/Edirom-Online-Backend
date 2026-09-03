@@ -28,8 +28,14 @@ declare option output:media-type "application/json";
     designation to be looked up within $movementId.
 
     Only ONE measure is wanted even where a designation occurs once per part: the caller
-    fires one request per part, each feeding its own viewer. The [1] therefore lives here,
+    fires one request per part, each feeding its own viewer. The choice therefore lives here,
     at the point where that constraint originates, rather than inside the lookup.
+
+    Of the candidates, one that is on the facsimile is preferred over one that is not. Where a
+    part's stave was omitted from the source, that part carries the measure as an invisible
+    rest with no @facs, and it can perfectly well come first in document order - taking it
+    would leave the response with no zone to report and hence empty, even though other parts
+    do show the measure.
 
     @param $mei The sourcefile
     @param $movementId The ID of the mdiv to look in
@@ -37,8 +43,11 @@ declare option output:media-type "application/json";
     @returns The measure, or the empty sequence if neither resolves
 :)
 declare function local:findMeasure($mei, $movementId, $measureIdName) as element(mei:measure)? {
-    ($mei/id($measureIdName)[self::mei:measure],
-     source:resolve-measure-in-mdiv($mei, $movementId, $measureIdName))[1]
+    let $candidates :=
+        ($mei/id($measureIdName)[self::mei:measure],
+         source:resolve-measure-in-mdiv($mei, $movementId, $measureIdName))
+    return
+        ($candidates[@facs], $candidates)[1]
 };
 (:~
     Returns one map per zone the measure is linked to.
