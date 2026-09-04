@@ -98,5 +98,9 @@ declare
         let $measure := $doc/id($measureId)
         let $resolved := source:resolve-virtual-measure-id($doc, source:get-virtual-measure-id($measure))
         return
-            $measure/@xml:id eq $resolved/@xml:id
+            (: General comparison, not 'eq': source:resolve-virtual-measure-id returns one
+               measure per part, and 'eq' rejects a sequence of more than one (err:XPTY0004).
+               The round trip is satisfied when the ID resolves back to a set containing the
+               measure it was built from. :)
+            $measure/@xml:id = $resolved/@xml:id
 };
