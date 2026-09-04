@@ -172,14 +172,18 @@ declare
 (: round trip ============================================================== :)
 
 declare
-    %test:args("measure_3f9a1c2d-flauto-one")   %test:assertEquals("true")
+    %test:args("measure_3f9a1c2d-flauto-one")   %test:assertTrue
     (: the alphanumeric label is the interesting case: nothing normalises it on either side :)
-    %test:args("measure_5b7e4d8a-flauto-two")   %test:assertEquals("true")
-    %test:args("measure_7d3b5e0f-score-one")    %test:assertEquals("true")
-    function st:test-virtual-measure-id-round-trip($measureId as xs:string) as xs:string {
+    %test:args("measure_5b7e4d8a-flauto-two")   %test:assertTrue
+    %test:args("measure_7d3b5e0f-score-one")    %test:assertTrue
+    function st:test-virtual-measure-id-round-trip($measureId as xs:string) as xs:boolean {
         let $doc := doc($st:parts-labelled)
         let $measure := $doc/id($measureId)
         let $resolved := source:resolve-virtual-measure-id($doc, source:get-virtual-measure-id($measure))
         return
-            string($measure/@xml:id = $resolved/@xml:id)
+            (: General comparison, not 'eq': source:resolve-virtual-measure-id returns one
+               measure per part, and 'eq' rejects a sequence of more than one (err:XPTY0004).
+               The round trip is satisfied when the ID resolves back to a set containing the
+               measure it was built from. :)
+            $measure/@xml:id = $resolved/@xml:id
 };
