@@ -6,7 +6,7 @@
     </citeStructure>
 
     <citeStructure xml:id="paginationStructure"
-                    unit="Surface"
+                    unit="Page"
                     match="tei:pb"
                     use="@xml:id">
     </citeStructure>

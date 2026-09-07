@@ -36,79 +36,6 @@ declare function ddt:citationTree(
     ]
 };
 
-declare function ddt:alternativeCitationTree(
-    $tree as xs:string?
-) as element(citeStructure)* {
-    <refsDecl xmlns:mei="http://www.music-encoding.org/ns/mei">
-        <citeStructure xml:id="musicStructure"
-                        unit="Movement"
-                        match="mei:mdiv"
-                        use="@xml:id">
-            <citeStructure unit="Measure"
-                            match="mei:measure"
-                            use="@n"/>
-        </citeStructure>
-        <citeStructure xml:id="paginationStructure"
-                        unit="Surface"
-                        match="mei:surface"
-                        use="@xml:id">
-            <citeStructure unit="Zone"
-                            match="mei:zone"
-                            use="@xml:id"/>
-        </citeStructure>
-    </refsDecl>/citeStructure[
-        not($tree) or @xml:id = $tree
-    ]
-};
-
-declare
-    %test:assertEquals("movement-1")
-    function ddt:test-selectBasedOnCiteStructure-selects-by-xml-id() as xs:string {
-        let $document := document {
-            <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.0.0">
-                <meiHead/>
-                <music>
-                    <body>
-                        <mdiv xml:id="movement-1">
-                            <score>
-                                <section>
-                                    <measure n="42"/>
-                                </section>
-                            </score>
-                        </mdiv>
-                    </body>
-                </music>
-            </mei>
-        }
-        let $citationTree := ddt:alternativeCitationTree("musicStructure")
-        let $selected := dts-document:selectBasedOnCiteStructure($document, "movement-1", $citationTree)
-        return string($selected/@xml:id)
-};
-
-declare
-    %test:assertEquals("42")
-    function ddt:test-selectBasedOnCiteStructure-selects-by-n() as xs:string {
-        let $document := document {
-            <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.0.0">
-                <meiHead/>
-                <music>
-                    <body>
-                        <mdiv xml:id="movement-1">
-                            <score>
-                                <section>
-                                    <measure n="42"/>
-                                </section>
-                            </score>
-                        </mdiv>
-                    </body>
-                </music>
-            </mei>
-        }
-        let $citationTree := ddt:alternativeCitationTree("musicStructure")
-        let $selected := dts-document:selectBasedOnCiteStructure($document, "42", $citationTree)
-        return string($selected/@n)
-};
-
 declare
     %test:args(
         "<mei xmlns='http://www.music-encoding.org/ns/mei' meiversion='5.0.0' xml:id='root'><meiHead><fileDesc/></meiHead><music><body><mdiv xml:id='selection'/></body></music></mei>"
@@ -453,7 +380,7 @@ declare
 declare
     %test:assertTrue
     function ddt:test-selectTEIPages-returns-something() {
-        let $document := doc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+        let $document := eutil:getDoc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
         let $document := eutil:add-xml-ids($document)
         let $result :=
         <result>
@@ -472,7 +399,7 @@ declare
 declare
     %test:assertTrue
     function ddt:test-selectTEIPages-with-endPb-selects-page-range() as xs:boolean {
-        let $document := doc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+        let $document := eutil:getDoc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
         let $document := eutil:add-xml-ids($document)
         let $result := 
         <result>
@@ -495,7 +422,7 @@ declare
 declare
     %test:assertTrue
     function ddt:test-selectTEIPages-with-empty-endPb-selects-current-page() as xs:boolean {
-        let $document := doc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+        let $document := eutil:getDoc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
         let $document := eutil:add-xml-ids($document)
         let $result := dts-document:selectTEIPages(
             $document,

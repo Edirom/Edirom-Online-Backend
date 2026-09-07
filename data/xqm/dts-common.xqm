@@ -40,6 +40,52 @@ declare function dts-common:resolveSpecialResourceAlias(
 };
 
 (:~
+ : Selects nodes from the document only for those references that are actually covered by the supplied citation structure.
+ :
+ : @param $document The source document
+ : @param $ref The reference value to resolve
+ : @param $citationTree The citation tree used to locate matching nodes
+ : @return A map containing the selected node and its citation structure
+ :)
+declare function dts-common:selectBasedOnCiteStructure(
+    $document as node(),
+    $ref as xs:string?,
+    $citationTree as element(citeStructure)*
+) as map(*)* {
+    let $citeStructures := ($citationTree, $citationTree//citeStructure)
+    for $citeStructure in $citeStructures
+    let $match := normalize-space($citeStructure/@match)
+    let $use := normalize-space($citeStructure/@use)
+    let $matchName :=
+        if (not($match)) then
+            ()
+        else
+            resolve-QName($match, $citeStructure)
+    let $selected :=
+        if (not($match) or not($use) or not($ref)) then
+            ()
+        else
+            let $attributeName :=
+                if (starts-with($use, "@")) then
+                    substring($use, 2)
+                else
+                    ()
+            return
+                if ($attributeName) then
+                    $document//*[node-name(.) eq $matchName and string(@*[string(node-name(.)) eq $attributeName]) = $ref][1]
+                else
+                    ()
+    return
+        if ($selected) then
+            map {
+                "node": $selected,
+                "citeStructure": $citeStructure
+            }
+        else
+            ()
+};
+
+(:~
  : Builds a URI template for the collection endpoint, explicitly assigning
  : parameters whose values are supplied.
  :

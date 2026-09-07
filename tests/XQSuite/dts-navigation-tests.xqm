@@ -3,6 +3,7 @@ xquery version "3.1";
 module namespace dnt = "http://www.edirom.de/xquery/xqsuite/dts-navigation-tests";
 
 import module namespace dts-navigation = "http://www.edirom.de/api/dts-navigation" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/dts-navigation.xqm";
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/eutil.xqm";
 
 declare namespace errors = "http://www.edirom.de/xquery/errors";
 declare namespace json = "http://www.json.org";
@@ -119,7 +120,7 @@ declare
     %test:assertTrue
     function dnt:test-buildResourceObject-builds-dts-links() as xs:boolean {
         let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml"
-        let $document := doc($resource)
+        let $document := eutil:getDoc($resource)
         let $result := dts-navigation:buildResourceObject($document, $resource)
         return
             $result/id[@json:name = "@id"] eq $resource
@@ -130,6 +131,39 @@ declare
             and $result/citationTrees[1]/type[@json:name = "@type"] eq "CitationTree"
             and $result/citationTrees[1]/citeStructure[1]/citeType eq "Movement"
 };
+
+declare
+    (: Function sets parent for child unit :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("ref", "test-measure-1")
+    %test:arg("tree", "musicStructure")
+    %test:assertEquals("2|test-mdiv-1|Measure")
+    (: Function omits parent for root unit :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("ref", "test-mdiv-1")
+    %test:arg("tree", "musicStructure")
+    %test:assertEquals("1||Movement")
+    (: Function supports TEI div tree :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("ref", "test-div-1")
+    %test:arg("tree", "basicStructure")
+    %test:assertEquals("1||Paragraph")
+    (:Function supports TEI pagination tree :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("ref", "pb-1")
+    %test:arg("tree", "paginationStructure")
+    %test:assertEquals("1||Page")
+    function dnt:test-buildCitableUnitObject(
+        $resource as xs:string,
+        $ref as xs:string,
+        $tree as xs:string
+    ) as xs:string {
+        let $document := eutil:getDoc($resource)
+        let $citationTree := dts-navigation:getCitationTrees($document)[@xml:id = $tree]
+        let $result := dts-navigation:buildCitableUnitObject($document, $ref, $citationTree, "ref")
+        return
+            string($result/level) || "|" || string($result/parent) || "|" || string($result/citeType)
+    };
 
 declare
     (: Valid request using down. :)

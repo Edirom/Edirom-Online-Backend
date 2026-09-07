@@ -101,6 +101,50 @@ declare function dts-navigation:buildCitationTreesObjects(
 };
 
 (:~
+ : Builds the XML-based JSON representation of a DTS CitableUnit object.
+ :
+ : The supplied reference is resolved against the citation tree. The matched
+ : citation structure determines the unit level and cite type. If the unit is
+ : nested in the citation tree, its parent is resolved from the corresponding
+ : ancestor element in the document.
+ :
+ : @param $document The document containing the citable unit
+ : @param $ref The reference identifying the citable unit
+ : @param $citationTree The citation tree used to resolve the reference
+ : @param $unitName The JSON property name for the citable unit, such as `ref`, `start`, or `end`
+ : @return The citable unit representation containing its identifier, level, parent, and cite type
+ :)
+declare function dts-navigation:buildCitableUnitObject(
+    $document as document-node(),
+    $ref as xs:string,
+    $citationTree as element(citeStructure),
+    $unitName as xs:string
+) as element(citableUnit) {
+    let $selectionOutput := dts-common:selectBasedOnCiteStructure($document, $ref, $citationTree)
+    let $selectedNode := $selectionOutput("node")
+    let $citeStructure := $selectionOutput("citeStructure")
+    let $level := count($citeStructure/ancestor::citeStructure) + 1
+    let $parentCiteStructure := $citeStructure/parent::citeStructure
+    let $parentId :=
+        if ($level eq 1) then
+            ()
+        else
+            let $parentMatch := normalize-space($parentCiteStructure/@match)
+            let $parentElementName := resolve-QName($parentMatch, $parentCiteStructure)
+            return
+                string($selectedNode/ancestor::*[node-name(.) eq $parentElementName][1]/@xml:id)
+    let $citableUnit :=
+        <citableUnit json:name="{$unitName}">
+            <identifier>{string($ref)}</identifier>
+            <type json:name="@type">CitableUnit</type>
+            <level json:literal="true">{$level}</level>
+            <parent>{$parentId}</parent>
+            <citeType>{string($citeStructure/@unit)}</citeType>
+        </citableUnit>
+    return $citableUnit
+};
+
+(:~
  : Builds the XML-based JSON representation of a DTS Resource object.
  :
  : @param $document The document represented by the resource.
@@ -164,6 +208,14 @@ declare function dts-navigation:navigation(
         let $citationTree := eutil:getDoc($eutil:app-root || '/data/trees/citationTrees' || upper-case($namespace) || '.xml')/refsDecl/citeStructure[
             not($tree) or @xml:id = $tree
         ]
+        let $citableUnits :=
+            if ($ref) then
+                dts-navigation:buildCitableUnitObject($document, $ref, $citationTree, "ref")
+            else if ($start and $end) then
+                (dts-navigation:buildCitableUnitObject($document, $start, $citationTree, "start")
+                , dts-navigation:buildCitableUnitObject($document, $end, $citationTree, "end"))
+            else
+                ()
 
         let $resourceObject := dts-navigation:buildResourceObject($document, $resource)
         let $output :=
@@ -173,6 +225,7 @@ declare function dts-navigation:navigation(
                 <id json:name="@id">{request:get-url()}</id>
                 <type json:name="@type">Navigation</type>
                 {$resourceObject}
+                {$citableUnits}
             </json:value>
 
         return $output

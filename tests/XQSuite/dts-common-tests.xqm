@@ -8,6 +8,31 @@ declare namespace test = "http://exist-db.org/xquery/xqsuite";
 
 declare variable $dct:openAPI := json-doc("xmldb:exist:///db/apps/Edirom-Online-Backend/data/api/api.json");
 
+declare function dct:alternativeCitationTree(
+    $tree as xs:string?
+) as element(citeStructure)* {
+    <refsDecl xmlns:mei="http://www.music-encoding.org/ns/mei">
+        <citeStructure xml:id="musicStructure"
+                        unit="Movement"
+                        match="mei:mdiv"
+                        use="@xml:id">
+            <citeStructure unit="Measure"
+                            match="mei:measure"
+                            use="@n"/>
+        </citeStructure>
+        <citeStructure xml:id="paginationStructure"
+                        unit="Surface"
+                        match="mei:surface"
+                        use="@xml:id">
+            <citeStructure unit="Zone"
+                            match="mei:zone"
+                            use="@xml:id"/>
+        </citeStructure>
+    </refsDecl>/citeStructure[
+        not($tree) or @xml:id = $tree
+    ]
+};
+
 
 declare %private function dct:uriTemplateParameterNames($uri as xs:string) as xs:string* {
     tokenize(substring-before(substring-after($uri, "{?"), "}"), ",")
@@ -54,6 +79,54 @@ declare
     %test:assertEquals("https://example.org/api/document/?resource=resource&amp;ref=1&amp;mediaType=text/html{&amp;start,end,tree,lang,idPrefix,htmlProfile}")
     function dct:test-buildDocumentURI-assignments() as xs:string {
         dts-common:buildDocumentURI("https://example.org", "resource", "1", (), (), (), "text/html", (), (), ())
+};
+
+declare
+    %test:assertEquals("movement-1:Movement")
+    function dct:test-selectBasedOnCiteStructure-selects-by-xml-id() as xs:string {
+        let $document := document {
+            <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.0.0">
+                <meiHead/>
+                <music>
+                    <body>
+                        <mdiv xml:id="movement-1">
+                            <score>
+                                <section>
+                                    <measure n="42"/>
+                                </section>
+                            </score>
+                        </mdiv>
+                    </body>
+                </music>
+            </mei>
+        }
+        let $citationTree := dct:alternativeCitationTree("musicStructure")
+        let $selected := dts-common:selectBasedOnCiteStructure($document, "movement-1", $citationTree)
+        return string(($selected?node)/@xml:id) || ":" || string($selected?citeStructure/@unit)
+};
+
+declare
+    %test:assertEquals("42:Measure")
+    function dct:test-selectBasedOnCiteStructure-selects-by-n() as xs:string {
+        let $document := document {
+            <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.0.0">
+                <meiHead/>
+                <music>
+                    <body>
+                        <mdiv xml:id="movement-1">
+                            <score>
+                                <section>
+                                    <measure n="42"/>
+                                </section>
+                            </score>
+                        </mdiv>
+                    </body>
+                </music>
+            </mei>
+        }
+        let $citationTree := dct:alternativeCitationTree("musicStructure")
+        let $selected := dts-common:selectBasedOnCiteStructure($document, "42", $citationTree)
+        return string(($selected?node)/@n) || ":" || string($selected?citeStructure/@unit)
 };
 
 (: TODO: Create openapi specification for the collection endpoint
