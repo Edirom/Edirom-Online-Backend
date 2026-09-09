@@ -440,12 +440,12 @@
 							"schema": {
 								"type": "int",
 								"minimum": -1,
-								"default": -1
+								"default": null
 							},
 							"examples": {
 								"Empty": {
 									"summary": "Empty",
-									"value": ""
+									"value": null
 								},
 								"0": {
 									"summary": "0",

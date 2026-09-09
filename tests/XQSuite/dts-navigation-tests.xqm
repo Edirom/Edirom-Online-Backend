@@ -201,6 +201,98 @@ declare
 };
 
 declare
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("ref", "test-measure-1")
+    %test:arg("tree", "musicStructure")
+    %test:arg("identifiers", "test-measure-1 test-measure-2 test-measure-3 test-measure-4")
+    %test:arg("excludedIdentifiers", "test-mdiv-1 test-mdiv-2")
+    %test:assertTrue
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("ref", "test-mdiv-2")
+    %test:arg("tree", "musicStructure")
+    %test:arg("identifiers", "test-mdiv-1 test-mdiv-2")
+    %test:arg("excludedIdentifiers", "test-measure-1 test-measure-2 test-measure-3 test-measure-4")
+    %test:assertTrue
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("ref", "pb-2")
+    %test:arg("tree", "paginationStructure")
+    %test:arg("identifiers", "pb-2")
+    %test:arg("excludedIdentifiers", "pb-1 pb-3")
+    %test:assertTrue
+    function dnt:test-navigation-down-zero-returns-siblings(
+        $resource as xs:string,
+        $ref as xs:string,
+        $tree as xs:string,
+        $identifiers as xs:string,
+        $excludedIdentifiers as xs:string
+    ) as xs:boolean {
+        let $result := dts-navigation:navigation($resource, $ref, (), (), 0, $tree, ())
+        return
+            $result/ref/identifier eq $ref
+            and string-join($result/member/identifier, " ") eq $identifiers
+            and empty($result/member[identifier = tokenize($excludedIdentifiers, "\s+")])
+            and exists($result/member[identifier = $ref])
+            and (every $member in $result/member satisfies (
+                $member/@json:array eq "true"
+                and $member/type[@json:name = "@type"] eq "CitableUnit"
+                and $member/level eq $result/ref/level
+                and $member/parent eq $result/ref/parent
+                and $member/citeType eq $result/ref/citeType
+            ))
+};
+
+declare
+    %test:assertTrue
+    function dnt:test-buildMemberArrayRefDownZero-uses-xml-parent() as xs:boolean {
+        let $document := document {
+            <mei xmlns="http://www.music-encoding.org/ns/mei">
+                <music>
+                    <body>
+                        <mdiv xml:id="movement-1">
+                            <score>
+                                <section>
+                                    <measure xml:id="measure-before"/>
+                                    <measure xml:id="measure-1"/>
+                                    <sb xml:id="system-break"/>
+                                    <measure xml:id="measure-after"/>
+                                </section>
+                                <section><measure xml:id="measure-2"/></section>
+                            </score>
+                            <mdiv xml:id="nested-movement">
+                                <score><section><measure xml:id="nested-measure"/></section></score>
+                            </mdiv>
+                        </mdiv>
+                        <mdiv xml:id="movement-2">
+                            <score><section><measure xml:id="measure-3"/></section></score>
+                        </mdiv>
+                    </body>
+                </music>
+            </mei>
+        }
+        let $citationTree := dts-navigation:getCitationTrees($document)[@xml:id = "musicStructure"]
+        let $selection := dts-common:selectBasedOnCiteStructure($document, "measure-1", $citationTree)
+        let $members := dts-navigation:buildMemberArrayRefDownZero($selection)
+        let $singleSelection := dts-common:selectBasedOnCiteStructure($document, "measure-3", $citationTree)
+        let $singleMember := dts-navigation:buildMemberArrayRefDownZero($singleSelection)
+        return
+            string-join($members/identifier, " ") eq "measure-before measure-1 measure-after"
+            and (every $member in $members satisfies $member/parent eq "movement-1")
+            and count($singleMember) eq 1
+            and $singleMember/identifier eq "measure-3"
+            and $singleMember/@json:array eq "true"
+};
+
+declare
+    %test:assertTrue
+    function dnt:test-navigation-without-down-omits-members() as xs:boolean {
+        let $result := dts-navigation:navigation(
+            "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml",
+            "test-mdiv-1", (), (), (), "musicStructure", ()
+        )
+        return empty($result/member) and $result/ref/identifier eq "test-mdiv-1"
+};
+
+declare
     (: Ref cannot be combined with start/end. :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref", "test-mdiv-1")
