@@ -3,8 +3,10 @@ xquery version "3.1";
 module namespace dct = "http://www.edirom.de/xquery/xqsuite/dts-common-tests";
 
 import module namespace dts-common = "http://www.edirom.de/api/dts-common" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/dts-common.xqm";
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/eutil.xqm";
 
 declare namespace test = "http://exist-db.org/xquery/xqsuite";
+declare namespace tei = "http://www.tei-c.org/ns/1.0";
 
 declare variable $dct:openAPI := json-doc("xmldb:exist:///db/apps/Edirom-Online-Backend/data/api/api.json");
 
@@ -212,4 +214,65 @@ declare
             dct:uriTemplateParameterNames(dts-common:buildDocumentURI("https://example.org", (), (), (), (), (), (), (), (), ())),
             dct:openAPIQueryParameterNames("/api/document")
         )
+};
+
+declare
+    %test:assertTrue
+    function dct:test-selectTEIPages-returns-something() {
+        let $document := eutil:getDoc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+        let $document := eutil:add-xml-ids($document)
+        let $result :=
+        <result>
+        {
+            dts-common:selectTEIPages(
+                $document,
+                $document//tei:pb[@xml:id = "pb-1"],
+                ()
+            )
+        }
+        </result>
+        return
+            $result
+};
+
+declare
+    %test:assertTrue
+    function dct:test-selectTEIPages-with-endPb-selects-page-range() as xs:boolean {
+        let $document := eutil:getDoc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+        let $document := eutil:add-xml-ids($document)
+        let $result :=
+        <result>
+        {
+            dts-common:selectTEIPages(
+                $document,
+                $document//tei:pb[@xml:id = "pb-1"],
+                $document//tei:pb[@xml:id = "pb-2"]
+            )
+        }
+        </result>
+        return
+            exists($result//tei:pb[@xml:id = "pb-1"])
+            and exists($result//tei:pb[@xml:id = "pb-2"])
+            and exists($result//tei:p[@xml:id = "yes-in-p2-1"])
+            and empty($result//tei:div[@xml:id = "test-div-3"])
+            and empty($result//tei:p[@xml:id = "not-in-p2-2"])
+};
+
+declare
+    %test:assertTrue
+    function dct:test-selectTEIPages-with-empty-endPb-selects-current-page() as xs:boolean {
+        let $document := eutil:getDoc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+        let $document := eutil:add-xml-ids($document)
+        let $result := dts-common:selectTEIPages(
+            $document,
+            $document//tei:pb[@xml:id = "pb-2"],
+            ()
+        )
+        return
+            exists($result//tei:pb[@xml:id = "pb-2"])
+            and exists($result//tei:p[@xml:id = "yes-in-p2-1"])
+            and empty($result//tei:pb[@xml:id = "pb-1"])
+            and empty($result//tei:pb[@xml:id = "pb-3"])
+            and empty($result//tei:p[@xml:id = "not-in-p2-1"])
+            and empty($result//tei:p[@xml:id = "not-in-p2-2"])
 };

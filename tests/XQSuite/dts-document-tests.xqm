@@ -378,67 +378,6 @@ declare
 };
 
 declare
-    %test:assertTrue
-    function ddt:test-selectTEIPages-returns-something() {
-        let $document := eutil:getDoc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
-        let $document := eutil:add-xml-ids($document)
-        let $result :=
-        <result>
-        {
-            dts-document:selectTEIPages(
-                $document,
-                $document//tei:pb[@xml:id = "pb-1"],
-                ()
-            )
-        }
-        </result>
-        return
-            $result
-};
-
-declare
-    %test:assertTrue
-    function ddt:test-selectTEIPages-with-endPb-selects-page-range() as xs:boolean {
-        let $document := eutil:getDoc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
-        let $document := eutil:add-xml-ids($document)
-        let $result := 
-        <result>
-        {
-            dts-document:selectTEIPages(
-                $document,
-                $document//tei:pb[@xml:id = "pb-1"],
-                $document//tei:pb[@xml:id = "pb-2"]
-            )
-        }
-        </result>
-        return
-            exists($result//tei:pb[@xml:id = "pb-1"])
-            and exists($result//tei:pb[@xml:id = "pb-2"])
-            and exists($result//tei:p[@xml:id = "yes-in-p2-1"])
-            and empty($result//tei:div[@xml:id = "test-div-3"])
-            and empty($result//tei:p[@xml:id = "not-in-p2-2"])
-};
-
-declare
-    %test:assertTrue
-    function ddt:test-selectTEIPages-with-empty-endPb-selects-current-page() as xs:boolean {
-        let $document := eutil:getDoc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
-        let $document := eutil:add-xml-ids($document)
-        let $result := dts-document:selectTEIPages(
-            $document,
-            $document//tei:pb[@xml:id = "pb-2"],
-            ()
-        )
-        return
-            exists($result//tei:pb[@xml:id = "pb-2"])
-            and exists($result//tei:p[@xml:id = "yes-in-p2-1"])
-            and empty($result//tei:pb[@xml:id = "pb-1"])
-            and empty($result//tei:pb[@xml:id = "pb-3"])
-            and empty($result//tei:p[@xml:id = "not-in-p2-1"])
-            and empty($result//tei:p[@xml:id = "not-in-p2-2"])
-};
-
-declare
     %test:args("", "mei")                         %test:assertTrue
     %test:args("application/xml", "mei")          %test:assertTrue
     %test:args("text/xml", "mei")                 %test:assertTrue
