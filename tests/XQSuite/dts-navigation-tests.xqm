@@ -161,8 +161,9 @@ declare
     ) as xs:string {
         let $document := eutil:getDoc($resource)
         let $citationTree := dts-navigation:getCitationTrees($document)[@xml:id = $tree]
-        let $selectionOutput := dts-common:selectBasedOnCiteStructure($document, $ref, $citationTree)
-        let $result := dts-navigation:buildCitableUnitObject($selectionOutput("node"), $selectionOutput("citeStructure"), $ref)
+        let $selection := dts-common:selectBasedOnCiteStructure($document, $ref, $citationTree)
+        let $citeStructure := dts-common:getCiteStructureForNode($selection, $citationTree)
+        let $result := dts-navigation:buildCitableUnitObject($selection, $citeStructure, $ref)
         return
             string($result[self::level]) || "|" || string($result[self::parent]) || "|" || string($result[self::citeType])
     };
@@ -271,9 +272,11 @@ declare
         }
         let $citationTree := dts-navigation:getCitationTrees($document)[@xml:id = "musicStructure"]
         let $selection := dts-common:selectBasedOnCiteStructure($document, "measure-1", $citationTree)
-        let $members := dts-navigation:buildMemberArrayRefDownZero($selection("node"), $selection("citeStructure"))
+        let $citeStructure := dts-common:getCiteStructureForNode($selection, $citationTree)
+        let $members := dts-navigation:buildMemberArrayRefDownZero($selection, $citeStructure)
         let $singleSelection := dts-common:selectBasedOnCiteStructure($document, "measure-3", $citationTree)
-        let $singleMember := dts-navigation:buildMemberArrayRefDownZero($singleSelection("node"), $singleSelection("citeStructure"))
+        let $singleCiteStructure := dts-common:getCiteStructureForNode($singleSelection, $citationTree)
+        let $singleMember := dts-navigation:buildMemberArrayRefDownZero($singleSelection, $singleCiteStructure)
         return
             string-join($members/identifier, " ") eq "measure-before measure-1 measure-after"
             and (every $member in $members satisfies $member/parent eq "movement-1")

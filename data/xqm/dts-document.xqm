@@ -407,7 +407,7 @@ declare function dts-document:selectElementOrRange(
     $citationTree as element(citeStructure)*
 ) as node()* {
     if ($ref) then
-        let $citeStructureSelection := (dts-common:selectBasedOnCiteStructure($document, $ref, $citationTree))?node
+        let $citeStructureSelection := dts-common:selectBasedOnCiteStructure($document, $ref, $citationTree)
         let $candidateSelection :=
             if ($citeStructureSelection) then
                 $citeStructureSelection
@@ -432,8 +432,8 @@ declare function dts-document:selectElementOrRange(
             else
                 error($errors:NOT_FOUND, "The specified citable units did not match any element in the document for the specified citation tree.")
     else if ($start and $end) then
-        let $candidateStartNode := (dts-common:selectBasedOnCiteStructure($document, $start, $citationTree))?node
-        let $candidateEndNode := (dts-common:selectBasedOnCiteStructure($document, $end, $citationTree))?node
+        let $candidateStartNode := dts-common:selectBasedOnCiteStructure($document, $start, $citationTree)
+        let $candidateEndNode := dts-common:selectBasedOnCiteStructure($document, $end, $citationTree)
         let $startNode :=
             if (
                 $candidateStartNode and

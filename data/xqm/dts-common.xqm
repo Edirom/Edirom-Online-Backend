@@ -45,13 +45,13 @@ declare function dts-common:resolveSpecialResourceAlias(
  : @param $document The source document
  : @param $ref The reference value to resolve
  : @param $citationTree The citation tree used to locate matching nodes
- : @return A map containing the selected node and its citation structure
+ : @return The selected elements covered by the supplied citation structure
  :)
 declare function dts-common:selectBasedOnCiteStructure(
     $document as node(),
     $ref as xs:string?,
     $citationTree as element(citeStructure)*
-) as map(*)* {
+) as element()* {
     let $citeStructures := ($citationTree, $citationTree//citeStructure)
     for $citeStructure in $citeStructures
     let $match := normalize-space($citeStructure/@match)
@@ -76,13 +76,33 @@ declare function dts-common:selectBasedOnCiteStructure(
                 else
                     ()
     return
-        if ($selected) then
-            map {
-                "node": $selected,
-                "citeStructure": $citeStructure
-            }
+        $selected
+};
+
+(:~
+ : Returns citation structures whose match QName matches the supplied node.
+ : All matching structures are returned; ambiguous matches are not reduced to the first result.
+ : This uses the currently supported QName-based matches, not hierarchical XPath expressions.
+ :
+ : @param $node The selected element
+ : @param $citationTree The citation trees to search, including their descendant structures
+ : @return The matching citation structures, or an empty sequence when none match
+ :)
+declare function dts-common:getCiteStructureForNode(
+    $node as element(),
+    $citationTree as element(citeStructure)*
+) as element(citeStructure)* {
+    let $citeStructures := ($citationTree, $citationTree//citeStructure)
+    for $citeStructure in $citeStructures
+    let $match := normalize-space($citeStructure/@match)
+    let $matchName :=
+        if ($match) then
+            resolve-QName($match, $citeStructure)
         else
             ()
+    where node-name($node) eq $matchName
+    return
+        $citeStructure
 };
 
 (:~
