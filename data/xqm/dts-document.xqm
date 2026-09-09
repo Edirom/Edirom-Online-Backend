@@ -14,7 +14,7 @@ module namespace dts-document = "http://www.edirom.de/api/dts-document";
 
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 import module namespace errors = "http://www.edirom.de/xquery/errors" at "errors.xqm";
-import module namespace dts-common = "http://www.edirom.de/api/dts-common" at "dts-common.xqm";
+import module namespace dts-util = "http://www.edirom.de/api/dts-util" at "dts-util.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -108,7 +108,7 @@ declare function dts-document:wrapSelection(
     $selection as element()*,
     $document as node()
 ) as node()? {
-    let $alwaysPreserved := $document//*[node-name(.) = $dts-common:alwaysPreserveMEIElements or node-name(.) = $dts-common:alwaysPreserveTEIElements]
+    let $alwaysPreserved := $document//*[node-name(.) = $dts-util:alwaysPreserveMEIElements or node-name(.) = $dts-util:alwaysPreserveTEIElements]
     let $baseFullCopyNodes := ($selection, $alwaysPreserved)
     let $referencedNodes := dts-document:referenceClosure($document, $baseFullCopyNodes)
     let $referencingMeasures := dts-document:getMeasuresReferencingSelectedZones($document, $selection)
@@ -306,7 +306,7 @@ declare function dts-document:selectAndWrap(
     $end as xs:string?,
     $citationTree as element(citeStructure)*
 ) as node()* {
-    let $selection := dts-common:selectElementOrRange($document, $ref, $start, $end, $citationTree)
+    let $selection := dts-util:selectElementOrRange($document, $ref, $start, $end, $citationTree)
     return
         dts-document:wrapSelection($selection, $document)
 };
@@ -648,7 +648,7 @@ declare function dts-document:document(
     else if (($start and not($end)) or ($end and not($start))) then
         error($errors:INVALID_PARAMETERS, "Both 'start' and 'end' parameters must be provided together.")
     else
-        let $resource := dts-common:resolveSpecialResourceAlias($resource)
+        let $resource := dts-util:resolveSpecialResourceAlias($resource)
         let $document := eutil:getDoc($resource)/root()
         let $document :=
             if ($document) then
@@ -689,7 +689,7 @@ declare function dts-document:document(
                     document { dts-document:transformTEIToHTML($outputXml, $resource, $xslInstruction, $htmlParameters) }
             else if ($namespace eq "mei" and contains($mediaType, "json")) then
                 let $addMeasuresToZones :=
-                    if (dts-common:isInCitationTree(element mei:measure { }, $citationTree)) then
+                    if (dts-util:isInCitationTree(element mei:measure { }, $citationTree)) then
                         false()
                     else
                         true()

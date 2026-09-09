@@ -8,7 +8,7 @@ xquery version "3.1";
  :
  : @author Francesco Maccarini
  :)
-module namespace dts-common = "http://www.edirom.de/api/dts-common";
+module namespace dts-util = "http://www.edirom.de/api/dts-util";
 
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 import module namespace errors = "http://www.edirom.de/xquery/errors" at "errors.xqm";
@@ -21,7 +21,7 @@ declare namespace transform = "http://exist-db.org/xquery/transform";
 (:~
  : Maps special resource aliases to internal application resources.
  :)
-declare variable $dts-common:specialResourcesAliases as map(xs:string, xs:string) := map {
+declare variable $dts-util:specialResourcesAliases as map(xs:string, xs:string) := map {
     "help_en": "xmldb:exist:///db/apps/Edirom-Online-Backend/help/help_en.xml",
     "help_de": "xmldb:exist:///db/apps/Edirom-Online-Backend/help/help_de.xml"
 }; (: TODO: this is a temporary solution.
@@ -31,14 +31,14 @@ declare variable $dts-common:specialResourcesAliases as map(xs:string, xs:string
 (:~
  : Lists MEI elements that must always be preserved for every endpoint request.
  :)
-declare variable $dts-common:alwaysPreserveMEIElements as xs:QName* := (
+declare variable $dts-util:alwaysPreserveMEIElements as xs:QName* := (
     QName("http://www.music-encoding.org/ns/mei", "meiHead")
 );
 
 (:~
  : Lists TEI elements that must always be preserved for every endpoint request.
  :)
-declare variable $dts-common:alwaysPreserveTEIElements as xs:QName* := (
+declare variable $dts-util:alwaysPreserveTEIElements as xs:QName* := (
     QName("http://www.tei-c.org/ns/1.0", "teiHeader")
 );
 
@@ -50,11 +50,11 @@ declare variable $dts-common:alwaysPreserveTEIElements as xs:QName* := (
  : @param $resource The requested resource identifier
  : @return The resolved resource URI
  :)
-declare function dts-common:resolveSpecialResourceAlias(
+declare function dts-util:resolveSpecialResourceAlias(
     $resource as xs:string?
 ) as xs:string {
-    if (map:contains($dts-common:specialResourcesAliases, $resource)) then
-        map:get($dts-common:specialResourcesAliases, $resource)
+    if (map:contains($dts-util:specialResourcesAliases, $resource)) then
+        map:get($dts-util:specialResourcesAliases, $resource)
     else
         $resource
 };
@@ -67,7 +67,7 @@ declare function dts-common:resolveSpecialResourceAlias(
  : @param $citationTree The citation tree used to locate matching nodes
  : @return The selected elements covered by the supplied citation structure
  :)
-declare function dts-common:selectBasedOnCiteStructure(
+declare function dts-util:selectBasedOnCiteStructure(
     $document as node(),
     $ref as xs:string?,
     $citationTree as element(citeStructure)*
@@ -106,12 +106,12 @@ declare function dts-common:selectBasedOnCiteStructure(
  : @param $citationTree The citation tree to check against
  : @return `true()` when the elements are part of the citation tree, otherwise `false()`
  :)
-declare function dts-common:isInCitationTree(
+declare function dts-util:isInCitationTree(
     $elements as element()*,
     $citationTree as element(citeStructure)*
 ) as xs:boolean {
     some $citeStructure in ($citationTree, $citationTree//citeStructure)
-        satisfies dts-common:matchesCitationStructure($elements, $citeStructure)
+        satisfies dts-util:matchesCitationStructure($elements, $citeStructure)
 };
 
 (:~
@@ -120,10 +120,10 @@ declare function dts-common:isInCitationTree(
  : @param $elements The elements to test
  : @return `true()` if all supplied elements are in the list of always preserved elements, otherwise `false()`
  :)
-declare function dts-common:isAlwaysPreservedSelection(
+declare function dts-util:isAlwaysPreservedSelection(
     $elements as element()*
 ) as xs:boolean {
-    every $node in $elements satisfies node-name($node) = $dts-common:alwaysPreserveMEIElements or node-name($node) = $dts-common:alwaysPreserveTEIElements
+    every $node in $elements satisfies node-name($node) = $dts-util:alwaysPreserveMEIElements or node-name($node) = $dts-util:alwaysPreserveTEIElements
 };
 
 (:~
@@ -133,7 +133,7 @@ declare function dts-common:isAlwaysPreservedSelection(
  : @param $citeStructure The citation structure definition to compare against
  : @return `true()` when the elements match the citation structure, otherwise `false()`
  :)
-declare function dts-common:matchesCitationStructure(
+declare function dts-util:matchesCitationStructure(
     $elements as element()*,
     $citeStructure as element(citeStructure)
 ) as xs:boolean {
@@ -156,7 +156,7 @@ declare function dts-common:matchesCitationStructure(
  : @param $endPb The ending page break element, if present
  : @return The page content selected between the supplied boundaries
  :)
-declare function dts-common:selectTEIPages(
+declare function dts-util:selectTEIPages(
     $document as node(),
     $startPb as node()*,
     $endPb as node()*
@@ -198,7 +198,7 @@ declare function dts-common:selectTEIPages(
  : @param $citationTree The citation tree used to validate the selection
  : @return The selected nodes or range content
  :)
-declare function dts-common:selectElementOrRange(
+declare function dts-util:selectElementOrRange(
     $document as node(),
     $ref as xs:string?,
     $start as xs:string?,
@@ -206,7 +206,7 @@ declare function dts-common:selectElementOrRange(
     $citationTree as element(citeStructure)*
 ) as node()* {
     if ($ref) then
-        let $citeStructureSelection := dts-common:selectBasedOnCiteStructure($document, $ref, $citationTree)
+        let $citeStructureSelection := dts-util:selectBasedOnCiteStructure($document, $ref, $citationTree)
         let $candidateSelection :=
             if ($citeStructureSelection) then
                 $citeStructureSelection
@@ -215,15 +215,15 @@ declare function dts-common:selectElementOrRange(
         return
             if (
                 $candidateSelection and
-                (dts-common:isInCitationTree($candidateSelection, $citationTree)
-                or dts-common:isAlwaysPreservedSelection($candidateSelection)) 
+                (dts-util:isInCitationTree($candidateSelection, $citationTree)
+                or dts-util:isAlwaysPreservedSelection($candidateSelection)) 
                 and node-name($candidateSelection[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb")
             ) then
-                dts-common:selectTEIPages($document, $candidateSelection, ())
+                dts-util:selectTEIPages($document, $candidateSelection, ())
             else if (
                 $candidateSelection and
-                (dts-common:isInCitationTree($candidateSelection, $citationTree)
-                or dts-common:isAlwaysPreservedSelection($candidateSelection))
+                (dts-util:isInCitationTree($candidateSelection, $citationTree)
+                or dts-util:isAlwaysPreservedSelection($candidateSelection))
             ) then
                 $candidateSelection
             else if ($candidateSelection) then
@@ -231,12 +231,12 @@ declare function dts-common:selectElementOrRange(
             else
                 error($errors:NOT_FOUND, "The specified citable units did not match any element in the document for the specified citation tree.")
     else if ($start and $end) then
-        let $candidateStartNode := dts-common:selectBasedOnCiteStructure($document, $start, $citationTree)
-        let $candidateEndNode := dts-common:selectBasedOnCiteStructure($document, $end, $citationTree)
+        let $candidateStartNode := dts-util:selectBasedOnCiteStructure($document, $start, $citationTree)
+        let $candidateEndNode := dts-util:selectBasedOnCiteStructure($document, $end, $citationTree)
         let $startNode :=
             if (
                 $candidateStartNode and
-                dts-common:isInCitationTree($candidateStartNode, $citationTree)
+                dts-util:isInCitationTree($candidateStartNode, $citationTree)
             ) then
                 $candidateStartNode
             else if ($candidateStartNode) then
@@ -246,7 +246,7 @@ declare function dts-common:selectElementOrRange(
         let $endNode :=
             if (
                 $candidateEndNode and 
-                dts-common:isInCitationTree($candidateEndNode, $citationTree)
+                dts-util:isInCitationTree($candidateEndNode, $citationTree)
             ) then
                 $candidateEndNode
             else if ($candidateEndNode) then
@@ -257,7 +257,7 @@ declare function dts-common:selectElementOrRange(
             if (node-name($startNode[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb")
                 and node-name($endNode[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb")
             ) then
-                dts-common:selectTEIPages($document, $startNode, $endNode)
+                dts-util:selectTEIPages($document, $startNode, $endNode)
             else if ($start eq $end) then
                 $startNode
             else if (not($startNode/parent::* is $endNode/parent::*)) then
@@ -283,7 +283,7 @@ declare function dts-common:selectElementOrRange(
  : @param $citationTree The citation trees to search, including their descendant structures
  : @return The matching citation structures, or an empty sequence when none match
  :)
-declare function dts-common:getCiteStructureForNode(
+declare function dts-util:getCiteStructureForNode(
     $node as element(),
     $citationTree as element(citeStructure)*
 ) as element(citeStructure)* {
@@ -310,7 +310,7 @@ declare function dts-common:getCiteStructureForNode(
  : @param $nav The requested navigation direction
  : @return The collection endpoint URI template
  :)
-declare function dts-common:buildCollectionURI(
+declare function dts-util:buildCollectionURI(
     $baseURL as xs:string,
     $id as xs:string?,
     $page as xs:integer?,
@@ -352,7 +352,7 @@ declare function dts-common:buildCollectionURI(
  : @param $page The requested result page
  : @return The navigation endpoint URI template
  :)
-declare function dts-common:buildNavigationURI(
+declare function dts-util:buildNavigationURI(
     $baseURL as xs:string,
     $resource as xs:string?,
     $ref as xs:string?,
@@ -404,7 +404,7 @@ declare function dts-common:buildNavigationURI(
  : @param $htmlProfile The requested HTML profile
  : @return The document endpoint URI template
  :)
-declare function dts-common:buildDocumentURI(
+declare function dts-util:buildDocumentURI(
     $baseURL as xs:string,
     $resource as xs:string?,
     $ref as xs:string?,

@@ -14,7 +14,7 @@ module namespace dts-navigation = "http://www.edirom.de/api/dts-navigation";
 
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 import module namespace errors = "http://www.edirom.de/xquery/errors" at "errors.xqm";
-import module namespace dts-common = "http://www.edirom.de/api/dts-common" at "dts-common.xqm";
+import module namespace dts-util = "http://www.edirom.de/api/dts-util" at "dts-util.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -117,9 +117,9 @@ declare function dts-navigation:buildResourceObject(
         <resource>
             <id json:name="@id">{$resource}</id>
             <type json:name="@type">Resource</type>
-            <collection>{dts-common:buildCollectionURI($base-url, $resource, (), ())}</collection>
-            <navigation>{dts-common:buildNavigationURI($base-url, $resource, (), (), (), (), (), ())}</navigation>
-            <document>{dts-common:buildDocumentURI($base-url, $resource, (), (), (), (), (), (), (), ())}</document>
+            <collection>{dts-util:buildCollectionURI($base-url, $resource, (), ())}</collection>
+            <navigation>{dts-util:buildNavigationURI($base-url, $resource, (), (), (), (), (), ())}</navigation>
+            <document>{dts-util:buildDocumentURI($base-url, $resource, (), (), (), (), (), (), (), ())}</document>
             {dts-navigation:buildCitationTreesObjects($citationTreesXML)}
         </resource>
     return $resourceObject
@@ -269,7 +269,7 @@ declare function dts-navigation:navigation(
     else if ($down lt -1) then
         error($errors:INVALID_PARAMETERS, "The 'down' parameter must be -1 or greater.")  
     else
-        let $resource := dts-common:resolveSpecialResourceAlias($resource)
+        let $resource := dts-util:resolveSpecialResourceAlias($resource)
         let $document := eutil:getDoc($resource)/root()
         let $document :=
             if ($document) then
@@ -282,17 +282,17 @@ declare function dts-navigation:navigation(
         ]
         let $boundaryUnits :=
             if ($ref) then
-                let $selection := dts-common:selectBasedOnCiteStructure($document, $ref, $citationTree)
-                let $citeStructure := dts-common:getCiteStructureForNode($selection, $citationTree)
+                let $selection := dts-util:selectBasedOnCiteStructure($document, $ref, $citationTree)
+                let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
                 return
                     <ref>
                         {dts-navigation:buildCitableUnitObject($selection, $citeStructure, $ref)}
                     </ref>
             else if ($start and $end) then
-                let $startSelection := dts-common:selectBasedOnCiteStructure($document, $start, $citationTree)
-                let $endSelection := dts-common:selectBasedOnCiteStructure($document, $end, $citationTree)
-                let $startCiteStructure := dts-common:getCiteStructureForNode($startSelection, $citationTree)
-                let $endCiteStructure := dts-common:getCiteStructureForNode($endSelection, $citationTree)
+                let $startSelection := dts-util:selectBasedOnCiteStructure($document, $start, $citationTree)
+                let $endSelection := dts-util:selectBasedOnCiteStructure($document, $end, $citationTree)
+                let $startCiteStructure := dts-util:getCiteStructureForNode($startSelection, $citationTree)
+                let $endCiteStructure := dts-util:getCiteStructureForNode($endSelection, $citationTree)
                 return (
                     <start>
                         {dts-navigation:buildCitableUnitObject($startSelection, $startCiteStructure, $start)}
@@ -309,8 +309,8 @@ declare function dts-navigation:navigation(
                 ()
             (: If $down = 0 and $ref is present -> special case :)
             else if ($down eq 0 and $ref) then
-                let $selection := dts-common:selectBasedOnCiteStructure($document, $ref, $citationTree)
-                let $citeStructure := dts-common:getCiteStructureForNode($selection, $citationTree)
+                let $selection := dts-util:selectBasedOnCiteStructure($document, $ref, $citationTree)
+                let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
                 return dts-navigation:buildMemberArrayRefDownZero($selection, $citeStructure)
             else if (not($ref) and not($start) and not($end)) then
                 dts-navigation:buildMemberArray($document, $citationTree, $down)

@@ -17,7 +17,7 @@ import module namespace request="http://exist-db.org/xquery/request";
 import module namespace roaster="http://e-editiones.org/roaster";
 
 import module namespace errors="http://www.edirom.de/xquery/errors" at "../xqm/errors.xqm";
-import module namespace dts-common="http://www.edirom.de/api/dts-common" at "../xqm/dts-common.xqm";
+import module namespace dts-util="http://www.edirom.de/api/dts-util" at "../xqm/dts-util.xqm";
 import module namespace dts-document="http://www.edirom.de/api/dts-document" at "../xqm/dts-document.xqm";
 import module namespace dts-navigation="http://www.edirom.de/api/dts-navigation" at "../xqm/dts-navigation.xqm";
 
@@ -40,9 +40,9 @@ declare function api:entryPoint ($request as map(*)) {
             <dtsVersion>1.0</dtsVersion>
             <id json:name="@id">{concat($base-url, "/api/")}</id>
             <type json:name="@type">EntryPoint</type>
-            <collection>{dts-common:buildCollectionURI($base-url, (), (), ())}</collection>
-            <navigation>{dts-common:buildNavigationURI($base-url, (), (), (), (), (), (), ())}</navigation>
-            <document>{dts-common:buildDocumentURI($base-url, (), (), (), (), (), (), (), (), ())}</document>
+            <collection>{dts-util:buildCollectionURI($base-url, (), (), ())}</collection>
+            <navigation>{dts-util:buildNavigationURI($base-url, (), (), (), (), (), (), ())}</navigation>
+            <document>{dts-util:buildDocumentURI($base-url, (), (), (), (), (), (), (), (), ())}</document>
         </json:value>
 };
 

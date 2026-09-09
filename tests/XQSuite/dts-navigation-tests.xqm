@@ -3,7 +3,7 @@ xquery version "3.1";
 module namespace dnt = "http://www.edirom.de/xquery/xqsuite/dts-navigation-tests";
 
 import module namespace dts-navigation = "http://www.edirom.de/api/dts-navigation" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/dts-navigation.xqm";
-import module namespace dts-common = "http://www.edirom.de/api/dts-common" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/dts-common.xqm";
+import module namespace dts-util = "http://www.edirom.de/api/dts-util" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/dts-util.xqm";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/eutil.xqm";
 
 declare namespace errors = "http://www.edirom.de/xquery/errors";
@@ -304,8 +304,8 @@ declare
     ) as xs:string {
         let $document := eutil:getDoc($resource)
         let $citationTree := dts-navigation:getCitationTrees($document)[@xml:id = $tree]
-        let $selection := dts-common:selectBasedOnCiteStructure($document, $ref, $citationTree)
-        let $citeStructure := dts-common:getCiteStructureForNode($selection, $citationTree)
+        let $selection := dts-util:selectBasedOnCiteStructure($document, $ref, $citationTree)
+        let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
         let $result := dts-navigation:buildCitableUnitObject($selection, $citeStructure, $ref)
         return
             string($result[self::level]) || "|" || string($result[self::parent]) || "|" || string($result[self::citeType])
@@ -414,11 +414,11 @@ declare
             </mei>
         }
         let $citationTree := dts-navigation:getCitationTrees($document)[@xml:id = "musicStructure"]
-        let $selection := dts-common:selectBasedOnCiteStructure($document, "measure-1", $citationTree)
-        let $citeStructure := dts-common:getCiteStructureForNode($selection, $citationTree)
+        let $selection := dts-util:selectBasedOnCiteStructure($document, "measure-1", $citationTree)
+        let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
         let $members := dts-navigation:buildMemberArrayRefDownZero($selection, $citeStructure)
-        let $singleSelection := dts-common:selectBasedOnCiteStructure($document, "measure-3", $citationTree)
-        let $singleCiteStructure := dts-common:getCiteStructureForNode($singleSelection, $citationTree)
+        let $singleSelection := dts-util:selectBasedOnCiteStructure($document, "measure-3", $citationTree)
+        let $singleCiteStructure := dts-util:getCiteStructureForNode($singleSelection, $citationTree)
         let $singleMember := dts-navigation:buildMemberArrayRefDownZero($singleSelection, $singleCiteStructure)
         return
             string-join($members/identifier, " ") eq "measure-before measure-1 measure-after"
