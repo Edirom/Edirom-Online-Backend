@@ -3,6 +3,7 @@ xquery version "3.1";
 module namespace dnt = "http://www.edirom.de/xquery/xqsuite/dts-navigation-tests";
 
 import module namespace dts-navigation = "http://www.edirom.de/api/dts-navigation" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/dts-navigation.xqm";
+import module namespace dts-common = "http://www.edirom.de/api/dts-common" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/dts-common.xqm";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/eutil.xqm";
 
 declare namespace errors = "http://www.edirom.de/xquery/errors";
@@ -160,9 +161,10 @@ declare
     ) as xs:string {
         let $document := eutil:getDoc($resource)
         let $citationTree := dts-navigation:getCitationTrees($document)[@xml:id = $tree]
-        let $result := dts-navigation:buildCitableUnitObject($document, $ref, $citationTree, "ref")
+        let $selectionOutput := dts-common:selectBasedOnCiteStructure($document, $ref, $citationTree)
+        let $result := dts-navigation:buildCitableUnitObject($selectionOutput, $ref)
         return
-            string($result/level) || "|" || string($result/parent) || "|" || string($result/citeType)
+            string($result[self::level]) || "|" || string($result[self::parent]) || "|" || string($result[self::citeType])
     };
 
 declare
