@@ -162,12 +162,53 @@ declare function dts-navigation:buildCitableUnitObject(
     )
 };
 
+(:~
+ : Builds a flat sequence of CitableUnit members by traversing citation levels.
+ : Selected elements are starting units; a document supplies all matching starting units.
+ : Members are emitted parent-first, with units at each traversal step in document order.
+ : Descendants belonging to a nested unit of the same parent type are excluded.
+ :
+ : @param $selection The document or already-selected citable elements
+ : @param $citeStructure The starting citation structures, retaining their tree ancestors
+ : @param $down The number of included levels: 1 includes only the starting level,
+ :              -1 includes all levels, and 0 or an empty value includes none
+ : @return Individual member elements, each containing one CitableUnit
+ :)
 declare function dts-navigation:buildMemberArray(
-    $selection as node(),
-    $citationTree as element(citeStructure)*,
+    $selection as node()*,
+    $citeStructure as element(citeStructure)*,
     $down as xs:integer?
 ) as element()* {
-    ()
+    if (empty($down) or $down eq 0) then
+        ()
+    else
+        for $node in $selection/self::node()
+        return
+            typeswitch ($node)
+                case document-node() return
+                    dts-navigation:buildMemberArray($node/descendant::*, $citeStructure, $down)
+                case element() return
+                    for $currentCiteStructure in $citeStructure
+                    let $match := normalize-space($currentCiteStructure/@match)
+                    let $elementName :=
+                        if ($match) then resolve-QName($match, $currentCiteStructure) else ()
+                    where node-name($node) eq $elementName
+                    return (
+                        <member json:array="true">
+                            {dts-navigation:buildCitableUnitObject($node, $currentCiteStructure, string($node/@xml:id))}
+                        </member>,
+                        if (($down eq -1 or $down gt 1) and exists($currentCiteStructure/citeStructure)) then
+                            let $children := $node/descendant::*[
+                                ancestor::*[node-name(.) eq $elementName][1] is $node
+                            ]
+                            let $nextDown := if ($down eq -1) then -1 else $down - 1
+                            return
+                                dts-navigation:buildMemberArray($children, $currentCiteStructure/citeStructure, $nextDown)
+                        else
+                            ()
+                    )
+                default return
+                    ()
 };
 
 (:~
@@ -179,21 +220,21 @@ declare function dts-navigation:buildMemberArray(
  : including the current CitableUnit identified by ref.
  :
  : @param $selection The referenced node
- : @param $citationTree The citation structure for the referenced node
+ : @param $citeStructure The citation structure for the referenced node
  : @return Matching XML siblings, including the referenced unit, in document order
  :)
 declare function dts-navigation:buildMemberArrayRefDownZero(
     $selection as node(),
-    $citationTree as element(citeStructure)
+    $citeStructure as element(citeStructure)
 ) as element()* {
-    let $elementName := resolve-QName(normalize-space($citationTree/@match), $citationTree)
+    let $elementName := resolve-QName(normalize-space($citeStructure/@match), $citeStructure)
     let $siblings := $selection/parent::node()/*[
         node-name(.) eq $elementName
     ]
     for $sibling in $siblings
     return
         <member json:array="true">
-            {dts-navigation:buildCitableUnitObject($sibling, $citationTree, string($sibling/@xml:id))}
+            {dts-navigation:buildCitableUnitObject($sibling, $citeStructure, string($sibling/@xml:id))}
         </member>
 };
 
@@ -272,9 +313,7 @@ declare function dts-navigation:navigation(
                 let $citeStructure := dts-common:getCiteStructureForNode($selection, $citationTree)
                 return dts-navigation:buildMemberArrayRefDownZero($selection, $citeStructure)
             else if (not($ref) and not($start) and not($end)) then
-                <member json:array="true">
-                    {dts-navigation:buildMemberArray($document, $citationTree, $down)}
-                </member>
+                dts-navigation:buildMemberArray($document, $citationTree, $down)
             else
                 <member json:array="true">
                     <TODO/>

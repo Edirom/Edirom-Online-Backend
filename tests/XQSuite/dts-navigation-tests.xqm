@@ -10,6 +10,149 @@ declare namespace errors = "http://www.edirom.de/xquery/errors";
 declare namespace json = "http://www.json.org";
 declare namespace test = "http://exist-db.org/xquery/xqsuite";
 
+declare function dnt:memberDocument() as document-node() {
+    document {
+        <mei xmlns="http://www.music-encoding.org/ns/mei">
+            <facsimile><surface xml:id="surface-1"><zone xml:id="zone-1"/></surface></facsimile>
+            <music><body>
+                <mdiv xml:id="movement-1">
+                    <score>
+                        <section><measure xml:id="measure-1"><staff><layer><note xml:id="note-1"/></layer></staff></measure></section>
+                        <section><measure xml:id="measure-2"/></section>
+                    </score>
+                    <mdiv xml:id="nested-movement">
+                        <score><section><measure xml:id="nested-measure"/></section></score>
+                    </mdiv>
+                </mdiv>
+                <mdiv xml:id="movement-2"><score><section><measure xml:id="measure-3"/></section></score></mdiv>
+            </body></music>
+        </mei>
+    }
+};
+
+declare function dnt:memberCitationTrees() as element(citeStructure)* {
+    <refsDecl xmlns:mei="http://www.music-encoding.org/ns/mei">
+        <citeStructure match="mei:mdiv" use="@xml:id" unit="Movement">
+            <citeStructure match="mei:measure" use="@xml:id" unit="Measure">
+                <citeStructure match="mei:note" use="@xml:id" unit="Note"/>
+            </citeStructure>
+        </citeStructure>
+        <citeStructure match="mei:surface" use="@xml:id" unit="Surface">
+            <citeStructure match="mei:zone" use="@xml:id" unit="Zone"/>
+        </citeStructure>
+    </refsDecl>/citeStructure
+};
+
+declare
+    %test:args(1, "movement-1")
+    %test:assertEquals("movement-1")
+    %test:args(2, "movement-1")
+    %test:assertEquals("movement-1 measure-1 measure-2")
+    %test:args(3, "movement-1")
+    %test:assertEquals("movement-1 measure-1 note-1 measure-2")
+    %test:args("-1", "movement-1")
+    %test:assertEquals("movement-1 measure-1 note-1 measure-2")
+    %test:args(10, "movement-1")
+    %test:assertEquals("movement-1 measure-1 note-1 measure-2")
+    %test:args(1, "document")
+    %test:assertEquals("movement-1 nested-movement movement-2")
+    %test:args(2, "document")
+    %test:assertEquals("movement-1 measure-1 measure-2 nested-movement nested-measure movement-2 measure-3")
+    %test:args("-1", "document")
+    %test:assertEquals("movement-1 measure-1 note-1 measure-2 nested-movement nested-measure movement-2 measure-3")
+    function dnt:test-buildMemberArray-depth($down as xs:integer, $scope as xs:string) as xs:string {
+        let $document := dnt:memberDocument()
+        let $selection := if ($scope eq "document") then $document else $document//*[@xml:id = $scope]
+        let $members := dts-navigation:buildMemberArray($selection, dnt:memberCitationTrees()[1], $down)
+        return string-join($members/identifier, " ")
+};
+
+declare
+    %test:assertTrue
+    function dnt:test-buildMemberArray-flat-metadata() as xs:boolean {
+        let $document := dnt:memberDocument()
+        let $tree := dnt:memberCitationTrees()[1]
+        let $members := dts-navigation:buildMemberArray($document//*[@xml:id = "movement-1"], $tree, -1)
+        let $measure := dts-navigation:buildMemberArray($document//*[@xml:id = "measure-1"], $tree/citeStructure, 1)
+        return
+            count($members) eq 4
+            and empty($members/member)
+            and (every $member in $members satisfies (
+                $member/self::member and $member/@json:array eq "true"
+                and count($member/identifier) eq 1
+                and $member/type[@json:name = "@type"] eq "CitableUnit"
+            ))
+            and $members[1]/level[@json:literal = "true"] eq "1"
+            and string($members[1]/parent) eq ""
+            and $members[2]/level eq "2"
+            and $members[2]/parent eq "movement-1"
+            and $members[3]/level eq "3"
+            and $members[3]/parent eq "measure-1"
+            and $members[3]/citeType eq "Note"
+            and count($measure) eq 1
+            and $measure/identifier eq "measure-1"
+            and $measure/level eq "2"
+            and $measure/parent eq "movement-1"
+};
+
+declare
+    %test:assertTrue
+    function dnt:test-buildMemberArray-multiple-selections-and-trees() as xs:boolean {
+        let $document := dnt:memberDocument()
+        let $trees := dnt:memberCitationTrees()
+        let $selection := $document//*[@xml:id = ("movement-1", "movement-2")]
+        let $selected := dts-navigation:buildMemberArray(reverse($selection), $trees[1], 2)
+        let $all := dts-navigation:buildMemberArray($document, $trees, 2)
+        return
+            string-join($selected/identifier, " ") eq "movement-1 measure-1 measure-2 movement-2 measure-3"
+            and string-join($all/identifier, " ") eq "surface-1 zone-1 movement-1 measure-1 measure-2 nested-movement nested-measure movement-2 measure-3"
+            and $all[2]/parent eq "surface-1"
+};
+
+declare
+    %test:assertTrue
+    function dnt:test-buildMemberArray-emptiness() as xs:boolean {
+        let $document := dnt:memberDocument()
+        let $tree := dnt:memberCitationTrees()[1]
+        return
+            empty(dts-navigation:buildMemberArray($document, $tree, 0))
+            and empty(dts-navigation:buildMemberArray($document, $tree, ()))
+            and empty(dts-navigation:buildMemberArray((), $tree, -1))
+            and empty(dts-navigation:buildMemberArray($document, (), -1))
+            and empty(dts-navigation:buildMemberArray(document { <unmatched/> }, $tree, -1))
+};
+
+declare
+    %test:assertTrue
+    function dnt:test-buildMemberArray-leaf() as xs:boolean {
+        let $document := dnt:memberDocument()
+        let $tree := dnt:memberCitationTrees()[1]
+        let $leaf := $document//*[@xml:id = "note-1"]
+        let $members := dts-navigation:buildMemberArray($leaf, $tree/citeStructure/citeStructure, 10)
+        return
+            count($members) eq 1
+            and $members/identifier eq "note-1"
+            and $members/level eq "3"
+};
+
+declare
+    %test:assertTrue
+    function dnt:test-navigation-whole-document-member-wrappers() as xs:boolean {
+        let $result := dts-navigation:navigation(
+            "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml",
+            (), (), (), 1, "musicStructure", ()
+        )
+        return
+            count($result/member) eq 2
+            and string-join($result/member/identifier, " ") eq "test-mdiv-1 test-mdiv-2"
+            and empty($result/member/member)
+            and (every $member in $result/member satisfies (
+                $member/@json:array eq "true"
+                and count($member/identifier) eq 1
+                and $member/level eq "1"
+            ))
+};
+
 
 declare
     %test:assertEquals("musicStructure", "paginationStructure")
