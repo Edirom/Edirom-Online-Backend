@@ -128,23 +128,23 @@ declare function dts-navigation:buildResourceObject(
 (:~
  : Builds the child elements for the XML-based JSON representation of a DTS CitableUnit object.
  :
- : The supplied selection contains the resolved node and citation structure. The matched
+ : The supplied selection is the resolved node. The matched
  : citation structure determines the unit level and cite type. If the unit is
  : nested in the citation tree, its parent is resolved from the corresponding
  : ancestor element in the document.
  :
- : @param $selectionOutput The selection map containing the node and its citation structure
+ : @param $selection The resolved node
+ : @param $citationTree The citation structure for the resolved node
  : @param $ref The reference identifying the citable unit
  : @return The citable unit child elements containing its identifier, type, level, parent, and cite type
  :)
 declare function dts-navigation:buildCitableUnitObject(
-    $selectionOutput as map(*),
+    $selection as node(),
+    $citationTree as element(citeStructure),
     $ref as xs:string
 ) as element()* {
-    let $selectedNode := $selectionOutput("node")
-    let $citeStructure := $selectionOutput("citeStructure")
-    let $level := count($citeStructure/ancestor::citeStructure) + 1
-    let $parentCiteStructure := $citeStructure/parent::citeStructure
+    let $level := count($citationTree/ancestor::citeStructure) + 1
+    let $parentCiteStructure := $citationTree/parent::citeStructure
     let $parentId :=
         if ($level eq 1) then
             ()
@@ -152,18 +152,19 @@ declare function dts-navigation:buildCitableUnitObject(
             let $parentMatch := normalize-space($parentCiteStructure/@match)
             let $parentElementName := resolve-QName($parentMatch, $parentCiteStructure)
             return
-                string($selectedNode/ancestor::*[node-name(.) eq $parentElementName][1]/@xml:id)
+                string($selection/ancestor::*[node-name(.) eq $parentElementName][1]/@xml:id)
     return (
         <identifier>{string($ref)}</identifier>,
         <type json:name="@type">CitableUnit</type>,
         <level json:literal="true">{$level}</level>,
         <parent>{$parentId}</parent>,
-        <citeType>{string($citeStructure/@unit)}</citeType>
+        <citeType>{string($citationTree/@unit)}</citeType>
     )
 };
 
 declare function dts-navigation:buildMemberArray(
-    $selection as map(*),
+    $selection as node(),
+    $citationTree as element(citeStructure)*,
     $down as xs:integer?
 ) as element()* {
     ()
@@ -177,26 +178,22 @@ declare function dts-navigation:buildMemberArray(
  : of CitableUnits that are siblings (sharing the same parent),
  : including the current CitableUnit identified by ref.
  :
- : @param $selection The selection map containing the referenced node and its citation structure
+ : @param $selection The referenced node
+ : @param $citationTree The citation structure for the referenced node
  : @return Matching XML siblings, including the referenced unit, in document order
  :)
 declare function dts-navigation:buildMemberArrayRefDownZero(
-    $selection as map(*)
+    $selection as node(),
+    $citationTree as element(citeStructure)
 ) as element()* {
-    let $selectedNode := $selection("node")
-    let $citeStructure := $selection("citeStructure")
-    let $elementName := resolve-QName(normalize-space($citeStructure/@match), $citeStructure)
-    let $siblings := $selectedNode/parent::node()/*[
+    let $elementName := resolve-QName(normalize-space($citationTree/@match), $citationTree)
+    let $siblings := $selection/parent::node()/*[
         node-name(.) eq $elementName
     ]
     for $sibling in $siblings
-    let $siblingSelection := map {
-        "node": $sibling,
-        "citeStructure": $citeStructure
-    }
     return
         <member json:array="true">
-            {dts-navigation:buildCitableUnitObject($siblingSelection, string($sibling/@xml:id))}
+            {dts-navigation:buildCitableUnitObject($sibling, $citationTree, string($sibling/@xml:id))}
         </member>
 };
 
@@ -228,6 +225,8 @@ declare function dts-navigation:navigation(
         error($errors:INVALID_PARAMETERS, "At least one of 'ref', 'start/end', or 'down' parameters must be provided.")
     else if ($down eq 0 and not($ref)) then
         error($errors:INVALID_PARAMETERS, "The 'down' parameter cannot be 0 when no 'ref' parameter is provided.")
+    else if ($down lt -1) then
+        error($errors:INVALID_PARAMETERS, "The 'down' parameter must be -1 or greater.")  
     else
         let $resource := dts-common:resolveSpecialResourceAlias($resource)
         let $document := eutil:getDoc($resource)/root()
@@ -245,17 +244,17 @@ declare function dts-navigation:navigation(
                 let $selectionOutput := dts-common:selectBasedOnCiteStructure($document, $ref, $citationTree)
                 return
                     <ref>
-                        {dts-navigation:buildCitableUnitObject($selectionOutput, $ref)}
+                        {dts-navigation:buildCitableUnitObject($selectionOutput("node"), $selectionOutput("citeStructure"), $ref)}
                     </ref>
             else if ($start and $end) then
                 let $startSelection := dts-common:selectBasedOnCiteStructure($document, $start, $citationTree)
                 let $endSelection := dts-common:selectBasedOnCiteStructure($document, $end, $citationTree)
                 return (
                     <start>
-                        {dts-navigation:buildCitableUnitObject($startSelection, $start)}
+                        {dts-navigation:buildCitableUnitObject($startSelection("node"), $startSelection("citeStructure"), $start)}
                     </start>,
                     <end>
-                        {dts-navigation:buildCitableUnitObject($endSelection, $end)}
+                        {dts-navigation:buildCitableUnitObject($endSelection("node"), $endSelection("citeStructure"), $end)}
                     </end>
                 )
             else
@@ -267,7 +266,11 @@ declare function dts-navigation:navigation(
             (: If $down = 0 and $ref is present -> special case :)
             else if ($down eq 0 and $ref) then
                 let $selectionOutput := dts-common:selectBasedOnCiteStructure($document, $ref, $citationTree)
-                return dts-navigation:buildMemberArrayRefDownZero($selectionOutput)
+                return dts-navigation:buildMemberArrayRefDownZero($selectionOutput("node"), $selectionOutput("citeStructure"))
+            else if (not($ref) and not($start) and not($end)) then
+                <member json:array="true">
+                    {dts-navigation:buildMemberArray($document, $citationTree, $down)}
+                </member>
             else
                 <member json:array="true">
                     <TODO/>

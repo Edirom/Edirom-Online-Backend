@@ -162,7 +162,7 @@ declare
         let $document := eutil:getDoc($resource)
         let $citationTree := dts-navigation:getCitationTrees($document)[@xml:id = $tree]
         let $selectionOutput := dts-common:selectBasedOnCiteStructure($document, $ref, $citationTree)
-        let $result := dts-navigation:buildCitableUnitObject($selectionOutput, $ref)
+        let $result := dts-navigation:buildCitableUnitObject($selectionOutput("node"), $selectionOutput("citeStructure"), $ref)
         return
             string($result[self::level]) || "|" || string($result[self::parent]) || "|" || string($result[self::citeType])
     };
@@ -271,9 +271,9 @@ declare
         }
         let $citationTree := dts-navigation:getCitationTrees($document)[@xml:id = "musicStructure"]
         let $selection := dts-common:selectBasedOnCiteStructure($document, "measure-1", $citationTree)
-        let $members := dts-navigation:buildMemberArrayRefDownZero($selection)
+        let $members := dts-navigation:buildMemberArrayRefDownZero($selection("node"), $selection("citeStructure"))
         let $singleSelection := dts-common:selectBasedOnCiteStructure($document, "measure-3", $citationTree)
-        let $singleMember := dts-navigation:buildMemberArrayRefDownZero($singleSelection)
+        let $singleMember := dts-navigation:buildMemberArrayRefDownZero($singleSelection("node"), $singleSelection("citeStructure"))
         return
             string-join($members/identifier, " ") eq "measure-before measure-1 measure-after"
             and (every $member in $members satisfies $member/parent eq "movement-1")
