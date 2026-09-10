@@ -284,7 +284,7 @@ declare function dts-util:selectElementOrRange(
  : @return The matching citation structures, or an empty sequence when none match
  :)
 declare function dts-util:getCiteStructureForNode(
-    $node as element(),
+    $node as element()*,
     $citationTree as element(citeStructure)*
 ) as element(citeStructure)* {
     let $citeStructures := ($citationTree, $citationTree//citeStructure)
@@ -295,7 +295,7 @@ declare function dts-util:getCiteStructureForNode(
             resolve-QName($match, $citeStructure)
         else
             ()
-    where node-name($node) eq $matchName
+    where node-name($node[1]) eq $matchName
     return
         $citeStructure
 };

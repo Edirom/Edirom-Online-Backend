@@ -311,13 +311,15 @@ declare function dts-navigation:navigation(
             else if ($down eq 0 and $ref) then
                 let $selection := dts-util:selectBasedOnCiteStructure($document, $ref, $citationTree)
                 let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
-                return dts-navigation:buildMemberArrayRefDownZero($selection, $citeStructure)
+                return
+                    dts-navigation:buildMemberArrayRefDownZero($selection, $citeStructure)
             else if (not($ref) and not($start) and not($end)) then
                 dts-navigation:buildMemberArray($document, $citationTree, $down)
             else
-                <member json:array="true">
-                    <TODO/>
-                </member>
+                let $selection := dts-util:selectElementOrRange($document, $ref, $start, $end, $citationTree)
+                let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
+                return
+                    dts-navigation:buildMemberArray($selection, $citeStructure, $down)
 
         let $resourceObject := dts-navigation:buildResourceObject($document, $resource)
         let $output :=

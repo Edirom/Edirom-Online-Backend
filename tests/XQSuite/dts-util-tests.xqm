@@ -187,6 +187,16 @@ declare
             and $result[2] is $citationTree[2]
 };
 
+declare
+    %test:assertTrue
+    function dct:test-getCiteStructureForNode-uses-first-node() as xs:boolean {
+        let $citationTree := dct:alternativeCitationTree("musicStructure")
+        let $movement := <mdiv xmlns="http://www.music-encoding.org/ns/mei"/>
+        let $measure := <measure xmlns="http://www.music-encoding.org/ns/mei"/>
+        return
+            dts-util:getCiteStructureForNode(($movement, $measure), $citationTree) is $citationTree
+};
+
 (: TODO: Create openapi specification for the collection endpoint
 declare
     %test:assertTrue
