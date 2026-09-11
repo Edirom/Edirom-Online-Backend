@@ -1003,6 +1003,28 @@ declare
         dts-document:htmlProfileParameters("unknown-profile")
     };
 
+declare
+    %test:assertEquals("it")
+    function ddt:test-document-html-language-explicit-lang-wins() {
+        dts-document:htmlLanguage(map { "lang": "it" })
+    };
+
+(: The language must never resolve to "": edirom_langReplacement.xsl builds the locale file name
+   from it, so "" makes doc-available fail and the stylesheet falls back to English regardless of
+   the configured application_language. Asserted as non-empty rather than against a fixed value,
+   which depends on the preferences of the deployment the suite runs against. :)
+declare
+    %test:assertTrue
+    function ddt:test-document-html-language-falls-back-when-absent() {
+        dts-document:htmlLanguage(map { }) ne ""
+    };
+
+declare
+    %test:assertTrue
+    function ddt:test-document-html-language-falls-back-when-empty() {
+        dts-document:htmlLanguage(map { "lang": "" }) ne ""
+    };
+
 (: Tests with json media type :)
 
 declare
