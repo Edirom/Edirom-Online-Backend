@@ -31,6 +31,10 @@ declare function ddt:citationTree(
                             match="mei:zone"
                             use="@xml:id"/>
         </citeStructure>
+        <citeStructure xml:id="performanceStructure"
+                    unit="Recording"
+                    match="mei:recording"
+                    use="@xml:id"/>
     </refsDecl>/citeStructure[
         not($tree) or @xml:id = $tree
     ]
@@ -56,6 +60,10 @@ declare function ddt:alternativeCitationTree(
                             match="mei:zone"
                             use="@xml:id"/>
         </citeStructure>
+        <citeStructure xml:id="performanceStructure"
+                    unit="Recording"
+                    match="mei:recording"
+                    use="@xml:id"/>
     </refsDecl>/citeStructure[
         not($tree) or @xml:id = $tree
     ]
@@ -717,6 +725,30 @@ declare
     %test:arg("mediaType", "application/xml")
     %test:arg("lang")
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.tei-c.org/ns/1.0}teiHeader")
+    (: retrieve full recording mei :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-recording.xml")
+    %test:arg("ref") %test:arg("start") %test:arg("end") %test:arg("tree")
+    %test:arg("mediaType", "application/xml")
+    %test:arg("lang")
+    %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei[@xml:id='recording-1']")
+    (: retrieve a recording by ref :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-recording.xml")
+    %test:arg("ref", "rec-1")
+    %test:arg("start") %test:arg("end")
+    %test:arg("tree", "performanceStructure")
+    %test:arg("mediaType", "application/xml")
+    %test:arg("lang", "de")
+    %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.music-encoding.org/ns/mei}recording[@xml:id='rec-1']")
+    (: retrieve a range of recordings by start and end :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-recording.xml")
+    %test:arg("ref")
+    %test:arg("start", "rec-2")
+    %test:arg("end", "rec-3")
+    %test:arg("tree", "performanceStructure")
+    %test:arg("mediaType", "application/xml")
+    %test:arg("lang")
+    %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.music-encoding.org/ns/mei}recording[@xml:id='rec-2']")
+    %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.music-encoding.org/ns/mei}recording[@xml:id='rec-3']")
     (: Errors :)
     (: ask both for ref and start/end mei :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
@@ -1496,6 +1528,9 @@ declare
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
     %test:arg("tree", "paginationStructure")
     %test:assertTrue
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-recording.xml")
+    %test:arg("tree", "performanceStructure")
+    %test:assertTrue
     function ddt:test-document-json-full-document(
         $resource as xs:string,
         $tree as xs:string?
@@ -1523,10 +1558,65 @@ declare
                 and map:contains($response?surface(3), "surfaceId")
                 and map:contains($response?surface(3)?zone(1), "measure")
                 and map:contains($response?surface(3)?zone(1), "ulx")
+            else if ($tree eq "performanceStructure") then
+                map:contains($response, "recording")
+                and map:contains($response?recording(1), "recordingId")
+                and map:contains($response?recording(1), "avFile")
+                and map:contains($response?recording(1), "title")
+                and map:contains($response?recording(1), "composer")
             else
                 false
         return
             $response instance of map(*)
             and map:size($response) gt 0
             and $checkResponseStructure
+};
+
+declare
+    (: retrieve a specific recording by ref :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-recording.xml")
+    %test:arg("ref", "rec-1")
+    %test:arg("expectedMimetype", "audio/mp3")
+    %test:assertTrue
+    function ddt:test-document-json-recording-ref(
+        $resource as xs:string,
+        $ref as xs:string?,
+        $expectedMimetype as xs:string?
+    ) { 
+        let $html-parameters := map {
+            "lang": "de",
+            "idPrefix": ""
+        }
+        let $mediaType := "application/json"
+        let $tree := "performanceStructure"
+        let $response := dts-document:document($resource, $ref, (), (), $tree, $mediaType, $html-parameters)
+        let $mimetype := $response?recording(1)?avFile(1)?mimetype
+        return
+            map:contains($response, "recording")
+            and $mimetype = $expectedMimetype
+};
+
+declare
+    (: retrieve a range of recordings by start and end :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-recording.xml")
+    %test:arg("start", "rec-2")
+    %test:arg("end", "rec-3")
+    %test:arg("expectedRecordingCount", 2)
+    %test:assertTrue
+    function ddt:test-document-json-recording-start-end(
+        $resource as xs:string,
+        $start as xs:string?,
+        $end as xs:string?,
+        $expectedRecordingCount as xs:integer?
+    ) { 
+        let $html-parameters := map {
+            "lang": "de",
+            "idPrefix": ""
+        }
+        let $tree := "performanceStructure"
+        let $mediaType := "application/json"
+        let $response := dts-document:document($resource, (), $start, $end, $tree, $mediaType, $html-parameters)
+        return
+            map:contains($response, "recording")
+            and (array:size($response?recording) eq $expectedRecordingCount)
 };
