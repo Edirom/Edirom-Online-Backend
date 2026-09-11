@@ -8,6 +8,7 @@ xquery version "3.1";
 import module namespace functx = "http://www.functx.com";
 
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
+import module namespace source = "http://www.edirom.de/xquery/source" at "../xqm/source.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -48,10 +49,13 @@ declare function local:analyze-labels($labels as xs:string*) as xs:string* {
  : @return A sequence of measure IDs as xs:string*
  :)
 declare function local:get-measure-ids($measure as element(mei:measure)) as xs:string* {
-    if ($measure/@label) then
-        local:analyze-labels($measure/@label ! string(.))
-    else
-        $measure/@n ! string(.)
+    let $designation := source:label-or-n($measure)
+    return
+        (: Range expansion applies to @label only; @n is a plain running count. :)
+        if ($measure/@label) then
+            local:analyze-labels($designation)
+        else
+            $designation
 };
 
 (:~
