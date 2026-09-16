@@ -72,10 +72,7 @@ declare function local:getView($type as xs:string, $docUri as xs:string, $doc as
         
     (: xpath check whether any given view is supported :)
     let $hasView :=
-        if ($type = 'desc_summaryView') then
-            (true())
-        
-        else if ($type = 'desc_headerView') then
+        if ($type = 'desc_headerView') then
             (exists($doc//mei:meiHead or $doc//tei:teiHeader))
         
         else if ($type = 'mei_textView') then
@@ -127,7 +124,6 @@ declare function local:getView($type as xs:string, $docUri as xs:string, $doc as
 declare function local:getViews($type as xs:string, $docUri as xs:string, $doc as document-node()?) as map(*)* {
     
     let $views := (
-        (:'desc_summaryView',:)
         (:'desc_headerView',:)
         'mei_textView',
         'mei_sourceView',
