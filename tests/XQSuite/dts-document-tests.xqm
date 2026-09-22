@@ -792,9 +792,41 @@ declare
             "lang": if ($lang) then $lang else "de",
             "idPrefix": ""
         }
+        let $xml-parameters := map {
+            "unwrap": false()
+        }
         return
-            dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters)
+            dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters, $xml-parameters)
 };
+
+declare
+    (: keep DTS wrapper :)
+    %test:arg("unwrap", "false")
+    %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei/Q{http://www.music-encoding.org/ns/mei}music/Q{http://www.music-encoding.org/ns/mei}body/Q{https://w3id.org/dts/api#}wrapper/Q{http://www.music-encoding.org/ns/mei}mdiv[@xml:id='test-mdiv-1']")
+    (: unwrap DTS wrapper :)
+    %test:arg("unwrap", "true")
+    %test:assertXPath("/Q{http://www.music-encoding.org/ns/mei}mei/Q{http://www.music-encoding.org/ns/mei}music/Q{http://www.music-encoding.org/ns/mei}body/Q{http://www.music-encoding.org/ns/mei}mdiv[@xml:id='test-mdiv-1']")
+    function ddt:test-document-xml-unwraps-dts-wrapper(
+        $unwrap as xs:boolean
+    ) as document-node() {
+        let $html-parameters := map {
+            "lang": "de",
+            "idPrefix": ""
+        }
+        let $xml-parameters := map {
+            "unwrap": $unwrap
+        }
+        return dts-document:document(
+            "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml",
+            "test-mdiv-1",
+            (),
+            (),
+            "musicStructure",
+            "application/xml",
+            $html-parameters,
+            $xml-parameters
+        )
+    };
 
 declare
     (: retrieve meiHead by ref as html :)
@@ -852,8 +884,11 @@ declare
         }
         let $tree := ""
         let $mediaType := "text/html"
+        let $xml-parameters := map {
+            "unwrap": false()
+        }
         return
-            dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters)
+            dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters, $xml-parameters)
 };
 
 declare
@@ -878,8 +913,11 @@ declare
             "lang": if ($lang) then $lang else "de",
             "idPrefix": ""
         }
+        let $xml-parameters := map {
+            "unwrap": false()
+        }
         let $document :=
-            dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters)
+            dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters, $xml-parameters)
         return ($document//tei:p[@xml:id = "not-in-p2-1"], $document//tei:p[@xml:id = "not-in-p2-2"])
     };
 
@@ -906,8 +944,11 @@ declare
             "lang": if ($lang) then $lang else "de",
             "idPrefix": ""
         }
+        let $xml-parameters := map {
+            "unwrap": false()
+        }
         let $document :=
-            dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters)
+            dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters, $xml-parameters)
         return $document//tei:p[@xml:id = "not-in-p2-1"]
     };
 
@@ -937,8 +978,11 @@ declare
             "idPrefix": "",
             "htmlProfile": $htmlProfile
         }
+        let $xml-parameters := map {
+            "unwrap": false()
+        }
         let $document :=
-            dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters)
+            dts-document:document($resource, $ref, $start, $end, $tree, $mediaType, $html-parameters, $xml-parameters)
         let $header-div4 := $document//xhtml:section[@id="test-div-4"]//xhtml:h1
         let $header-div4-in-toc := $document//xhtml:li/xhtml:a[@title="I am the only paragraph in the fourth div that does not have a heading."]
         let $toc := $document//xhtml:ul[@class="toc toc_body"]
@@ -1206,9 +1250,12 @@ declare
             "lang": "de",
             "idPrefix": ""
         }
+        let $xml-parameters := map {
+            "unwrap": false()
+        }
         let $mediaType := "application/json"
         let $tree := "paginationStructure"
-        let $response := dts-document:document($resource, $ref, (), (), $tree, $mediaType, $html-parameters)
+        let $response := dts-document:document($resource, $ref, (), (), $tree, $mediaType, $html-parameters, $xml-parameters)
         let $zone := $response?zone(1)
         let $zoneId := $zone?zoneId
         let $ulx := $zone?ulx
@@ -1253,9 +1300,12 @@ declare
             "lang": "de",
             "idPrefix": ""
         }
+        let $xml-parameters := map {
+            "unwrap": false()
+        }
         let $tree := "paginationStructure"
         let $mediaType := "application/json"
-        let $response := dts-document:document($resource, (), $start, $end, $tree, $mediaType, $html-parameters)
+        let $response := dts-document:document($resource, (), $start, $end, $tree, $mediaType, $html-parameters, $xml-parameters)
         let $zoneIdFirst := $response?zone(1)?zoneId
         let $zoneCount := array:size($response?zone)
         let $zoneIdLast := $response?zone($zoneCount)?zoneId
@@ -1313,9 +1363,12 @@ declare
             "lang": "de",
             "idPrefix": ""
         }
+        let $xml-parameters := map {
+            "unwrap": false()
+        }
         let $mediaType := "application/json"
         let $tree := "paginationStructure"
-        let $response := dts-document:document($resource, $ref, (), (), $tree, $mediaType, $html-parameters)
+        let $response := dts-document:document($resource, $ref, (), (), $tree, $mediaType, $html-parameters, $xml-parameters)
         let $surface := $response?surface(1)
         let $zoneFirst := $surface?zone(1)
         let $zoneSecond := $surface?zone(2)
@@ -1358,9 +1411,12 @@ declare
             "lang": "de",
             "idPrefix": ""
         }
+        let $xml-parameters := map {
+            "unwrap": false()
+        }
         let $tree := "paginationStructure"
         let $mediaType := "application/json"
-        let $response := dts-document:document($resource, (), $start, $end, $tree, $mediaType, $html-parameters)
+        let $response := dts-document:document($resource, (), $start, $end, $tree, $mediaType, $html-parameters, $xml-parameters)
         let $zoneFirst := $response?surface(1)?zone(1)
         let $zoneLast := $response?surface(array:size($response?surface))?zone(1)
         let $ulx := $zoneFirst?ulx
@@ -1410,9 +1466,12 @@ declare
             "lang": "de",
             "idPrefix": ""
         }
+        let $xml-parameters := map {
+            "unwrap": false()
+        }
         let $mediaType := "application/json"
         let $tree := "musicStructure"
-        let $response := dts-document:document($resource, $ref, (), (), $tree, $mediaType, $html-parameters)
+        let $response := dts-document:document($resource, $ref, (), (), $tree, $mediaType, $html-parameters, $xml-parameters)
         let $measure := $response?measure(1)
         let $mdivId := $measure?mdivId
         let $facsimile := $measure?facs(1)
@@ -1465,9 +1524,12 @@ declare
             "lang": "de",
             "idPrefix": ""
         }
+        let $xml-parameters := map {
+            "unwrap": false()
+        }
         let $tree := "musicStructure"
         let $mediaType := "application/json"
-        let $response := dts-document:document($resource, (), $start, $end, $tree, $mediaType, $html-parameters)
+        let $response := dts-document:document($resource, (), $start, $end, $tree, $mediaType, $html-parameters, $xml-parameters)
         let $measures := $response?measure
         let $measureCount := array:size($measures)
         let $measureFirst := $measures(1)
@@ -1504,8 +1566,11 @@ declare
             "lang": "de",
             "idPrefix": ""
         }
+        let $xml-parameters := map {
+            "unwrap": false()
+        }
         let $mediaType := "application/json"
-        let $response := dts-document:document($resource, (), (), (), $tree, $mediaType, $html-parameters)
+        let $response := dts-document:document($resource, (), (), (), $tree, $mediaType, $html-parameters, $xml-parameters)
         let $checkResponseStructure := 
             if ($tree eq "musicStructure") then
                 map:contains($response, "mdiv")
