@@ -16,4 +16,9 @@
                     match="mei:zone"
                     use="@xml:id"/>
     </citeStructure>
+
+    <citeStructure xml:id="performanceStructure"
+                    unit="Recording"
+                    match="mei:recording"
+                    use="@xml:id"/>
 </refsDecl>

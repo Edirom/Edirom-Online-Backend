@@ -116,6 +116,10 @@
 									"summary": "Test MEI facsimile",
 									"value": "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml"
 								},
+								"Test MEI recording": {
+									"summary": "Test MEI recording",
+									"value": "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-recording.xml"
+								},
 								"Test TEI": {
 									"summary": "Test TEI",
 									"value": "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
@@ -210,6 +214,10 @@
 								"meiHead": {
 									"summary": "meiHead",
 									"value": "meiHead"
+								},
+								"Recording 1": {
+									"summary": "Recording 1",
+									"value": "rec-1"
 								},
 								"teiHeader": {
 									"summary": "teiHeader",
@@ -306,6 +314,14 @@
 									"summary": "Klarinettenquintett source 2 (with parts) - Measure 5 Viola",
 									"value": "bar-4382"
 								},
+								"Recording 1": {
+									"summary": "Recording 1",
+									"value": "rec-1"
+								},
+								"Recording 2": {
+									"summary": "Recording 2",
+									"value": "rec-2"
+								},
 								"Page Break 1": {
 									"summary": "Page Break 1",
 									"value": "pb-1"
@@ -397,6 +413,14 @@
 									"summary": "Klarinettenquintett source 2 (with parts) - Measure 11 Viola",
 									"value": "bar-4388"
 								},
+								"Recording 2": {
+									"summary": "Recording 2",
+									"value": "rec-2"
+								},
+								"Recording 4": {
+									"summary": "Recording 4",
+									"value": "rec-4"
+								},
 								"Page Break 1": {
 									"summary": "Page Break 1",
 									"value": "pb-1"
@@ -419,7 +443,8 @@
 								"type": "string",
 								"enum": [
 									"musicStructure",
-									"paginationStructure"
+									"paginationStructure",
+									"performanceStructure"
 								],
 								"default": "musicStructure"
 							},
@@ -435,6 +460,10 @@
 								"paginationStructure": {
 									"summary": "paginationStructure",
 									"value": "paginationStructure"
+								},
+								"performanceStructure": {
+									"summary": "performanceStructure",
+									"value": "performanceStructure"
 								}
 							}
 						},
