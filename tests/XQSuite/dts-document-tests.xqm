@@ -1652,9 +1652,12 @@ declare
             "lang": "de",
             "idPrefix": ""
         }
+        let $xml-parameters := map {
+            "unwrap": false()
+        }
         let $mediaType := "application/json"
         let $tree := "performanceStructure"
-        let $response := dts-document:document($resource, $ref, (), (), $tree, $mediaType, $html-parameters)
+        let $response := dts-document:document($resource, $ref, (), (), $tree, $mediaType, $html-parameters, $xml-parameters)
         let $mimetype := $response?recording(1)?avFile(1)?mimetype
         return
             map:contains($response, "recording")
@@ -1678,9 +1681,12 @@ declare
             "lang": "de",
             "idPrefix": ""
         }
+        let $xml-parameters := map {
+            "unwrap": false()
+        }
         let $tree := "performanceStructure"
         let $mediaType := "application/json"
-        let $response := dts-document:document($resource, (), $start, $end, $tree, $mediaType, $html-parameters)
+        let $response := dts-document:document($resource, (), $start, $end, $tree, $mediaType, $html-parameters, $xml-parameters)
         return
             map:contains($response, "recording")
             and (array:size($response?recording) eq $expectedRecordingCount)
