@@ -12,6 +12,7 @@ module namespace dts-document = "http://www.edirom.de/api/dts-document";
 
 (: IMPORTS ================================================================= :)
 
+import module namespace edition = "http://www.edirom.de/xquery/edition" at "edition.xqm";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 import module namespace errors = "http://www.edirom.de/xquery/errors" at "errors.xqm";
 
@@ -117,6 +118,26 @@ declare function dts-document:htmlProfileParameters(
             error($errors:INVALID_PARAMETERS, "The specified HTML profile is not supported. Supported profiles are: " || string-join(map:keys($dts-document:htmlProfiles), ", ") || ". Specified profile: " || $htmlProfile)
     return
         map:get($dts-document:htmlProfiles, $profile)
+};
+
+(:~
+ : Returns the language to render HTML in: an explicitly requested 'lang' wins, otherwise the
+ : configured application language is used.
+ :
+ : Without this the language replacement stylesheet is handed "" whenever the caller omits 'lang'
+ : (which the frontend always does), finds no 'edirom-lang-.xml', and silently falls back to
+ : 'edirom-lang-en.xml' — so a German edition renders English interface terms.
+ :
+ : @param $htmlParameters The HTML parameters of the request
+ : @return The language key
+ :)
+declare function dts-document:htmlLanguage(
+    $htmlParameters as map(xs:string, xs:string)
+) as xs:string {
+    if (map:contains($htmlParameters, "lang") and map:get($htmlParameters, "lang") ne "") then
+        map:get($htmlParameters, "lang")
+    else
+        edition:getLanguage('')
 };
 
 (:~
@@ -619,7 +640,7 @@ declare function dts-document:transformTEIToHTML(
     let $doc := transform:transform($doc, $xslUnwrap, <parameters/>)
 
     (: Unpack html parameters :)
-    let $lang := if (map:contains($htmlParameters, "lang")) then map:get($htmlParameters, "lang") else ""
+    let $lang := dts-document:htmlLanguage($htmlParameters)
     let $idPrefix := if (map:contains($htmlParameters, "idPrefix")) then map:get($htmlParameters, "idPrefix") else ""
     let $htmlProfile := if (map:contains($htmlParameters, "htmlProfile")) then map:get($htmlParameters, "htmlProfile") else $dts-document:defaultHTMLProfile
 
@@ -689,7 +710,7 @@ declare function dts-document:transformHeaderToHTML(
     let $doc := transform:transform($doc, $xslUnwrap, <parameters/>)
 
     (: Unpack html parameters :)
-    let $lang := if (map:contains($htmlParameters, "lang")) then map:get($htmlParameters, "lang") else ""
+    let $lang := dts-document:htmlLanguage($htmlParameters)
 
     (: Convert to HTML :)
     let $xslConvert :=
