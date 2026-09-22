@@ -67,7 +67,9 @@
         <span class="superscript"><xsl:value-of select="$footnoteCount"/></span>
     </xsl:template>
     <xsl:template match="mei:ref">
-        <span class="ref">
+        <a>
+            <xsl:attribute name="class" select="string-join(('link_ref', @rend[string-length() gt 0]), ' ')"/>
+            <xsl:attribute name="href" select="@target"/>
             <xsl:choose>
                 <xsl:when test="matches(@target, '\[.*\]')">
                     <xsl:attribute name="onclick">
@@ -75,14 +77,14 @@
                         <xsl:value-of select="replace(@target, '\[.*\]', '')"/>
                         <xsl:text>', {</xsl:text>
                         <xsl:value-of select="replace(substring-before(substring-after(@target, '['), ']'), '=', ':')"/>
-                        <xsl:text>})</xsl:text>
+                        <xsl:text>}); return false;</xsl:text>
                     </xsl:attribute>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:attribute name="onclick">
                         <xsl:text>loadLink("</xsl:text>
                         <xsl:value-of select="@target"/>
-                        <xsl:text>")</xsl:text>
+                        <xsl:text>"); return false;</xsl:text>
                     </xsl:attribute>
                 </xsl:otherwise>
             </xsl:choose>
@@ -90,7 +92,7 @@
                 <xsl:attribute name="xml:id" select="concat($idPrefix,@xml:id)"/>
             </xsl:if>
             <xsl:apply-templates select="* | text()"/>
-        </span>
+        </a>
     </xsl:template>
     <xsl:template match="mei:rend">
         <xsl:variable name="style">
