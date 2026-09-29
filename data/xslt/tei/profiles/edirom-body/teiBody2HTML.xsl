@@ -1330,5 +1330,15 @@
         </xsl:element>
     </xsl:template>
     
+    <xd:doc scope="component">
+        <xd:desc>Pass xhtml:* elements to output</xd:desc>
+    </xd:doc>
+    <xsl:template match="xhtml:*">
+        <xsl:element name="{local-name()}">
+            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates />
+        </xsl:element>
+    </xsl:template>
+    
     <!-- /ADDITIONAL TEMPLATES -->
 </xsl:stylesheet>
