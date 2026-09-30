@@ -281,21 +281,14 @@ let $internal := $doc/id($internalId)
 
 let $edition := request:get-parameter('edition', '')
 
-(: Specific handling of virtual measure IDs for parts in OPERA project :)
+(: An ID that resolves to nothing may still be one of the virtual measure IDs Edirom
+   Online uses to reference a measure number across all parts at once. :)
 let $internal :=
     if (exists($internal))
     then
         ($internal)
-    else (
-        if (starts-with($internalId, 'measure_') and $doc//mei:parts)
-        then (
-            let $mdivId := functx:substring-before-last(substring-after($internalId, 'measure_'), '_')
-            let $measureN := functx:substring-after-last($internalId, '_')
-            return
-                ($doc/id($mdivId)//mei:measure[@n eq $measureN])[1]
-        ) else
-            ($internal)
-    )
+    else
+        (source:resolve-virtual-measure-id($doc, $internalId)[1])
 
 let $type :=
     (: Work :)

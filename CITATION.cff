@@ -11,6 +11,9 @@ authors:
   - given-names: Daniel
     family-names: Röwenstrunk
     orcid: https://orcid.org/0000-0001-6271-2095
+  - given-names: Francesco
+    family-names: Maccarini
+    orcid: https://orcid.org/0000-0002-0219-5898
   - given-names: Nikolaos
     family-names: Beer
     orcid: https://orcid.org/0009-0005-4739-5227
@@ -23,39 +26,35 @@ authors:
   - given-names: Kristin
     family-names: Herold
     orcid: https://orcid.org/0000-0003-2915-353X
-  - given-names: Hizkiel
-    family-names: Alemayehu
-    orcid: https://orcid.org/0009-0006-3345-086X
   - given-names: Dennis
     family-names: Friedl
     orcid: https://orcid.org/0009-0000-4410-4627
+  - given-names: Hizkiel
+    family-names: Alemayehu
+    orcid: https://orcid.org/0009-0006-3345-086X
   - given-names: Johannes
     family-names: Kepper
     orcid: https://orcid.org/0000-0003-4891-260X
+  - given-names: Silke
+    family-names: Reich
+    orcid: https://orcid.org/0009-0007-8817-0299
   - given-names: Dennis
     family-names: Ried
     orcid: https://orcid.org/0000-0001-5545-2088
   - given-names: Tobias
     family-names: Bachmann
     orcid: https://orcid.org/0009-0003-9952-7899
-  - given-names: Silke
-    family-names: Reich
-    orcid: https://orcid.org/0009-0007-8817-0299
-  - given-names: Francesco
-    family-names: Maccarini
-    orcid: https://orcid.org/0000-0002-0219-5898
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.21394092
+    value: 10.5281/zenodo.23061489
     description: Edirom Online Backend
 repository-code: https://github.com/Edirom/Edirom-Online-Backend
-commit: fbfb27ab1415b6e3f24b43f22cbe8551e21abebf
+commit: 5fc96fe9fa128bb66948cb6865c917f1e66a91e5
 abstract: >-
   Edirom-Online Backend is the backend for the Edirom 
   Online which is used for the presentation and
   analysis of critical musical editions in a digital format,
   particularly in the fields of musicology and philology.
 license: GPL-3.0
-version: v1.4.0
-date-released: 2026-07-21
-
+version: v1.5.0
+date-released: 2026-09-30
