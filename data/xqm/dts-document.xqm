@@ -893,7 +893,8 @@ declare function dts-document:document(
     $end as xs:string?,
     $tree as xs:string?,
     $mediaType as xs:string?,
-    $htmlParameters as map(xs:string, xs:string)
+    $htmlParameters as map(xs:string, xs:string),
+    $xmlParameters as map(*)
 ) as item() {
     if ($ref and ($start or $end)) then
         error($errors:INVALID_PARAMETERS, "The 'ref' parameter cannot be used together with 'start' or 'end'.")
@@ -931,7 +932,13 @@ declare function dts-document:document(
         let $outputXml := transform:transform($outputXmlRaw, $xslPrepare, <parameters/>)
 
         let $output :=
-            if (contains($mediaType, "xml")) then
+            if (contains($mediaType, "xml") and map:contains($xmlParameters, "unwrap") and map:get($xmlParameters, "unwrap") eq true()) then
+                (: Remove DTS wrapper :)
+                let $xslUnwrap := eutil:getDoc($eutil:xsltBase || '/removeDtsWrapper.xsl')
+                let $outputXml := transform:transform($outputXml, $xslUnwrap, <parameters/>)
+                return
+                    document { $outputXml }
+            else if (contains($mediaType, "xml")) then
                 document { $outputXml }
             else if (contains($mediaType, "html") and (map:contains($htmlParameters, "htmlProfile")) and map:get($htmlParameters, "htmlProfile") eq "edirom-header") then
                 document { dts-document:transformHeaderToHTML($outputXml, $namespace, $htmlParameters) }

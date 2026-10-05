@@ -578,6 +578,30 @@
 									"value": "edirom-header"
 								}
 							}
+						},
+						{
+							"name": "unwrap",
+							"in": "query",
+							"required": false,
+							"description": "Remove the dts:wrapper element from the returned document, only used if mediaType is application/xml",
+							"schema": {
+								"type": "boolean",
+								"default": false
+							},
+							"examples": {
+								"Empty": {
+									"summary": "Empty",
+									"value": ""
+								},
+								"True": {
+									"summary": "True",
+									"value": true
+								},
+								"False": {
+									"summary": "False",
+									"value": false
+								}
+							}
 						}
 					],
 				"responses": {
