@@ -1,0 +1,353 @@
+xquery version "3.1";
+(:
+ : For LICENSE-Details please refer to the LICENSE file in the root directory of this repository.
+ :)
+
+(:~
+ : This module provides library functions for Link Targets
+ :)
+module namespace linktarget = "http://www.edirom.de/xquery/linktarget";
+
+(: IMPORTS ================================================================= :)
+
+import module namespace functx = "http://www.functx.com";
+
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xqm";
+import module namespace source = "http://www.edirom.de/xquery/source" at "source.xqm";
+
+(: NAMESPACE DECLARATIONS ================================================== :)
+
+declare namespace html = "http://www.w3.org/1999/xhtml";
+declare namespace map = "http://www.w3.org/2005/xpath-functions/map";
+declare namespace mei = "http://www.music-encoding.org/ns/mei";
+declare namespace tei = "http://www.tei-c.org/ns/1.0";
+
+(: FUNCTION DECLARATIONS =================================================== :)
+
+(:~
+ : Returns a view for an edirom object
+ :
+ : @param $type The type of the view, e.g. "mei_sourceView"
+ : @param $docUri The URI of the document the view is for
+ : @param $doc The document the view is for
+ : @param $lang The language for the label of the view
+ : @return a map object with the keys "type", "uri", optionally "label" and "defaultView", or the empty sequence if the document does not support the view
+ :)
+declare function linktarget:getView($type as xs:string, $docUri as xs:string, $doc as document-node()?, $lang as xs:string) as map(*)? {
+    let $baseMap := map {
+        'type': substring-after($type, '_'),
+        'uri':if ($type = ('mei_textView', 'desc_xmlView')) then
+                string(($doc//mei:annot[@type = 'descLink'])[1]/@plist)
+              else
+                $docUri
+    }
+    
+    (: optionally set label for some views:)
+    let $labeled.map :=
+        if ($type = 'mei_textView') then
+            (map:put($baseMap, 'label', eutil:getLanguageString('sourceDescription', (), $lang)))
+        else if ($type = 'desc_xmlView') then
+            (map:put($baseMap, 'label', eutil:getLanguageString('xmlSourceDescription', (), $lang)))
+        else
+            ($baseMap)
+            
+    (: whether to set the view as default view:)
+    let $defaultViewed.map :=
+        if ($type = (
+                'mei_sourceView',
+                'mei_audioView',
+                'tei_textView',
+                'tei_facsimileView',
+                'tei_textFacsimileSplitView',
+                'mei_annotationView',
+                'mei_verovioView')
+        ) then
+            (map:put($labeled.map, 'defaultView', true()))
+        else
+            ($labeled.map)
+        
+    (: xpath check whether any given view is supported :)
+    let $hasView :=
+        if ($type = 'desc_summaryView') then
+            (true())
+        
+        else if ($type = 'desc_headerView') then
+            (exists($doc//mei:meiHead or $doc//tei:teiHeader))
+        
+        else if ($type = 'mei_textView') then
+            (exists($doc//mei:annot[@type = 'descLink']))
+        
+        else if ($type = 'mei_sourceView') then
+            (exists($doc//mei:facsimile//mei:graphic[@type = 'facsimile']))
+        
+        else if ($type = 'mei_audioView') then
+            (exists($doc//mei:recording))
+        
+        else if ($type = 'mei_verovioView') then
+            (exists($doc//mei:body//mei:measure) and exists($doc//mei:body//mei:note))
+        
+        else if ($type = 'tei_textView') then
+            (exists($doc//tei:body[matches(.//text(), '[^\s]+')]))
+        
+        else if ($type = 'tei_facsimileView') then
+            (exists($doc//tei:facsimile//tei:graphic))
+        
+        else if ($type = 'tei_textFacsimileSplitView') then
+            (exists($doc//tei:facsimile//tei:graphic) and exists($doc//tei:pb[@facs]))
+        
+        else if ($type = 'mei_annotationView') then
+            (exists($doc//mei:annot[@type = 'editorialComment']))
+        
+        else if($type = 'html_iFrameView')
+        then(exists($doc/html) or exists($doc/html:html) or contains($docUri, '.html'))
+        
+        else if($type = 'xml_xmlView')
+        then(exists($doc/mei:mei) or exists($doc/tei:TEI))
+        
+        else if ($type = 'desc_xmlView') then
+            (exists($doc//mei:annot[@type = 'descLink']))
+            
+        else
+            (false())
+    
+    return
+        if ($hasView) then
+            ($defaultViewed.map)
+        else
+            ()
+};
+
+(:~
+ : Returns the views for an edirom object
+ :
+ : @param $type The type of the document, e.g. "source"
+ : @param $docUri The URI of the document
+ : @param $doc The document
+ : @param $lang The language for the labels of the views
+ : @return a map object for each view the document supports, see linktarget:getView
+ :)
+declare function linktarget:getViews($type as xs:string, $docUri as xs:string, $doc as document-node()?, $lang as xs:string) as map(*)* {
+    
+    let $views := (
+        (:'desc_summaryView',:)
+        (:'desc_headerView',:)
+        'mei_textView',
+        'mei_sourceView',
+        'mei_audioView',
+        'mei_verovioView',
+        'tei_textView',
+        'tei_facsimileView',
+        'tei_textFacsimileSplitView',
+        'mei_annotationView',
+        'html_iFrameView',
+        'xml_xmlView',
+        'desc_xmlView'
+    )
+    
+    let $maps :=
+        for $view in $views
+        return
+            linktarget:getView($view, $docUri, $doc, $lang)
+    
+    return
+        $maps
+};
+
+(:~
+ : Returns the window title for an edirom-object
+ :
+ : @param $doc The document of the edirom-object
+ : @param $type The type of the document, e.g. "source"
+ : @param $lang The language of the title
+ : @return The title
+ :)
+declare function linktarget:getWindowTitle($doc as document-node()?, $type as xs:string, $lang as xs:string) as xs:string {
+    
+    (: Work :)
+    if ($type = 'work') then
+        
+        let $workTitleContainer := (
+            (: MEI 3 and older :)
+            ($doc//mei:work)[1]/mei:titleStmt,
+            (: MEI 4 and newer :)
+            ($doc//mei:work)[1]
+        )[1]
+    
+        return
+            eutil:getLocalizedTitle($workTitleContainer, $lang)
+    
+    (: Recording :)
+    else if ($type = 'recording') then
+        (eutil:getLocalizedTitle($doc//mei:fileDesc/mei:titleStmt[1], $lang))
+    
+    (: Source / Score  MEI 4 and newer :)
+    else if ($type = 'source' and exists($doc//mei:manifestation/mei:titleStmt)) then
+        (string-join((eutil:getLocalizedTitle(($doc//mei:manifestation)[1]/mei:titleStmt[1], $lang),
+        ($doc//mei:manifestation)[1]//mei:identifier[lower-case(@type) = 'shelfmark'][1]), ' | ')
+        => normalize-space())
+     
+     (: Source / Score  MEI 3 and older :)
+    else if ($type = 'source' and exists($doc//mei:source/mei:titleStmt)) then
+        (string-join((eutil:getLocalizedTitle(($doc//mei:source)[1]/mei:titleStmt[1], $lang),
+        ($doc//mei:source)[1]//mei:identifier[lower-case(@type) = 'shelfmark'][1]), ' | ')
+        => normalize-space())
+    
+    (: MEI fallback if no title is found :)
+    else if (exists($doc//mei:mei) and exists(($doc//mei:titleStmt)[1])) then
+        (eutil:getLocalizedTitle(($doc//mei:titleStmt)[1], $lang))
+
+    (: Text :)
+    else if ($type = 'text') then
+        (eutil:getLocalizedTitle($doc//tei:fileDesc/tei:titleStmt[1], $lang))
+    
+    (: HTML :)
+    else if ($type = 'html' and not(functx:all-whitespace($doc//*:head/*:title))) then
+        $doc//*:head/*:title => normalize-space()
+    
+    else if($type = 'unknown') then
+    
+        let $eventualTitleContainers := ($doc//mei:titleStmt, $doc//tei:titleStmt)
+        let $eventualTitles := (
+            for $et in $eventualTitleContainers return
+                eutil:getLocalizedTitle($et, $lang),
+            for $t in $doc//*:title return
+                $t => normalize-space()
+        )
+        (: ensure to return a string when $eventualTitles is the empty sequence :)
+        return $eventualTitles[1] => string()
+    
+    else
+        ('[No title found!]')
+};
+
+(:~
+ : Returns a map object with details about a link target: its type, window title and available views
+ :
+ : @param $uri The URI of the target, optionally with an internal ID (#...) and ?term= / ?path= parameters
+ : @param $lang The language for localized titles and labels
+ : @return a map object with the keys "type", "title", "doc", "views", "internalId", "term", "path" and "internalIdType"
+ :)
+declare function linktarget:details($uri as xs:string, $lang as xs:string) as map(*) {
+
+    let $uriParams :=
+        if (contains($uri, '?')) then
+            (substring-after($uri, '?'))
+        else
+            ('')
+
+    let $uri :=
+        if (contains($uri, '?')) then
+            (replace($uri, '[?&amp;](term|path)=[^&amp;]*', ''))
+        else
+            ($uri)
+
+    let $docUri :=
+        if (contains($uri, '#')) then
+            (substring-before($uri, '#'))
+        else
+            ($uri)
+
+    let $internalId :=
+        if (contains($uri, '#')) then
+            (substring-after($uri, '#'))
+        else
+            ()
+
+    let $internalIdParam :=
+        if (contains($internalId, '?')) then
+            (concat('?', substring-after($internalId, '?')))
+        else
+            ('')
+
+    let $internalId :=
+        if (contains($internalId, '?')) then
+            (substring-before($internalId, '?'))
+        else
+            ($internalId)
+
+    let $term :=
+        if (contains($uriParams, 'term=')) then
+            (substring-after($uriParams, 'term='))
+        else
+            ()
+
+    let $term :=
+        if (contains($term, '&amp;')) then
+            (substring-before($term, '&amp;'))
+        else
+            ($term)
+
+    let $path :=
+        if (contains($uriParams, 'path=')) then
+            (substring-after($uriParams, 'path='))
+        else
+            ()
+
+    let $path :=
+        if (contains($path, '&amp;')) then
+            (substring-before($path, '&amp;'))
+        else
+            ($path)
+
+    let $doc := eutil:getDoc($docUri)
+
+    let $internal := $doc/id($internalId)
+
+    (: An ID that resolves to nothing may still be one of the virtual measure IDs Edirom
+       Online uses to reference a measure number across all parts at once. :)
+    let $internal :=
+        if (exists($internal))
+        then
+            ($internal)
+        else
+            (source:resolve-virtual-measure-id($doc, $internalId)[1])
+
+    let $type :=
+        (: Work :)
+        if (exists($doc//mei:mei) and exists($doc//mei:work) and not(exists($doc//mei:perfMedium))) then
+            (string('work'))
+    
+        (: Recording :)
+        else if (exists($doc//mei:mei) and exists($doc//mei:recording)) then
+            (string('recording'))
+    
+        (: Source / Score :)
+        else if (source:isSource($docUri)) then
+            (string('source'))
+    
+        (: Text :)
+        else if (exists($doc/tei:TEI)) then
+            (string('text'))
+    
+        (: HTML :)
+        else if (exists($doc/html) or exists($doc/html:html)) then
+            (string('html'))
+    
+        else if (contains($docUri, '.html')) then
+            (string('html'))
+    
+        else
+            (string('unknown'))
+
+    let $internalIdType :=
+        if (exists($internal)) then
+            (local-name($internal))
+        else
+            ('unknown')
+
+    let $map :=
+        map {
+            'type': $type,
+            'title': linktarget:getWindowTitle($doc, $type, $lang),
+            'doc': $docUri,
+            'views': array {linktarget:getViews($type, $docUri, $doc, $lang)},
+            'internalId': $internalId || $internalIdParam,
+            'term': $term,
+            'path': $path,
+            'internalIdType': $internalIdType
+        }
+
+    return
+        $map
+
+};
