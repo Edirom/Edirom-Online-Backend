@@ -641,6 +641,7 @@
 									"action": { "type": "string", "enum": ["login", "logout", "status"] },
 									"user": { "type": "string" },
 									"password": { "type": "string" },
+									"remember": { "type": "boolean" },
 									"logout": { "type": "string" }
 								}
 							}

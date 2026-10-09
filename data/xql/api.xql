@@ -65,7 +65,9 @@ declare function api:authentication ($request as map(*)) {
     (: Form fields are exposed by eXist's request module for url-encoded bodies. :)
     let $action := request:get-parameter("action", "status")
     let $logout := $action eq "logout"
-    let $login-result := login:set-user("org.exist.login", (), false())
+    let $remember := request:get-parameter("remember", "false") eq "true"
+    let $max-age := if ($action eq "login" and $remember) then xs:dayTimeDuration("P30D") else ()
+    let $login-result := login:set-user("org.exist.login", $max-age, false())
     let $user := ($login-result, request:get-attribute("org.exist.login.user"))[last()]
     let $authenticated := exists($user)
     let $headers := map { "Cache-Control": "no-store" }
