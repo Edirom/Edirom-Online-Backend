@@ -30,6 +30,10 @@
 		{
 			"name": "document",
 			"description": "Document endpoint"
+		},
+		{
+			"name": "authentication",
+			"description": "Session authentication endpoint"
 		}
 	],
 	"components": {
@@ -617,6 +621,36 @@
 					"500": {
 						"description": "Internal server error"
 					}
+				}
+			}
+		},
+		"/api/authentication": {
+			"post": {
+				"summary": "Manage the current login session",
+				"description": "Log in, log out, or read the current session status.",
+				"operationId": "api:authentication",
+				"tags": ["authentication"],
+				"security": [],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/x-www-form-urlencoded": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"action": { "type": "string", "enum": ["login", "logout", "status"] },
+									"user": { "type": "string" },
+									"password": { "type": "string" },
+									"logout": { "type": "string" }
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": { "description": "Authentication action completed" },
+					"401": { "description": "Credentials were not accepted" },
+					"500": { "description": "Internal server error" }
 				}
 			}
 		}

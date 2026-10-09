@@ -13,6 +13,8 @@ declare namespace exist="http://exist.sourceforge.net/NS/exist";
 (: IMPORTS ================================================================= :)
 
 import module namespace request="http://exist-db.org/xquery/request";
+import module namespace login="http://exist-db.org/xquery/login"
+    at "resource:org/exist/xquery/modules/persistentlogin/login.xql";
 import module namespace roaster="http://e-editiones.org/roaster";
 
 import module namespace errors="http://www.edirom.de/xquery/errors" at "../xqm/errors.xqm";
@@ -53,6 +55,40 @@ declare function api:navigation ($request as map(*)) {
     map {
         "message": "This is a navigation endpoint."
      }
+};
+
+(:~
+ : Manage the current eXist-db login through the API router.
+ : Login credentials remain form-encoded, as expected by eXist's login module.
+ :)
+declare function api:authentication ($request as map(*)) {
+    (: Form fields are exposed by eXist's request module for url-encoded bodies. :)
+    let $action := request:get-parameter("action", "status")
+    let $logout := $action eq "logout"
+    let $login-result := login:set-user("org.exist.login", (), false())
+    let $user := ($login-result, request:get-attribute("org.exist.login.user"))[last()]
+    let $authenticated := exists($user)
+    let $headers := map { "Cache-Control": "no-store" }
+    return
+        if ($action eq "login" and not($authenticated)) then
+            roaster:response(401, "application/json", map {
+                "authenticated": false(),
+                "loggedOut": false(),
+                "userName": "",
+                "message": "The username or password was not accepted."
+            }, $headers)
+        else if ($logout) then
+            roaster:response(200, "application/json", map {
+                "authenticated": false(),
+                "loggedOut": true(),
+                "userName": ""
+            }, $headers)
+        else
+            roaster:response(200, "application/json", map {
+                "authenticated": $authenticated,
+                "loggedOut": false(),
+                "userName": if ($authenticated) then string($user) else ""
+            }, $headers)
 };
 
 declare function api:document ($request as map(*)) {
