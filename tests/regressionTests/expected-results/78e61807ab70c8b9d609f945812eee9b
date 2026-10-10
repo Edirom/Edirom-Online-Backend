@@ -61,22 +61,42 @@
     "mdiv" : "",
     "digilibBaseParams" : "/Scaler/IIIF/Erstdruck1!34_ED-st_I_012_Vl1_1v"
   }, {
-    "linkUri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-3.xml#bar-2002469?tstamp2=7m+0",
-    "label" : "Takte 16 bis 23",
+    "linkUri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-3.xml#bar-2002469?tstamp2=3m+0",
+    "label" : "Takte 16 bis 19",
     "source" : "Stichvorlage K/sv",
     "type" : "measure",
     "hiddenData" : {
       "origW" : 4986,
-      "width" : 4303,
-      "height" : 3475,
+      "width" : 3603,
+      "height" : 1815,
       "origH" : 3982,
       "y" : 101,
+      "x" : 1040
+    },
+    "content" : "",
+    "siglum" : "K/sv",
+    "page" : "3",
+    "digilibSizeParams" : "&amp;wx=0.20858403529883673&amp;wy=0.025364138623807132&amp;ww=0.7226233453670277&amp;wh=0.4558011049723757&amp;mo=fit",
+    "part" : "",
+    "mdiv" : "",
+    "digilibBaseParams" : "/Scaler/IIIF/Ksv_Satz1-3!0003.tif"
+  }, {
+    "linkUri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-3.xml#bar-2002473?tstamp2=3m+0",
+    "label" : "Takte 20 bis 23",
+    "source" : "Stichvorlage K/sv",
+    "type" : "measure",
+    "hiddenData" : {
+      "origW" : 4986,
+      "width" : 3277,
+      "height" : 1767,
+      "origH" : 3982,
+      "y" : 1809,
       "x" : 340
     },
     "content" : "",
     "siglum" : "K/sv",
     "page" : "3",
-    "digilibSizeParams" : "&amp;wx=0.06819093461692739&amp;wy=0.025364138623807132&amp;ww=0.863016446048937&amp;wh=0.8726770467101959&amp;mo=fit",
+    "digilibSizeParams" : "&amp;wx=0.06819093461692739&amp;wy=0.45429432446007034&amp;ww=0.6572402727637384&amp;wh=0.4437468608739327&amp;mo=fit",
     "part" : "",
     "mdiv" : "",
     "digilibBaseParams" : "/Scaler/IIIF/Ksv_Satz1-3!0003.tif"
