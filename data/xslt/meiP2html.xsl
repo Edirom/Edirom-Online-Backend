@@ -75,14 +75,17 @@
                         <xsl:value-of select="replace(@target, '\[.*\]', '')"/>
                         <xsl:text>', {</xsl:text>
                         <xsl:value-of select="replace(substring-before(substring-after(@target, '['), ']'), '=', ':')"/>
-                        <xsl:text>})</xsl:text>
+                        <xsl:text>}, this)</xsl:text>
                     </xsl:attribute>
                 </xsl:when>
                 <xsl:otherwise>
+                    <!-- the clicked element is passed on so that a target which is a bare
+                         fragment identifier can be resolved against the view this
+                         annotation is rendered in -->
                     <xsl:attribute name="onclick">
                         <xsl:text>loadLink("</xsl:text>
                         <xsl:value-of select="@target"/>
-                        <xsl:text>")</xsl:text>
+                        <xsl:text>", {}, this)</xsl:text>
                     </xsl:attribute>
                 </xsl:otherwise>
             </xsl:choose>
