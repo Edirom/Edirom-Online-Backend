@@ -16,8 +16,10 @@ declare variable $exist:path external;
 declare variable $exist:resource external;
 declare variable $exist:prefix external;
 declare variable $exist:controller external;
+declare variable $exist:root external;
 
 let $langVal := edition:getLanguage(request:get-parameter("edition", ""))
+let $frontendURL := json-doc(concat($exist:root, $exist:controller, "/config.json"))?frontendURL
 
 return
     if ($exist:path eq "") then
@@ -49,6 +51,21 @@ return
     ) then
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <forward url="{$exist:controller}/data/api/{$exist:path}"/>
+        </dispatch>
+    else if (starts-with($exist:path, "/api/authentication")) then
+        (: forward /api/authentication to api.xql Cross-Origin authentication only from Edirom-Online-Frontend :)
+        <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+            <forward url="{$exist:controller}/data/xql/api.xql">
+                <set-header name="Access-Control-Allow-Origin" value="{$frontendURL}"/>
+                <set-header name="Access-Control-Allow-Headers" value="*"/>
+                <set-header name="Access-Control-Allow-Methods" value="GET,OPTIONS,POST"/>
+                <set-header name="Access-Control-Allow-Credentials" value="true"/>
+                <set-attribute name="exist:path" value="{$exist:path}"/>
+                <set-attribute name="exist:resource" value="{$exist:resource}"/>
+                <set-attribute name="exist:controller" value="{$exist:controller}"/>
+                <set-attribute name="exist:prefix" value="{$exist:prefix}"/>
+                <cache-control cache="yes"/>
+            </forward>
         </dispatch>
     else if (starts-with($exist:path, "/api")) then
         (: forward /api to api.xql :)
