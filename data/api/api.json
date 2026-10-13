@@ -627,7 +627,7 @@
 		"/api/authentication": {
 			"post": {
 				"summary": "Manage the current login session",
-				"description": "Log in, log out, or read the current session status.",
+				"description": "Log in, log out, or read the current session status. Requests must include an Origin header matching either the configured frontend origin or this endpoint's origin. The endpoint uses the eXist persistent-login cookie; send requests with credentials enabled. If action is omitted, it defaults to status.",
 				"operationId": "api:authentication",
 				"tags": ["authentication"],
 				"security": [],
@@ -637,15 +637,30 @@
 						"application/x-www-form-urlencoded": {
 							"schema": {
 								"type": "object",
+								"description": "Use action=login with user and password to log in. Set remember=true to request a persistent login for 30 days. Use action=logout together with logout=true to clear the persistent-login cookie. Use action=status, or omit action, to inspect the current session.",
 								"properties": {
-									"action": { "type": "string", "enum": ["login", "logout", "status"] },
-									"user": { "type": "string" },
-									"password": { "type": "string" },
-									"remember": { "type": "boolean" },
+									"action": {
+										"type": "string",
+										"enum": ["login", "logout", "status"],
+										"description": "Operation to perform. Defaults to status when omitted."
+									},
+									"user": {
+										"type": "string",
+										"description": "eXist-db username; required when action=login."
+									},
+									"password": {
+										"type": "string",
+										"format": "password",
+										"description": "eXist-db password; required when action=login."
+									},
+									"remember": {
+										"type": "boolean",
+										"description": "When true for a login, request a persistent login lasting 30 days."
+									},
 									"logout": {
 										"type": "string",
 										"enum": ["true"],
-										"description": "Required with action=logout to clear the eXist persistent login."
+										"description": "Must be true with action=logout to clear the eXist persistent-login cookie."
 									}
 								}
 							}
@@ -653,10 +668,42 @@
 					}
 				},
 				"responses": {
-					"200": { "description": "Authentication action completed" },
-					"401": { "description": "Credentials were not accepted" },
+					"200": {
+						"description": "Action completed. authenticated reports the resulting session state; loggedOut is true only when a logout action completed successfully.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"authenticated": { "type": "boolean", "description": "Whether the current session is authenticated." },
+										"loggedOut": { "type": "boolean", "description": "True when the requested logout completed successfully." },
+										"userName": { "type": "string", "description": "Authenticated username, or an empty string when unauthenticated." }
+									},
+									"required": ["authenticated", "loggedOut", "userName"],
+									"example": { "authenticated": false, "loggedOut": true, "userName": "" }
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Login credentials were not accepted.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"authenticated": { "type": "boolean", "example": false },
+										"loggedOut": { "type": "boolean", "example": false },
+										"userName": { "type": "string", "example": "" },
+										"message": { "type": "string", "example": "The username or password was not accepted." }
+									},
+									"required": ["authenticated", "loggedOut", "userName", "message"]
+								}
+							}
+						}
+					},
 					"403": {
-						"description": "The request Origin is not allowed",
+						"description": "Origin is missing or does not match the configured frontend origin or this endpoint's origin.",
 						"content": {
 							"application/json": {
 								"schema": {
