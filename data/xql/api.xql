@@ -57,42 +57,6 @@ declare function api:navigation ($request as map(*)) {
      }
 };
 
-(:~
- : Manage the current eXist-db login through the API router.
- : Login credentials remain form-encoded, as expected by eXist's login module.
- :)
-declare function api:authentication ($request as map(*)) {
-    (: Form fields are exposed by eXist's request module for url-encoded bodies. :)
-    let $action := request:get-parameter("action", "status")
-    let $logout := $action eq "logout"
-    let $remember := request:get-parameter("remember", "false") eq "true"
-    let $max-age := if ($action eq "login" and $remember) then xs:dayTimeDuration("P30D") else ()
-    let $login-result := login:set-user("org.exist.login", $max-age, false())
-    let $user := ($login-result, request:get-attribute("org.exist.login.user"))[last()]
-    let $authenticated := exists($user)
-    let $headers := map { "Cache-Control": "no-store" }
-    return
-        if ($action eq "login" and not($authenticated)) then
-            roaster:response(401, "application/json", map {
-                "authenticated": false(),
-                "loggedOut": false(),
-                "userName": "",
-                "message": "The username or password was not accepted."
-            }, $headers)
-        else if ($logout) then
-            roaster:response(200, "application/json", map {
-                "authenticated": false(),
-                "loggedOut": true(),
-                "userName": ""
-            }, $headers)
-        else
-            roaster:response(200, "application/json", map {
-                "authenticated": $authenticated,
-                "loggedOut": false(),
-                "userName": if ($authenticated) then string($user) else ""
-            }, $headers)
-};
-
 declare function api:document ($request as map(*)) {
     let $base-url := substring-before(request:get-url(), "/api")
     let $resource := xs:string($request?parameters?resource)
@@ -128,6 +92,52 @@ declare function api:document ($request as map(*)) {
     
 
     
+};
+
+(:~
+ : Manage the current eXist-db login through the API router.
+ : Login credentials remain form-encoded, as expected by eXist's login module.
+ :)
+declare function api:authentication ($request as map(*)) {
+    let $origin := request:get-header("Origin")
+    let $frontend-origin := request:get-attribute("frontendOrigin")
+    let $endpoint-origin := replace(request:get-url(), "^(https?://[^/]+).*$", "$1")
+    let $headers := map { "Cache-Control": "no-store" }
+    return
+        if (not($origin = ($frontend-origin, $endpoint-origin))) then
+            roaster:response(403, "application/json", map {
+                "error": "forbidden_origin",
+                "message": "Authentication requests from this origin are not allowed."
+            }, $headers)
+        else
+            (: Form fields are exposed by eXist's request module for url-encoded bodies. :)
+            let $action := request:get-parameter("action", "status")
+            let $logout := $action eq "logout"
+            let $remember := request:get-parameter("remember", "false") eq "true"
+            let $max-age := if ($action eq "login" and $remember) then xs:dayTimeDuration("P30D") else ()
+            let $login-result := login:set-user("org.exist.login", $max-age, false())
+            let $user := ($login-result, request:get-attribute("org.exist.login.user"))[last()]
+            let $authenticated := exists($user)
+            return
+                if ($action eq "login" and not($authenticated)) then
+                    roaster:response(401, "application/json", map {
+                        "authenticated": false(),
+                        "loggedOut": false(),
+                        "userName": "",
+                        "message": "The username or password was not accepted."
+                    }, $headers)
+                else if ($logout) then
+                    roaster:response(200, "application/json", map {
+                        "authenticated": false(),
+                        "loggedOut": true(),
+                        "userName": ""
+                    }, $headers)
+                else
+                    roaster:response(200, "application/json", map {
+                        "authenticated": $authenticated,
+                        "loggedOut": false(),
+                        "userName": if ($authenticated) then string($user) else ""
+                    }, $headers)
 };
 (: end of route handlers :)
 

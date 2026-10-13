@@ -60,6 +60,7 @@ return
                 <set-header name="Access-Control-Allow-Headers" value="*"/>
                 <set-header name="Access-Control-Allow-Methods" value="GET,OPTIONS,POST"/>
                 <set-header name="Access-Control-Allow-Credentials" value="true"/>
+                <set-attribute name="frontendOrigin" value="{$frontendOrigin}"/>
                 <set-attribute name="exist:path" value="{$exist:path}"/>
                 <set-attribute name="exist:resource" value="{$exist:resource}"/>
                 <set-attribute name="exist:controller" value="{$exist:controller}"/>
