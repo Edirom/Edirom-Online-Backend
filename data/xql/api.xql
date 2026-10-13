@@ -112,9 +112,10 @@ declare function api:authentication ($request as map(*)) {
         else
             (: Form fields are exposed by eXist's request module for url-encoded bodies. :)
             let $action := request:get-parameter("action", "status")
-            let $logout := $action eq "logout"
+            let $is-logout := $action eq "logout"
             let $remember := request:get-parameter("remember", "false") eq "true"
             let $max-age := if ($action eq "login" and $remember) then xs:dayTimeDuration("P30D") else ()
+            (: login:set-user requires the separate logout parameter to clear its persistent login. :)
             let $login-result := login:set-user("org.exist.login", $max-age, false())
             let $user := ($login-result, request:get-attribute("org.exist.login.user"))[last()]
             let $authenticated := exists($user)
@@ -126,7 +127,7 @@ declare function api:authentication ($request as map(*)) {
                         "userName": "",
                         "message": "The username or password was not accepted."
                     }, $headers)
-                else if ($logout) then
+                else if ($is-logout) then
                     roaster:response(200, "application/json", map {
                         "authenticated": false(),
                         "loggedOut": true(),
