@@ -651,6 +651,21 @@
 				"responses": {
 					"200": { "description": "Authentication action completed" },
 					"401": { "description": "Credentials were not accepted" },
+					"403": {
+						"description": "The request Origin is not allowed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"error": { "type": "string", "example": "forbidden_origin" },
+										"message": { "type": "string", "example": "Authentication requests from this origin are not allowed." }
+									},
+									"required": ["error", "message"]
+								}
+							}
+						}
+					},
 					"500": { "description": "Internal server error" }
 				}
 			}
