@@ -11,7 +11,8 @@
     <property name="frontend.host" value="localhost"/>
     <property name="frontend.port" value="8089"/>
     <property name="frontend.path" value="/"/>
-    <property name="frontend.url" value="${frontend.protocol}://${frontend.host}:${frontend.port}${frontend.path}"/>
+    <property name="frontend.origin" value="${frontend.protocol}://${frontend.host}:${frontend.port}"/>
+    <property name="frontend.url" value="${frontend.origin}${frontend.path}"/>
 
     <property name="project.version" value="1.5.0"/>
     <property name="project.app" value="Edirom-Online-Backend"/>
@@ -92,7 +93,7 @@
         <copy file="${basedir}/CITATION.cff" tofile="${build.dir}/resources/CITATION.cff" overwrite="true"/>
         <copy file="${basedir}/config.json" tofile="${build.dir}/config.json" overwrite="true">
             <filterset begintoken="@" endtoken="@">
-                <filter token="frontend.url" value="${frontend.url}"/>
+                <filter token="frontend.origin" value="${frontend.origin}"/>
             </filterset>
         </copy>
     </target>
