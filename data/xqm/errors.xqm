@@ -25,6 +25,7 @@ declare variable $errors:INVALID_PARAMETERS := QName("http://www.edirom.de/xquer
 declare variable $errors:UNSUPPORTED_MEDIA_TYPE := QName("http://www.edirom.de/xquery/errors", "UnsupportedMediaTypeError");
 declare variable $errors:UNSUPPORTED_DOCUMENT_FORMAT := QName("http://www.edirom.de/xquery/errors", "UnsupportedDocumentFormatError");
 declare variable $errors:NOT_FOUND := QName("http://www.edirom.de/xquery/errors", "NotFoundError");
+declare variable $errors:FORBIDDEN_ORIGIN := QName("http://www.edirom.de/xquery/errors", "ForbiddenOriginError");
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
@@ -50,6 +51,11 @@ declare function errors:sendResponse ($errCode as xs:QName, $errDescription as x
                 "error": "NotFound",
                 "message": $errDescription
             })
+        case $errors:FORBIDDEN_ORIGIN return
+            roaster:response(403, "application/json", map {
+                "error": "forbidden_origin",
+                "message": $errDescription
+            }, map { "Cache-Control": "no-store" })
         default return
             roaster:response(500, "application/json", map {
                 "error": "InternalServerError",
