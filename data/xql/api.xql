@@ -67,6 +67,9 @@ declare function api:document ($request as map(*)) {
         "idPrefix": if (exists($request?parameters?idPrefix)) then xs:string($request?parameters?idPrefix) else "",
         "htmlProfile": if (exists($request?parameters?htmlProfile)) then xs:string($request?parameters?htmlProfile) else $dts-document:defaultHTMLProfile
     }
+    let $xmlParameters := map {
+        "unwrap": if (exists($request?parameters?unwrap)) then xs:boolean($request?parameters?unwrap) else false()
+    }
     return
         try {
             let $document := dts-document:document(
@@ -76,7 +79,8 @@ declare function api:document ($request as map(*)) {
                 if (exists($request?parameters?end)) then xs:string($request?parameters?end) else "",
                 xs:string($request?parameters?tree),
                 $mediaType,
-                $htmlParameters
+                $htmlParameters,
+                $xmlParameters
             )
             return
                 roaster:response(200, $mediaType, $document, $headers)

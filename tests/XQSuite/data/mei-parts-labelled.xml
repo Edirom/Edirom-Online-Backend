@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.0" xml:id="test-mei-parts-labelled">
+   <!--
+      Fixture for the virtual measure ID functions in data/xqm/source.xqm.
+
+      Deliberate properties, each exercised by tests/XQSuite/source-tests.xqm:
+
+      * The mdiv @xml:id contains an underscore ("test_mdiv_01"), so a parser that
+        split the virtual ID on the FIRST underscore would fail here.
+      * Measure @xml:id values start with the string "measure_", exactly as data
+        produced by the cartographer-app does. A resolver without a real-id-wins
+        guard would mistake them for virtual IDs.
+      * @label and @n deliberately diverge: @n runs continuously across the parts
+        (1-2 in Flauto, 3-4 in Oboe) while @label carries the musical measure
+        number, so the two attributes can never be confused.
+      * One label is alphanumeric ("2b") - the example given in
+        docs/data-creation-workflow.md.
+      * The second mdiv has no parts and its measure carries no @label, covering
+        the @n fallback.
+   -->
+   <meiHead>
+      <fileDesc>
+         <titleStmt>
+            <title>Test source with labelled measures in parts</title>
+         </titleStmt>
+         <pubStmt/>
+      </fileDesc>
+   </meiHead>
+   <music>
+      <body>
+         <mdiv xml:id="test_mdiv_01" n="1" label="Erster Satz">
+            <parts>
+               <part xml:id="test_part_01" label="Flauto">
+                  <staffDef n="1" lines="5" decls="#test_perfRes_01"/>
+                  <section>
+                     <measure xml:id="measure_3f9a1c2d-flauto-one" label="1" n="1"/>
+                     <measure xml:id="measure_5b7e4d8a-flauto-two" label="2b" n="2"/>
+                  </section>
+               </part>
+               <part xml:id="test_part_02" label="Oboe">
+                  <staffDef n="2" lines="5" decls="#test_perfRes_02"/>
+                  <section>
+                     <measure xml:id="measure_8c2d6f1b-oboe-one" label="1" n="3"/>
+                     <measure xml:id="measure_1e4a9b7c-oboe-two" label="2b" n="4"/>
+                  </section>
+               </part>
+            </parts>
+         </mdiv>
+         <mdiv xml:id="test_mdiv_02" n="2" label="Zweiter Satz">
+            <score>
+               <scoreDef>
+                  <staffGrp>
+                     <staffDef n="1" lines="5"/>
+                  </staffGrp>
+               </scoreDef>
+               <section>
+                  <measure xml:id="measure_7d3b5e0f-score-one" n="1"/>
+               </section>
+            </score>
+         </mdiv>
+      </body>
+   </music>
+</mei>
