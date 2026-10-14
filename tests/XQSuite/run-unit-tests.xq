@@ -21,6 +21,6 @@ test:suite((
     util:list-functions("http://www.edirom.de/xquery/xqsuite/edition-tests"),
     util:list-functions("http://www.edirom.de/xquery/xqsuite/dts-document-tests"),
     util:list-functions("http://www.edirom.de/xquery/xqsuite/taxonomy-tests"),
-    util:list-functions("http://www.edirom.de/xquery/xqsuite/annotation-tests")
+    util:list-functions("http://www.edirom.de/xquery/xqsuite/annotation-tests"),
     util:list-functions("http://www.edirom.de/xquery/xqsuite/source-tests")
 ))
