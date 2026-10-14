@@ -33,6 +33,12 @@
         
         <entry key="controller.desktop.TaskBar_confirmReload" value="Die Anwendung muss neu gestartet werden, damit die Spracheinstellung vollständig umgesetzt wird."/>
         
+        <entry key="controller.navigator.Navigator_NavigationTab" value="Navigation"/>
+        <entry key="controller.navigator.Navigator_NoContent" value="Keine Einträge vorhanden."/>
+        <entry key="controller.navigator.Navigator_ConcordanceTab" value="Konkordanz"/>
+        <entry key="controller.navigator.Navigator_ConcordanceDocuments" value="Weitere Dokumente"/>
+        <entry key="controller.navigator.Navigator_ConcordanceExternalResources" value="Weitere Ressourcen"/>
+
         <entry key="controller.window.Window_annotationView" value="Anmerkung"/>
         <entry key="controller.window.Window_headerView" value="Metadaten"/>
         <entry key="controller.window.Window_renderingView" value="Rendering"/>
