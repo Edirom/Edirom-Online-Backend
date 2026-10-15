@@ -473,7 +473,9 @@
 								"type": "string",
 								"enum": [
 									"musicStructure",
-									"paginationStructure"
+									"basicStructure",
+									"paginationStructure",
+									"performanceStructure"
 								],
 								"default": "musicStructure"
 							},
@@ -486,35 +488,17 @@
 									"summary": "musicStructure",
 									"value": "musicStructure"
 								},
+								"basicStructure": {
+									"summary": "basicStructure",
+									"value": "basicStructure"
+								},
 								"paginationStructure": {
 									"summary": "paginationStructure",
 									"value": "paginationStructure"
-								}
-							}
-						},
-						{
-							"name": "page",
-							"in": "query",
-							"required": false,
-							"schema": {
-								"type": "int"
-							},
-							"examples": {
-								"Empty": {
-									"summary": "Empty",
-									"value": ""
 								},
-								"1": {
-									"summary": "1",
-									"value": 1
-								},
-								"2": {
-									"summary": "2",
-									"value": 2
-								},
-								"3": {
-									"summary": "3",
-									"value": 3
+								"performanceStructure": {
+									"summary": "performanceStructure",
+									"value": "performanceStructure"
 								}
 							}
 						}

@@ -118,7 +118,7 @@ declare function dts-navigation:buildResourceObject(
             <id json:name="@id">{$resource}</id>
             <type json:name="@type">Resource</type>
             <collection>{dts-util:buildCollectionURI($base-url, $resource, (), ())}</collection>
-            <navigation>{dts-util:buildNavigationURI($base-url, $resource, (), (), (), (), (), ())}</navigation>
+            <navigation>{dts-util:buildNavigationURI($base-url, $resource, (), (), (), (), ())}</navigation>
             <document>{dts-util:buildDocumentURI($base-url, $resource, (), (), (), (), (), (), (), (), ())}</document>
             {dts-navigation:buildCitationTreesObjects($citationTreesXML)}
         </resource>
@@ -248,7 +248,6 @@ declare function dts-navigation:buildMemberArrayRefDownZero(
  : @param $end The ending point of the navigation (optional).
  : @param $down The depth of the navigation tree (optional).
  : @param $tree The citation tree identifier to use (optional).
- : @param $page The number of identifying a page in paginated query results (optional).
  :)
 declare function dts-navigation:navigation(
     $resource as xs:string,
@@ -256,8 +255,7 @@ declare function dts-navigation:navigation(
     $start as xs:string?,
     $end as xs:string?,
     $down as xs:integer?,
-    $tree as xs:string?,
-    $page as xs:integer?
+    $tree as xs:string?
 ) as element(json:value) {
     if ($ref and ($start or $end)) then
         error($errors:INVALID_PARAMETERS, "The 'ref' parameter cannot be used together with 'start' or 'end'.")

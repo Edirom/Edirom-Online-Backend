@@ -140,7 +140,7 @@ declare
     function dnt:test-navigation-whole-document-member-wrappers() as xs:boolean {
         let $result := dts-navigation:navigation(
             "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml",
-            (), (), (), 1, "musicStructure", ()
+            (), (), (), 1, "musicStructure"
         )
         return
             count($result/member) eq 2
@@ -317,14 +317,12 @@ declare
     %test:arg("ref") %test:arg("start") %test:arg("end")
     %test:arg("down", "1")
     %test:arg("tree", "musicStructure")
-    %test:arg("page")
     %test:assertTrue
     (: Valid request using ref and down=0. :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref", "test-mdiv-1") %test:arg("start") %test:arg("end")
     %test:arg("down", "0")
     %test:arg("tree", "musicStructure")
-    %test:arg("page")
     %test:assertTrue
     function dnt:test-navigation-returns-navigation-object(
         $resource as xs:string,
@@ -332,10 +330,9 @@ declare
         $start as xs:string?,
         $end as xs:string?,
         $down as xs:integer?,
-        $tree as xs:string?,
-        $page as xs:integer?
+        $tree as xs:string?
     ) as xs:boolean {
-        let $result := dts-navigation:navigation($resource, $ref, $start, $end, $down, $tree, $page)
+        let $result := dts-navigation:navigation($resource, $ref, $start, $end, $down, $tree)
         return
             $result/context[@json:name = "@context"] eq "https://dtsapi.org/context/v1.0.json"
             and $result/dtsVersion eq "1.0"
@@ -370,7 +367,7 @@ declare
         $identifiers as xs:string,
         $excludedIdentifiers as xs:string
     ) as xs:boolean {
-        let $result := dts-navigation:navigation($resource, $ref, (), (), 0, $tree, ())
+        let $result := dts-navigation:navigation($resource, $ref, (), (), 0, $tree)
         return
             $result/ref/identifier eq $ref
             and string-join($result/member/identifier, " ") eq $identifiers
@@ -433,7 +430,7 @@ declare
     function dnt:test-navigation-without-down-omits-members() as xs:boolean {
         let $result := dts-navigation:navigation(
             "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml",
-            "test-mdiv-1", (), (), (), "musicStructure", ()
+            "test-mdiv-1", (), (), (), "musicStructure"
         )
         return empty($result/member) and $result/ref/identifier eq "test-mdiv-1"
 };
@@ -444,31 +441,31 @@ declare
     %test:arg("ref", "test-mdiv-1")
     %test:arg("start", "test-mdiv-1")
     %test:arg("end", "test-mdiv-2")
-    %test:arg("down") %test:arg("tree") %test:arg("page")
+    %test:arg("down") %test:arg("tree")
     %test:assertError("errors:InvalidParametersError")
     (: Start requires end. :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref")
     %test:arg("start", "test-mdiv-1")
     %test:arg("end")
-    %test:arg("down") %test:arg("tree") %test:arg("page")
+    %test:arg("down") %test:arg("tree")
     %test:assertError("errors:InvalidParametersError")
     (: End requires start. :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref") %test:arg("start")
     %test:arg("end", "test-mdiv-2")
-    %test:arg("down") %test:arg("tree") %test:arg("page")
+    %test:arg("down") %test:arg("tree")
     %test:assertError("errors:InvalidParametersError")
     (: At least one navigation selector is required. :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref") %test:arg("start") %test:arg("end")
-    %test:arg("down") %test:arg("tree") %test:arg("page")
+    %test:arg("down") %test:arg("tree")
     %test:assertError("errors:InvalidParametersError")
     (: Down=0 requires ref. :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref") %test:arg("start") %test:arg("end")
     %test:arg("down", "0")
-    %test:arg("tree") %test:arg("page")
+    %test:arg("tree")
     %test:assertError("errors:InvalidParametersError")
     function dnt:test-navigation-validates-parameters(
         $resource as xs:string,
@@ -476,10 +473,9 @@ declare
         $start as xs:string?,
         $end as xs:string?,
         $down as xs:integer?,
-        $tree as xs:string?,
-        $page as xs:integer?
+        $tree as xs:string?
     ) as element(json:value) {
-        dts-navigation:navigation($resource, $ref, $start, $end, $down, $tree, $page)
+        dts-navigation:navigation($resource, $ref, $start, $end, $down, $tree)
 };
 
 declare
@@ -491,7 +487,6 @@ declare
             "",
             "",
             (),
-            "",
-            ()
+            ""
         )
 };

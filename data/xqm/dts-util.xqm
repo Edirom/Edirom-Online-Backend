@@ -349,7 +349,6 @@ declare function dts-util:buildCollectionURI(
  : @param $end The end reference of a range
  : @param $down The requested traversal depth
  : @param $tree The citation tree identifier
- : @param $page The requested result page
  : @return The navigation endpoint URI template
  :)
 declare function dts-util:buildNavigationURI(
@@ -359,8 +358,7 @@ declare function dts-util:buildNavigationURI(
     $start as xs:string?,
     $end as xs:string?,
     $down as xs:integer?,
-    $tree as xs:string?,
-    $page as xs:integer?
+    $tree as xs:string?
 ) as xs:string {
     let $parameters := map {
         "resource": $resource,
@@ -368,10 +366,9 @@ declare function dts-util:buildNavigationURI(
         "start": $start,
         "end": $end,
         "down": $down,
-        "tree": $tree,
-        "page": $page
+        "tree": $tree
     }
-    let $parameterNames := ("resource", "ref", "start", "end", "down", "tree", "page")
+    let $parameterNames := ("resource", "ref", "start", "end", "down", "tree")
     let $assignedParameters :=
         for $parameterName in $parameterNames
         let $value := map:get($parameters, $parameterName)

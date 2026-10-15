@@ -60,15 +60,15 @@ declare
 };
 
 declare
-    %test:assertEquals("https://example.org/api/navigation/{?resource,ref,start,end,down,tree,page}")
+    %test:assertEquals("https://example.org/api/navigation/{?resource,ref,start,end,down,tree}")
     function dct:test-buildNavigationURI-template() as xs:string {
-        dts-util:buildNavigationURI("https://example.org", (), (), (), (), (), (), ())
+        dts-util:buildNavigationURI("https://example.org", (), (), (), (), (), ())
 };
 
 declare
-    %test:assertEquals("https://example.org/api/navigation/?resource=resource&amp;tree=main{&amp;ref,start,end,down,page}")
+    %test:assertEquals("https://example.org/api/navigation/?resource=resource&amp;tree=main{&amp;ref,start,end,down}")
     function dct:test-buildNavigationURI-assignments() as xs:string {
-        dts-util:buildNavigationURI("https://example.org", "resource", (), (), (), (), "main", ())
+        dts-util:buildNavigationURI("https://example.org", "resource", (), (), (), (), "main")
 };
 
 declare
@@ -212,7 +212,7 @@ declare
     %test:assertTrue
     function dct:test-buildNavigationURI-parameters-match-openAPI() as xs:boolean {
         deep-equal(
-            dct:uriTemplateParameterNames(dts-util:buildNavigationURI("https://example.org", (), (), (), (), (), (), ())),
+            dct:uriTemplateParameterNames(dts-util:buildNavigationURI("https://example.org", (), (), (), (), (), ())),
             dct:openAPIQueryParameterNames("/api/navigation")
         )
 };

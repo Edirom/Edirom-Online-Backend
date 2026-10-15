@@ -41,7 +41,7 @@ declare function api:entryPoint ($request as map(*)) {
             <id json:name="@id">{concat($base-url, "/api/")}</id>
             <type json:name="@type">EntryPoint</type>
             <collection>{dts-util:buildCollectionURI($base-url, (), (), ())}</collection>
-            <navigation>{dts-util:buildNavigationURI($base-url, (), (), (), (), (), (), ())}</navigation>
+            <navigation>{dts-util:buildNavigationURI($base-url, (), (), (), (), (), ())}</navigation>
             <document>{dts-util:buildDocumentURI($base-url, (), (), (), (), (), (), (), (), (), ())}</document>
         </json:value>
 };
@@ -63,8 +63,7 @@ declare function api:navigation ($request as map(*)) {
                 if (exists($request?parameters?start)) then xs:string($request?parameters?start) else "",
                 if (exists($request?parameters?end)) then xs:string($request?parameters?end) else "",
                 if (exists($request?parameters?down)) then xs:integer($request?parameters?down) else (),
-                if (exists($request?parameters?tree)) then xs:string($request?parameters?tree) else "",
-                if (exists($request?parameters?page)) then xs:integer($request?parameters?page) else ()
+                if (exists($request?parameters?tree)) then xs:string($request?parameters?tree) else ""
             )
             return
                 roaster:response(200, $mediaType, $navigation)
