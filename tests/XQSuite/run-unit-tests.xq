@@ -13,6 +13,9 @@ import module namespace edt="http://www.edirom.de/xquery/xqsuite/edition-tests" 
 import module namespace ddt="http://www.edirom.de/xquery/xqsuite/dts-document-tests" at "dts-document-tests.xqm";
 import module namespace dct="http://www.edirom.de/xquery/xqsuite/dts-util-tests" at "dts-util-tests.xqm";
 import module namespace dnt="http://www.edirom.de/xquery/xqsuite/dts-navigation-tests" at "dts-navigation-tests.xqm";
+import module namespace tax="http://www.edirom.de/xquery/xqsuite/taxonomy-tests" at "taxonomy-tests.xqm";
+import module namespace ann="http://www.edirom.de/xquery/xqsuite/annotation-tests" at "annotation-tests.xqm";
+import module namespace st="http://www.edirom.de/xquery/xqsuite/source-tests" at "source-tests.xqm";
 
 (: the test:suite() function will run all the test-annotated functions in the module whose namespace URI you provide :)
 test:suite((
@@ -20,5 +23,8 @@ test:suite((
     util:list-functions("http://www.edirom.de/xquery/xqsuite/edition-tests"),
     util:list-functions("http://www.edirom.de/xquery/xqsuite/dts-document-tests"),
     util:list-functions("http://www.edirom.de/xquery/xqsuite/dts-util-tests"),
-    util:list-functions("http://www.edirom.de/xquery/xqsuite/dts-navigation-tests")
+    util:list-functions("http://www.edirom.de/xquery/xqsuite/dts-navigation-tests"),
+    util:list-functions("http://www.edirom.de/xquery/xqsuite/taxonomy-tests"),
+    util:list-functions("http://www.edirom.de/xquery/xqsuite/annotation-tests"),
+    util:list-functions("http://www.edirom.de/xquery/xqsuite/source-tests")
 ))
