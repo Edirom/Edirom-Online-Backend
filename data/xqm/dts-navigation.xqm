@@ -159,6 +159,7 @@ declare function dts-navigation:buildCitableUnitObject(
         <level json:literal="true">{$level}</level>,
         <parent>{$parentId}</parent>,
         <citeType>{string($citationTree/@unit)}</citeType>
+        (: TODO: optional dublinCore and extensions objects for metadata :)
     )
 };
 
