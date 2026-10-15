@@ -414,7 +414,8 @@ declare function dts-util:buildDocumentURI(
     $mediaType as xs:string?,
     $lang as xs:string?,
     $idPrefix as xs:string?,
-    $htmlProfile as xs:string?
+    $htmlProfile as xs:string?,
+    $unwrap as xs:boolean?
 ) as xs:string {
     let $parameters := map {
         "resource": $resource,
@@ -425,9 +426,10 @@ declare function dts-util:buildDocumentURI(
         "mediaType": $mediaType,
         "lang": $lang,
         "idPrefix": $idPrefix,
-        "htmlProfile": $htmlProfile
+        "htmlProfile": $htmlProfile,
+        "unwrap": $unwrap
     }
-    let $parameterNames := ("resource", "ref", "start", "end", "tree", "mediaType", "lang", "idPrefix", "htmlProfile")
+    let $parameterNames := ("resource", "ref", "start", "end", "tree", "mediaType", "lang", "idPrefix", "htmlProfile", "unwrap")
     let $assignedParameters :=
         for $parameterName in $parameterNames
         let $value := map:get($parameters, $parameterName)

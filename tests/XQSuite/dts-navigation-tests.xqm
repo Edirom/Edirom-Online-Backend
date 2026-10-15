@@ -155,7 +155,7 @@ declare
 
 
 declare
-    %test:assertEquals("musicStructure", "paginationStructure")
+    %test:assertEquals("musicStructure", "paginationStructure", "performanceStructure")
     function dnt:test-getCitationTrees-returns-standard-mei-trees() as xs:string* {
         let $document := document {
             <mei xmlns="http://www.music-encoding.org/ns/mei">
@@ -173,7 +173,7 @@ declare
 };
 
 declare
-    %test:assertEquals("musicStructure", "paginationStructure")
+    %test:assertEquals("musicStructure", "paginationStructure", "performanceStructure")
     function dnt:test-getCitationTrees-returns-all-mei-trees-with-partial-content() as xs:string* {
         let $document := document {
             <mei xmlns="http://www.music-encoding.org/ns/mei">
@@ -204,7 +204,7 @@ declare
 };
 
 declare
-    %test:assertEquals("musicStructure", "paginationStructure")
+    %test:assertEquals("musicStructure", "paginationStructure", "performanceStructure")
     function dnt:test-getCitationTrees-returns-all-mei-trees-without-matching-content() as xs:string* {
         let $document := document {
             <mei xmlns="http://www.music-encoding.org/ns/mei">

@@ -119,7 +119,7 @@ declare function dts-navigation:buildResourceObject(
             <type json:name="@type">Resource</type>
             <collection>{dts-util:buildCollectionURI($base-url, $resource, (), ())}</collection>
             <navigation>{dts-util:buildNavigationURI($base-url, $resource, (), (), (), (), (), ())}</navigation>
-            <document>{dts-util:buildDocumentURI($base-url, $resource, (), (), (), (), (), (), (), ())}</document>
+            <document>{dts-util:buildDocumentURI($base-url, $resource, (), (), (), (), (), (), (), (), ())}</document>
             {dts-navigation:buildCitationTreesObjects($citationTreesXML)}
         </resource>
     return $resourceObject

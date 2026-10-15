@@ -72,15 +72,15 @@ declare
 };
 
 declare
-    %test:assertEquals("https://example.org/api/document/{?resource,ref,start,end,tree,mediaType,lang,idPrefix,htmlProfile}")
+    %test:assertEquals("https://example.org/api/document/{?resource,ref,start,end,tree,mediaType,lang,idPrefix,htmlProfile,unwrap}")
     function dct:test-buildDocumentURI-template() as xs:string {
-        dts-util:buildDocumentURI("https://example.org", (), (), (), (), (), (), (), (), ())
+        dts-util:buildDocumentURI("https://example.org", (), (), (), (), (), (), (), (), (), ())
 };
 
 declare
-    %test:assertEquals("https://example.org/api/document/?resource=resource&amp;ref=1&amp;mediaType=text/html{&amp;start,end,tree,lang,idPrefix,htmlProfile}")
+    %test:assertEquals("https://example.org/api/document/?resource=resource&amp;ref=1&amp;mediaType=text/html{&amp;start,end,tree,lang,idPrefix,htmlProfile,unwrap}")
     function dct:test-buildDocumentURI-assignments() as xs:string {
-        dts-util:buildDocumentURI("https://example.org", "resource", "1", (), (), (), "text/html", (), (), ())
+        dts-util:buildDocumentURI("https://example.org", "resource", "1", (), (), (), "text/html", (), (), (), ())
 };
 
 declare
@@ -221,7 +221,7 @@ declare
     %test:assertTrue
     function dct:test-buildDocumentURI-parameters-match-openAPI() as xs:boolean {
         deep-equal(
-            dct:uriTemplateParameterNames(dts-util:buildDocumentURI("https://example.org", (), (), (), (), (), (), (), (), ())),
+            dct:uriTemplateParameterNames(dts-util:buildDocumentURI("https://example.org", (), (), (), (), (), (), (), (), (), ())),
             dct:openAPIQueryParameterNames("/api/document")
         )
 };

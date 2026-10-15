@@ -42,7 +42,7 @@ declare function api:entryPoint ($request as map(*)) {
             <type json:name="@type">EntryPoint</type>
             <collection>{dts-util:buildCollectionURI($base-url, (), (), ())}</collection>
             <navigation>{dts-util:buildNavigationURI($base-url, (), (), (), (), (), (), ())}</navigation>
-            <document>{dts-util:buildDocumentURI($base-url, (), (), (), (), (), (), (), (), ())}</document>
+            <document>{dts-util:buildDocumentURI($base-url, (), (), (), (), (), (), (), (), (), ())}</document>
         </json:value>
 };
 
