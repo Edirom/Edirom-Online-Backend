@@ -69,7 +69,7 @@ declare
 
 declare
     %test:assertTrue
-    function dnt:test-buildMemberArray-flat-metadata() as xs:boolean {
+    function dnt:test-buildMemberArray-returns-flat-members-with-correct-metadata() as xs:boolean {
         let $document := dnt:memberDocument()
         let $tree := dnt:memberCitationTrees()[1]
         let $members := dts-navigation:buildMemberArray($document//*[@xml:id = "movement-1"], $tree, -1)
@@ -96,17 +96,42 @@ declare
 };
 
 declare
+    (: The first tree matches both selected movements and their measures. :)
+    %test:arg("treeNumber", "1")
+    %test:arg("expected", "movement-1 measure-1 measure-2 movement-2 measure-3")
     %test:assertTrue
-    function dnt:test-buildMemberArray-multiple-selections-and-trees() as xs:boolean {
+    (: The second tree does not match the selected movements. :)
+    %test:arg("treeNumber", "2")
+    %test:arg("expected", "")
+    %test:assertTrue
+    function dnt:test-buildMemberArray-multiple-selections(
+        $treeNumber as xs:integer,
+        $expected as xs:string
+    ) as xs:boolean {
         let $document := dnt:memberDocument()
-        let $trees := dnt:memberCitationTrees()
         let $selection := $document//*[@xml:id = ("movement-1", "movement-2")]
-        let $selected := dts-navigation:buildMemberArray(reverse($selection), $trees[1], 2)
-        let $all := dts-navigation:buildMemberArray($document, $trees, 2)
-        return
-            string-join($selected/identifier, " ") eq "movement-1 measure-1 measure-2 movement-2 measure-3"
-            and string-join($all/identifier, " ") eq "surface-1 zone-1 movement-1 measure-1 measure-2 nested-movement nested-measure movement-2 measure-3"
-            and $all[2]/parent eq "surface-1"
+        let $tree := dnt:memberCitationTrees()[$treeNumber]
+        let $selected := dts-navigation:buildMemberArray(reverse($selection), $tree, 2)
+        return string-join($selected/identifier, " ") eq $expected
+};
+
+declare
+    (: The first tree returns all movement units through depth 2. :)
+    %test:arg("treeNumber", "1")
+    %test:arg("expected", "movement-1 measure-1 measure-2 nested-movement nested-measure movement-2 measure-3")
+    %test:assertTrue
+    (: The second tree returns the surface and its zone. :)
+    %test:arg("treeNumber", "2")
+    %test:arg("expected", "surface-1 zone-1")
+    %test:assertTrue
+    function dnt:test-buildMemberArray-whole-document(
+        $treeNumber as xs:integer,
+        $expected as xs:string
+    ) as xs:boolean {
+        let $document := dnt:memberDocument()
+        let $tree := dnt:memberCitationTrees()[$treeNumber]
+        let $members := dts-navigation:buildMemberArray($document, $tree, 2)
+        return string-join($members/identifier, " ") eq $expected
 };
 
 declare
@@ -154,19 +179,33 @@ declare
 };
 
 declare
+    (: An empty tree ID for the MEI score selects its first tree, musicStructure. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("tree", "")
+    %test:arg("identifiers", "test-mdiv-1 test-mdiv-2")
     %test:assertTrue
-    function dnt:test-navigation-empty-tree-selects-default-tree() as xs:boolean {
-        let $emptyTree := dts-navigation:navigation(
-            "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml",
-            (), (), (), 1, ""
-        )
-        let $omittedTree := dts-navigation:navigation(
-            "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml",
-            (), (), (), 1, ()
-        )
-        return
-            string-join($emptyTree/member/identifier, " ") eq "test-mdiv-1 test-mdiv-2"
-            and string-join($omittedTree/member/identifier, " ") eq "test-mdiv-1 test-mdiv-2"
+    (: An omitted tree ID for the MEI score also selects musicStructure. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("tree")
+    %test:arg("identifiers", "test-mdiv-1 test-mdiv-2")
+    %test:assertTrue
+    (: An empty tree ID for the TEI document selects its first tree, basicStructure. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("tree", "")
+    %test:arg("identifiers", "test-div-1 nested-div test-div-2 test-div-3 test-div-4")
+    %test:assertTrue
+    (: An omitted tree ID for the TEI document also selects basicStructure. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("tree")
+    %test:arg("identifiers", "test-div-1 nested-div test-div-2 test-div-3 test-div-4")
+    %test:assertTrue
+    function dnt:test-navigation-defaults-to-first-citation-tree(
+        $resource as xs:string,
+        $tree as xs:string?,
+        $identifiers as xs:string
+    ) as xs:boolean {
+        let $result := dts-navigation:navigation($resource, (), (), (), 1, $tree)
+        return string-join($result/member/identifier, " ") eq $identifiers
 };
 
 declare
@@ -244,7 +283,7 @@ declare
     %test:arg("identifiers", "test-mdiv-1 test-measure-1 test-measure-2 test-measure-3 test-measure-4 test-mdiv-2 test-mdiv-2-measure-1")
     %test:arg("excludedIdentifiers", "")
     %test:assertTrue
-    function dnt:test-navigation-down-positive-member-content(
+    function dnt:test-navigation-down-positive-member-content-mei(
         $ref as xs:string?,
         $start as xs:string?,
         $end as xs:string?,
@@ -270,6 +309,129 @@ declare
             and (every $id in $boundaryIds satisfies exists($result/member[identifier = $id]))
 };
 
+declare
+    (: Whole-resource traversal returns every citable div at depth 1. :)
+    %test:arg("ref") %test:arg("start") %test:arg("end")
+    %test:arg("down", "1")
+    %test:arg("identifiers", "test-div-1 nested-div test-div-2 test-div-3 test-div-4")
+    %test:arg("excludedIdentifiers", "")
+    %test:assertTrue
+    (: Whole-resource traversal returns the same div units at depth 2; this tree has no child citation level. :)
+    %test:arg("ref") %test:arg("start") %test:arg("end")
+    %test:arg("down", "2")
+    %test:arg("identifiers", "test-div-1 nested-div test-div-2 test-div-3 test-div-4")
+    %test:arg("excludedIdentifiers", "")
+    %test:assertTrue
+    (: Whole-resource traversal includes all div units at down=-1. :)
+    %test:arg("ref") %test:arg("start") %test:arg("end")
+    %test:arg("down", "-1")
+    %test:arg("identifiers", "test-div-1 nested-div test-div-2 test-div-3 test-div-4")
+    %test:arg("excludedIdentifiers", "")
+    %test:assertTrue
+    (: Ref traversal returns only the referenced div because basicStructure has no child citation level. :)
+    %test:arg("ref", "test-div-1") %test:arg("start") %test:arg("end")
+    %test:arg("down", "1")
+    %test:arg("identifiers", "test-div-1")
+    %test:arg("excludedIdentifiers", "nested-div test-div-2 test-div-3 test-div-4")
+    %test:assertTrue
+    (: Ref traversal returns a nested div as a citable unit at down=-1. :)
+    %test:arg("ref", "nested-div") %test:arg("start") %test:arg("end")
+    %test:arg("down", "-1")
+    %test:arg("identifiers", "nested-div")
+    %test:arg("excludedIdentifiers", "test-div-1 test-div-2 test-div-3 test-div-4")
+    %test:assertTrue
+    (: Range traversal returns sibling divs between start and end inclusively. :)
+    %test:arg("ref") %test:arg("start", "test-div-1") %test:arg("end", "test-div-3")
+    %test:arg("down", "1")
+    %test:arg("identifiers", "test-div-1 test-div-2 test-div-3")
+    %test:arg("excludedIdentifiers", "nested-div test-div-4")
+    %test:assertTrue
+    (: Range traversal to down=-1 has the same units because the tree has no child citation level. :)
+    %test:arg("ref") %test:arg("start", "test-div-1") %test:arg("end", "test-div-3")
+    %test:arg("down", "-1")
+    %test:arg("identifiers", "test-div-1 test-div-2 test-div-3")
+    %test:arg("excludedIdentifiers", "nested-div test-div-4")
+    %test:assertTrue
+    function dnt:test-navigation-down-positive-member-content-tei(
+        $ref as xs:string?,
+        $start as xs:string?,
+        $end as xs:string?,
+        $down as xs:integer,
+        $identifiers as xs:string,
+        $excludedIdentifiers as xs:string
+    ) as xs:boolean {
+        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
+        let $result := dts-navigation:navigation($resource, $ref, $start, $end, $down, "basicStructure")
+        let $boundaryIds := ($start, $end)[.]
+        let $excludedIds := tokenize(normalize-space($excludedIdentifiers), "\s+")
+        return
+            string-join($result/member/identifier, " ") eq $identifiers
+            and empty($result/member[identifier = $excludedIds])
+            and (every $member in $result/member satisfies (
+                $member/@json:array eq "true"
+                and $member/type[@json:name = "@type"] eq "CitableUnit"
+            ))
+            and (if ($ref) then $result/ref/identifier eq $ref else empty($result/ref))
+            and (if ($start and $end) then
+                $result/start/identifier eq $start and $result/end/identifier eq $end
+                else empty($result/start) and empty($result/end))
+            and (every $id in $boundaryIds satisfies exists($result/member[identifier = $id]))
+};
+
+declare
+    (: Whole-document pagination traversal returns all page breaks. :)
+    %test:arg("ref")
+    %test:arg("start") %test:arg("end")
+    %test:arg("down", "1")
+    %test:arg("identifiers", "pb-1 pb-2 pb-3")
+    %test:arg("excludedIdentifiers", "")
+    %test:assertTrue
+    (: Ref pagination traversal returns only the referenced page break. :)
+    %test:arg("ref", "pb-2")
+    %test:arg("start") %test:arg("end")
+    %test:arg("down", "1")
+    %test:arg("identifiers", "pb-2")
+    %test:arg("excludedIdentifiers", "pb-1 pb-3")
+    %test:assertTrue
+    (: Ref pagination traversal at down=-1 still returns the referenced page break. :)
+    %test:arg("ref", "pb-2")
+    %test:arg("start") %test:arg("end")
+    %test:arg("down", "-1")
+    %test:arg("identifiers", "pb-2")
+    %test:arg("excludedIdentifiers", "pb-1 pb-3")
+    %test:assertTrue
+    (: Pagination range traversal returns the page breaks from start to end inclusively. :)
+    %test:arg("ref")
+    %test:arg("start", "pb-1") %test:arg("end", "pb-3")
+    %test:arg("down", "1")
+    %test:arg("identifiers", "pb-1 pb-2 pb-3")
+    %test:arg("excludedIdentifiers", "")
+    %test:assertTrue
+    function dnt:test-navigation-pagination-tree-member-content-tei(
+        $ref as xs:string?,
+        $start as xs:string?,
+        $end as xs:string?,
+        $down as xs:integer,
+        $identifiers as xs:string,
+        $excludedIdentifiers as xs:string
+    ) as xs:boolean {
+        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
+        let $result := dts-navigation:navigation($resource, $ref, $start, $end, $down, "paginationStructure")
+        let $excludedIds := tokenize(normalize-space($excludedIdentifiers), "\s+")
+        let $boundaryIds := ($start, $end)[.]
+        return
+            string-join($result/member/identifier, " ") eq $identifiers
+            and empty($result/member[identifier = $excludedIds])
+            and (every $member in $result/member satisfies (
+                $member/@json:array eq "true"
+                and $member/type[@json:name = "@type"] eq "CitableUnit"
+            ))
+            and (if ($ref) then $result/ref/identifier eq $ref else empty($result/ref))
+            and (if ($start and $end) then
+                $result/start/identifier eq $start and $result/end/identifier eq $end
+                else empty($result/start) and empty($result/end))
+            and (every $id in $boundaryIds satisfies exists($result/member[identifier = $id]))
+};
 
 declare
     %test:assertEquals("musicStructure", "paginationStructure", "performanceStructure")
@@ -289,20 +451,6 @@ declare
         return dts-navigation:getCitationTrees($document)/string(@xml:id)
 };
 
-declare
-    %test:assertEquals("musicStructure", "paginationStructure", "performanceStructure")
-    function dnt:test-getCitationTrees-returns-all-mei-trees-with-partial-content() as xs:string* {
-        let $document := document {
-            <mei xmlns="http://www.music-encoding.org/ns/mei">
-                <music>
-                    <body>
-                        <mdiv/>
-                    </body>
-                </music>
-            </mei>
-        }
-        return dts-navigation:getCitationTrees($document)/string(@xml:id)
-};
 
 declare
     %test:assertEquals("basicStructure", "paginationStructure")
@@ -456,6 +604,60 @@ declare
     %test:arg("down", "0")
     %test:arg("tree", "musicStructure")
     %test:assertTrue
+    (: Valid TEI request using down. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("ref") %test:arg("start") %test:arg("end")
+    %test:arg("down", "1")
+    %test:arg("tree", "basicStructure")
+    %test:assertTrue
+    (: Valid TEI request using down and ref. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("ref", "test-div-1")
+    %test:arg("start") %test:arg("end")
+    %test:arg("down", "1")
+    %test:arg("tree", "basicStructure")
+    %test:assertTrue
+    (: Valid TEI request using down and start/end. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("ref")
+    %test:arg("start", "test-div-1")
+    %test:arg("end", "test-div-2")
+    %test:arg("down", "1")
+    %test:arg("tree", "basicStructure")
+    %test:assertTrue
+    (: Valid TEI request using ref and down=0. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("ref", "test-div-1") %test:arg("start") %test:arg("end")
+    %test:arg("down", "0")
+    %test:arg("tree", "basicStructure")
+    %test:assertTrue
+    (: Valid TEI pagination request using down. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("ref") %test:arg("start") %test:arg("end")
+    %test:arg("down", "1")
+    %test:arg("tree", "paginationStructure")
+    %test:assertTrue
+    (: Valid TEI pagination request using down and ref. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("ref", "pb-2")
+    %test:arg("start") %test:arg("end")
+    %test:arg("down", "1")
+    %test:arg("tree", "paginationStructure")
+    %test:assertTrue
+    (: Valid TEI pagination request using down and start/end. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("ref")
+    %test:arg("start", "pb-1")
+    %test:arg("end", "pb-3")
+    %test:arg("down", "1")
+    %test:arg("tree", "paginationStructure")
+    %test:assertTrue
+    (: Valid TEI pagination request using ref and down=0. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("ref", "pb-2") %test:arg("start") %test:arg("end")
+    %test:arg("down", "0")
+    %test:arg("tree", "paginationStructure")
+    %test:assertTrue
     function dnt:test-navigation-returns-navigation-object(
         $resource as xs:string,
         $ref as xs:string?,
@@ -491,8 +693,8 @@ declare
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "pb-2")
     %test:arg("tree", "paginationStructure")
-    %test:arg("identifiers", "pb-2")
-    %test:arg("excludedIdentifiers", "pb-1 pb-3")
+    %test:arg("identifiers", "pb-1 pb-2 pb-3")
+    %test:arg("excludedIdentifiers", "")
     %test:assertTrue
     function dnt:test-navigation-down-zero-returns-siblings(
         $resource as xs:string,
