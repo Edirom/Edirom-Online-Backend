@@ -154,6 +154,22 @@ declare
 };
 
 declare
+    %test:assertTrue
+    function dnt:test-navigation-empty-tree-selects-default-tree() as xs:boolean {
+        let $emptyTree := dts-navigation:navigation(
+            "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml",
+            (), (), (), 1, ""
+        )
+        let $omittedTree := dts-navigation:navigation(
+            "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml",
+            (), (), (), 1, ()
+        )
+        return
+            string-join($emptyTree/member/identifier, " ") eq "test-mdiv-1 test-mdiv-2"
+            and string-join($omittedTree/member/identifier, " ") eq "test-mdiv-1 test-mdiv-2"
+};
+
+declare
     (: Whole-resource traversal: include citation units from the root through depth 2. :)
     %test:arg("ref") %test:arg("start") %test:arg("end")
     %test:arg("down", "2")

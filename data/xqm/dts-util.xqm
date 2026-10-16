@@ -60,6 +60,32 @@ declare function dts-util:resolveSpecialResourceAlias(
 };
 
 (:~
+ : Loads and selects a citation tree for the document, defaulting to the first
+ : tree when no identifier or an empty identifier is supplied.
+ :
+ : @param $document The source document
+ : @param $tree The requested citation tree identifier, if supplied
+ : @return The selected citation tree
+ :)
+declare function dts-util:selectCitationTree(
+    $document as node(),
+    $tree as xs:string?
+) as element(citeStructure)* {
+    let $namespace := eutil:getNamespace($document/*)
+    let $citationTrees := eutil:getDoc($eutil:app-root || '/data/trees/citationTrees' || upper-case($namespace) || '.xml')/refsDecl/citeStructure
+    return
+        if (not($tree)) then
+            $citationTrees[1]
+        else
+            let $selected := $citationTrees[@xml:id = $tree]
+            return
+                if (exists($selected)) then
+                    $selected
+                else
+                    error($errors:INVALID_PARAMETERS, "The requested citation tree '" || $tree || "' does not exist for this resource.")
+};
+
+(:~
  : Selects nodes from the document only for those references that are actually covered by the supplied citation structure.
  :
  : @param $document The source document

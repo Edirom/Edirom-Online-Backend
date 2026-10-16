@@ -7,6 +7,7 @@ import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "xmldb:ex
 
 declare namespace test = "http://exist-db.org/xquery/xqsuite";
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
+declare namespace errors = "http://www.edirom.de/xquery/errors";
 
 declare variable $dct:openAPI := json-doc("xmldb:exist:///db/apps/Edirom-Online-Backend/data/api/api.json");
 
@@ -33,6 +34,57 @@ declare function dct:alternativeCitationTree(
     </refsDecl>/citeStructure[
         not($tree) or @xml:id = $tree
     ]
+};
+
+declare
+    (: An omitted MEI tree ID defaults to the first citation tree. :)
+    %test:arg("document", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("tree")
+    %test:arg("expected", "musicStructure")
+    %test:assertTrue
+    (: An empty MEI tree ID also defaults to the first citation tree. :)
+    %test:arg("document", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("tree", "")
+    %test:arg("expected", "musicStructure")
+    %test:assertTrue
+    (: A supplied MEI tree ID selects that citation tree. :)
+    %test:arg("document", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("tree", "paginationStructure")
+    %test:arg("expected", "paginationStructure")
+    %test:assertTrue
+    (: An unknown MEI tree ID raises InvalidParametersError. :)
+    %test:arg("document", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("tree", "unknownTree")
+    %test:arg("expected")
+    %test:assertError("errors:InvalidParametersError")
+    (: An omitted TEI tree ID defaults to the first citation tree. :)
+    %test:arg("document", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("tree")
+    %test:arg("expected", "basicStructure")
+    %test:assertTrue
+    (: An empty TEI tree ID also defaults to the first citation tree. :)
+    %test:arg("document", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("tree", "")
+    %test:arg("expected", "basicStructure")
+    %test:assertTrue
+    (: A supplied TEI tree ID selects that citation tree. :)
+    %test:arg("document", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("tree", "paginationStructure")
+    %test:arg("expected", "paginationStructure")
+    %test:assertTrue
+    (: An unknown TEI tree ID raises InvalidParametersError. :)
+    %test:arg("document", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("tree", "unknownTree")
+    %test:arg("expected")
+    %test:assertError("errors:InvalidParametersError")
+    function dct:test-selectCitationTree(
+        $document as xs:string,
+        $tree as xs:string?,
+        $expected as xs:string?
+    ) as xs:boolean {
+        let $documentResource := eutil:getDoc($document)
+        let $selectedTreeId := dts-util:selectCitationTree($documentResource, $tree)/string(@xml:id)
+        return $selectedTreeId eq $expected
 };
 
 

@@ -1459,6 +1459,14 @@ declare
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
     %test:arg("tree", "paginationStructure")
     %test:assertTrue
+    (: An empty tree parameter selects the first citation tree by default. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
+    %test:arg("tree", "")
+    %test:assertTrue
+    (: An omitted tree parameter also selects the first citation tree by default. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
+    %test:arg("tree")
+    %test:assertTrue
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-recording.xml")
     %test:arg("tree", "performanceStructure")
     %test:assertTrue
@@ -1476,7 +1484,7 @@ declare
         let $mediaType := "application/json"
         let $response := dts-document:document($resource, (), (), (), $tree, $mediaType, $html-parameters, $xml-parameters)
         let $checkResponseStructure := 
-            if ($tree eq "musicStructure") then
+            if (not($tree) or $tree eq "" or $tree eq "musicStructure") then
                 map:contains($response, "mdiv")
                 and map:contains($response?mdiv(1)?score(1)?section(1), "measure")
                 and map:contains($response?mdiv(1)?score(1)?section(1)?measure(1), "measureId")
