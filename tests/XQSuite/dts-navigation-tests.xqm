@@ -318,6 +318,21 @@ declare
     %test:arg("down", "1")
     %test:arg("tree", "musicStructure")
     %test:assertTrue
+    (: Valid request using down and ref. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("ref", "test-mdiv-1")
+    %test:arg("start") %test:arg("end")
+    %test:arg("down", "1")
+    %test:arg("tree", "musicStructure")
+    %test:assertTrue
+    (: Valid request using down and start/end. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("ref")
+    %test:arg("start", "test-mdiv-1")
+    %test:arg("end", "test-mdiv-2")
+    %test:arg("down", "1")
+    %test:arg("tree", "musicStructure")
+    %test:assertTrue
     (: Valid request using ref and down=0. :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref", "test-mdiv-1") %test:arg("start") %test:arg("end")
@@ -340,6 +355,8 @@ declare
             and $result/resource/id[@json:name = "@id"] eq $resource
             and $result/resource/type[@json:name = "@type"] eq "Resource"
 };
+
+
 
 declare
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
@@ -427,12 +444,27 @@ declare
 
 declare
     %test:assertTrue
-    function dnt:test-navigation-without-down-omits-members() as xs:boolean {
+    function dnt:test-navigation-ref-without-down-omits-members() as xs:boolean {
         let $result := dts-navigation:navigation(
             "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml",
             "test-mdiv-1", (), (), (), "musicStructure"
         )
-        return empty($result/member) and $result/ref/identifier eq "test-mdiv-1"
+        return
+            empty($result/member)
+            and $result/ref/identifier eq "test-mdiv-1"
+};
+
+declare
+    %test:assertTrue
+    function dnt:test-navigation-start-end-without-down-omits-members() as xs:boolean {
+        let $result := dts-navigation:navigation(
+            "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml",
+            (), "test-mdiv-1", "test-mdiv-2", (), "musicStructure"
+        )
+        return
+            empty($result/member)
+            and $result/start/identifier eq "test-mdiv-1"
+            and $result/end/identifier eq "test-mdiv-2"
 };
 
 declare
@@ -464,6 +496,14 @@ declare
     (: Down=0 requires ref. :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref") %test:arg("start") %test:arg("end")
+    %test:arg("down", "0")
+    %test:arg("tree")
+    %test:assertError("errors:InvalidParametersError")
+    (: Down=0 with start/end is invalid. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("ref")
+    %test:arg("start", "test-mdiv-1")
+    %test:arg("end", "test-mdiv-2")
     %test:arg("down", "0")
     %test:arg("tree")
     %test:assertError("errors:InvalidParametersError")
