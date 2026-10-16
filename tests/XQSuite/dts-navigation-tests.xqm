@@ -60,10 +60,10 @@ declare
     %test:assertEquals("movement-1 measure-1 measure-2 nested-movement nested-measure movement-2 measure-3")
     %test:args("-1", "document")
     %test:assertEquals("movement-1 measure-1 note-1 measure-2 nested-movement nested-measure movement-2 measure-3")
-    function dnt:test-buildMemberArray-depth($down as xs:integer, $scope as xs:string) as xs:string {
+    function dnt:test-buildMemberArray-depth($remainingLevels as xs:integer, $scope as xs:string) as xs:string {
         let $document := dnt:memberDocument()
         let $selection := if ($scope eq "document") then $document else $document//*[@xml:id = $scope]
-        let $members := dts-navigation:buildMemberArray($selection, dnt:memberCitationTrees()[1], $down)
+        let $members := dts-navigation:buildMemberArray($selection, dnt:memberCitationTrees()[1], $remainingLevels)
         return string-join($members/identifier, " ")
 };
 
@@ -151,6 +151,107 @@ declare
                 and count($member/identifier) eq 1
                 and $member/level eq "1"
             ))
+};
+
+declare
+    (: Whole-resource traversal: include citation units from the root through depth 2. :)
+    %test:arg("ref") %test:arg("start") %test:arg("end")
+    %test:arg("down", "2")
+    %test:arg("identifiers", "test-mdiv-1 test-measure-1 test-measure-2 test-measure-3 test-measure-4 test-mdiv-2 test-mdiv-2-measure-1")
+    %test:arg("excludedIdentifiers", "")
+    %test:assertTrue
+    (: Whole-resource traversal: include citation units from the root through depth 1. :)
+    %test:arg("ref") %test:arg("start") %test:arg("end")
+    %test:arg("down", "1")
+    %test:arg("identifiers", "test-mdiv-1 test-mdiv-2")
+    %test:arg("excludedIdentifiers", "test-measure-1 test-measure-2 test-measure-3 test-measure-4 test-mdiv-2-measure-1")
+    %test:assertTrue
+    (: Whole-resource traversal: include citation units from the root through deepest level. :)
+    %test:arg("ref") %test:arg("start") %test:arg("end")
+    %test:arg("down", "-1")
+    %test:arg("identifiers", "test-mdiv-1 test-measure-1 test-measure-2 test-measure-3 test-measure-4 test-mdiv-2 test-mdiv-2-measure-1")
+    %test:arg("excludedIdentifiers", "")
+    %test:assertTrue
+    (: Ref traversal: include the referenced movement and its citation units through relative depth 2. :)
+    %test:arg("ref", "test-mdiv-1") %test:arg("start") %test:arg("end")
+    %test:arg("down", "2")
+    %test:arg("identifiers", "test-mdiv-1 test-measure-1 test-measure-2 test-measure-3 test-measure-4")
+    %test:arg("excludedIdentifiers", "test-mdiv-2 test-mdiv-2-measure-1")
+    %test:assertTrue
+    (: Ref traversal: include the referenced movement and its citation units through relative depth 1. :)
+    %test:arg("ref", "test-mdiv-1") %test:arg("start") %test:arg("end")
+    %test:arg("down", "1")
+    %test:arg("identifiers", "test-mdiv-1 test-measure-1 test-measure-2 test-measure-3 test-measure-4")
+    %test:arg("excludedIdentifiers", "test-mdiv-2 test-mdiv-2-measure-1")
+    %test:assertTrue
+    (: Ref traversal: include the referenced movement and its citation units through deepest level. :)
+    %test:arg("ref", "test-mdiv-1") %test:arg("start") %test:arg("end")
+    %test:arg("down", "-1")
+    %test:arg("identifiers", "test-mdiv-1 test-measure-1 test-measure-2 test-measure-3 test-measure-4")
+    %test:arg("excludedIdentifiers", "test-mdiv-2 test-mdiv-2-measure-1")
+    %test:assertTrue
+    (: Ref traversal: include the referenced measure and its citation units through deepest level. :)
+    %test:arg("ref", "test-measure-2") %test:arg("start") %test:arg("end")
+    %test:arg("down", "-1")
+    %test:arg("identifiers", "test-measure-2")
+    %test:arg("excludedIdentifiers", "test-mdiv-1 test-measure-1 test-measure-3 test-measure-4 test-mdiv-2 test-mdiv-2-measure-1")
+    %test:assertTrue
+    (: Range traversal: include measures between start and end, inclusive, and citation units at relative depth 1. :)
+    %test:arg("ref")
+    %test:arg("start", "test-measure-1")
+    %test:arg("end", "test-measure-3")
+    %test:arg("down", "1")
+    %test:arg("identifiers", "test-measure-1 test-measure-2 test-measure-3")
+    %test:arg("excludedIdentifiers", "test-measure-4 test-mdiv-1 test-mdiv-2")
+    %test:assertTrue
+    (: Range traversal: include movements between start and end, inclusive, and citation units (measures) at relative depth 1. :)
+    %test:arg("ref")
+    %test:arg("start", "test-mdiv-1")
+    %test:arg("end", "test-mdiv-2")
+    %test:arg("down", "1")
+    %test:arg("identifiers", "test-mdiv-1 test-measure-1 test-measure-2 test-measure-3 test-measure-4 test-mdiv-2 test-mdiv-2-measure-1")
+    %test:arg("excludedIdentifiers", "")
+    %test:assertTrue
+    (: Range traversal: include measures between start and end, inclusive, and citation units until the deepest level. :)
+    %test:arg("ref")
+    %test:arg("start", "test-measure-1")
+    %test:arg("end", "test-measure-3")
+    %test:arg("down", "-1")
+    %test:arg("identifiers", "test-measure-1 test-measure-2 test-measure-3")
+    %test:arg("excludedIdentifiers", "test-measure-4 test-mdiv-1 test-mdiv-2")
+    %test:assertTrue
+    (: Range traversal: include movements between start and end, inclusive, and citation units (measures) until the deepest level. :)
+    %test:arg("ref")
+    %test:arg("start", "test-mdiv-1")
+    %test:arg("end", "test-mdiv-2")
+    %test:arg("down", "-1")
+    %test:arg("identifiers", "test-mdiv-1 test-measure-1 test-measure-2 test-measure-3 test-measure-4 test-mdiv-2 test-mdiv-2-measure-1")
+    %test:arg("excludedIdentifiers", "")
+    %test:assertTrue
+    function dnt:test-navigation-down-positive-member-content(
+        $ref as xs:string?,
+        $start as xs:string?,
+        $end as xs:string?,
+        $down as xs:integer,
+        $identifiers as xs:string,
+        $excludedIdentifiers as xs:string
+    ) as xs:boolean {
+        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml"
+        let $result := dts-navigation:navigation($resource, $ref, $start, $end, $down, "musicStructure")
+        let $boundaryIds := ($start, $end)[.]
+        let $excludedIds := tokenize(normalize-space($excludedIdentifiers), "\s+")
+        return
+            string-join($result/member/identifier, " ") eq $identifiers
+            and empty($result/member[identifier = $excludedIds])
+            and (every $member in $result/member satisfies (
+                $member/@json:array eq "true"
+                and $member/type[@json:name = "@type"] eq "CitableUnit"
+            ))
+            and (if ($ref) then $result/ref/identifier eq $ref else empty($result/ref))
+            and (if ($start and $end) then
+                $result/start/identifier eq $start and $result/end/identifier eq $end
+                else empty($result/start) and empty($result/end))
+            and (every $id in $boundaryIds satisfies exists($result/member[identifier = $id]))
 };
 
 

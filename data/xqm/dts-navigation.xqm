@@ -171,23 +171,24 @@ declare function dts-navigation:buildCitableUnitObject(
  :
  : @param $selection The document or already-selected citable elements
  : @param $citeStructure The starting citation structures, retaining their tree ancestors
- : @param $down The number of included levels: 1 includes only the starting level,
- :              -1 includes all levels, and 0 or an empty value includes none
+ : @param $remainingLevels The number of levels still to include: 1 includes only
+ :                         the starting level, -1 includes all levels, and 0 or
+ :                         an empty value includes none
  : @return Individual member elements, each containing one CitableUnit
  :)
 declare function dts-navigation:buildMemberArray(
     $selection as node()*,
     $citeStructure as element(citeStructure)*,
-    $down as xs:integer?
+    $remainingLevels as xs:integer?
 ) as element()* {
-    if (empty($down) or $down eq 0) then
+    if (empty($remainingLevels) or $remainingLevels eq 0) then
         ()
     else
         for $node in $selection/self::node()
         return
             typeswitch ($node)
                 case document-node() return
-                    dts-navigation:buildMemberArray($node/descendant::*, $citeStructure, $down)
+                    dts-navigation:buildMemberArray($node/descendant::*, $citeStructure, $remainingLevels)
                 case element() return
                     for $currentCiteStructure in $citeStructure
                     let $match := normalize-space($currentCiteStructure/@match)
@@ -198,13 +199,13 @@ declare function dts-navigation:buildMemberArray(
                         <member json:array="true">
                             {dts-navigation:buildCitableUnitObject($node, $currentCiteStructure, string($node/@xml:id))}
                         </member>,
-                        if (($down eq -1 or $down gt 1) and exists($currentCiteStructure/citeStructure)) then
+                        if (($remainingLevels eq -1 or $remainingLevels gt 1) and exists($currentCiteStructure/citeStructure)) then
                             let $children := $node/descendant::*[
                                 ancestor::*[node-name(.) eq $elementName][1] is $node
                             ]
-                            let $nextDown := if ($down eq -1) then -1 else $down - 1
+                            let $nextRemainingLevels := if ($remainingLevels eq -1) then -1 else $remainingLevels - 1
                             return
-                                dts-navigation:buildMemberArray($children, $currentCiteStructure/citeStructure, $nextDown)
+                                dts-navigation:buildMemberArray($children, $currentCiteStructure/citeStructure, $nextRemainingLevels)
                         else
                             ()
                     )
@@ -317,8 +318,9 @@ declare function dts-navigation:navigation(
             else
                 let $selection := dts-util:selectElementOrRange($document, $ref, $start, $end, $citationTree)
                 let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
-                return
-                    dts-navigation:buildMemberArray($selection, $citeStructure, $down)
+                (: The selected CitableUnit is the starting level; down counts levels below it. :)
+                let $remainingLevels := if ($down gt 0) then $down + 1 else $down
+                return dts-navigation:buildMemberArray($selection, $citeStructure, $remainingLevels)
 
         let $resourceObject := dts-navigation:buildResourceObject($document, $resource)
         let $output :=
