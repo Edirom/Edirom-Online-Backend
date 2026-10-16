@@ -660,6 +660,11 @@ declare function dts-document:document(
         let $citationTree := eutil:getDoc($eutil:app-root || '/data/trees/citationTrees' || upper-case($namespace) || '.xml')/refsDecl/citeStructure[
             not($tree) or @xml:id = $tree
         ]
+        let $citationTree :=
+            if ($tree and empty($citationTree)) then
+                error($errors:INVALID_PARAMETERS, "The requested citation tree '" || $tree || "' does not exist for this resource.")
+            else
+                $citationTree
         let $mediaTypeCompatible := dts-document:isMediaTypeCompatible($mediaType, $namespace)
 
 

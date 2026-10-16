@@ -608,6 +608,12 @@ declare
     %test:arg("down", "0")
     %test:arg("tree")
     %test:assertError("errors:InvalidParametersError")
+    (: The requested citation tree must exist for the resource. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("ref") %test:arg("start") %test:arg("end")
+    %test:arg("down", "1")
+    %test:arg("tree", "missingCitationTree")
+    %test:assertError("errors:InvalidParametersError")
     function dnt:test-navigation-validates-parameters(
         $resource as xs:string,
         $ref as xs:string?,

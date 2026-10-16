@@ -280,6 +280,11 @@ declare function dts-navigation:navigation(
         let $citationTree := eutil:getDoc($eutil:app-root || '/data/trees/citationTrees' || upper-case($namespace) || '.xml')/refsDecl/citeStructure[
             not($tree) or @xml:id = $tree
         ]
+        let $citationTree :=
+            if ($tree and empty($citationTree)) then
+                error($errors:INVALID_PARAMETERS, "The requested citation tree '" || $tree || "' does not exist for this resource.")
+            else
+                $citationTree
         let $boundaryUnits :=
             if ($ref) then
                 let $selection := dts-util:selectBasedOnCiteStructure($document, $ref, $citationTree)

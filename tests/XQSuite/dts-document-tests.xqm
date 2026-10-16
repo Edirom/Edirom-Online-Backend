@@ -673,6 +673,13 @@ declare
     %test:arg("mediaType", "application/xml")
     %test:arg("lang")
     %test:assertError("errors:InvalidParametersError")
+    (: reject an unknown citation tree id explicitly :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("ref") %test:arg("start") %test:arg("end")
+    %test:arg("tree", "missingCitationTree")
+    %test:arg("mediaType", "application/xml")
+    %test:arg("lang")
+    %test:assertError("errors:InvalidParametersError")
     function ddt:test-document-xml(
         $resource as xs:string,
         $ref as xs:string?,

@@ -477,7 +477,7 @@
 									"paginationStructure",
 									"performanceStructure"
 								],
-								"default": "musicStructure"
+								"default": ""
 							},
 							"examples": {
 								"Empty": {
@@ -885,10 +885,11 @@
 								"type": "string",
 								"enum": [
 									"musicStructure",
+									"basicStructure",
 									"paginationStructure",
 									"performanceStructure"
 								],
-								"default": "musicStructure"
+								"default": ""
 							},
 							"examples": {
 								"Empty": {
@@ -898,6 +899,10 @@
 								"musicStructure": {
 									"summary": "musicStructure",
 									"value": "musicStructure"
+								},
+								"basicStructure": {
+									"summary": "basicStructure",
+									"value": "basicStructure"
 								},
 								"paginationStructure": {
 									"summary": "paginationStructure",
