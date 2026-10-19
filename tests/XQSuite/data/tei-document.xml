@@ -57,8 +57,9 @@
             <p>Hello this is a paragraph</p>
             <p>Hello this is a paragraph</p>
             <p>Hello this is a paragraph</p>
-            <p>Hello this is a paragraph</p>
-            <p>Hello this is a paragraph</p>
+            <p>Hello this is the last paragraph of page 3.</p>
+            <pb n="4" xml:id="pb-4"/>
+            <p>Hello this is the first paragraph of page 4.</p>
             <p>Hello this is a paragraph</p>
             <p>Hello this is a paragraph<lb/>Hello this is a paragraph<lb/>Hello this is a paragraph<lb/><lb/>Hello this is a paragraph<ref n="Internetseite des Edirom-Projekts im Browser öffnen" target="https://www.edirom.de">Hello this is a paragraph</ref>Hello this is a paragraph<ref n="Internetseite der Weber-Ausgabe im Browser öffnen" target="https://www.weber-gesamtausgabe.de">Hello this is a paragraph</ref><lb/>Hello this is a paragraph<ref n="E-Mail an Edirom schreiben" target="mailto:info@edirom.de">Hello this is a paragraph</ref>Hello this is a paragraph<ref n="E-Mail an die Weber-Ausgabe schreiben" target="mailto:info@weber-gesamtausgabe.de">Hello this is a paragraph</ref></p>
          </div>

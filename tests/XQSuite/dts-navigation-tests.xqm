@@ -383,7 +383,7 @@ declare
     %test:arg("ref")
     %test:arg("start") %test:arg("end")
     %test:arg("down", "1")
-    %test:arg("identifiers", "pb-1 pb-2 pb-3")
+    %test:arg("identifiers", "pb-1 pb-2 pb-3 pb-4")
     %test:arg("excludedIdentifiers", "")
     %test:assertTrue
     (: Ref pagination traversal returns only the referenced page break. :)
@@ -391,21 +391,21 @@ declare
     %test:arg("start") %test:arg("end")
     %test:arg("down", "1")
     %test:arg("identifiers", "pb-2")
-    %test:arg("excludedIdentifiers", "pb-1 pb-3")
+    %test:arg("excludedIdentifiers", "pb-1 pb-3 pb-4")
     %test:assertTrue
     (: Ref pagination traversal at down=-1 still returns the referenced page break. :)
     %test:arg("ref", "pb-2")
     %test:arg("start") %test:arg("end")
     %test:arg("down", "-1")
     %test:arg("identifiers", "pb-2")
-    %test:arg("excludedIdentifiers", "pb-1 pb-3")
+    %test:arg("excludedIdentifiers", "pb-1 pb-3 pb-4")
     %test:assertTrue
     (: Pagination range traversal returns the page breaks from start to end inclusively. :)
     %test:arg("ref")
     %test:arg("start", "pb-1") %test:arg("end", "pb-3")
     %test:arg("down", "1")
     %test:arg("identifiers", "pb-1 pb-2 pb-3")
-    %test:arg("excludedIdentifiers", "")
+    %test:arg("excludedIdentifiers", "pb-4")
     %test:assertTrue
     function dnt:test-navigation-pagination-tree-member-content-tei(
         $ref as xs:string?,
@@ -693,8 +693,14 @@ declare
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "pb-2")
     %test:arg("tree", "paginationStructure")
-    %test:arg("identifiers", "pb-1 pb-2 pb-3")
-    %test:arg("excludedIdentifiers", "")
+    %test:arg("identifiers", "pb-2")
+    %test:arg("excludedIdentifiers", "pb-1 pb-3 pb-4")
+    %test:assertTrue
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("ref", "pb-3")
+    %test:arg("tree", "paginationStructure")
+    %test:arg("identifiers", "pb-3 pb-4")
+    %test:arg("excludedIdentifiers", "pb-1 pb-2")
     %test:assertTrue
     function dnt:test-navigation-down-zero-returns-siblings(
         $resource as xs:string,
