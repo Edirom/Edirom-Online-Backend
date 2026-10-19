@@ -277,17 +277,24 @@ declare function dts-navigation:navigation(
             else
                 error($errors:NOT_FOUND, "The requested resource was not found.")
         let $citationTree := dts-util:selectCitationTree($document, $tree)
+        let $resolvedSelection :=
+            if ($ref) then
+                dts-util:selectRef($document, $ref, $citationTree)
+            else if ($start and $end) then
+                dts-util:selectRange($document, $start, $end, $citationTree)
+            else
+                ()
         let $boundaryUnits :=
             if ($ref) then
-                let $selection := dts-util:selectBasedOnCiteStructure($document, $ref, $citationTree)
+                let $selection := $resolvedSelection?selectedNodes
                 let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
                 return
                     <ref>
                         {dts-navigation:buildCitableUnitObject($selection, $citeStructure, $ref)}
                     </ref>
             else if ($start and $end) then
-                let $startSelection := dts-util:selectBasedOnCiteStructure($document, $start, $citationTree)
-                let $endSelection := dts-util:selectBasedOnCiteStructure($document, $end, $citationTree)
+                let $startSelection := $resolvedSelection?startNode
+                let $endSelection := $resolvedSelection?endNode
                 let $startCiteStructure := dts-util:getCiteStructureForNode($startSelection, $citationTree)
                 let $endCiteStructure := dts-util:getCiteStructureForNode($endSelection, $citationTree)
                 return (
@@ -306,14 +313,14 @@ declare function dts-navigation:navigation(
                 ()
             (: If $down = 0 and $ref is present -> special case :)
             else if ($down eq 0 and $ref) then
-                let $selection := dts-util:selectBasedOnCiteStructure($document, $ref, $citationTree)
+                let $selection := $resolvedSelection?startNode
                 let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
                 return
                     dts-navigation:buildMemberArrayRefDownZero($selection, $citeStructure)
             else if (not($ref) and not($start) and not($end)) then
                 dts-navigation:buildMemberArray($document, $citationTree, $down)
             else
-                let $selection := dts-util:selectElementOrRange($document, $ref, $start, $end, $citationTree)
+                let $selection := $resolvedSelection?selectedNodes
                 let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
                 (: The selected CitableUnit is the starting level; down counts levels below it. :)
                 let $remainingLevels := if ($down gt 0) then $down + 1 else $down

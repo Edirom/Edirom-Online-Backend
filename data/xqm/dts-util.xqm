@@ -214,90 +214,150 @@ declare function dts-util:selectTEIPages(
         $reduced/descendant-or-self::*[@xml:id = $commonAncestorID]/*
 };
 
+(: Resolves a single citable unit using the same validation as a ref selection. :)
+declare function dts-util:resolveCitableUnit(
+    $document as node(),
+    $ref as xs:string,
+    $citationTree as element(citeStructure)*,
+    $allowAlwaysPreserved as xs:boolean
+) as element()* {
+    let $citeStructureSelection := dts-util:selectBasedOnCiteStructure($document, $ref, $citationTree)
+    let $candidateSelection :=
+        if ($citeStructureSelection) then
+            $citeStructureSelection
+        else
+            $document//*[local-name() = $ref]
+    return
+        if (
+            $candidateSelection and
+            (dts-util:isInCitationTree($candidateSelection, $citationTree)
+            or ($allowAlwaysPreserved and dts-util:isAlwaysPreservedSelection($candidateSelection)))
+        ) then
+            $candidateSelection
+        else if ($candidateSelection) then
+            error($errors:INVALID_PARAMETERS, "The selected citable units are not part of the citation tree specified for this document and are not part of the always preserved elements." || "Citation tree: " || string-join($citationTree/@xml:id, ", ") || ". Selected element: " || node-name($candidateSelection[1]) || ", Selected element @xml:id: " || $candidateSelection[1]/@xml:id)
+        else
+            error($errors:NOT_FOUND, "The specified citable units did not match any element in the document for the specified citation tree.")
+};
+
+(: Resolves the requested range endpoints once, preserving the exact boundary nodes. :)
+declare function dts-util:getRangeExtremes(
+    $document as node(),
+    $start as xs:string,
+    $end as xs:string,
+    $citationTree as element(citeStructure)*
+) as map(*) {
+    let $candidateStartNode := dts-util:selectBasedOnCiteStructure($document, $start, $citationTree)
+    let $candidateEndNode := dts-util:selectBasedOnCiteStructure($document, $end, $citationTree)
+    let $startNode :=
+        if ($candidateStartNode and dts-util:isInCitationTree($candidateStartNode, $citationTree)) then
+            $candidateStartNode[1]
+        else if ($candidateStartNode) then
+            error($errors:INVALID_PARAMETERS, "The selected start citable unit is not part of the citation tree specified for this document." || "Citation tree: " || string-join($citationTree/@xml:id, ", ") || ". Selected element: " || node-name($candidateStartNode[1]) || ", Selected element @xml:id: " || $candidateStartNode[1]/@xml:id)
+        else
+            error($errors:NOT_FOUND, "The specified start citable unit did not match any element in the document for the specified citation tree.")
+    let $endNode :=
+        if ($candidateEndNode and dts-util:isInCitationTree($candidateEndNode, $citationTree)) then
+            $candidateEndNode[1]
+        else if ($candidateEndNode) then
+            error($errors:INVALID_PARAMETERS, "The selected end citable unit is not part of the citation tree specified for this document." || "Citation tree: " || string-join($citationTree/@xml:id, ", ") || ". Selected element: " || node-name($candidateEndNode[1]) || ", Selected element @xml:id: " || $candidateEndNode[1]/@xml:id)
+        else
+            error($errors:NOT_FOUND, "The specified end citable unit did not match any element in the document for the specified citation tree.")
+    return map { "startNode": $startNode, "endNode": $endNode }
+};
+
+(: Selects the elements represented by resolved range extremes. :)
+declare function dts-util:selectRangeNodes(
+    $startNode as element(),
+    $endNode as element(),
+    $start as xs:string,
+    $end as xs:string
+) as element()* {
+    if (
+        node-name($startNode) eq QName("http://www.tei-c.org/ns/1.0", "pb")
+        and node-name($endNode) eq QName("http://www.tei-c.org/ns/1.0", "pb")
+    ) then
+        if ($startNode is $endNode) then
+            $startNode
+        else if ($startNode << $endNode) then
+            ($startNode, $startNode/following::*[. << $endNode], $endNode)
+        else
+            error($errors:INVALID_PARAMETERS, "Invalid start and end citable units. The start node must come before the end node. Start: " || $start || ", End: " || $end)
+    else if ($start eq $end) then
+        $startNode
+    else if (not($startNode/parent::* is $endNode/parent::*)) then
+        error($errors:INVALID_PARAMETERS, "The start and end citable units must have the same parent, or be page break elements." || "Selected start element: " || node-name($startNode) || ", Selected start element @xml:id: " || $startNode/@xml:id || ". Selected end element: " || node-name($endNode) || ", Selected end element @xml:id: " || $endNode/@xml:id)
+    else if ($startNode << $endNode) then
+        ($startNode, $startNode/following-sibling::*[. << $endNode], $endNode)
+    else
+        error($errors:INVALID_PARAMETERS, "Invalid start and end citable units. The start node must come before the end node. Start: " || $start || ", End: " || $end)
+};
+
+(: Resolves and selects a ref request, retaining its selected node and boundary. :)
+declare function dts-util:selectRef(
+    $document as node(),
+    $ref as xs:string,
+    $citationTree as element(citeStructure)*
+) as map(*) {
+    let $nodes := dts-util:resolveCitableUnit($document, $ref, $citationTree, true())
+    return map { "selectedNodes": $nodes, "startNode": $nodes, "endNode": () }
+};
+
+(: Resolves and selects a range request, retaining its exact requested extremes. :)
+declare function dts-util:selectRange(
+    $document as node(),
+    $start as xs:string,
+    $end as xs:string,
+    $citationTree as element(citeStructure)*
+) as map(*) {
+    let $extremes := dts-util:getRangeExtremes($document, $start, $end, $citationTree)
+    let $startNode := $extremes?startNode
+    let $endNode := $extremes?endNode
+    let $selectedNodes := dts-util:selectRangeNodes($startNode, $endNode, $start, $end)
+    return map {
+        "selectedNodes": $selectedNodes,
+        "startNode": $startNode,
+        "endNode": $endNode
+    }
+};
+
 (:~
- : Resolves a document selection from a reference or a start/end pair, matching a given citation structure.
+ : Selects document content for a DTS document request. This preserves the
+ : original selectElementOrRange signature and expands TEI page selections.
  :
  : @param $document The source document
  : @param $ref An optional reference to select a single unit
  : @param $start The optional start reference of a range
  : @param $end The optional end reference of a range
  : @param $citationTree The citation tree used to validate the selection
- : @return The selected nodes or range content
+ : @return The selected nodes or page content
  :)
 declare function dts-util:selectElementOrRange(
     $document as node(),
     $ref as xs:string?,
     $start as xs:string?,
-    $end as xs:string?,
+    $end as xs:string?, 
     $citationTree as element(citeStructure)*
 ) as node()* {
-    if ($ref) then
-        let $citeStructureSelection := dts-util:selectBasedOnCiteStructure($document, $ref, $citationTree)
-        let $candidateSelection :=
-            if ($citeStructureSelection) then
-                $citeStructureSelection
-            else
-                $document//*[local-name() = $ref]
-        return
-            if (
-                $candidateSelection and
-                (dts-util:isInCitationTree($candidateSelection, $citationTree)
-                or dts-util:isAlwaysPreservedSelection($candidateSelection)) 
-                and node-name($candidateSelection[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb")
-            ) then
-                dts-util:selectTEIPages($document, $candidateSelection, ())
-            else if (
-                $candidateSelection and
-                (dts-util:isInCitationTree($candidateSelection, $citationTree)
-                or dts-util:isAlwaysPreservedSelection($candidateSelection))
-            ) then
-                $candidateSelection
-            else if ($candidateSelection) then
-                error($errors:INVALID_PARAMETERS, "The selected citable units are not part of the citation tree specified for this document and are not part of the always preserved elements." || "Citation tree: " || string-join($citationTree/@xml:id, ", ") || ". Selected element: " || node-name($candidateSelection[1]) || ", Selected element @xml:id: " || $candidateSelection[1]/@xml:id)
-            else
-                error($errors:NOT_FOUND, "The specified citable units did not match any element in the document for the specified citation tree.")
-    else if ($start and $end) then
-        let $candidateStartNode := dts-util:selectBasedOnCiteStructure($document, $start, $citationTree)
-        let $candidateEndNode := dts-util:selectBasedOnCiteStructure($document, $end, $citationTree)
-        let $startNode :=
-            if (
-                $candidateStartNode and
-                dts-util:isInCitationTree($candidateStartNode, $citationTree)
-            ) then
-                $candidateStartNode
-            else if ($candidateStartNode) then
-                error($errors:INVALID_PARAMETERS, "The selected start citable unit is not part of the citation tree specified for this document." || "Citation tree: " || string-join($citationTree/@xml:id, ", ") || ". Selected element: " || node-name($candidateStartNode[1]) || ", Selected element @xml:id: " || $candidateStartNode[1]/@xml:id)
-            else
-                error($errors:NOT_FOUND, "The specified start citable unit did not match any element in the document for the specified citation tree.")
-        let $endNode :=
-            if (
-                $candidateEndNode and 
-                dts-util:isInCitationTree($candidateEndNode, $citationTree)
-            ) then
-                $candidateEndNode
-            else if ($candidateEndNode) then
-                error($errors:INVALID_PARAMETERS, "The selected end citable unit is not part of the citation tree specified for this document." || "Citation tree: " || string-join($citationTree/@xml:id, ", ") || ". Selected element: " || node-name($candidateEndNode[1]) || ", Selected element @xml:id: " || $candidateEndNode[1]/@xml:id)
-            else
-                error($errors:NOT_FOUND, "The specified end citable unit did not match any element in the document for the specified citation tree.")
-        return
-            if (node-name($startNode[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb")
-                and node-name($endNode[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb")
-            ) then
-                dts-util:selectTEIPages($document, $startNode, $endNode)
-            else if ($start eq $end) then
-                $startNode
-            else if (not($startNode/parent::* is $endNode/parent::*)) then
-                error($errors:INVALID_PARAMETERS, "The start and end citable units must have the same parent, or be page break elements." || "Selected start element: " || node-name($startNode[1]) || ", Selected start element @xml:id: " || $startNode[1]/@xml:id || ". Selected end element: " || node-name($endNode[1]) || ", Selected end element @xml:id: " || $endNode[1]/@xml:id)
-            else if ($startNode << $endNode) then
-                (
-                    $startNode, 
-                    $startNode/following-sibling::*[. << $endNode], 
-                    $endNode
-                )
-            else
-                error($errors:INVALID_PARAMETERS, "Invalid start and end citable units. The start node must come before the end node. Start: " || $start || ", End: " || $end)
-    else
-        ()
+    let $resolvedSelection :=
+        if ($ref) then
+            dts-util:selectRef($document, $ref, $citationTree)
+        else if ($start and $end) then
+            dts-util:selectRange($document, $start, $end, $citationTree)
+        else
+            map { "selectedNodes": (), "startNode": (), "endNode": () }
+    let $selection := $resolvedSelection?selectedNodes
+    let $startBoundary := $resolvedSelection?startNode
+    let $endBoundary := $resolvedSelection?endNode
+    return
+        if (
+            exists($startBoundary)
+            and node-name($startBoundary[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb")
+            and (empty($endBoundary) or node-name($endBoundary[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb"))
+        ) then
+            dts-util:selectTEIPages($document, $startBoundary, $endBoundary)
+        else
+            $selection
 };
 
 (:~

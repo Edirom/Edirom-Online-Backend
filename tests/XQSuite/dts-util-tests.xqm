@@ -279,6 +279,83 @@ declare
 };
 
 declare
+    (: A page-break ref selection remains the requested page-break unit. :)
+    %test:arg("ref", "pb-2")
+    %test:arg("identifiers", "pb-2")
+    %test:assertTrue
+    function dct:test-selectRef-keeps-TEI-page-break-unit(
+        $ref as xs:string?,
+        $identifiers as xs:string
+    ) as xs:boolean {
+        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
+        let $document := eutil:add-xml-ids(eutil:getDoc($resource))
+        let $citationTree := dts-util:selectCitationTree($document, "paginationStructure")
+        let $resolvedSelection := dts-util:selectRef($document, $ref, $citationTree)
+        let $selection := $resolvedSelection?selectedNodes
+        let $pageBreakIds := $selection[self::tei:pb]/@xml:id
+        return
+            string-join(for $id in $pageBreakIds return string($id), " ") eq $identifiers
+            and ($resolvedSelection?startNode)/@xml:id eq $ref
+            and empty($resolvedSelection?endNode)
+            and (every $selectedUnit in $selection satisfies $selectedUnit/self::tei:pb)
+};
+
+declare
+    (: A page-break range preserves its boundaries and intervening elements. :)
+    %test:arg("start", "pb-1")
+    %test:arg("end", "pb-3")
+    %test:arg("identifiers", "pb-1 pb-2 pb-3")
+    %test:assertTrue
+    function dct:test-selectRange-keeps-TEI-page-break-units(
+        $start as xs:string,
+        $end as xs:string,
+        $identifiers as xs:string
+    ) as xs:boolean {
+        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
+        let $document := eutil:add-xml-ids(eutil:getDoc($resource))
+        let $citationTree := dts-util:selectCitationTree($document, "paginationStructure")
+        let $resolvedSelection := dts-util:selectRange($document, $start, $end, $citationTree)
+        let $selection := $resolvedSelection?selectedNodes
+        let $pageBreakIds := $selection[self::tei:pb]/@xml:id
+        return
+            string-join(for $id in $pageBreakIds return string($id), " ") eq $identifiers
+            and exists($selection[not(self::tei:pb)])
+            and ($resolvedSelection?startNode)/@xml:id eq $start
+            and ($resolvedSelection?endNode)/@xml:id eq $end
+};
+
+declare
+    (: A document ref to a page break expands to that page's content. :)
+    %test:arg("ref", "pb-2")
+    %test:arg("start") %test:arg("end")
+    %test:arg("expectedIdentifiers", "pb-2 yes-in-p2-1")
+    %test:arg("excludedIdentifiers", "pb-1 pb-3 not-in-p2-1 not-in-p2-2")
+    %test:assertTrue
+    (: A document page range expands to content across both pages. :)
+    %test:arg("ref")
+    %test:arg("start", "pb-1") %test:arg("end", "pb-2")
+    %test:arg("expectedIdentifiers", "pb-1 pb-2 yes-in-p2-1")
+    %test:arg("excludedIdentifiers", "pb-3 not-in-p2-2")
+    %test:assertTrue
+    function dct:test-selectElementOrRange-expands-TEI-pages(
+        $ref as xs:string?,
+        $start as xs:string?,
+        $end as xs:string?,
+        $expectedIdentifiers as xs:string,
+        $excludedIdentifiers as xs:string
+    ) as xs:boolean {
+        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
+        let $document := eutil:add-xml-ids(eutil:getDoc($resource))
+        let $citationTree := dts-util:selectCitationTree($document, "paginationStructure")
+        let $content := dts-util:selectElementOrRange($document, $ref, $start, $end, $citationTree)
+        let $expectedIds := tokenize(normalize-space($expectedIdentifiers), "\s+")
+        let $excludedIds := tokenize(normalize-space($excludedIdentifiers), "\s+")
+        return
+            (every $id in $expectedIds satisfies exists($content/descendant-or-self::*[@xml:id = $id]))
+            and empty($content/descendant-or-self::*[@xml:id = $excludedIds])
+};
+
+declare
     %test:assertTrue
     function dct:test-selectTEIPages-returns-something() {
         let $document := eutil:getDoc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
