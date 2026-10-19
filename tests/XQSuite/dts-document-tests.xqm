@@ -3,6 +3,7 @@ xquery version "3.1";
 module namespace ddt = "http://www.edirom.de/xquery/xqsuite/dts-document-tests";
 
 import module namespace dts-document = "http://www.edirom.de/api/dts-document" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/dts-document.xqm";
+import module namespace dts-util = "http://www.edirom.de/api/dts-util" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/dts-util.xqm";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/eutil.xqm";
 
 declare namespace dts="https://w3id.org/dts/api#";
@@ -10,6 +11,37 @@ declare namespace mei="http://www.music-encoding.org/ns/mei";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace test="http://exist-db.org/xquery/xqsuite";
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
+
+declare
+    (: A page-break ref returns content from that page only. :)
+    %test:arg("ref", "pb-2")
+    %test:arg("start") %test:arg("end")
+    %test:arg("expectedIdentifiers", "pb-2 yes-in-p2-1")
+    %test:arg("excludedIdentifiers", "pb-1 pb-3 not-in-p2-1 not-in-p2-2")
+    %test:assertTrue
+    (: A page range returns content across both requested pages. :)
+    %test:arg("ref")
+    %test:arg("start", "pb-1") %test:arg("end", "pb-2")
+    %test:arg("expectedIdentifiers", "pb-1 pb-2 yes-in-p2-1")
+    %test:arg("excludedIdentifiers", "pb-3 not-in-p2-2")
+    %test:assertTrue
+    function ddt:test-selectElementOrRange-expands-TEI-pages(
+        $ref as xs:string?,
+        $start as xs:string?,
+        $end as xs:string?,
+        $expectedIdentifiers as xs:string,
+        $excludedIdentifiers as xs:string
+    ) as xs:boolean {
+        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
+        let $document := eutil:add-xml-ids(eutil:getDoc($resource))
+        let $citationTree := dts-util:selectCitationTree($document, "paginationStructure")
+        let $content := dts-document:selectElementOrRange($document, $ref, $start, $end, $citationTree)
+        let $expectedIds := tokenize(normalize-space($expectedIdentifiers), "\s+")
+        let $excludedIds := tokenize(normalize-space($excludedIdentifiers), "\s+")
+        return
+            (every $id in $expectedIds satisfies exists($content/descendant-or-self::*[@xml:id = $id]))
+            and empty($content/descendant-or-self::*[@xml:id = $excludedIds])
+};
 
 declare function ddt:citationTree(
     $tree as xs:string?

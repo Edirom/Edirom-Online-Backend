@@ -322,45 +322,6 @@ declare function dts-util:selectRange(
 };
 
 (:~
- : Selects document content for a DTS document request. This preserves the
- : original selectElementOrRange signature and expands TEI page selections.
- :
- : @param $document The source document
- : @param $ref An optional reference to select a single unit
- : @param $start The optional start reference of a range
- : @param $end The optional end reference of a range
- : @param $citationTree The citation tree used to validate the selection
- : @return The selected nodes or page content
- :)
-declare function dts-util:selectElementOrRange(
-    $document as node(),
-    $ref as xs:string?,
-    $start as xs:string?,
-    $end as xs:string?, 
-    $citationTree as element(citeStructure)*
-) as node()* {
-    let $resolvedSelection :=
-        if ($ref) then
-            dts-util:selectRef($document, $ref, $citationTree)
-        else if ($start and $end) then
-            dts-util:selectRange($document, $start, $end, $citationTree)
-        else
-            map { "selectedNodes": (), "startNode": (), "endNode": () }
-    let $selection := $resolvedSelection?selectedNodes
-    let $startBoundary := $resolvedSelection?startNode
-    let $endBoundary := $resolvedSelection?endNode
-    return
-        if (
-            exists($startBoundary)
-            and node-name($startBoundary[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb")
-            and (empty($endBoundary) or node-name($endBoundary[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb"))
-        ) then
-            dts-util:selectTEIPages($document, $startBoundary, $endBoundary)
-        else
-            $selection
-};
-
-(:~
  : Returns citation structures whose match QName matches the supplied node.
  : All matching structures are returned; ambiguous matches are not reduced to the first result.
  : This uses the currently supported QName-based matches, not hierarchical XPath expressions.

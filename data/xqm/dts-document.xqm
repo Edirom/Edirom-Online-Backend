@@ -306,9 +306,48 @@ declare function dts-document:selectAndWrap(
     $end as xs:string?,
     $citationTree as element(citeStructure)*
 ) as node()* {
-    let $selection := dts-util:selectElementOrRange($document, $ref, $start, $end, $citationTree)
+    let $selection := dts-document:selectElementOrRange($document, $ref, $start, $end, $citationTree)
     return
         dts-document:wrapSelection($selection, $document)
+};
+
+(:~
+ : Selects document content from a reference or range, expanding TEI page
+ : selections to the requested page content.
+ :
+ : @param $document The source document
+ : @param $ref An optional reference to select a single unit
+ : @param $start The optional start reference of a range
+ : @param $end The optional end reference of a range
+ : @param $citationTree The citation tree used to validate the selection
+ : @return The selected nodes or page content
+ :)
+declare function dts-document:selectElementOrRange(
+    $document as node(),
+    $ref as xs:string?,
+    $start as xs:string?,
+    $end as xs:string?,
+    $citationTree as element(citeStructure)*
+) as node()* {
+    let $resolvedSelection :=
+        if ($ref) then
+            dts-util:selectRef($document, $ref, $citationTree)
+        else if ($start and $end) then
+            dts-util:selectRange($document, $start, $end, $citationTree)
+        else
+            map { "selectedNodes": (), "startNode": (), "endNode": () }
+    let $selection := $resolvedSelection?selectedNodes
+    let $startBoundary := $resolvedSelection?startNode
+    let $endBoundary := $resolvedSelection?endNode
+    return
+        if (
+            exists($startBoundary)
+            and node-name($startBoundary[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb")
+            and (empty($endBoundary) or node-name($endBoundary[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb"))
+        ) then
+            dts-util:selectTEIPages($document, $startBoundary, $endBoundary)
+        else
+            $selection
 };
 
 (:~
