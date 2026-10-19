@@ -187,11 +187,31 @@ declare function source:get-virtual-measure-id($measure as element(mei:measure))
 };
 
 (:~
+ : Returns the measures of an mdiv that carry a given designation.
+ :
+ : A designation generally occurs once in every part, so this is a sequence rather than a
+ : single element. Callers needing exactly one measure take [1] themselves: that constraint
+ : belongs to the caller, not to the lookup.
+ :
+ : @param $doc The source document to resolve against, may be empty
+ : @param $mdivId The @xml:id of the mdiv to look in, may be empty
+ : @param $designation The measure designation, cf. source:label-or-n, may be empty
+ : @return The measures carrying that designation, in document order
+ :)
+declare function source:resolve-measure-in-mdiv($doc as document-node()?, $mdivId as xs:string?, $designation as xs:string?) as element(mei:measure)* {
+
+    if (string($mdivId) ne '' and string($designation) ne '')
+    then $doc/id($mdivId)//mei:measure[source:label-or-n(.) eq $designation]
+    else ()
+};
+
+(:~
  : Returns the measure elements a virtual measure ID denotes.
  :
- : Since a measure number generally occurs once in every part, this is a sequence rather
- : than a single element. The ID is split on its LAST underscore, so an mdiv @xml:id that
- : itself contains underscores stays intact.
+ : The ID is split on its LAST underscore, so an mdiv @xml:id that itself contains
+ : underscores stays intact; the two halves are then handed to
+ : source:resolve-measure-in-mdiv, which is the same lookup the goto-by-name path performs
+ : with the mdiv and designation supplied separately rather than encoded in a string.
  :
  : @param $doc The source document to resolve against, may be empty
  : @param $id The virtual measure ID, may be empty
@@ -203,12 +223,11 @@ declare function source:resolve-virtual-measure-id($doc as document-node()?, $id
     if (starts-with($id, 'measure_'))
     then
         let $reference := substring-after($id, 'measure_')
-        let $mdivId := functx:substring-before-last($reference, '_')
-        let $designation := functx:substring-after-last($reference, '_')
         return
-            if ($mdivId eq '' or $designation eq '')
-            then ()
-            else $doc/id($mdivId)//mei:measure[source:label-or-n(.) eq $designation]
+            source:resolve-measure-in-mdiv(
+                $doc,
+                functx:substring-before-last($reference, '_'),
+                functx:substring-after-last($reference, '_'))
     else ()
 };
 

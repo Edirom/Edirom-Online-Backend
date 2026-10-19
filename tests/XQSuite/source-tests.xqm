@@ -39,6 +39,25 @@ declare
 };
 
 
+(: source:resolve-measure-in-mdiv =========================================== :)
+
+declare
+    (: a designation occurring once per part yields one measure per part :)
+    %test:args("test_mdiv_01", "1")     %test:assertEquals("2")
+    %test:args("test_mdiv_01", "2b")    %test:assertEquals("2")
+    (: an mdiv without parts yields a single measure :)
+    %test:args("test_mdiv_02", "1")     %test:assertEquals("1")
+    (: the lookup is scoped to the mdiv: mdiv 2's designation is not visible in mdiv 1 :)
+    %test:args("test_mdiv_01", "99")    %test:assertEquals("0")
+    %test:args("no-such-mdiv", "1")     %test:assertEquals("0")
+    (: empty arguments resolve to nothing rather than to every measure :)
+    %test:args("", "1")                 %test:assertEquals("0")
+    %test:args("test_mdiv_01", "")      %test:assertEquals("0")
+    function st:test-resolve-measure-in-mdiv($mdivId as xs:string, $designation as xs:string) as xs:string {
+        string(count(source:resolve-measure-in-mdiv(doc($st:parts-labelled), $mdivId, $designation)))
+};
+
+
 (: source:resolve-virtual-measure-id ======================================== :)
 
 declare
