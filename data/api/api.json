@@ -247,6 +247,10 @@
 								"Page Break 3": {
 									"summary": "Page Break 3",
 									"value": "pb-3"
+								},
+								"Page Break 4": {
+									"summary": "Page Break 4",
+									"value": "pb-4"
 								}
 							}
 						},
@@ -338,6 +342,10 @@
 								"Page Break 3": {
 									"summary": "Page Break 3",
 									"value": "pb-3"
+								},
+								"Page Break 4": {
+									"summary": "Page Break 4",
+									"value": "pb-4"
 								}
 							}
 						},
@@ -429,6 +437,10 @@
 								"Page Break 3": {
 									"summary": "Page Break 3",
 									"value": "pb-3"
+								},
+								"Page Break 4": {
+									"summary": "Page Break 4",
+									"value": "pb-4"
 								}
 							}
 						},
@@ -676,6 +688,10 @@
 								"Page Break 3": {
 									"summary": "Page Break 3",
 									"value": "pb-3"
+								},
+								"Page Break 4": {
+									"summary": "Page Break 4",
+									"value": "pb-4"
 								}
 							}
 						},
@@ -775,6 +791,10 @@
 								"Page Break 3": {
 									"summary": "Page Break 3",
 									"value": "pb-3"
+								},
+								"Page Break 4": {
+									"summary": "Page Break 4",
+									"value": "pb-4"
 								}
 							}
 						},
@@ -874,6 +894,10 @@
 								"Page Break 3": {
 									"summary": "Page Break 3",
 									"value": "pb-3"
+								},
+								"Page Break 4": {
+									"summary": "Page Break 4",
+									"value": "pb-4"
 								}
 							}
 						},
@@ -1033,7 +1057,7 @@
 							"description": "Remove the dts:wrapper element from the returned document, only used if mediaType is application/xml",
 							"schema": {
 								"type": "boolean",
-								"default": false
+								"default": null
 							},
 							"examples": {
 								"Empty": {
