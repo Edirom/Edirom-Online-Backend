@@ -584,6 +584,20 @@ declare function eutil:request-lang-preferred-iso639() as xs:string? {
 };
 
 (:~
+ : Converts a positive integer to its uppercase Roman numeral representation.
+ : Values that are not positive integers are returned unchanged as strings.
+ :
+ : @param $n The value to convert
+ : @return The Roman numeral, or the original value as a string
+ :)
+declare function eutil:changeFormatToRomanNumeral($n as xs:anyAtomicType?) as xs:string {
+    if ($n castable as xs:integer and xs:integer($n) gt 0) then
+        format-integer(xs:integer($n), 'I')
+    else
+        string($n)
+};
+
+(:~
  : Returns one joined and normalized string
  :
  : @param $strings The string(s) to be processed

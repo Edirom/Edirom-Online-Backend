@@ -22,30 +22,6 @@ declare option output:media-type "application/json";
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
-declare function local:changeFormat($n) as xs:string {
-(:TODO replace with fn:format-integer:)
-    if ($n = '1') then
-        ('I')
-    else if ($n = '2') then
-        ('II')
-    else if ($n = '3') then
-        ('III')
-    else if ($n = '4') then
-        ('IV')
-    else if ($n = '5') then
-        ('V')
-    else if ($n = '6') then
-        ('VI')
-    else if ($n = '7') then
-        ('VII')
-    else if ($n = '8') then
-        ('VIII')
-    else if ($n = '9') then
-        ('IX')
-    else
-        ($n)
-};
-
 let $uri := request:get-parameter('uri', '')
 let $mode := request:get-parameter('mode', '')
 let $tei := eutil:getDoc($uri)
@@ -95,7 +71,7 @@ let $ret as array(*)* :=
                     }
             ) else if ($elem/local-name() = 'div' and $elem[@type = 'act']) then (
                 let $act := $elem
-                let $label := local:changeFormat($act/@n)
+                let $label := eutil:changeFormatToRomanNumeral($act/@n)
                 return
                     for $scene in $act//tei:div[@type = 'scene']
                     let $label := $label || ' - ' || string-join(

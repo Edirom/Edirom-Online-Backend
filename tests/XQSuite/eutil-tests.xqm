@@ -265,3 +265,11 @@ declare
     function eut:sort-as-numeric-alpha($seq as item()*) as item()* {
         eutil:sort-as-numeric-alpha($seq)
 };
+
+declare
+    %test:args("4")  %test:assertEquals("IV")
+    %test:args("12") %test:assertEquals("XII")
+    %test:args("Ten") %test:assertEquals("Ten")
+    function eut:test-changeFormatToRomanNumeral($n as xs:string) as xs:string {
+        eutil:changeFormatToRomanNumeral($n)
+};
