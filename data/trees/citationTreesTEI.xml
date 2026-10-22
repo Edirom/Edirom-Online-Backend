@@ -1,13 +1,13 @@
 <refsDecl xmlns:tei="http://www.tei-c.org/ns/1.0">
     <citeStructure xml:id="basicStructure"
-                    unit="Paragraph"
-                    match="tei:div"
+                    unit="Chapter"
+                    match="//tei:div[@type = 'chapter'] | //tei:div1 | //tei:milestone[@unit = 'number'] | //tei:div[@type = 'act']//tei:div[@type = 'scene']"
                     use="@xml:id">
     </citeStructure>
 
     <citeStructure xml:id="paginationStructure"
                     unit="Page"
-                    match="tei:pb"
+                    match="//tei:pb"
                     use="@xml:id">
     </citeStructure>
 </refsDecl>

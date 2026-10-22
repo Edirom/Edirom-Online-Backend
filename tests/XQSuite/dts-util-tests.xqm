@@ -7,6 +7,7 @@ import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "xmldb:ex
 
 declare namespace test = "http://exist-db.org/xquery/xqsuite";
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
+declare namespace mei = "http://www.music-encoding.org/ns/mei";
 declare namespace errors = "http://www.edirom.de/xquery/errors";
 
 declare variable $dct:openAPI := json-doc("xmldb:exist:///db/apps/Edirom-Online-Backend/data/api/api.json");
@@ -17,15 +18,15 @@ declare function dct:alternativeCitationTree(
     <refsDecl xmlns:mei="http://www.music-encoding.org/ns/mei">
         <citeStructure xml:id="musicStructure"
                         unit="Movement"
-                        match="mei:mdiv"
+                        match="//mei:mdiv"
                         use="@xml:id">
             <citeStructure unit="Measure"
-                            match="mei:measure"
+                            match="descendant::mei:measure"
                             use="@n"/>
         </citeStructure>
         <citeStructure xml:id="paginationStructure"
                         unit="Surface"
-                        match="mei:surface"
+                        match="//mei:surface"
                         use="@xml:id">
             <citeStructure unit="Zone"
                             match="mei:zone"
@@ -203,8 +204,15 @@ declare
     %test:assertTrue
     function dct:test-getCiteStructureForNode-root-and-descendant() as xs:boolean {
         let $citationTree := dct:alternativeCitationTree("musicStructure")
-        let $movement := <mdiv xmlns="http://www.music-encoding.org/ns/mei" xml:id="movement-1"/>
-        let $measure := <measure xmlns="http://www.music-encoding.org/ns/mei" n="42"/>
+        let $document := document {
+            <mei xmlns="http://www.music-encoding.org/ns/mei">
+                <mdiv xml:id="movement-1">
+                    <score><section><measure n="42"/></section></score>
+                </mdiv>
+            </mei>
+        }
+        let $movement := $document//mei:mdiv
+        let $measure := $document//mei:measure
         return
             dts-util:getCiteStructureForNode($movement, $citationTree) is $citationTree
             and dts-util:getCiteStructureForNode($measure, $citationTree) is $citationTree/citeStructure
@@ -228,8 +236,8 @@ declare
     function dct:test-getCiteStructureForNode-keeps-all-matches() as xs:boolean {
         let $citationTree :=
             <refsDecl xmlns:mei="http://www.music-encoding.org/ns/mei">
-                <citeStructure match="mei:measure" use="@xml:id" unit="MeasureById"/>
-                <citeStructure match="mei:measure" use="@n" unit="MeasureByNumber"/>
+            <citeStructure match="//mei:measure" use="@xml:id" unit="MeasureById"/>
+            <citeStructure match="//mei:measure" use="@n" unit="MeasureByNumber"/>
             </refsDecl>/citeStructure
         let $node := <m:measure xmlns:m="http://www.music-encoding.org/ns/mei" xml:id="measure-1" n="42"/>
         let $result := dts-util:getCiteStructureForNode($node, $citationTree)

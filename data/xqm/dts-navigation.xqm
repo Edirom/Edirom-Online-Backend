@@ -183,14 +183,30 @@ declare function dts-navigation:buildMemberArray(
     if (empty($remainingLevels) or $remainingLevels eq 0) then
         ()
     else
+        let $elements :=
         for $node in $selection/self::node()
         return
             typeswitch ($node)
-                case document-node() return
-                    dts-navigation:buildMemberArray($node/descendant::*, $citeStructure, $remainingLevels)
-                case element() return
-                    for $currentCiteStructure in $citeStructure
-                    where dts-util:matchesCiteStructure($node, $currentCiteStructure)
+                    case document-node() return $node/descendant::*
+                    case element() return $node
+                    default return ()
+        return
+            if (empty($elements)) then
+                ()
+            else
+                let $root := root($elements[1])
+                let $matchSets :=
+                    map:merge(
+                        for $currentCiteStructure at $position in $citeStructure
+                        return map:entry(
+                            $position,
+                            dts-util:getCiteStructureMatches($root, $currentCiteStructure)
+                        )
+                    )
+                for $node in $elements
+                for $currentCiteStructure at $position in $citeStructure
+                where some $match in map:get($matchSets, $position)
+                    satisfies $node is $match or (empty($node/parent::*) and deep-equal($node, $match))
                     return (
                         <member json:array="true">
                             {dts-navigation:buildCitableUnitObject($node, $currentCiteStructure, string($node/@xml:id))}
@@ -199,7 +215,8 @@ declare function dts-navigation:buildMemberArray(
                             let $childMatches :=
                                 for $childCiteStructure in $currentCiteStructure/citeStructure
                                 return dts-util:findCiteStructureMatches($node, $childCiteStructure)
-                            let $nestedUnits := dts-util:findCiteStructureMatches($node, $currentCiteStructure)
+                        let $currentStructureMatches := dts-util:getCiteStructureMatches($root, $currentCiteStructure)
+                        let $nestedUnits := $node/descendant::*[. intersect $currentStructureMatches]
                             let $children := $node/descendant::*[
                                 exists(. intersect $childMatches)
                                 and empty(ancestor::*[. intersect $nestedUnits])
@@ -210,8 +227,6 @@ declare function dts-navigation:buildMemberArray(
                         else
                             ()
                     )
-                default return
-                    ()
 };
 
 (:~
@@ -230,9 +245,8 @@ declare function dts-navigation:buildMemberArrayRefDownZero(
     $selection as node(),
     $citeStructure as element(citeStructure)
 ) as element()* {
-    let $siblings := $selection/parent::node()/*[
-        dts-util:matchesCiteStructure(., $citeStructure)
-    ]
+    let $matches := dts-util:getCiteStructureMatches(root($selection), $citeStructure)
+    let $siblings := $selection/parent::node()/*[. intersect $matches]
     for $sibling in $siblings
     return
         <member json:array="true">

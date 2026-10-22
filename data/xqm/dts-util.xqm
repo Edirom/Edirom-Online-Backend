@@ -113,7 +113,7 @@ declare function dts-util:selectBasedOnCiteStructure(
                     ()
             return
                 if ($attributeName) then
-                    dts-util:findCiteStructureMatches($document, $citeStructure)[
+                    dts-util:getCiteStructureMatches($document, $citeStructure)[
                         string(@*[string(node-name(.)) eq $attributeName]) = $ref
                     ][1]
                 else
@@ -160,58 +160,109 @@ declare function dts-util:matchesCiteStructure(
     $elements as element()*,
     $citeStructure as element(citeStructure)
 ) as xs:boolean {
-    dts-util:matchesQName($elements, dts-util:getCitationStructureMatch($citeStructure))
+    every $element in $elements
+        satisfies
+            let $isDetached := empty($element/parent::*)
+            let $searchRoot :=
+                if ($isDetached) then
+                    document { $element }
+                else
+                    root($element)
+            let $matches := dts-util:getCiteStructureMatches($searchRoot, $citeStructure)
+            return
+                some $match in $matches
+                    satisfies $element is $match or ($isDetached and deep-equal($element, $match))
 };
 
 (:~
- : Resolves the QName currently used by a citation structure's match attribute.
+ : Checks whether an XPath match uses the supported path-expression grammar.
+ : The grammar permits child and descendant paths, unions, and predicates that
+ : compare an attribute to a string literal. It does not permit general XPath
+ : functions or XQuery expressions.
  :
- : @param $citeStructure The citation structure definition
- : @return The resolved match QName, or the empty sequence when no match is supplied
+ : @param $match The XPath match expression
+ : @param $isTopLevel Whether the expression belongs to a top-level structure
+ : @return `true()` when the expression follows the supported grammar
  :)
-declare function dts-util:getCitationStructureMatch(
-    $citeStructure as element(citeStructure)
-) as xs:QName? {
-    let $match := normalize-space($citeStructure/@match)
-    return
-        if ($match) then
-            resolve-QName($match, $citeStructure)
-        else
-            ()
-};
-
-(:~
- : Tests whether elements match a QName.
- :
- : @param $elements The elements to test
- : @param $matchName The resolved match QName
- : @return `true()` when the elements match, otherwise `false()`
- :)
-declare function dts-util:matchesQName(
-    $elements as element()*,
-    $matchName as xs:QName?
+declare function dts-util:isSupportedCiteStructureMatch(
+    $match as xs:string,
+    $isTopLevel as xs:boolean
 ) as xs:boolean {
-    exists($matchName)
-    and (every $node in $elements satisfies node-name($node) eq $matchName)
+    let $qname := "([A-Za-z_][A-Za-z0-9._-]*:)?[A-Za-z_][A-Za-z0-9._-]*"
+    let $stringLiteral := "('[^']*'|""[^""]*"")"
+    let $predicate :=
+        "\s*\[\s*@" || $qname || "\s*=\s*" || $stringLiteral
+        || "(\s+and\s+@" || $qname || "\s*=\s*" || $stringLiteral || ")*\s*\]"
+    let $step := "((child|descendant)::)?" || $qname || "(" || $predicate || ")*"
+    let $path := $step || "(\s*(//|/)\s*" || $step || ")*"
+    let $alternative :=
+        (if ($isTopLevel) then "(//|/)\s*" else "") || $path
+    let $pattern := "^\s*" || $alternative || "(\s*\|\s*" || $alternative || ")*\s*$"
+    return matches($match, $pattern)
 };
 
 (:~
- : Finds descendants matching a citation structure. The match QName is resolved
- : once for the subtree scan and checked by matchesQName.
+ : Evaluates a citation structure's XPath match. Top-level structures are
+ : evaluated against the document; nested structures are evaluated against
+ : their parent citable element.
  :
- : @param $subtree The node whose descendant elements are searched
+ : @param $subtree The document for a top-level structure, or its matched parent for a nested structure
  : @param $citeStructure The citation structure definition
- : @return Descendant elements matching the citation structure
+ : @return Element nodes selected by the citation structure's XPath expression
  :)
 declare function dts-util:findCiteStructureMatches(
     $subtree as node(),
     $citeStructure as element(citeStructure)
 ) as element()* {
-    let $matchName := dts-util:getCitationStructureMatch($citeStructure)
+    let $match := string($citeStructure/@match)
+    let $normalizedMatch := normalize-space($match)
+    let $isTopLevel := empty($citeStructure/parent::citeStructure)
+    let $expression :=
+        "declare namespace mei = 'http://www.music-encoding.org/ns/mei'; "
+        || "declare namespace tei = 'http://www.tei-c.org/ns/1.0'; "
+        || $match
+    let $context :=
+        if ($isTopLevel) then
+            root($subtree)
+        else
+            $subtree
+    let $matches :=
+        if (not($normalizedMatch)) then
+            ()
+        else if ($isTopLevel and not(starts-with($normalizedMatch, "/"))) then
+            error($errors:INVALID_CITATION_TREE, "A top-level citeStructure match must be an absolute XPath expression: " || $match)
+        else if (not($isTopLevel) and starts-with($normalizedMatch, "/")) then
+            error($errors:INVALID_CITATION_TREE, "A nested citeStructure match must be relative to its parent: " || $match)
+        else if (not(dts-util:isSupportedCiteStructureMatch($match, $isTopLevel))) then
+            error($errors:INVALID_CITATION_TREE, "The citeStructure match uses an unsupported XPath expression: " || $match)
+        else
+            util:eval-with-context(
+                $expression,
+                <static-context/>,
+                true(),
+                $context
+            )
     return
-        $subtree/descendant::*[
-            dts-util:matchesQName(., $matchName)
-        ]
+        $matches[self::element()]
+};
+
+(:~
+ : Finds all elements selected by a citation structure, resolving each nested
+ : match relative to elements selected by its parent structure.
+ :
+ : @param $document The document containing the citation structure matches
+ : @param $citeStructure The citation structure to evaluate
+ : @return Elements selected by the citation structure in its matched ancestor contexts
+ :)
+declare function dts-util:getCiteStructureMatches(
+    $document as node(),
+    $citeStructure as element(citeStructure)
+) as element()* {
+    if (empty($citeStructure/parent::citeStructure)) then
+        dts-util:findCiteStructureMatches($document, $citeStructure)
+    else
+        for $parentMatch in dts-util:getCiteStructureMatches($document, $citeStructure/parent::citeStructure)
+        return dts-util:findCiteStructureMatches($parentMatch, $citeStructure)
 };
 
 (:~
@@ -362,9 +413,9 @@ declare function dts-util:selectRange(
 };
 
 (:~
- : Returns citation structures whose match QName matches the supplied node.
+ : Returns citation structures whose match expression selects the supplied node.
  : All matching structures are returned; ambiguous matches are not reduced to the first result.
- : This uses the currently supported QName-based matches, not hierarchical XPath expressions.
+ : Matching is performed by evaluating each structure's XPath expression.
  :
  : @param $node The selected element
  : @param $citationTree The citation trees to search, including their descendant structures

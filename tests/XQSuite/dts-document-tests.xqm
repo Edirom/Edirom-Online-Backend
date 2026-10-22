@@ -49,15 +49,15 @@ declare function ddt:citationTree(
     <refsDecl xmlns:mei="http://www.music-encoding.org/ns/mei">
         <citeStructure xml:id="musicStructure"
                         unit="Movement"
-                        match="mei:mdiv"
+                        match="//mei:mdiv"
                         use="@xml:id">
             <citeStructure unit="Measure"
-                            match="mei:measure"
+                            match="descendant::mei:measure"
                             use="@xml:id"/>
         </citeStructure>
         <citeStructure xml:id="paginationStructure"
                         unit="Surface"
-                        match="mei:surface"
+                        match="//mei:surface"
                         use="@xml:id">
             <citeStructure unit="Zone"
                             match="mei:zone"
@@ -65,7 +65,7 @@ declare function ddt:citationTree(
         </citeStructure>
         <citeStructure xml:id="performanceStructure"
                     unit="Recording"
-                    match="mei:recording"
+                    match="//mei:recording"
                     use="@xml:id"/>
     </refsDecl>/citeStructure[
         not($tree) or @xml:id = $tree

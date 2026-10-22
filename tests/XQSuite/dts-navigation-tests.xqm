@@ -32,12 +32,12 @@ declare function dnt:memberDocument() as document-node() {
 
 declare function dnt:memberCitationTrees() as element(citeStructure)* {
     <refsDecl xmlns:mei="http://www.music-encoding.org/ns/mei">
-        <citeStructure match="mei:mdiv" use="@xml:id" unit="Movement">
-            <citeStructure match="mei:measure" use="@xml:id" unit="Measure">
-                <citeStructure match="mei:note" use="@xml:id" unit="Note"/>
+        <citeStructure match="//mei:mdiv" use="@xml:id" unit="Movement">
+            <citeStructure match="descendant::mei:measure" use="@xml:id" unit="Measure">
+                <citeStructure match="descendant::mei:note" use="@xml:id" unit="Note"/>
             </citeStructure>
         </citeStructure>
-        <citeStructure match="mei:surface" use="@xml:id" unit="Surface">
+        <citeStructure match="//mei:surface" use="@xml:id" unit="Surface">
             <citeStructure match="mei:zone" use="@xml:id" unit="Zone"/>
         </citeStructure>
     </refsDecl>/citeStructure
@@ -556,7 +556,7 @@ declare
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "test-div-1")
     %test:arg("tree", "basicStructure")
-    %test:assertEquals("1||Paragraph")
+    %test:assertEquals("1||Chapter")
     (:Function supports TEI pagination tree :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "pb-1")
