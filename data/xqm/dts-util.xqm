@@ -102,11 +102,6 @@ declare function dts-util:selectBasedOnCiteStructure(
     for $citeStructure in $citeStructures
     let $match := normalize-space($citeStructure/@match)
     let $use := normalize-space($citeStructure/@use)
-    let $matchName :=
-        if (not($match)) then
-            ()
-        else
-            resolve-QName($match, $citeStructure)
     let $selected :=
         if (not($match) or not($use) or not($ref)) then
             ()
@@ -118,7 +113,9 @@ declare function dts-util:selectBasedOnCiteStructure(
                     ()
             return
                 if ($attributeName) then
-                    $document//*[node-name(.) eq $matchName and string(@*[string(node-name(.)) eq $attributeName]) = $ref][1]
+                    dts-util:findCiteStructureMatches($document, $citeStructure)[
+                        string(@*[string(node-name(.)) eq $attributeName]) = $ref
+                    ][1]
                 else
                     ()
     return
@@ -137,7 +134,7 @@ declare function dts-util:isInCitationTree(
     $citationTree as element(citeStructure)*
 ) as xs:boolean {
     some $citeStructure in ($citationTree, $citationTree//citeStructure)
-        satisfies dts-util:matchesCitationStructure($elements, $citeStructure)
+        satisfies dts-util:matchesCiteStructure($elements, $citeStructure)
 };
 
 (:~
@@ -153,25 +150,68 @@ declare function dts-util:isAlwaysPreservedSelection(
 };
 
 (:~
- : Tests whether the supplied elements match a single citation structure definition.
+ : Tests whether elements match a citation structure.
  :
  : @param $elements The elements to test
- : @param $citeStructure The citation structure definition to compare against
- : @return `true()` when the elements match the citation structure, otherwise `false()`
+ : @param $citeStructure The citation structure definition
+ : @return `true()` when the elements match, otherwise `false()`
  :)
-declare function dts-util:matchesCitationStructure(
+declare function dts-util:matchesCiteStructure(
     $elements as element()*,
     $citeStructure as element(citeStructure)
 ) as xs:boolean {
+    dts-util:matchesQName($elements, dts-util:getCitationStructureMatch($citeStructure))
+};
+
+(:~
+ : Resolves the QName currently used by a citation structure's match attribute.
+ :
+ : @param $citeStructure The citation structure definition
+ : @return The resolved match QName, or the empty sequence when no match is supplied
+ :)
+declare function dts-util:getCitationStructureMatch(
+    $citeStructure as element(citeStructure)
+) as xs:QName? {
     let $match := normalize-space($citeStructure/@match)
-    let $matchName :=
-        if (not($match)) then
-            ()
-        else
-            resolve-QName($match, $citeStructure)
     return
-        exists($matchName)
-        and (every $node in $elements satisfies node-name($node) eq $matchName)
+        if ($match) then
+            resolve-QName($match, $citeStructure)
+        else
+            ()
+};
+
+(:~
+ : Tests whether elements match a QName.
+ :
+ : @param $elements The elements to test
+ : @param $matchName The resolved match QName
+ : @return `true()` when the elements match, otherwise `false()`
+ :)
+declare function dts-util:matchesQName(
+    $elements as element()*,
+    $matchName as xs:QName?
+) as xs:boolean {
+    exists($matchName)
+    and (every $node in $elements satisfies node-name($node) eq $matchName)
+};
+
+(:~
+ : Finds descendants matching a citation structure. The match QName is resolved
+ : once for the subtree scan and checked by matchesQName.
+ :
+ : @param $subtree The node whose descendant elements are searched
+ : @param $citeStructure The citation structure definition
+ : @return Descendant elements matching the citation structure
+ :)
+declare function dts-util:findCiteStructureMatches(
+    $subtree as node(),
+    $citeStructure as element(citeStructure)
+) as element()* {
+    let $matchName := dts-util:getCitationStructureMatch($citeStructure)
+    return
+        $subtree/descendant::*[
+            dts-util:matchesQName(., $matchName)
+        ]
 };
 
 (:~
@@ -336,13 +376,7 @@ declare function dts-util:getCiteStructureForNode(
 ) as element(citeStructure)* {
     let $citeStructures := ($citationTree, $citationTree//citeStructure)
     for $citeStructure in $citeStructures
-    let $match := normalize-space($citeStructure/@match)
-    let $matchName :=
-        if ($match) then
-            resolve-QName($match, $citeStructure)
-        else
-            ()
-    where node-name($node[1]) eq $matchName
+    where dts-util:matchesCiteStructure($node[1], $citeStructure)
     return
         $citeStructure
 };

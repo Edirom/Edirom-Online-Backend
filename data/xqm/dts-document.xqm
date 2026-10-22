@@ -562,17 +562,7 @@ declare function dts-document:selectCitationTreeRootElements(
     $citationTree as element(citeStructure)*
 ) as element()* {
     let $topLevel := $citationTree[1]
-    let $match := normalize-space($topLevel/@match)
-    let $matchName :=
-        if ($match) then
-            resolve-QName($match, $topLevel)
-        else
-            ()
-    let $selection :=
-        if (exists($matchName)) then
-            $xml//*[node-name(.) eq $matchName]
-        else
-            ()
+    let $selection := dts-util:findCiteStructureMatches($xml, $topLevel)
     let $startNode := $selection[1]
     let $endNode := $selection[last()]
     let $start := $startNode/@xml:id
