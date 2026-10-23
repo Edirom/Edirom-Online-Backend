@@ -15,6 +15,7 @@ module namespace dts-navigation = "http://www.edirom.de/api/dts-navigation";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 import module namespace errors = "http://www.edirom.de/xquery/errors" at "errors.xqm";
 import module namespace dts-util = "http://www.edirom.de/api/dts-util" at "dts-util.xqm";
+import module namespace teitext = "http://www.edirom.de/xquery/teitext" at "teitext.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -126,6 +127,65 @@ declare function dts-navigation:buildResourceObject(
 };
 
 (:~
+ : Returns the display title for a citable unit when one is available.
+ :
+ : @param $selection The selected citable unit
+ : @param $namespace The standardized namespace prefix of the containing document
+ : @return The display title, or an empty string when no title is available
+ :)
+declare function dts-navigation:getTitle($selection as node(), $namespace as xs:string) as xs:string {
+    if ($namespace eq "tei" and $selection instance of element()) then
+        teitext:getChapterName($selection treat as element())
+    else
+        ""
+};
+
+(:~
+ : Returns page identifier for a citable unit when available.
+ :
+ : @param $selection The selected citable unit
+ : @param $namespace The standardized namespace prefix of the containing document
+ : @return A pageId element, or an empty sequence when no page identifier is available
+ :)
+declare function dts-navigation:getPageId($selection as node(), $namespace as xs:string) as element(pageId)? {
+    if ($namespace eq "tei" and $selection instance of element()) then
+        <pageId>{teitext:getChapterPageId($selection, "pageMode")}</pageId>
+    else
+        ()
+};
+
+(: TODO: Add context to extensions :)
+(:~
+ : Builds the metadata objects for a DTS CitableUnit.
+ :
+ : @param $selection The selected citable unit
+ : @param $namespace The standardized namespace prefix of the containing document
+ : @return The dublinCore and extensions objects
+ :)
+declare function dts-navigation:buildMetadataForCitableUnit(
+    $selection as node(),
+    $namespace as xs:string
+) as element()* {
+    <dublinCore>
+        <title>{dts-navigation:getTitle($selection, $namespace)}</title>
+    </dublinCore>,
+    <extensions>
+        {dts-navigation:getPageId($selection, $namespace)}
+    </extensions>
+};
+
+(:~
+ : Determines the standardized namespace prefix for a node's document.
+ :
+ : @param $selection A node from the document
+ : @return The standardized namespace prefix
+ :)
+declare %private function dts-navigation:getDocumentNamespace($selection as node()) as xs:string {
+    let $root := root($selection)
+    return eutil:getNamespace(if ($root instance of document-node()) then $root/* else $root)
+};
+
+(:~
  : Builds the child elements for the XML-based JSON representation of a DTS CitableUnit object.
  :
  : The supplied selection is the resolved node. The matched
@@ -136,12 +196,27 @@ declare function dts-navigation:buildResourceObject(
  : @param $selection The resolved node
  : @param $citationTree The citation structure for the resolved node
  : @param $ref The reference identifying the citable unit
+ : @param $namespace The standardized namespace prefix of the containing document
  : @return The citable unit child elements containing its identifier, type, level, parent, and cite type
  :)
 declare function dts-navigation:buildCitableUnitObject(
     $selection as node(),
     $citationTree as element(citeStructure),
     $ref as xs:string
+) as element()* {
+    dts-navigation:buildCitableUnitObject(
+        $selection,
+        $citationTree,
+        $ref,
+        dts-navigation:getDocumentNamespace($selection)
+    )
+};
+
+declare function dts-navigation:buildCitableUnitObject(
+    $selection as node(),
+    $citationTree as element(citeStructure),
+    $ref as xs:string,
+    $namespace as xs:string
 ) as element()* {
     let $level := count($citationTree/ancestor::citeStructure) + 1
     let $parentCiteStructure := $citationTree/parent::citeStructure
@@ -157,8 +232,9 @@ declare function dts-navigation:buildCitableUnitObject(
         <type json:name="@type">CitableUnit</type>,
         <level json:literal="true">{$level}</level>,
         <parent>{$parentId}</parent>,
-        <citeType>{string($citationTree/@unit)}</citeType>
+        <citeType>{string($citationTree/@unit)}</citeType>,
         (: TODO: optional dublinCore and extensions objects for metadata :)
+        dts-navigation:buildMetadataForCitableUnit($selection, $namespace)
     )
 };
 
@@ -173,12 +249,30 @@ declare function dts-navigation:buildCitableUnitObject(
  : @param $remainingLevels The number of levels still to include: 1 includes only
  :                         the starting level, -1 includes all levels, and 0 or
  :                         an empty value includes none
+ : @param $namespace The standardized namespace prefix of the containing document
  : @return Individual member elements, each containing one CitableUnit
  :)
 declare function dts-navigation:buildMemberArray(
     $selection as node()*,
     $citeStructure as element(citeStructure)*,
     $remainingLevels as xs:integer?
+) as element()* {
+    if (empty($selection)) then
+        ()
+    else
+        dts-navigation:buildMemberArray(
+            $selection,
+            $citeStructure,
+            $remainingLevels,
+            dts-navigation:getDocumentNamespace($selection[1])
+        )
+};
+
+declare function dts-navigation:buildMemberArray(
+    $selection as node()*,
+    $citeStructure as element(citeStructure)*,
+    $remainingLevels as xs:integer?,
+    $namespace as xs:string
 ) as element()* {
     if (empty($remainingLevels) or $remainingLevels eq 0) then
         ()
@@ -209,7 +303,7 @@ declare function dts-navigation:buildMemberArray(
                     satisfies $node is $match or (empty($node/parent::*) and deep-equal($node, $match))
                 return (
                     <member json:array="true">
-                        {dts-navigation:buildCitableUnitObject($node, $currentCiteStructure, string($node/@xml:id))}
+                        {dts-navigation:buildCitableUnitObject($node, $currentCiteStructure, string($node/@xml:id), $namespace)}
                     </member>,
                     if (($remainingLevels eq -1 or $remainingLevels gt 1) and exists($currentCiteStructure/citeStructure)) then
                         let $childMatches :=
@@ -223,7 +317,7 @@ declare function dts-navigation:buildMemberArray(
                         ]
                         let $nextRemainingLevels := if ($remainingLevels eq -1) then -1 else $remainingLevels - 1
                         return
-                            dts-navigation:buildMemberArray($children, $currentCiteStructure/citeStructure, $nextRemainingLevels)
+                            dts-navigation:buildMemberArray($children, $currentCiteStructure/citeStructure, $nextRemainingLevels, $namespace)
                     else
                         ()
                 )
@@ -239,18 +333,31 @@ declare function dts-navigation:buildMemberArray(
  :
  : @param $selection The referenced node
  : @param $citeStructure The citation structure for the referenced node
+ : @param $namespace The standardized namespace prefix of the containing document
  : @return Matching XML siblings, including the referenced unit, in document order
  :)
 declare function dts-navigation:buildMemberArrayRefDownZero(
     $selection as node(),
     $citeStructure as element(citeStructure)
 ) as element()* {
+    dts-navigation:buildMemberArrayRefDownZero(
+        $selection,
+        $citeStructure,
+        dts-navigation:getDocumentNamespace($selection)
+    )
+};
+
+declare function dts-navigation:buildMemberArrayRefDownZero(
+    $selection as node(),
+    $citeStructure as element(citeStructure),
+    $namespace as xs:string
+) as element()* {
     let $matches := dts-util:getCiteStructureMatches(root($selection), $citeStructure)
     let $siblings := $selection/parent::node()/*[. intersect $matches]
     for $sibling in $siblings
     return
         <member json:array="true">
-            {dts-navigation:buildCitableUnitObject($sibling, $citeStructure, string($sibling/@xml:id))}
+            {dts-navigation:buildCitableUnitObject($sibling, $citeStructure, string($sibling/@xml:id), $namespace)}
         </member>
 };
 
@@ -290,6 +397,7 @@ declare function dts-navigation:navigation(
                 eutil:add-xml-ids($document)
             else
                 error($errors:NOT_FOUND, "The requested resource was not found.")
+        let $namespace := eutil:getNamespace($document/*)
         let $citationTree := dts-util:selectCitationTree($document, $tree)
         let $resolvedSelection :=
             if ($ref) then
@@ -304,7 +412,7 @@ declare function dts-navigation:navigation(
                 let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
                 return
                     <ref>
-                        {dts-navigation:buildCitableUnitObject($selection, $citeStructure, $ref)}
+                        {dts-navigation:buildCitableUnitObject($selection, $citeStructure, $ref, $namespace)}
                     </ref>
             else if ($start and $end) then
                 let $startSelection := $resolvedSelection?startNode
@@ -313,10 +421,10 @@ declare function dts-navigation:navigation(
                 let $endCiteStructure := dts-util:getCiteStructureForNode($endSelection, $citationTree)
                 return (
                     <start>
-                        {dts-navigation:buildCitableUnitObject($startSelection, $startCiteStructure, $start)}
+                        {dts-navigation:buildCitableUnitObject($startSelection, $startCiteStructure, $start, $namespace)}
                     </start>,
                     <end>
-                        {dts-navigation:buildCitableUnitObject($endSelection, $endCiteStructure, $end)}
+                        {dts-navigation:buildCitableUnitObject($endSelection, $endCiteStructure, $end, $namespace)}
                     </end>
                 )
             else
@@ -330,15 +438,15 @@ declare function dts-navigation:navigation(
                 let $selection := $resolvedSelection?startNode
                 let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
                 return
-                    dts-navigation:buildMemberArrayRefDownZero($selection, $citeStructure)
+                dts-navigation:buildMemberArrayRefDownZero($selection, $citeStructure, $namespace)
             else if (not($ref) and not($start) and not($end)) then
-                dts-navigation:buildMemberArray($document, $citationTree, $down)
+                dts-navigation:buildMemberArray($document, $citationTree, $down, $namespace)
             else
                 let $selection := $resolvedSelection?selectedNodes
                 let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
                 (: The selected CitableUnit is the starting level; down counts levels below it. :)
                 let $remainingLevels := if ($down gt 0) then $down + 1 else $down
-                return dts-navigation:buildMemberArray($selection, $citeStructure, $remainingLevels)
+                return dts-navigation:buildMemberArray($selection, $citeStructure, $remainingLevels, $namespace)
 
         let $resourceObject := dts-navigation:buildResourceObject($document, $resource)
         let $output :=
