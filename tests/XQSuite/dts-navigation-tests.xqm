@@ -9,6 +9,7 @@ import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "xmldb:ex
 declare namespace errors = "http://www.edirom.de/xquery/errors";
 declare namespace json = "http://www.json.org";
 declare namespace test = "http://exist-db.org/xquery/xqsuite";
+declare namespace mei = "http://www.music-encoding.org/ns/mei";
 declare namespace tei = "http://www.tei-c.org/ns/1.0";
 
 declare function dnt:memberDocument() as document-node() {
@@ -61,10 +62,14 @@ declare
 };
 
 declare
-    (: Non-TEI selections have no chapter title metadata. :)
-    %test:arg("selectionXml", "<div xmlns='http://www.tei-c.org/ns/1.0' type='chapter' n='1'><head>Chapter</head></div>")
+    (: MEI elements other than mdiv do not provide a title. :)
+    %test:arg("selectionXml", "<measure xmlns='http://www.music-encoding.org/ns/mei' label='Measure 1'/>")
     %test:arg("namespace", "mei")
     %test:assertEquals("")
+    (: MEI mdiv titles come from the label attribute. :)
+    %test:arg("selectionXml", "<mdiv xmlns='http://www.music-encoding.org/ns/mei' label='Movement I'/>")
+    %test:arg("namespace", "mei")
+    %test:assertEquals("Movement I")
     (: TEI selections return the normalized chapter title and number. :)
     %test:arg("selectionXml", "<div xmlns='http://www.tei-c.org/ns/1.0' type='chapter' n='1'><head>My example chapter</head></div>")
     %test:arg("namespace", "tei")

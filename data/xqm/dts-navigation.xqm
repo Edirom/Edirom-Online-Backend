@@ -136,6 +136,8 @@ declare function dts-navigation:buildResourceObject(
 declare function dts-navigation:getTitle($selection as node(), $namespace as xs:string) as xs:string {
     if ($namespace eq "tei" and $selection instance of element()) then
         teitext:getChapterName($selection treat as element())
+    else if ($namespace eq "mei" and $selection instance of element(mei:mdiv)) then
+        string($selection/@label)
     else
         ""
 };
