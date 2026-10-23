@@ -9,6 +9,7 @@ import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "xmldb:ex
 declare namespace errors = "http://www.edirom.de/xquery/errors";
 declare namespace json = "http://www.json.org";
 declare namespace test = "http://exist-db.org/xquery/xqsuite";
+declare namespace tei = "http://www.tei-c.org/ns/1.0";
 
 declare function dnt:memberDocument() as document-node() {
     document {
@@ -41,6 +42,66 @@ declare function dnt:memberCitationTrees() as element(citeStructure)* {
             <citeStructure match="mei:zone" use="@xml:id" unit="Zone"/>
         </citeStructure>
     </refsDecl>/citeStructure
+};
+
+declare
+    (: Converts a citation structure with a nested child recursively. :)
+    %test:arg("citeXml", "<citeStructure unit='Chapter'><citeStructure unit='Paragraph'/></citeStructure>")
+    %test:assertEquals("Chapter:0 Paragraph:1")
+    (: Converts a leaf citation structure without adding children. :)
+    %test:arg("citeXml", "<citeStructure unit='Movement'/>")
+    %test:assertEquals("Movement:0")
+    function dnt:test-buildCiteStructureObject($citeXml as xs:string) as xs:string {
+        let $result := dts-navigation:buildCiteStructureObject(parse-xml($citeXml)/*)
+        return string-join(
+            for $citeStructure in $result/descendant-or-self::citeStructure
+            return string($citeStructure/citeType) || ":" || count($citeStructure/ancestor::citeStructure),
+            " "
+        )
+};
+
+declare
+    (: Non-TEI selections have no chapter title metadata. :)
+    %test:arg("selectionXml", "<div xmlns='http://www.tei-c.org/ns/1.0' type='chapter' n='1'><head>Chapter</head></div>")
+    %test:arg("namespace", "mei")
+    %test:assertEquals("")
+    (: TEI selections return the normalized chapter title and number. :)
+    %test:arg("selectionXml", "<div xmlns='http://www.tei-c.org/ns/1.0' type='chapter' n='1'><head>My example chapter</head></div>")
+    %test:arg("namespace", "tei")
+    %test:assertEquals("1: My example chapter")
+    function dnt:test-getTitle($selectionXml as xs:string, $namespace as xs:string) as xs:string {
+        let $selection := parse-xml($selectionXml)/*
+        return dts-navigation:getTitle($selection, $namespace)
+};
+
+declare
+    (: Non-TEI namespaces have no page identifier for the selected chapter. :)
+    %test:arg("documentXml", "<TEI xmlns='http://www.tei-c.org/ns/1.0'><text><body><pb facs='#page-1'/><div type='chapter'/></body></text></TEI>")
+    %test:arg("namespace", "mei")
+    %test:assertEquals("")
+    (: TEI page identifiers come from the preceding page break in the document. :)
+    %test:arg("documentXml", "<TEI xmlns='http://www.tei-c.org/ns/1.0'><text><body><pb facs='#page-1'/><div type='chapter'/></body></text></TEI>")
+    %test:arg("namespace", "tei")
+    %test:assertEquals("page-1")
+    function dnt:test-getPageId($documentXml as xs:string, $namespace as xs:string) as xs:string {
+        let $document := parse-xml($documentXml)
+        return string(dts-navigation:getPageId($document//tei:div, $namespace))
+};
+
+declare
+    (: MEI metadata contains an empty title and no page identifier. :)
+    %test:arg("documentXml", "<TEI xmlns='http://www.tei-c.org/ns/1.0'><text><body><pb facs='#page-1'/><div type='chapter' n='1'><head>Chapter</head></div></body></text></TEI>")
+    %test:arg("namespace", "mei")
+    %test:assertEquals("|")
+    (: TEI metadata includes both the chapter title and page identifier. :)
+    %test:arg("documentXml", "<TEI xmlns='http://www.tei-c.org/ns/1.0'><text><body><pb facs='#page-1'/><div type='chapter' n='1'><head>My example chapter</head></div></body></text></TEI>")
+    %test:arg("namespace", "tei")
+    %test:assertEquals("1: My example chapter|page-1")
+    function dnt:test-buildMetadataForCitableUnit($documentXml as xs:string, $namespace as xs:string) as xs:string {
+        let $document := parse-xml($documentXml)
+        let $selection := $document//tei:div[@type = "chapter"]
+        let $metadata := dts-navigation:buildMetadataForCitableUnit($selection, $namespace)
+        return string($metadata[self::dublinCore]/title) || "|" || string($metadata[self::extensions]/pageId)
 };
 
 declare
@@ -449,6 +510,22 @@ declare
             </mei>
         }
         return dts-navigation:getCitationTrees($document)/string(@xml:id)
+};
+
+declare
+    (: A chapter before any later page break uses the nearest preceding page. :)
+    %test:arg("ref", "test-div-1")
+    %test:assertEquals("This is the header of the firs…|page-1")
+    (: A chapter after the second page break uses page 2. :)
+    %test:arg("ref", "test-div-2")
+    %test:assertEquals("I am the header of the second …|page-2")
+    (: A nested chapter inherits the nearest page break before it. :)
+    %test:arg("ref", "nested-div")
+    %test:assertEquals("This is the header of the nest…|page-2")
+    function dnt:test-navigation-tei-chapter-page-metadata($ref as xs:string) as xs:string {
+        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
+        let $result := dts-navigation:navigation($resource, $ref, (), (), (), "basicStructure")
+        return string($result/ref/dublinCore/title) || "|" || string($result/ref/extensions/pageId)
 };
 
 

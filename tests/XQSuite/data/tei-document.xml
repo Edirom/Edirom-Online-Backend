@@ -27,15 +27,21 @@
          </change>
       </revisionDesc>
    </teiHeader>
+   <facsimile>
+      <surface xml:id="page-1" n="1"/>
+      <surface xml:id="page-2" n="2"/>
+      <surface xml:id="page-3" n="3"/>
+      <surface xml:id="page-4" n="4"/>
+   </facsimile>
    <text>
       <body>
-         <pb n="1" xml:id="pb-1"/>
+         <pb n="1" xml:id="pb-1" facs="#page-1"/>
          <head>This is the main header</head>
          <div type="chapter" xml:id="test-div-1">
             <head>This is the header of the first div</head>
             <p>Hello this is a paragraph</p>
             <p xml:id="not-in-p2-1">This paragraph is not in page 2<emph>Hello this is a paragraph</emph>Hello this is a paragraph<hi rendition="#italic">Hello this is a paragraph</hi>Hello this is a paragraph<hi rendition="#italic">Hello this is a paragraph</hi>Hello this is a paragraph</p>
-               <pb n="2" xml:id="pb-2"/>
+               <pb n="2" xml:id="pb-2" facs="#page-2"/>
             <p>Hello this is a paragraph<emph>Hello this is a paragraph</emph>Hello this is a paragraph</p>
             <div type="chapter" xml:id="nested-div">
                <head>This is the header of the nested div (inside the first div)</head>
@@ -52,13 +58,13 @@
          <div type="chapter" xml:id="test-div-2">
             <head>I am the header of the second div</head>
             <p xml:id="yes-in-p2-1">This paragraph is in page 2</p>
-            <pb n="3" xml:id="pb-3"/>
+            <pb n="3" xml:id="pb-3" facs="#page-3"/>
             <p xml:id="not-in-p2-2">This paragraph is not in page 2</p>
             <p>Hello this is a paragraph</p>
             <p>Hello this is a paragraph</p>
             <p>Hello this is a paragraph</p>
             <p>Hello this is the last paragraph of page 3.</p>
-            <pb n="4" xml:id="pb-4"/>
+            <pb n="4" xml:id="pb-4" facs="#page-4"/>
             <p>Hello this is the first paragraph of page 4.</p>
             <p>Hello this is a paragraph</p>
             <p>Hello this is a paragraph<lb/>Hello this is a paragraph<lb/>Hello this is a paragraph<lb/><lb/>Hello this is a paragraph<ref n="Internetseite des Edirom-Projekts im Browser öffnen" target="https://www.edirom.de">Hello this is a paragraph</ref>Hello this is a paragraph<ref n="Internetseite der Weber-Ausgabe im Browser öffnen" target="https://www.weber-gesamtausgabe.de">Hello this is a paragraph</ref><lb/>Hello this is a paragraph<ref n="E-Mail an Edirom schreiben" target="mailto:info@edirom.de">Hello this is a paragraph</ref>Hello this is a paragraph<ref n="E-Mail an die Weber-Ausgabe schreiben" target="mailto:info@weber-gesamtausgabe.de">Hello this is a paragraph</ref></p>
