@@ -175,17 +175,6 @@ declare function dts-navigation:buildMetadataForCitableUnit(
 };
 
 (:~
- : Determines the standardized namespace prefix for a node's document.
- :
- : @param $selection A node from the document
- : @return The standardized namespace prefix
- :)
-declare %private function dts-navigation:getDocumentNamespace($selection as node()) as xs:string {
-    let $root := root($selection)
-    return eutil:getNamespace(if ($root instance of document-node()) then $root/* else $root)
-};
-
-(:~
  : Builds the child elements for the XML-based JSON representation of a DTS CitableUnit object.
  :
  : The supplied selection is the resolved node. The matched
@@ -199,19 +188,6 @@ declare %private function dts-navigation:getDocumentNamespace($selection as node
  : @param $namespace The standardized namespace prefix of the containing document
  : @return The citable unit child elements containing its identifier, type, level, parent, and cite type
  :)
-declare function dts-navigation:buildCitableUnitObject(
-    $selection as node(),
-    $citationTree as element(citeStructure),
-    $ref as xs:string
-) as element()* {
-    dts-navigation:buildCitableUnitObject(
-        $selection,
-        $citationTree,
-        $ref,
-        dts-navigation:getDocumentNamespace($selection)
-    )
-};
-
 declare function dts-navigation:buildCitableUnitObject(
     $selection as node(),
     $citationTree as element(citeStructure),
@@ -252,22 +228,6 @@ declare function dts-navigation:buildCitableUnitObject(
  : @param $namespace The standardized namespace prefix of the containing document
  : @return Individual member elements, each containing one CitableUnit
  :)
-declare function dts-navigation:buildMemberArray(
-    $selection as node()*,
-    $citeStructure as element(citeStructure)*,
-    $remainingLevels as xs:integer?
-) as element()* {
-    if (empty($selection)) then
-        ()
-    else
-        dts-navigation:buildMemberArray(
-            $selection,
-            $citeStructure,
-            $remainingLevels,
-            dts-navigation:getDocumentNamespace($selection[1])
-        )
-};
-
 declare function dts-navigation:buildMemberArray(
     $selection as node()*,
     $citeStructure as element(citeStructure)*,
@@ -336,17 +296,6 @@ declare function dts-navigation:buildMemberArray(
  : @param $namespace The standardized namespace prefix of the containing document
  : @return Matching XML siblings, including the referenced unit, in document order
  :)
-declare function dts-navigation:buildMemberArrayRefDownZero(
-    $selection as node(),
-    $citeStructure as element(citeStructure)
-) as element()* {
-    dts-navigation:buildMemberArrayRefDownZero(
-        $selection,
-        $citeStructure,
-        dts-navigation:getDocumentNamespace($selection)
-    )
-};
-
 declare function dts-navigation:buildMemberArrayRefDownZero(
     $selection as node(),
     $citeStructure as element(citeStructure),

@@ -63,7 +63,7 @@ declare
     function dnt:test-buildMemberArray-depth($remainingLevels as xs:integer, $scope as xs:string) as xs:string {
         let $document := dnt:memberDocument()
         let $selection := if ($scope eq "document") then $document else $document//*[@xml:id = $scope]
-        let $members := dts-navigation:buildMemberArray($selection, dnt:memberCitationTrees()[1], $remainingLevels)
+        let $members := dts-navigation:buildMemberArray($selection, dnt:memberCitationTrees()[1], $remainingLevels, "mei")
         return string-join($members/identifier, " ")
 };
 
@@ -72,8 +72,8 @@ declare
     function dnt:test-buildMemberArray-returns-flat-members-with-correct-metadata() as xs:boolean {
         let $document := dnt:memberDocument()
         let $tree := dnt:memberCitationTrees()[1]
-        let $members := dts-navigation:buildMemberArray($document//*[@xml:id = "movement-1"], $tree, -1)
-        let $measure := dts-navigation:buildMemberArray($document//*[@xml:id = "measure-1"], $tree/citeStructure, 1)
+        let $members := dts-navigation:buildMemberArray($document//*[@xml:id = "movement-1"], $tree, -1, "mei")
+        let $measure := dts-navigation:buildMemberArray($document//*[@xml:id = "measure-1"], $tree/citeStructure, 1, "mei")
         return
             count($members) eq 4
             and empty($members/member)
@@ -111,7 +111,7 @@ declare
         let $document := dnt:memberDocument()
         let $selection := $document//*[@xml:id = ("movement-1", "movement-2")]
         let $tree := dnt:memberCitationTrees()[$treeNumber]
-        let $selected := dts-navigation:buildMemberArray(reverse($selection), $tree, 2)
+        let $selected := dts-navigation:buildMemberArray(reverse($selection), $tree, 2, "mei")
         return string-join($selected/identifier, " ") eq $expected
 };
 
@@ -130,7 +130,7 @@ declare
     ) as xs:boolean {
         let $document := dnt:memberDocument()
         let $tree := dnt:memberCitationTrees()[$treeNumber]
-        let $members := dts-navigation:buildMemberArray($document, $tree, 2)
+        let $members := dts-navigation:buildMemberArray($document, $tree, 2, "mei")
         return string-join($members/identifier, " ") eq $expected
 };
 
@@ -140,11 +140,11 @@ declare
         let $document := dnt:memberDocument()
         let $tree := dnt:memberCitationTrees()[1]
         return
-            empty(dts-navigation:buildMemberArray($document, $tree, 0))
-            and empty(dts-navigation:buildMemberArray($document, $tree, ()))
-            and empty(dts-navigation:buildMemberArray((), $tree, -1))
-            and empty(dts-navigation:buildMemberArray($document, (), -1))
-            and empty(dts-navigation:buildMemberArray(document { <unmatched/> }, $tree, -1))
+            empty(dts-navigation:buildMemberArray($document, $tree, 0, "mei"))
+            and empty(dts-navigation:buildMemberArray($document, $tree, (), "mei"))
+            and empty(dts-navigation:buildMemberArray((), $tree, -1, "mei"))
+            and empty(dts-navigation:buildMemberArray($document, (), -1, "mei"))
+            and empty(dts-navigation:buildMemberArray(document { <unmatched/> }, $tree, -1, "unknown"))
 };
 
 declare
@@ -153,7 +153,7 @@ declare
         let $document := dnt:memberDocument()
         let $tree := dnt:memberCitationTrees()[1]
         let $leaf := $document//*[@xml:id = "note-1"]
-        let $members := dts-navigation:buildMemberArray($leaf, $tree/citeStructure/citeStructure, 10)
+        let $members := dts-navigation:buildMemberArray($leaf, $tree/citeStructure/citeStructure, 10, "mei")
         return
             count($members) eq 1
             and $members/identifier eq "note-1"
@@ -546,32 +546,37 @@ declare
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref", "test-measure-1")
     %test:arg("tree", "musicStructure")
+    %test:arg("namespace", "mei")
     %test:assertEquals("2|test-mdiv-1|Measure")
     (: Function omits parent for root unit :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref", "test-mdiv-1")
     %test:arg("tree", "musicStructure")
+    %test:arg("namespace", "mei")
     %test:assertEquals("1||Movement")
     (: Function supports TEI div tree :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "test-div-1")
     %test:arg("tree", "basicStructure")
+    %test:arg("namespace", "tei")
     %test:assertEquals("1||Chapter")
     (:Function supports TEI pagination tree :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "pb-1")
     %test:arg("tree", "paginationStructure")
+    %test:arg("namespace", "tei")
     %test:assertEquals("1||Page")
     function dnt:test-buildCitableUnitObject(
         $resource as xs:string,
         $ref as xs:string,
-        $tree as xs:string
+        $tree as xs:string,
+        $namespace as xs:string
     ) as xs:string {
         let $document := eutil:getDoc($resource)
         let $citationTree := dts-navigation:getCitationTrees($document)[@xml:id = $tree]
         let $selection := dts-util:selectBasedOnCiteStructure($document, $ref, $citationTree)
         let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
-        let $result := dts-navigation:buildCitableUnitObject($selection, $citeStructure, $ref)
+        let $result := dts-navigation:buildCitableUnitObject($selection, $citeStructure, $ref, $namespace)
         return
             string($result[self::level]) || "|" || string($result[self::parent]) || "|" || string($result[self::citeType])
     };
@@ -755,10 +760,10 @@ declare
         let $citationTree := dts-navigation:getCitationTrees($document)[@xml:id = "musicStructure"]
         let $selection := dts-util:selectBasedOnCiteStructure($document, "measure-1", $citationTree)
         let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
-        let $members := dts-navigation:buildMemberArrayRefDownZero($selection, $citeStructure)
+        let $members := dts-navigation:buildMemberArrayRefDownZero($selection, $citeStructure, "mei")
         let $singleSelection := dts-util:selectBasedOnCiteStructure($document, "measure-3", $citationTree)
         let $singleCiteStructure := dts-util:getCiteStructureForNode($singleSelection, $citationTree)
-        let $singleMember := dts-navigation:buildMemberArrayRefDownZero($singleSelection, $singleCiteStructure)
+        let $singleMember := dts-navigation:buildMemberArrayRefDownZero($singleSelection, $singleCiteStructure, "mei")
         return
             string-join($members/identifier, " ") eq "measure-before measure-1 measure-after"
             and (every $member in $members satisfies $member/parent eq "movement-1")
