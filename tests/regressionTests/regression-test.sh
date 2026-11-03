@@ -67,6 +67,14 @@ declare -a ENDPOINTS=(
 "/data/xql/getXml.xql?uri=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fsources%2Fsource-1.xml&internalId=&edition=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fedition.xml&lang=de"
 "/data/xql/getZone.xql?uri=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fsources%2Fsource-8.xml&zoneId=zone_4d395284-88a3-4269-adc8-8ecabc1d434d&lang=en"
 "/data/xql/search.xql?term=hilfe&lang=de&edition=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fedition.xml"
+"/api/document?resource=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Ftexts%2Ftext-1.xml&mediaType=text%2Fhtml&htmlProfile=edirom-text&idPrefix=textView-1063_"
+"/api/document?resource=help_de&mediaType=text%2Fhtml&htmlProfile=edirom-help"
+"/api/document?resource=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fsources%2Fsource-4-MEI.xml&ref=meiHead&mediaType=text%2Fhtml&htmlProfile=edirom-header&idPrefix=headerView-1_"
+"/api/document?resource=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fsources%2Fsource-1.xml&mediaType=text%2Fxml"
+"/api/document?resource=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fsources%2Fsource-1.xml&ref=bar-2002&mediaType=text%2Fxml"
+"/api/document?resource=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fsources%2Fsource-4-MEI.xml&tree=musicStructure&mediaType=application%2Fmei%2Bxml"
+"/api/document?resource=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fsources%2Fsource-4-MEI.xml&ref=tf280fcd0-c18e-42b4-8ec3-8166ac51f7cf&tree=musicStructure&mediaType=application%2Fxml"
+"/api/document?resource=xmldb%3Aexist%3A%2F%2F%2Fdb%2Fapps%2Fweber-klarinettenquintett-eol-emeritus%2Fsources%2Fsource-4-MEI.xml&ref=tf280fcd0-c18e-42b4-8ec3-8166ac51f7cf&tree=musicStructure&mediaType=application%2Fxml&unwrap=true"
 )
 
 # Helper function to compute filenames from endpoint via `md5`.
