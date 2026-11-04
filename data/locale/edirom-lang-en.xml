@@ -39,6 +39,31 @@
         <entry key="controller.navigator.Navigator_ConcordanceDocuments" value="Additional documents"/>
         <entry key="controller.navigator.Navigator_ConcordanceExternalResources" value="Additional resources"/>
 
+        <!-- Edirom Mobile -->
+        <entry key="mobile.Header_mainMenu" value="Main menu"/>
+        <entry key="mobile.Header_editions" value="Editions"/>
+        <entry key="mobile.Header_about" value="About"/>
+        <entry key="mobile.Header_switchToDesktop" value="Switch to desktop view"/>
+        <entry key="mobile.Pages_selectEdition" value="Select edition"/>
+        <entry key="mobile.Navigator_documents" value="Documents"/>
+        <entry key="mobile.Navigator_externalResources" value="External resources"/>
+        <entry key="mobile.ConcordanceNavigator_freeExploration" value="Free exploration"/>
+        <entry key="mobile.ImageView_page" value="Page"/>
+        <entry key="mobile.About_title" value="About {0}"/>
+        <entry key="mobile.About_intro1" value="Edirom-Online is a web-based platform for the collaborative editing of complex scholarly digital editions. It is based on the TEI XML standard and provides a rich set of tools for the collaborative editing of texts, images, and other media. Edirom-Online is developed by the Edirom Project."/>
+        <entry key="mobile.About_intro2" value="The software consists of two main modules: the frontend and the backend. Information about the parts of the software can be found below."/>
+        <entry key="mobile.About_version" value="Version"/>
+        <entry key="mobile.About_date" value="Date"/>
+        <entry key="mobile.About_doi" value="DOI"/>
+        <entry key="mobile.About_github" value="GitHub"/>
+        <entry key="mobile.About_revision" value="Revision"/>
+        <entry key="mobile.About_contributors" value="Contributors"/>
+        <entry key="mobile.About_contributorsAlt" value="Avatars of contributors to {0} in GitHub"/>
+        <entry key="mobile.About_loadError" value="Error fetching content from CITATION.cff files."/>
+        <entry key="mobile.About_backendUrl" value="URL of backend CITATION.cff file:"/>
+        <entry key="mobile.About_frontendUrl" value="URL of frontend CITATION.cff file:"/>
+        <entry key="mobile.About_reportIssue" value="When encountering this or other issues persistently, please create a report on"/>
+
         <entry key="controller.window.Window_annotationView" value="Annotations"/>
         <entry key="controller.window.Window_headerView" value="Meta data"/>
         <entry key="controller.window.Window_renderingView" value="Rendering"/>
