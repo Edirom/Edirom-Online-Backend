@@ -333,6 +333,14 @@ declare
     %test:arg("identifiers", "test-mdiv-1 test-measure-1 test-measure-2 test-measure-3 test-measure-4 test-mdiv-2 test-mdiv-2-measure-1")
     %test:arg("excludedIdentifiers", "")
     %test:assertTrue
+    (: A deeper movement range includes the same available measures when there is no third citation level. :)
+    %test:arg("ref")
+    %test:arg("start", "test-mdiv-1")
+    %test:arg("end", "test-mdiv-2")
+    %test:arg("down", "2")
+    %test:arg("identifiers", "test-mdiv-1 test-measure-1 test-measure-2 test-measure-3 test-measure-4 test-mdiv-2 test-mdiv-2-measure-1")
+    %test:arg("excludedIdentifiers", "")
+    %test:assertTrue
     (: Range traversal: include measures between start and end, inclusive, and citation units until the deepest level. :)
     %test:arg("ref")
     %test:arg("start", "test-measure-1")
@@ -470,6 +478,13 @@ declare
     %test:arg("ref")
     %test:arg("start", "pb-1") %test:arg("end", "pb-3")
     %test:arg("down", "1")
+    %test:arg("identifiers", "pb-1 pb-2 pb-3")
+    %test:arg("excludedIdentifiers", "pb-4")
+    %test:assertTrue
+    (: Pagination range traversal at down=-1 still returns only the selected page breaks. :)
+    %test:arg("ref")
+    %test:arg("start", "pb-1") %test:arg("end", "pb-3")
+    %test:arg("down", "-1")
     %test:arg("identifiers", "pb-1 pb-2 pb-3")
     %test:arg("excludedIdentifiers", "pb-4")
     %test:assertTrue
@@ -789,6 +804,12 @@ declare
     %test:arg("identifiers", "pb-3 pb-4")
     %test:arg("excludedIdentifiers", "pb-1 pb-2")
     %test:assertTrue
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
+    %test:arg("ref", "test-div-1")
+    %test:arg("tree", "basicStructure")
+    %test:arg("identifiers", "test-div-1 test-div-2 test-div-3 test-div-4")
+    %test:arg("excludedIdentifiers", "nested-div")
+    %test:assertTrue
     function dnt:test-navigation-down-zero-returns-siblings(
         $resource as xs:string,
         $ref as xs:string,
@@ -880,6 +901,47 @@ declare
 };
 
 declare
+    (: An omitted tree with ref and down selects the first MEI citation tree and returns the expected movement subtree. :)
+    %test:assertTrue
+    function dnt:test-navigation-ref-down-uses-default-tree-results() as xs:boolean {
+        let $result := dts-navigation:navigation(
+            "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml",
+            "test-mdiv-1", (), (), 2, ()
+        )
+        return
+            $result/ref/identifier eq "test-mdiv-1"
+            and $result/ref/citeType eq "Movement"
+            and $result/ref/level eq "1"
+            and string-join($result/member/identifier, " ") eq "test-mdiv-1 test-measure-1 test-measure-2 test-measure-3 test-measure-4"
+            and (every $member in $result/member satisfies (
+                $member/type[@json:name = "@type"] eq "CitableUnit"
+                and $member/@json:array eq "true"
+            ))
+};
+
+declare
+    (: A TEI range without down returns its two boundary objects and no member array. :)
+    %test:assertTrue
+    function dnt:test-navigation-tei-range-without-down-returns-boundaries() as xs:boolean {
+        let $result := dts-navigation:navigation(
+            "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml",
+            (), "test-div-1", "test-div-2", (), "basicStructure"
+        )
+        return
+            empty($result/member)
+            and $result/start/identifier eq "test-div-1"
+            and $result/start/citeType eq "Chapter"
+            and $result/start/level eq "1"
+            and $result/start/dublinCore/title eq "This is the header of the firs…"
+            and $result/start/extensions/pageId eq "page-1"
+            and $result/end/identifier eq "test-div-2"
+            and $result/end/citeType eq "Chapter"
+            and $result/end/level eq "1"
+            and $result/end/dublinCore/title eq "I am the header of the second …"
+            and $result/end/extensions/pageId eq "page-2"
+};
+
+declare
     (: Ref cannot be combined with start/end. :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref", "test-mdiv-1")
@@ -919,12 +981,26 @@ declare
     %test:arg("down", "0")
     %test:arg("tree")
     %test:assertError("errors:InvalidParametersError")
+    (: Down values less than -1 are invalid. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("ref", "test-mdiv-1") %test:arg("start") %test:arg("end")
+    %test:arg("down", "-2")
+    %test:arg("tree", "musicStructure")
+    %test:assertError("errors:InvalidParametersError")
     (: The requested citation tree must exist for the resource. :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
     %test:arg("ref") %test:arg("start") %test:arg("end")
     %test:arg("down", "1")
     %test:arg("tree", "missingCitationTree")
     %test:assertError("errors:InvalidParametersError")
+    (: A missing resource must raise NotFoundError. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/missing.xml")
+    %test:arg("ref", "ref")
+    %test:arg("start", "")
+    %test:arg("end", "")
+    %test:arg("down")
+    %test:arg("tree", "")
+    %test:assertError("errors:NotFoundError")
     function dnt:test-navigation-validates-parameters(
         $resource as xs:string,
         $ref as xs:string?,
@@ -934,17 +1010,4 @@ declare
         $tree as xs:string?
     ) as element(json:value) {
         dts-navigation:navigation($resource, $ref, $start, $end, $down, $tree)
-};
-
-declare
-    %test:assertError("errors:NotFoundError")
-    function dnt:test-navigation-errors-for-missing-resource() as element(json:value) {
-        dts-navigation:navigation(
-            "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/missing.xml",
-            "ref",
-            "",
-            "",
-            (),
-            ""
-        )
 };
