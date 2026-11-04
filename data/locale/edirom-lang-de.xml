@@ -39,6 +39,31 @@
         <entry key="controller.navigator.Navigator_ConcordanceDocuments" value="Weitere Dokumente"/>
         <entry key="controller.navigator.Navigator_ConcordanceExternalResources" value="Weitere Ressourcen"/>
 
+        <!-- Edirom Mobile -->
+        <entry key="mobile.Header_mainMenu" value="Hauptmenü"/>
+        <entry key="mobile.Header_editions" value="Editionen"/>
+        <entry key="mobile.Header_about" value="Über"/>
+        <entry key="mobile.Header_switchToDesktop" value="Zur Desktop-Ansicht wechseln"/>
+        <entry key="mobile.Pages_selectEdition" value="Edition auswählen"/>
+        <entry key="mobile.Navigator_documents" value="Dokumente"/>
+        <entry key="mobile.Navigator_externalResources" value="Externe Ressourcen"/>
+        <entry key="mobile.ConcordanceNavigator_freeExploration" value="Freies Erkunden"/>
+        <entry key="mobile.ImageView_page" value="Seite"/>
+        <entry key="mobile.About_title" value="Über {0}"/>
+        <entry key="mobile.About_intro1" value="Edirom-Online ist eine webbasierte Plattform zur kollaborativen Erstellung komplexer wissenschaftlicher digitaler Editionen. Sie basiert auf dem TEI-XML-Standard und bietet vielfältige Werkzeuge für die gemeinsame Bearbeitung von Texten, Bildern und anderen Medien. Edirom-Online wird vom Edirom-Projekt entwickelt."/>
+        <entry key="mobile.About_intro2" value="Die Software besteht aus zwei Hauptmodulen: dem Frontend und dem Backend. Informationen zu den Teilen der Software finden sich weiter unten."/>
+        <entry key="mobile.About_version" value="Version"/>
+        <entry key="mobile.About_date" value="Datum"/>
+        <entry key="mobile.About_doi" value="DOI"/>
+        <entry key="mobile.About_github" value="GitHub"/>
+        <entry key="mobile.About_revision" value="Revision"/>
+        <entry key="mobile.About_contributors" value="Mitwirkende"/>
+        <entry key="mobile.About_contributorsAlt" value="Avatare der Mitwirkenden an {0} auf GitHub"/>
+        <entry key="mobile.About_loadError" value="Fehler beim Laden der CITATION.cff-Dateien."/>
+        <entry key="mobile.About_backendUrl" value="URL der CITATION.cff-Datei des Backends:"/>
+        <entry key="mobile.About_frontendUrl" value="URL der CITATION.cff-Datei des Frontends:"/>
+        <entry key="mobile.About_reportIssue" value="Wenn dieses oder andere Probleme dauerhaft auftreten, erstelle bitte eine Meldung unter"/>
+
         <entry key="controller.window.Window_annotationView" value="Anmerkung"/>
         <entry key="controller.window.Window_headerView" value="Metadaten"/>
         <entry key="controller.window.Window_renderingView" value="Rendering"/>
@@ -121,7 +146,7 @@
         <entry key="view.window.search.SearchWindow_HitsIn" value="Treffer gefunden in"/>
         <entry key="view.window.search.SearchWindow_ShowAllHits" value="Alle Treffer zeigen"/>
         <entry key="view.window.search.SearchWindow_Objects" value="Objekten"/>
-        <entry key="view.window.about.AboutWindow_Title" value="About Edirom Online"/>
+        <entry key="view.window.about.AboutWindow_Title" value="Über Edirom Online"/>
         <entry key="view.window.about.AboutWindow_License" value="Lizenz"/>
         <entry key="view.window.source.SourceView_categoriesMenu" value="Kategorien…"/>
         <entry key="view.window.source.SourceView_prioMenu" value="Prioritäten…"/>
