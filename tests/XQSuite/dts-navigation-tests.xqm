@@ -82,15 +82,44 @@ declare
 declare
     (: Non-TEI namespaces have no page identifier for the selected chapter. :)
     %test:arg("documentXml", "<TEI xmlns='http://www.tei-c.org/ns/1.0'><text><body><pb facs='#page-1'/><div type='chapter'/></body></text></TEI>")
+    %test:arg("resource") %test:arg("selectionId")
     %test:arg("namespace", "mei")
-    %test:assertEquals("")
+    %test:assertEquals("|")
     (: TEI page identifiers come from the preceding page break in the document. :)
     %test:arg("documentXml", "<TEI xmlns='http://www.tei-c.org/ns/1.0'><text><body><pb facs='#page-1'/><div type='chapter'/></body></text></TEI>")
+    %test:arg("resource") %test:arg("selectionId")
     %test:arg("namespace", "tei")
-    %test:assertEquals("page-1")
-    function dnt:test-getPageId($documentXml as xs:string, $namespace as xs:string) as xs:string {
-        let $document := parse-xml($documentXml)
-        return string(dts-navigation:getPageId($document//tei:div, $namespace))
+    %test:assertEquals("pageId|page-1")
+    (: The first measure's facsimile zone resolves to its containing surface. :)
+    %test:arg("documentXml") %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
+    %test:arg("selectionId", "part-1") %test:arg("namespace", "mei")
+    %test:assertEquals("firstSurfaceId|facsimile-2001002")
+    (: A movement without facsimile data has an empty first-page identifier. :)
+    %test:arg("documentXml") %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("selectionId", "test-mdiv-1") %test:arg("namespace", "mei")
+    %test:assertEquals("firstSurfaceId|")
+    (: Non-MEI selections do not receive a first-page identifier. :)
+    %test:arg("documentXml") %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
+    %test:arg("selectionId", "part-1") %test:arg("namespace", "other")
+    %test:assertEquals("|")
+    function dnt:test-getPageId(
+        $documentXml as xs:string?,
+        $resource as xs:string?,
+        $selectionId as xs:string?,
+        $namespace as xs:string
+    ) as xs:string {
+        let $document :=
+            if ($resource) then
+                eutil:getDoc($resource)
+            else
+                parse-xml($documentXml)
+        let $selection :=
+            if ($selectionId) then
+                $document/id($selectionId)
+            else
+                $document//tei:div
+        let $result := dts-navigation:getPageId($selection, $namespace)
+        return local-name($result) || "|" || string($result)
 };
 
 declare
@@ -107,6 +136,16 @@ declare
         let $selection := $document//tei:div[@type = "chapter"]
         let $metadata := dts-navigation:buildMetadataForCitableUnit($selection, $namespace)
         return string($metadata[self::dublinCore]/title) || "|" || string($metadata[self::extensions]/pageId)
+};
+
+declare
+    (: MEI movement metadata includes the firstSurfaceId extension. :)
+    %test:args("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml", "part-1")
+    %test:assertEquals("facsimile-2001002")
+    function dnt:test-buildMetadataForCitableUnit-includes-firstSurfaceId($resource as xs:string, $movementId as xs:string) as xs:string {
+        let $document := eutil:getDoc($resource)
+        let $metadata := dts-navigation:buildMetadataForCitableUnit($document/id($movementId), "mei")
+        return string($metadata[self::extensions]/firstSurfaceId)
 };
 
 declare

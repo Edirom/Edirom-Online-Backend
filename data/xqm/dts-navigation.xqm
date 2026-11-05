@@ -15,6 +15,7 @@ module namespace dts-navigation = "http://www.edirom.de/api/dts-navigation";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 import module namespace errors = "http://www.edirom.de/xquery/errors" at "errors.xqm";
 import module namespace dts-util = "http://www.edirom.de/api/dts-util" at "dts-util.xqm";
+import module namespace source = "http://www.edirom.de/xquery/source" at "source.xqm";
 import module namespace teitext = "http://www.edirom.de/xquery/teitext" at "teitext.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
@@ -138,11 +139,18 @@ declare function dts-navigation:getTitle($selection as node(), $namespace as xs:
  :
  : @param $selection The selected citable unit
  : @param $namespace The standardized namespace prefix of the containing document
- : @return A pageId element, or an empty sequence when no page identifier is available
+ : @return A pageId for TEI, a firstSurfaceId for MEI movements, or an empty sequence
  :)
-declare function dts-navigation:getPageId($selection as node(), $namespace as xs:string) as element(pageId)? {
+declare function dts-navigation:getPageId($selection as node(), $namespace as xs:string) as element()? {
     if ($namespace eq "tei" and $selection instance of element()) then
         <pageId>{teitext:getChapterPageId($selection, "pageMode")}</pageId>
+    else if ($namespace eq "mei" and $selection instance of element(mei:mdiv)) then
+        let $mei := $selection/root()
+        let $measure := ($selection//mei:measure)[1]
+        let $zoneId := source:getZoneIdFromMeasure($measure)
+        let $surface := source:getSurfaceForZone($mei, $zoneId)
+        return
+            <firstSurfaceId>{string($surface/@xml:id)}</firstSurfaceId>
     else
         ()
 };
