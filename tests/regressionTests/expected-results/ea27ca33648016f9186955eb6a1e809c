@@ -1,0 +1,82 @@
+[ {
+  "type" : "source",
+  "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-1.xml",
+  "internalIdType" : "unknown",
+  "title" : "Autographe Partitur, Berlin | Mus. ms. autogr. C. M. von Weber WFN 14 (2)",
+  "term" : null,
+  "views" : [ {
+    "label" : "Quellenbeschreibung",
+    "type" : "textView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/sourceDesc-1.xml"
+  }, {
+    "type" : "sourceView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-1.xml",
+    "defaultView" : true
+  }, {
+    "type" : "xmlView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-1.xml"
+  }, {
+    "label" : "XML Quellenbeschreibung",
+    "type" : "xmlView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/sourceDesc-1.xml"
+  } ],
+  "internalId" : "",
+  "path" : null,
+  "doc" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-1.xml"
+}, {
+  "type" : "text",
+  "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-1.xml",
+  "internalIdType" : "unknown",
+  "title" : "Vorbemerkung",
+  "term" : null,
+  "views" : [ {
+    "type" : "textView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-1.xml",
+    "defaultView" : true
+  }, {
+    "type" : "xmlView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-1.xml"
+  } ],
+  "internalId" : "",
+  "path" : null,
+  "doc" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-1.xml"
+}, {
+  "type" : "source",
+  "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml#annotation-2",
+  "internalIdType" : "annot",
+  "title" : "Edition",
+  "term" : null,
+  "views" : [ {
+    "label" : "Quellenbeschreibung",
+    "type" : "textView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/sourceDesc-4.xml"
+  }, {
+    "type" : "verovioView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml",
+    "defaultView" : true
+  }, {
+    "type" : "annotationView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml",
+    "defaultView" : true
+  }, {
+    "type" : "xmlView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml"
+  }, {
+    "label" : "XML Quellenbeschreibung",
+    "type" : "xmlView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/sourceDesc-4.xml"
+  } ],
+  "internalId" : "annotation-2",
+  "path" : null,
+  "doc" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml"
+}, {
+  "type" : "unknown",
+  "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/does-not-exist.xml",
+  "internalIdType" : "unknown",
+  "title" : "",
+  "term" : null,
+  "views" : [ ],
+  "internalId" : "",
+  "path" : null,
+  "doc" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/does-not-exist.xml"
+} ]
