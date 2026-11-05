@@ -3,6 +3,7 @@ xquery version "3.1";
 module namespace st = "http://www.edirom.de/xquery/xqsuite/source-tests";
 
 import module namespace source = "http://www.edirom.de/xquery/source" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/source.xqm";
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/eutil.xqm";
 
 declare namespace mei="http://www.music-encoding.org/ns/mei";
 declare namespace test="http://exist-db.org/xquery/xqsuite";
@@ -10,6 +11,7 @@ declare namespace test="http://exist-db.org/xquery/xqsuite";
 (: The fixture is addressed by path rather than held as a document, because id() only
  : works on stored documents, not on constructed nodes. :)
 declare variable $st:parts-labelled := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-parts-labelled.xml";
+declare variable $st:facsimile := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml";
 
 
 (: source:label-or-n ======================================================== :)
@@ -23,6 +25,32 @@ declare
     %test:args("measure_7d3b5e0f-score-one")    %test:assertEquals("1")
     function st:test-label-or-n($measureId as xs:string) as xs:string? {
         source:label-or-n(doc($st:parts-labelled)/id($measureId))
+};
+
+(: source:getZoneIdFromMeasure ============================================== :)
+
+declare
+    (: the leading fragment marker is removed :)
+    %test:args("<measure xmlns='http://www.music-encoding.org/ns/mei' facs='#zone_bar-2001'/>") %test:assertEquals("zone_bar-2001")
+    (: a bare zone ID is preserved :)
+    %test:args("<measure xmlns='http://www.music-encoding.org/ns/mei' facs='zone_bar-2001'/>") %test:assertEquals("zone_bar-2001")
+    (: a missing facs reference becomes an empty string :)
+    %test:args("<measure xmlns='http://www.music-encoding.org/ns/mei'/>") %test:assertEquals("")
+    (: an absent measure also becomes an empty string :)
+    %test:arg("measure") %test:assertEquals("")
+    function st:test-getZoneIdFromMeasure($measure as element(mei:measure)?) as xs:string {
+        source:getZoneIdFromMeasure($measure)
+};
+
+(: source:getSurfaceForZone ================================================= :)
+
+declare
+    (: a zone resolves to the surface that contains it :)
+    %test:arg("zoneId", "zone_bar-2001") %test:assertEquals("facsimile-2001002")
+    (: an unknown zone does not resolve to a surface :)
+    %test:arg("zoneId", "no-such-zone") %test:assertEquals("")
+    function st:test-getSurfaceForZone($zoneId as xs:string) as xs:string {
+        string(source:getSurfaceForZone(eutil:getDoc($st:facsimile), $zoneId)/@xml:id)
 };
 
 

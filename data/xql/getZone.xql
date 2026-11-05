@@ -12,11 +12,11 @@ xquery version "3.1";
 (: IMPORTS ================================================================= :)
 
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
+import module namespace source = "http://www.edirom.de/xquery/source" at "../xqm/source.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
-declare namespace mei = "http://www.music-encoding.org/ns/mei";
-declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization"; 
+declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace request = "http://exist-db.org/xquery/request";
 declare namespace xlink = "http://www.w3.org/1999/xlink";
 declare namespace xmldb = "http://exist-db.org/xquery/xmldb";
@@ -33,11 +33,12 @@ let $zoneId := request:get-parameter('zoneId', '')
 
 let $mei := eutil:getDoc($uri)
 let $zone := $mei/id($zoneId)
+let $surface := source:getSurfaceForZone($mei, $zoneId)
 
 return (
     map {
         'zoneId': $zone/string(@xml:id),
-        'pageId': $zone/../string(@xml:id),
+        'pageId': $surface/string(@xml:id),
         'ulx': $zone/string(@ulx),
         'uly': $zone/string(@uly),
         'lrx': $zone/string(@lrx),

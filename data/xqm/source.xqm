@@ -165,6 +165,25 @@ declare function source:label-or-n($element as element()) as xs:string? {
 };
 
 (:~
+ : Extracts a zone ID from a measure's facsimile reference.
+ :)
+declare function source:getZoneIdFromMeasure($measure as element(mei:measure)?) as xs:string {
+    let $zoneReference := string($measure/@facs)
+    return
+        if (starts-with($zoneReference, '#')) then
+            substring($zoneReference, 2)
+        else
+            $zoneReference
+};
+
+(:~
+ : Finds the surface containing a zone.
+ :)
+declare function source:getSurfaceForZone($mei as node(), $zoneId as xs:string) as element(mei:surface)? {
+    $mei/id($zoneId)/parent::mei:surface
+};
+
+(:~
  : Builds the virtual measure ID for a measure.
  :
  : A measure number generally occurs once in every part. Rather than referencing each of

@@ -10,7 +10,6 @@ declare namespace test="http://exist-db.org/xquery/xqsuite";
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
 declare namespace edirom="http://www.edirom.de/ns/1.3";
 
-
 declare 
     %test:args("<title xmlns='http://www.tei-c.org/ns/1.0' 
         type='main'>Some Title</title>")            %test:assertEquals("tei")
@@ -38,6 +37,26 @@ declare
         "de")       %test:assertEquals("Autographe Partitur")
     function eut:test-getLocalizedTitle($node as element(), $lang as xs:string?) as xs:string {
         eutil:getLocalizedTitle($node, $lang)
+};
+
+declare
+    (: the first measure is selected from the first part in document order :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-parts-labelled.xml")
+    %test:arg("movementId", "test_mdiv_01") %test:assertEquals("measure_3f9a1c2d-flauto-one")
+    (: a movement without parts still returns its first measure :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-parts-labelled.xml")
+    %test:arg("movementId", "test_mdiv_02") %test:assertEquals("measure_7d3b5e0f-score-one")
+    (: an unknown movement returns no measure :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-parts-labelled.xml")
+    %test:arg("movementId", "no-such-movement") %test:assertEquals("")
+    (: the first movement in a score fixture returns its first measure :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("movementId", "test-mdiv-1") %test:assertEquals("test-measure-1")
+    (: a facsimile fixture also returns the first measure in its movement :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
+    %test:arg("movementId", "part-1") %test:assertEquals("bar-2001")
+    function eut:test-getFirstMeasureInMovement($resource as xs:string, $movementId as xs:string) as xs:string {
+        string(eutil:getFirstMeasureInMovement(eutil:getDoc($resource), $movementId)/@xml:id)
 };
 
 declare

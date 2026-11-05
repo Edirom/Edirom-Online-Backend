@@ -6,10 +6,10 @@ xquery version "3.1";
 (: IMPORTS ================================================================= :)
 
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
+import module namespace source = "http://www.edirom.de/xquery/source" at "../xqm/source.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
-declare namespace mei = "http://www.music-encoding.org/ns/mei";
 declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace request = "http://exist-db.org/xquery/request";
 
@@ -24,14 +24,9 @@ let $uri := request:get-parameter('uri', '')
 let $movementId := request:get-parameter('movementId', '')
 
 let $mei := eutil:getDoc($uri)
-
-let $zoneId := ($mei/id($movementId)//mei:measure)[1]/string(@facs)
-
-let $zoneId :=
-    if (starts-with($zoneId, '#')) then
-        (substring($zoneId, 2))
-    else
-        ($zoneId)
+let $firstMeasure := eutil:getFirstMeasureInMovement($mei, $movementId)
+let $zoneId := source:getZoneIdFromMeasure($firstMeasure)
+let $surface := source:getSurfaceForZone($mei, $zoneId)
 
 return
-    $mei/id($zoneId)/parent::mei:surface/string(@xml:id)
+    $surface/string(@xml:id)

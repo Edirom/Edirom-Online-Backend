@@ -285,6 +285,13 @@ declare function eutil:get-referenced-element($node as node(), $reference as xs:
 };
 
 (:~
+ : Finds the first measure in a movement.
+ :)
+declare function eutil:getFirstMeasureInMovement($mei as node(), $movementId as xs:string) as element(mei:measure)? {
+    ($mei/id($movementId)//mei:measure)[1]
+};
+
+(:~
  : Returns a part's label (translated if available)
  :
  : @author Dennis Ried
