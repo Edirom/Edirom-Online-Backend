@@ -485,6 +485,7 @@
 								"type": "string",
 								"enum": [
 									"musicStructure",
+									"musicPartStructure",
 									"basicStructure",
 									"paginationStructure",
 									"performanceStructure"
@@ -499,6 +500,10 @@
 								"musicStructure": {
 									"summary": "musicStructure",
 									"value": "musicStructure"
+								},
+								"musicPartStructure": {
+									"summary": "musicPartStructure",
+									"value": "musicPartStructure"
 								},
 								"basicStructure": {
 									"summary": "basicStructure",
@@ -909,6 +914,7 @@
 								"type": "string",
 								"enum": [
 									"musicStructure",
+									"musicPartStructure",
 									"basicStructure",
 									"paginationStructure",
 									"performanceStructure"
@@ -923,6 +929,10 @@
 								"musicStructure": {
 									"summary": "musicStructure",
 									"value": "musicStructure"
+								},
+								"musicPartStructure": {
+									"summary": "musicPartStructure",
+									"value": "musicPartStructure"
 								},
 								"basicStructure": {
 									"summary": "basicStructure",

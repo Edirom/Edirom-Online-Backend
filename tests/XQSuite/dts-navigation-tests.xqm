@@ -515,7 +515,7 @@ declare
 };
 
 declare
-    %test:assertEquals("musicStructure", "paginationStructure", "performanceStructure")
+    %test:assertEquals("musicStructure", "musicPartStructure", "paginationStructure", "performanceStructure")
     function dnt:test-getCitationTrees-returns-standard-mei-trees() as xs:string* {
         let $document := document {
             <mei xmlns="http://www.music-encoding.org/ns/mei">
@@ -529,7 +529,7 @@ declare
                 </music>
             </mei>
         }
-        return dts-navigation:getCitationTrees($document)/string(@xml:id)
+        return dts-util:getCitationTrees($document)/string(@xml:id)
 };
 
 declare
@@ -562,18 +562,18 @@ declare
                 </text>
             </TEI>
         }
-        return dts-navigation:getCitationTrees($document)/string(@xml:id)
+        return dts-util:getCitationTrees($document)/string(@xml:id)
 };
 
 declare
-    %test:assertEquals("musicStructure", "paginationStructure", "performanceStructure")
+    %test:assertEquals("musicStructure", "musicPartStructure", "paginationStructure", "performanceStructure")
     function dnt:test-getCitationTrees-returns-all-mei-trees-without-matching-content() as xs:string* {
         let $document := document {
             <mei xmlns="http://www.music-encoding.org/ns/mei">
                 <meiHead/>
             </mei>
         }
-        return dts-navigation:getCitationTrees($document)/string(@xml:id)
+        return dts-util:getCitationTrees($document)/string(@xml:id)
 };
 
 declare
@@ -670,7 +670,7 @@ declare
         $namespace as xs:string
     ) as xs:string {
         let $document := eutil:getDoc($resource)
-        let $citationTree := dts-navigation:getCitationTrees($document)[@xml:id = $tree]
+        let $citationTree := dts-util:getCitationTrees($document)[@xml:id = $tree]
         let $selection := dts-util:selectBasedOnCiteStructure($document, $ref, $citationTree)
         let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
         let $result := dts-navigation:buildCitableUnitObject($selection, $citeStructure, $ref, $namespace)
@@ -860,7 +860,7 @@ declare
                 </music>
             </mei>
         }
-        let $citationTree := dts-navigation:getCitationTrees($document)[@xml:id = "musicStructure"]
+        let $citationTree := dts-util:getCitationTrees($document)[@xml:id = "musicStructure"]
         let $selection := dts-util:selectBasedOnCiteStructure($document, "measure-1", $citationTree)
         let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
         let $members := dts-navigation:buildMemberArrayRefDownZero($selection, $citeStructure, "mei")

@@ -34,18 +34,6 @@ declare namespace request = "http://exist-db.org/xquery/request";
 (: FUNCTION DECLARATIONS =================================================== :)
 
 (:~
- : Returns all standard citation trees for the namespace of a document.
- :
- : @param $document The document for which to retrieve the citation trees.
- : @return The citation tree elements defined for the document namespace.
- :)
-declare function dts-navigation:getCitationTrees($document as document-node()) as element()* {
-    let $namespace := eutil:getNamespace($document/*)
-    let $allTrees := eutil:getDoc($eutil:app-root || '/data/trees/citationTrees' || upper-case($namespace) || '.xml')/refsDecl/citeStructure
-    return $allTrees
-};
-
-(:~
  : Builds an XML-based JSON representation of a DTS CiteStructure object.
  :
  : @param $citeStructure The citation structure to convert.
@@ -113,7 +101,7 @@ declare function dts-navigation:buildResourceObject(
     $resource as xs:string
 ) as element(resource) {
     let $base-url := substring-before(request:get-url(), "/api")
-    let $citationTreesXML := dts-navigation:getCitationTrees($document)
+    let $citationTreesXML := dts-util:getCitationTrees($document)
     let $resourceObject :=
         <resource>
             <id json:name="@id">{$resource}</id>
@@ -136,7 +124,10 @@ declare function dts-navigation:buildResourceObject(
 declare function dts-navigation:getTitle($selection as node(), $namespace as xs:string) as xs:string {
     if ($namespace eq "tei" and $selection instance of element()) then
         teitext:getChapterName($selection treat as element())
-    else if ($namespace eq "mei" and $selection instance of element(mei:mdiv)) then
+    else if ($namespace eq "mei" and (
+        $selection instance of element(mei:mdiv)
+        or $selection instance of element(mei:part)
+    )) then
         string($selection/@label)
     else
         ""

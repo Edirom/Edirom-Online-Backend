@@ -8,6 +8,19 @@
                     use="@xml:id"/>
     </citeStructure>
 
+    <citeStructure xml:id="musicPartStructure"
+                    unit="Movement"
+                    match="//mei:mdiv"
+                    use="@xml:id">
+        <citeStructure unit="Part"
+                    match="descendant::mei:part"
+                    use="@label">
+            <citeStructure unit="Measure"
+                    match="descendant::mei:measure"
+                    use="@xml:id"/>
+        </citeStructure>
+    </citeStructure>
+
     <citeStructure xml:id="paginationStructure"
                     unit="Surface"
                     match="//mei:surface"

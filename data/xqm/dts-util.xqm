@@ -45,6 +45,20 @@ declare variable $dts-util:alwaysPreserveTEIElements as xs:QName* := (
 (: FUNCTION DECLARATIONS =================================================== :)
 
 (:~
+ : Returns all standard citation trees for the namespace of a document.
+ :
+ : @param $document The document for which to retrieve the citation trees.
+ : @return The citation tree elements defined for the document namespace.
+ :)
+declare function dts-util:getCitationTrees($document as node()) as element(citeStructure)* {
+    let $namespace := eutil:getNamespace($document/*)
+    return
+        eutil:getDoc(
+            $eutil:app-root || '/data/trees/citationTrees' || upper-case($namespace) || '.xml'
+        )/refsDecl/citeStructure
+};
+
+(:~
  : Resolves special resource aliases to their backing application resources.
  :
  : @param $resource The requested resource identifier
@@ -71,8 +85,7 @@ declare function dts-util:selectCitationTree(
     $document as node(),
     $tree as xs:string?
 ) as element(citeStructure)* {
-    let $namespace := eutil:getNamespace($document/*)
-    let $citationTrees := eutil:getDoc($eutil:app-root || '/data/trees/citationTrees' || upper-case($namespace) || '.xml')/refsDecl/citeStructure
+    let $citationTrees := dts-util:getCitationTrees($document)
     return
         if (not($tree)) then
             $citationTrees[1]
