@@ -477,6 +477,7 @@
 									"text/html",
 									"application/mei+xml",
 									"application/tei+xml",
+									"model/x3d+xml",
 									"application/xml",
 									"application/json"
 								],
@@ -490,6 +491,10 @@
 								"tei": {
 									"summary": "tei",
 									"value": "application/tei+xml"
+								},
+								"x3d": {
+									"summary": "x3d",
+									"value": "model/x3d+xml"
 								},
 								"html": {
 									"summary": "html",
