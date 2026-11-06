@@ -49,6 +49,8 @@
         <entry key="mobile.Navigator_externalResources" value="External resources"/>
         <entry key="mobile.ConcordanceNavigator_freeExploration" value="Free exploration"/>
         <entry key="mobile.ImageView_page" value="Page"/>
+        <entry key="mobile.ImageView_selectAllVoices" value="All parts"/>
+        <entry key="mobile.ImageView_noMeasureInSelectedVoices" value="No measure in the selected parts"/>
         <entry key="mobile.About_title" value="About {0}"/>
         <entry key="mobile.About_intro1" value="Edirom-Online is a web-based platform for the collaborative editing of complex scholarly digital editions. It is based on the TEI XML standard and provides a rich set of tools for the collaborative editing of texts, images, and other media. Edirom-Online is developed by the Edirom Project."/>
         <entry key="mobile.About_intro2" value="The software consists of two main modules: the frontend and the backend. Information about the parts of the software can be found below."/>

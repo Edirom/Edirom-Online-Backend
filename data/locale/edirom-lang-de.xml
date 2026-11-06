@@ -49,6 +49,8 @@
         <entry key="mobile.Navigator_externalResources" value="Externe Ressourcen"/>
         <entry key="mobile.ConcordanceNavigator_freeExploration" value="Freies Erkunden"/>
         <entry key="mobile.ImageView_page" value="Seite"/>
+        <entry key="mobile.ImageView_selectAllVoices" value="Alle Stimmen"/>
+        <entry key="mobile.ImageView_noMeasureInSelectedVoices" value="Kein Takt in den ausgewählten Stimmen"/>
         <entry key="mobile.About_title" value="Über {0}"/>
         <entry key="mobile.About_intro1" value="Edirom-Online ist eine webbasierte Plattform zur kollaborativen Erstellung komplexer wissenschaftlicher digitaler Editionen. Sie basiert auf dem TEI-XML-Standard und bietet vielfältige Werkzeuge für die gemeinsame Bearbeitung von Texten, Bildern und anderen Medien. Edirom-Online wird vom Edirom-Projekt entwickelt."/>
         <entry key="mobile.About_intro2" value="Die Software besteht aus zwei Hauptmodulen: dem Frontend und dem Backend. Informationen zu den Teilen der Software finden sich weiter unten."/>
