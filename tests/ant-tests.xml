@@ -4,19 +4,30 @@
     <property name="xqunit-url" value="http://localhost:8080/exist/apps/Edirom-Online-Backend/tests/XQSuite/run-unit-tests.xq"/>
     <property name="test-data-clarinet" value="clarinet-test-data.xar"/>
 
-    <target name="run-all-tests" depends="xqunit-tests,check-language-files"/>
+    <target name="run-all-tests" depends="-check-dependencies,xqunit-tests,check-language-files"/>
     
-    <target name="-check-dependencies">
+    <target name="-check-dependencies" depends="-check-xmllint,-check-saxon">
+        <description>Check for all dependencies needed by the test targets</description>
+    </target>
+
+    <target name="-check-xmllint">
         <description>Check for necessary executables</description>
-        <property environment="env" /> 
-        <available file="xmllint"  
-            filepath="${env.PATH}"  
+        <property environment="env" />
+        <available file="xmllint"
+            filepath="${env.PATH}"
             property="xmllint.present"/>
-        <fail unless="${xmllint.present}" 
+        <fail unless="${xmllint.present}"
             message="Missing executable 'xmllint'"/>
     </target>
-    
-    <target name="xqunit-tests" depends="-check-dependencies" if="xmllint.present">
+
+    <target name="-check-saxon">
+        <description>Check that Saxon is on Ant's classpath</description>
+        <available classname="net.sf.saxon.Query" property="saxon.present"/>
+        <fail unless="saxon.present"
+            message="Missing Saxon on Ant's classpath. Run ant with -lib pointing at a Saxon HE jar or directory, e.g. -lib /usr/share/java/"/>
+    </target>
+
+    <target name="xqunit-tests" depends="-check-xmllint" if="xmllint.present">
         <description>Run the XQSuite unit tests. 
             For general information about XQSuite see http://exist-db.org/exist/apps/doc/xqsuite.xml
         </description>
@@ -53,7 +64,7 @@
         </fail>
     </target>
 
-    <target name="check-language-files">
+    <target name="check-language-files" depends="-check-saxon">
         <description>Check alignment of language files and report missing entries</description>
         <parallel>
             <sequential>
