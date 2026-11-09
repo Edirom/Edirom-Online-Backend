@@ -1,0 +1,17 @@
+{
+  "type" : "text",
+  "internalIdType" : "unknown",
+  "title" : "Vorbemerkung",
+  "term" : null,
+  "views" : [ {
+    "type" : "textView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-1.xml",
+    "defaultView" : true
+  }, {
+    "type" : "xmlView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-1.xml"
+  } ],
+  "internalId" : "",
+  "path" : null,
+  "doc" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-1.xml"
+}
