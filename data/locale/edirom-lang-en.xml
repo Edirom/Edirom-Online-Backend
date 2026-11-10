@@ -41,6 +41,7 @@
 
         <!-- Edirom Mobile -->
         <entry key="mobile.Header_mainMenu" value="Main menu"/>
+        <entry key="mobile.Header_home" value="Home"/>
         <entry key="mobile.Header_editions" value="Editions"/>
         <entry key="mobile.Header_about" value="About"/>
         <entry key="mobile.Header_switchToDesktop" value="Switch to desktop view"/>
