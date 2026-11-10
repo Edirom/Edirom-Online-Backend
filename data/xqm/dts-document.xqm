@@ -24,6 +24,7 @@ declare namespace system = "http://exist-db.org/xquery/system";
 declare namespace transform = "http://exist-db.org/xquery/transform";
 declare namespace xhtml = "http://www.w3.org/1999/xhtml";
 declare namespace request = "http://exist-db.org/xquery/request";
+declare namespace util = "http://exist-db.org/xquery/util";
 
 (: VARIABLE DECLARATIONS ================================================== :)
 
@@ -576,6 +577,41 @@ declare function dts-document:isMediaTypeCompatible(
 };
 
 (:~
+ : Checks whether a resource is a citation file within an installed application.
+ :
+ : @param $resource The resource identifier to check
+ : @return `true()` for an application-level CITATION.cff resource
+ :)
+declare function dts-document:isCitationResource(
+    $resource as xs:string?
+) as xs:boolean {
+    $resource
+    and starts-with($resource, "xmldb:exist:///db/apps/")
+    and ends-with($resource, "/CITATION.cff")
+    and not(contains($resource, "?"))
+    and not(contains($resource, "#"))
+    and not(contains($resource, "/../"))
+    and not(contains($resource, "/./"))
+};
+
+(:~
+ : Loads a citation file as UTF-8 text without XML parsing or transformation.
+ :
+ : @param $resource The citation file resource identifier
+ : @return The citation file contents
+ :)
+declare function dts-document:citation(
+    $resource as xs:string?
+) as xs:string {
+    if (not(dts-document:isCitationResource($resource))) then
+        error($errors:UNSUPPORTED_DOCUMENT_FORMAT, "Only application-level CITATION.cff resources can be returned as text.")
+    else if (util:binary-doc-available($resource)) then
+        util:binary-to-string(util:binary-doc($resource), "UTF-8")
+    else
+        error($errors:NOT_FOUND, "The requested citation resource was not found.")
+};
+
+(:~
  : Resolves special resource aliases to their backing application resources.
  :
  : @param $resource The requested resource identifier
@@ -900,6 +936,11 @@ declare function dts-document:document(
         error($errors:INVALID_PARAMETERS, "The 'ref' parameter cannot be used together with 'start' or 'end'.")
     else if (($start and not($end)) or ($end and not($start))) then
         error($errors:INVALID_PARAMETERS, "Both 'start' and 'end' parameters must be provided together.")
+    else if ($mediaType eq "text/plain") then
+        if ($ref or $start or $end) then
+            error($errors:INVALID_PARAMETERS, "Text resources do not support document selection parameters.")
+        else
+            dts-document:citation($resource)
     else
         let $resource := dts-document:resolveSpecialResourceAlias($resource)
         let $document := eutil:getDoc($resource)/root()
