@@ -44,8 +44,9 @@ declare function local:getAnnotations($uriSharp as xs:string, $annotations as el
         for $annotation in $annotations
         let $id := $annotation/string(@xml:id)
         let $uri := concat('xmldb:exist://', document-uri($annotation/root()), '#', $id)
-        let $prio := $annotation/mei:ptr[@type = "priority"]/replace(@target, '#', '')
-        let $cat := $annotation/mei:ptr[@type = "categories"]/replace(@target, '#', '')
+        let $classes := tokenize(replace(normalize-space($annotation/@class), '#', ''), ' ')
+        let $prio := $annotation/mei:ptr[@type = "priority"]/replace(@target, '#', '') || $classes[starts-with(., 'ediromAnnotPrio')]
+        let $cat := $annotation/mei:ptr[@type = "categories"]/replace(@target, '#', '') || string-join($classes[contains(., 'annotation.category.')], ' ')
         let $plist as array(*) :=
             array {
                 for $p in tokenize($annotation/@plist, '\s+')

@@ -5,9 +5,8 @@ xquery version "3.1";
 
 (: IMPORTS ================================================================= :)
 
-import module namespace functx = "http://www.functx.com";
-
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
+import module namespace source = "http://www.edirom.de/xquery/source" at "../xqm/source.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -41,23 +40,13 @@ let $internalId :=
 let $doc := eutil:getDoc($docUri)
 let $internal := $doc/id($internalId)
 
-(: Specific handling of virtual measure IDs for parts in OPERA project :)
+(: An ID that resolves to nothing may still be one of the virtual measure IDs Edirom
+   Online uses to reference a measure number across all parts at once. :)
 let $internal :=
     if (exists($internal)) then
         ($internal)
-    else (
-        if (starts-with($internalId, 'measure_') and $doc//mei:parts) then (
-            let $mdivId := functx:substring-before-last(substring-after($internalId, 'measure_'), '_')
-            let $measureN := functx:substring-after-last($internalId, '_')
-            return (
-                if ($doc/id($mdivId)//mei:measure/@label) then
-                    $doc/id($mdivId)//mei:measure[@label][1]
-                else
-                    $doc/id($mdivId)//mei:measure[@n][1]
-            )
-        ) else
-            ($internal)
-    )
+    else
+        (source:resolve-virtual-measure-id($doc, $internalId)[1])
 
 return
     if (exists($internal)) then

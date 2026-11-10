@@ -81,7 +81,7 @@ declare function local:groupSourceParticipants($elems as node()*, $doc as xs:str
         return
             if ($isInPart)
             then
-                concat($doc, '#measure_', $elem/ancestor::mei:mdiv/@xml:id, '_', $elem/@n, $tstamp2)
+                concat($doc, '#', source:get-virtual-measure-id($elem), $tstamp2)
             else
                 concat($doc, '#', $startId, $tstamp2)
 };
