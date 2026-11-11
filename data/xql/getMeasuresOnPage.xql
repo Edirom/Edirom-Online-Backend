@@ -12,6 +12,7 @@ xquery version "3.1";
 (: IMPORTS ================================================================= :)
 
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
+import module namespace source = "http://www.edirom.de/xquery/source" at "../xqm/source.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -46,11 +47,7 @@ declare function local:getMeasures($mei as node(), $surface as node()) as map(*)
     let $measures := $mei//mei:measure[contains(@facs, $zoneRef)][$zoneRef = tokenize(@facs, '\s+')]
     return
         for $measure in $measures
-        let $measureLabel :=
-            if ($measure/@label) then
-                ($measure/string(@label))
-            else
-                ($measure/string(@n))
+        let $measureLabel := (source:label-or-n($measure), '')[1]
         let $measureLabel :=
             if ($measure//mei:multiRest) then
                 ($measureLabel || '–' || number($measureLabel) + number($measure//mei:multiRest/@num) - 1)

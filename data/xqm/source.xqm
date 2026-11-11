@@ -13,6 +13,8 @@ module namespace source = "http://www.edirom.de/xquery/source";
 
 (: IMPORTS ================================================================= :)
 
+import module namespace functx="http://www.functx.com";
+
 import module namespace edition="http://www.edirom.de/xquery/edition" at "edition.xqm";
 import module namespace eutil="http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 
@@ -140,4 +142,111 @@ declare function source:getSiglum($source as xs:string) as xs:string? {
         if(exists($elems))
         then $elems[1] => normalize-space()
         else ()
+};
+
+(:~
+ : Returns the designation Edirom Online displays for an element: @label if present,
+ : otherwise @n.
+ :
+ : This is the rule stated in docs/data-creation-workflow.md: "For both elements the
+ : Edirom Online prioritizes the value of the label-attribute to be displayed in the
+ : edition and uses the n-attribute only, if no label-attribute is provided." It is
+ : documented for mei:measure and mei:surface; the implementation is element-agnostic
+ : so both can share it.
+ :
+ : @param $element The element to read the designation from
+ : @return The designation, or the empty sequence if the element carries neither attribute
+ :)
+declare function source:label-or-n($element as element()) as xs:string? {
+
+    if ($element/@label)
+    then $element/string(@label)
+    else $element/@n ! string(.)
+};
+
+(:~
+ : Builds the virtual measure ID for a measure.
+ :
+ : A measure number generally occurs once in every part. Rather than referencing each of
+ : those measures individually, Edirom Online refers to them collectively through a single
+ : synthetic ID of the form measure_[mdiv ID]_[measure designation].
+ :
+ : The designation is appended verbatim, so an @label containing '_', whitespace or ';'
+ : yields an ID that cannot be parsed back or carried in a URI list. See implication #12
+ : in Edirom-Online/.claude/PLAN_data-implications-from-backend.md.
+ :
+ : @param $measure The measure to build the ID for
+ : @return The virtual measure ID
+ :)
+declare function source:get-virtual-measure-id($measure as element(mei:measure)) as xs:string {
+
+    'measure_'
+        || $measure/ancestor::mei:mdiv[1]/string(@xml:id)
+        || '_'
+        || source:label-or-n($measure)
+};
+
+(:~
+ : Returns the measures of an mdiv that carry a given designation.
+ :
+ : A designation generally occurs once in every part, so this is a sequence rather than a
+ : single element. Callers needing exactly one measure take [1] themselves: that constraint
+ : belongs to the caller, not to the lookup.
+ :
+ : @param $doc The source document to resolve against, may be empty
+ : @param $mdivId The @xml:id of the mdiv to look in, may be empty
+ : @param $designation The measure designation, cf. source:label-or-n, may be empty
+ : @return The measures carrying that designation, in document order
+ :)
+declare function source:resolve-measure-in-mdiv($doc as document-node()?, $mdivId as xs:string?, $designation as xs:string?) as element(mei:measure)* {
+
+    if (string($mdivId) ne '' and string($designation) ne '')
+    then $doc/id($mdivId)//mei:measure[source:label-or-n(.) eq $designation]
+    else ()
+};
+
+(:~
+ : Returns the measure elements a virtual measure ID denotes.
+ :
+ : The ID is split on its LAST underscore, so an mdiv @xml:id that itself contains
+ : underscores stays intact; the two halves are then handed to
+ : source:resolve-measure-in-mdiv, which is the same lookup the goto-by-name path performs
+ : with the mdiv and designation supplied separately rather than encoded in a string.
+ :
+ : @param $doc The source document to resolve against, may be empty
+ : @param $id The virtual measure ID, may be empty
+ : @return The measures denoted, or the empty sequence if $id is not a virtual measure ID
+ : resolvable in $doc
+ :)
+declare function source:resolve-virtual-measure-id($doc as document-node()?, $id as xs:string?) as element(mei:measure)* {
+
+    if (starts-with($id, 'measure_'))
+    then
+        let $reference := substring-after($id, 'measure_')
+        return
+            source:resolve-measure-in-mdiv(
+                $doc,
+                functx:substring-before-last($reference, '_'),
+                functx:substring-after-last($reference, '_'))
+    else ()
+};
+
+(:~
+ : Resolves a measure reference of either kind to the measure element(s) it denotes.
+ :
+ : A real @xml:id always wins. Measure @xml:id values may themselves start with 'measure_'
+ : (the cartographer-app generates IDs of the form measure_[UUID]), so a string is treated
+ : as a virtual measure ID only once it has failed to resolve to a real element.
+ :
+ : @param $doc The source document to resolve against, may be empty
+ : @param $id A measure @xml:id or a virtual measure ID, may be empty
+ : @return The measures denoted, or the empty sequence if $id resolves to neither
+ :)
+declare function source:resolve-measure-ref($doc as document-node()?, $id as xs:string?) as element(mei:measure)* {
+
+    let $measure := $doc/id($id)[self::mei:measure]
+    return
+        if (exists($measure))
+        then $measure
+        else source:resolve-virtual-measure-id($doc, $id)
 };
