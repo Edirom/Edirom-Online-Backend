@@ -9,20 +9,25 @@
     <property name="repo.target" value="${project.app}"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="build-xar"/>
-    <property name="tei.dir" value="build-tei"/>
+    <property name="tei.version" value="7.58.0"/>
+    <property name="tei.dir" value="build-tei/${tei.version}"/>
     
     <tstamp/>
 
     <target name="clean">
         <delete dir="${build.dir}"/>
-        <delete dir="${tei.dir}"/>
     </target>
 
-    <!-- Download TEI Zip file and extract it to ${tei.dir} -->
+    <!-- Also removes the downloaded TEI Stylesheets, so they are downloaded again on the next build -->
+    <target name="clean-all" depends="clean">
+        <delete dir="build-tei"/>
+    </target>
+
+    <!-- Download TEI Zip file (only if not already there) and extract it to ${tei.dir} -->
     <target name="download-tei">
         <mkdir dir="${tei.dir}"/>
-        <get src="https://github.com/TEIC/Stylesheets/releases/download/v7.58.0/tei-xsl-7.58.0.zip" dest="${tei.dir}/tei-xsl-7.58.0.zip"/>
-        <unzip src="${tei.dir}/tei-xsl-7.58.0.zip" dest="${tei.dir}"/>
+        <get src="https://github.com/TEIC/Stylesheets/releases/download/v${tei.version}/tei-xsl-${tei.version}.zip" dest="${tei.dir}/tei-xsl-${tei.version}.zip" skipexisting="true"/>
+        <unzip src="${tei.dir}/tei-xsl-${tei.version}.zip" dest="${tei.dir}"/>
     </target>
 
     <target name="build-plus">
