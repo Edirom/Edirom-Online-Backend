@@ -147,7 +147,7 @@ declare function dts-navigation:getPageId($selection as node(), $namespace as xs
     else if ($namespace eq "mei" and $selection instance of element(mei:mdiv)) then
         let $mei := $selection/root()
         let $measure := ($selection//mei:measure)[1]
-        let $zoneId := source:getZoneIdsFromMeasure($measure)[1]
+        let $zoneId := string(source:getZoneIdsFromMeasure($measure)[1])
         let $surface := source:getSurfaceForZone($mei, $zoneId)
         return
             <firstSurfaceId>{string($surface/@xml:id)}</firstSurfaceId>
