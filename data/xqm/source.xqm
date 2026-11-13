@@ -21,6 +21,7 @@ import module namespace eutil="http://www.edirom.de/xquery/eutil" at "eutil.xqm"
 (: NAMESPACE DECLARATIONS ================================================== :)
 
 declare namespace mei="http://www.music-encoding.org/ns/mei";
+declare namespace util="http://exist-db.org/xquery/util";
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
@@ -180,10 +181,152 @@ declare function source:label-or-n($element as element()) as xs:string? {
  :)
 declare function source:get-virtual-measure-id($measure as element(mei:measure)) as xs:string {
 
+    source:get-virtual-measure-id($measure, source:label-or-n($measure))
+};
+
+(:~
+ : Builds the virtual measure ID for a measure under an explicit designation.
+ :
+ : A measure standing for several of them - a range label, or a multiRest - has no single
+ : designation of its own, so callers grouping by designation supply the one they mean. This
+ : is the only place the ID format is written out.
+ :
+ : @param $measure The measure to build the ID for
+ : @param $designation The designation to build it under
+ : @return The virtual measure ID
+ :)
+declare function source:get-virtual-measure-id($measure as element(mei:measure), $designation as xs:string?) as xs:string {
+
     'measure_'
         || $measure/ancestor::mei:mdiv[1]/string(@xml:id)
         || '_'
-        || source:label-or-n($measure)
+        || $designation
+};
+
+(:~
+ : Reports a measure whose abbreviation could not be expanded, and yields its own designation.
+ :
+ : An edition using an abbreviation strategy this module does not cover would otherwise be
+ : silently short a measure in the spinner, which is how that class of defect goes unnoticed.
+ :
+ : @param $measure The measure concerned
+ : @param $designation Its own designation, returned unchanged
+ : @param $reason What could not be done
+ : @return $designation
+ :)
+declare %private function source:report-unexpanded($measure as element(mei:measure), $designation as xs:string?, $reason as xs:string) as xs:string* {
+
+    util:log('warn',
+        'source:measure-designations: ' || $reason
+            || ' (measure ' || (($measure/@xml:id, '[no @xml:id]')[1] => string())
+            || ', designation ' || (($designation, '[none]')[1] => string()) || ')'),
+    $designation
+};
+
+(:~
+ : Returns every designation a measure accounts for.
+ :
+ : Usually one, but a measure can stand for a run of them, and each number then has to be
+ : addressable in its own right while still resolving to the one measure - and therefore the
+ : one zone - that represents it. Two encodings are recognised:
+ :
+ :   - an explicit range label, '38-46' written with an en dash;
+ :   - a mei:multiRest, where @num measures are represented by the one carrying the rest.
+ :
+ : A measure may carry both - the label stating the span, the multiRest being the music that
+ : fills it. Only one is applied, and the range label wins: it states outright which numbers
+ : the measure covers, whereas @num has to be counted forward from the designation.
+ :
+ : Where an edition writes both an abbreviated and an expanded form, the expansion is the one
+ : that counts and the abbreviated measures are not in play at all - see
+ : source:effective-measures. This function is therefore only reached for the expanded form,
+ : or for an abbreviation standing alone.
+ :
+ : Expansion needs numeric bounds. A designation such as '2b' is returned unchanged, and
+ : reported if it carries an abbreviation that was expected to expand.
+ :
+ : @param $measure The measure to read
+ : @return The designations, in ascending order
+ :)
+declare function source:measure-designations($measure as element(mei:measure)) as xs:string* {
+
+    let $designation := source:label-or-n($measure)
+
+    (: A measure spanning several staves carries one multiRest per staff, all stating the same
+       span, so the first is representative. Absent or unparseable, this is NaN, and every
+       comparison against NaN is false - so the branch below simply does not fire. :)
+    let $multiRestNum := number(($measure//mei:multiRest/@num)[1])
+
+    return
+
+        (: an explicit range label :)
+        if (contains($designation, '–'))
+        then
+            let $first := number(substring-before($designation, '–'))
+            let $last := number(substring-after($designation, '–'))
+            return
+                if (string($first) ne 'NaN' and string($last) ne 'NaN' and $last ge $first)
+                then for $i in 0 to xs:integer($last - $first) return string($first + $i)
+                else source:report-unexpanded($measure, $designation,
+                        'range label does not give a usable pair of bounds')
+
+        (: a multiRest standing for @num measures :)
+        else if ($multiRestNum gt 1)
+        then
+            if (string(number($designation)) ne 'NaN')
+            then for $i in 0 to xs:integer($multiRestNum) - 1
+                 return string(number($designation) + $i)
+            else source:report-unexpanded($measure, $designation,
+                    'multiRest on a designation that is not a number')
+
+        (: an abbreviation this module does not recognise :)
+        else if (exists($measure/ancestor::mei:abbr))
+        then source:report-unexpanded($measure, $designation,
+                'measure is abbreviated by a strategy that cannot be expanded')
+
+        else $designation
+};
+
+(:~
+ : Returns the measures of a context that are in play.
+ :
+ : An edition may carry both an abbreviated and an expanded form of the same music, the
+ : abbreviation under mei:abbr and the individual measures under mei:expan. Both are present
+ : in the document, so a plain //mei:measure would count each of those measures twice: once
+ : written out, once by expanding the abbreviation. The expansion is the authoritative form,
+ : so measures under an mei:abbr that has an mei:expan beside it are excluded.
+ :
+ : An mei:abbr standing on its own is kept: dropping it would lose the measure altogether,
+ : which is worse than expanding it from @num.
+ :
+ : @param $context The element to scan, typically an mdiv
+ : @return The measures to work with, in document order
+ :)
+declare function source:effective-measures($context as node()?) as element(mei:measure)* {
+
+    $context//mei:measure[not(ancestor::mei:abbr[../mei:expan])]
+};
+
+(:~
+ : Returns the reference Edirom Online uses to address a designation.
+ :
+ : Where a single measure carries the designation its own @xml:id identifies it; where several
+ : do - one per part - the virtual measure ID stands for them collectively. A measure with no
+ : @xml:id, which a multiRest measure typically has none of since nothing on the facsimile
+ : corresponds to it, also falls back to the virtual ID rather than yielding an empty
+ : reference.
+ :
+ : @param $measures The measures carrying the designation
+ : @param $designation The designation they are addressed under
+ : @return The reference, or the empty sequence if there are no measures
+ :)
+declare function source:measure-reference($measures as element(mei:measure)*, $designation as xs:string?) as xs:string? {
+
+    if (empty($measures))
+    then ()
+    else if (count($measures) eq 1 and $measures[1]/string(@xml:id) ne '')
+    then $measures[1]/string(@xml:id)
+    else source:get-virtual-measure-id($measures[1], $designation)
 };
 
 (:~
@@ -200,8 +343,11 @@ declare function source:get-virtual-measure-id($measure as element(mei:measure))
  :)
 declare function source:resolve-measure-in-mdiv($doc as document-node()?, $mdivId as xs:string?, $designation as xs:string?) as element(mei:measure)* {
 
+    (: Matched against every designation a measure accounts for, not just its own: a range
+       label or a multiRest stands for a run of them, and each has to resolve back to the
+       measure - and therefore the zone - representing it. :)
     if (string($mdivId) ne '' and string($designation) ne '')
-    then $doc/id($mdivId)//mei:measure[source:label-or-n(.) eq $designation]
+    then source:effective-measures($doc/id($mdivId))[source:measure-designations(.) = $designation]
     else ()
 };
 
