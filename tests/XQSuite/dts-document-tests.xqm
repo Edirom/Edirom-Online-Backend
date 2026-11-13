@@ -426,6 +426,39 @@ declare
 };
 
 declare
+    %test:args("xmldb:exist:///db/apps/edition/CITATION.cff") %test:assertTrue
+    %test:args("xmldb:exist:///db/apps/edition/content/CITATION.cff") %test:assertTrue
+    %test:args("xmldb:exist:///db/system/CITATION.cff") %test:assertFalse
+    %test:args("xmldb:exist:///db/apps/edition/../other/CITATION.cff") %test:assertFalse
+    %test:args("xmldb:exist:///db/apps/edition/edition.xml") %test:assertFalse
+    function ddt:test-isCitationResource($resource as xs:string) as xs:boolean {
+        dts-document:isCitationResource($resource)
+};
+
+declare
+    %test:assertTrue
+    function ddt:test-document-returns-CFF-as-text() as xs:boolean {
+        starts-with(
+            string(dts-document:document(
+                "xmldb:exist:///db/apps/Edirom-Online-Backend/resources/CITATION.cff",
+                "",
+                "",
+                "",
+                "",
+                "text/plain",
+                map {
+                    "lang": "en",
+                    "idPrefix": ""
+                },
+                map {
+                    "unwrap": false()
+                }
+            )),
+            "cff-version: 1.2.0"
+        )
+};
+
+declare
     (: Valid requests :)
     (: retrieve full mei :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")

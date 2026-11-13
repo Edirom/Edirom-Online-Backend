@@ -27,19 +27,21 @@ declare
         source:label-or-n(doc($st:parts-labelled)/id($measureId))
 };
 
-(: source:getZoneIdFromMeasure ============================================== :)
+(: source:getZoneIdsFromMeasure ============================================= :)
 
 declare
     (: the leading fragment marker is removed :)
     %test:args("<measure xmlns='http://www.music-encoding.org/ns/mei' facs='#zone_bar-2001'/>") %test:assertEquals("zone_bar-2001")
     (: a bare zone ID is preserved :)
     %test:args("<measure xmlns='http://www.music-encoding.org/ns/mei' facs='zone_bar-2001'/>") %test:assertEquals("zone_bar-2001")
-    (: a missing facs reference becomes an empty string :)
+    (: multiple references are returned in facs order :)
+    %test:args("<measure xmlns='http://www.music-encoding.org/ns/mei' facs='#zone_bar-2001 #zone_bar-2002'/>") %test:assertEquals("zone_bar-2001|zone_bar-2002")
+    (: missing references return an empty sequence :)
     %test:args("<measure xmlns='http://www.music-encoding.org/ns/mei'/>") %test:assertEquals("")
-    (: an absent measure also becomes an empty string :)
+    (: an absent measure also returns an empty sequence :)
     %test:arg("measure") %test:assertEquals("")
-    function st:test-getZoneIdFromMeasure($measure as element(mei:measure)?) as xs:string {
-        source:getZoneIdFromMeasure($measure)
+    function st:test-getZoneIdsFromMeasure($measure as element(mei:measure)?) as xs:string {
+        string-join(source:getZoneIdsFromMeasure($measure), "|")
 };
 
 (: source:getSurfaceForZone ================================================= :)
@@ -64,6 +66,25 @@ declare
     %test:args("measure_7d3b5e0f-score-one")    %test:assertEquals("measure_test_mdiv_02_1")
     function st:test-get-virtual-measure-id($measureId as xs:string) as xs:string {
         source:get-virtual-measure-id(doc($st:parts-labelled)/id($measureId))
+};
+
+
+(: source:resolve-measure-in-mdiv =========================================== :)
+
+declare
+    (: a designation occurring once per part yields one measure per part :)
+    %test:args("test_mdiv_01", "1")     %test:assertEquals("2")
+    %test:args("test_mdiv_01", "2b")    %test:assertEquals("2")
+    (: an mdiv without parts yields a single measure :)
+    %test:args("test_mdiv_02", "1")     %test:assertEquals("1")
+    (: the lookup is scoped to the mdiv: mdiv 2's designation is not visible in mdiv 1 :)
+    %test:args("test_mdiv_01", "99")    %test:assertEquals("0")
+    %test:args("no-such-mdiv", "1")     %test:assertEquals("0")
+    (: empty arguments resolve to nothing rather than to every measure :)
+    %test:args("", "1")                 %test:assertEquals("0")
+    %test:args("test_mdiv_01", "")      %test:assertEquals("0")
+    function st:test-resolve-measure-in-mdiv($mdivId as xs:string, $designation as xs:string) as xs:string {
+        string(count(source:resolve-measure-in-mdiv(doc($st:parts-labelled), $mdivId, $designation)))
 };
 
 

@@ -25,7 +25,7 @@ let $movementId := request:get-parameter('movementId', '')
 
 let $mei := eutil:getDoc($uri)
 let $firstMeasure := eutil:getFirstMeasureInMovement($mei, $movementId)
-let $zoneId := source:getZoneIdFromMeasure($firstMeasure)
+let $zoneId := source:getZoneIdsFromMeasure($firstMeasure)[1]
 let $surface := source:getSurfaceForZone($mei, $zoneId)
 
 return
