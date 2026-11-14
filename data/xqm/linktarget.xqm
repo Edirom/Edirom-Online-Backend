@@ -60,7 +60,8 @@ declare function linktarget:getView($type as xs:string, $docUri as xs:string, $d
                 'tei_facsimileView',
                 'tei_textFacsimileSplitView',
                 'mei_annotationView',
-                'mei_verovioView')
+                'mei_verovioView',
+                'x3d_x3dView')
         ) then
             (map:put($labeled.map, 'defaultView', true()))
         else
@@ -97,6 +98,9 @@ declare function linktarget:getView($type as xs:string, $docUri as xs:string, $d
         
         else if ($type = 'mei_annotationView') then
             (exists($doc//mei:annot[@type = 'editorialComment']))
+
+        else if ($type = 'x3d_x3dView') then
+            (local-name($doc/*[1]) = 'X3D')
         
         else if($type = 'html_iFrameView')
         then(exists($doc/html) or exists($doc/html:html) or contains($docUri, '.html'))
@@ -139,6 +143,7 @@ declare function linktarget:getViews($type as xs:string, $docUri as xs:string, $
         'tei_facsimileView',
         'tei_textFacsimileSplitView',
         'mei_annotationView',
+        'x3d_x3dView',
         'html_iFrameView',
         'xml_xmlView',
         'desc_xmlView'
@@ -203,6 +208,10 @@ declare function linktarget:getWindowTitle($doc as document-node()?, $type as xs
     (: HTML :)
     else if ($type = 'html' and not(functx:all-whitespace($doc//*:head/*:title))) then
         $doc//*:head/*:title => normalize-space()
+
+    (: X3D :)
+    else if ($type = 'x3d') then
+        (string(($doc//*:WorldInfo/@title, 'X3D Scene')[1]))
     
     else if($type = 'unknown') then
     
@@ -325,6 +334,10 @@ declare function linktarget:details($uri as xs:string, $lang as xs:string) as ma
     
         else if (contains($docUri, '.html')) then
             (string('html'))
+
+        (: X3D :)
+        else if (local-name($doc/*[1]) = 'X3D') then
+            (string('x3d'))
     
         else
             (string('unknown'))

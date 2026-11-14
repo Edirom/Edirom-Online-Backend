@@ -572,6 +572,8 @@ declare function dts-document:isMediaTypeCompatible(
         contains($mediaType, "application/xml") or contains($mediaType, "text/xml") or contains($mediaType, "application/tei+xml") or contains($mediaType, "text/html")
     else if ($namespace eq "edirom") then
         contains($mediaType, "application/xml") or contains($mediaType, "text/xml")
+    else if ($namespace eq "x3d") then
+        exists($mediaType) and $mediaType eq "model/x3d+xml"
     else
         false()
 };
@@ -943,20 +945,30 @@ declare function dts-document:document(
             dts-document:citation($resource)
     else
         let $resource := dts-document:resolveSpecialResourceAlias($resource)
+        let $isX3d := ends-with(lower-case($resource), ".x3d")
         let $document := eutil:getDoc($resource)/root()
         let $document :=
             if ($document) then
-                eutil:add-xml-ids($document)
+                if ($isX3d) then
+                    $document
+                else
+                    eutil:add-xml-ids($document)
             else
                 error($errors:NOT_FOUND, "The requested resource was not found.")
-        let $namespace := eutil:getNamespace($document/*)
-        let $citationTree := eutil:getDoc($eutil:app-root || '/data/trees/citationTrees' || upper-case($namespace) || '.xml')/refsDecl/citeStructure[
-            not($tree) or @xml:id = $tree
-        ]
+        let $namespace :=
+            if ($isX3d) then
+                "x3d"
+            else
+                eutil:getNamespace($document/*)
+        let $citationTree :=
+            if ($isX3d) then
+                ()
+            else
+                eutil:getDoc($eutil:app-root || '/data/trees/citationTrees' || upper-case($namespace) || '.xml')/refsDecl/citeStructure[
+                    not($tree) or @xml:id = $tree
+                ]
         let $mediaTypeCompatible := dts-document:isMediaTypeCompatible($mediaType, $namespace)
-
-
-        let $outputXmlRaw := 
+        let $outputXmlRaw :=
             if (not($mediaTypeCompatible)) then
                 error($errors:UNSUPPORTED_MEDIA_TYPE, "The requested media type is not compatible with the document format. Media type: " || $mediaType || ", Namespace: " || $namespace)
             else if (not($ref) and not($start) and not($end) and $mediaType eq "application/json") then
@@ -964,16 +976,25 @@ declare function dts-document:document(
             else if (not($ref) and not($start) and not($end)) then
                 $document/*
             else if ($namespace eq "mei" or $namespace eq "tei") then
-                dts-document:selectAndWrap($document, $ref, $start, $end, $citationTree)             
+                dts-document:selectAndWrap($document, $ref, $start, $end, $citationTree)
             else
                 error($errors:UNSUPPORTED_DOCUMENT_FORMAT, "The format of the requested document is not supported. Namespace: " || $namespace )
-        
+
         (: TODO: transformations should be applied here only when edirom output is requested :)
         let $xslPrepare := eutil:getDoc($eutil:xsltBase || '/edirom_prepareAnnotsForRendering.xsl')
-        let $outputXml := transform:transform($outputXmlRaw, $xslPrepare, <parameters/>)
+        let $outputXml :=
+            if ($isX3d) then
+                $outputXmlRaw
+            else
+                transform:transform($outputXmlRaw, $xslPrepare, <parameters/>)
 
         let $output :=
-            if (contains($mediaType, "xml") and map:contains($xmlParameters, "unwrap") and map:get($xmlParameters, "unwrap") eq true()) then
+            if ($isX3d) then
+                serialize($outputXml, map {
+                    "method": "xml",
+                    "omit-xml-declaration": true()
+                })
+            else if (contains($mediaType, "xml") and map:contains($xmlParameters, "unwrap") and map:get($xmlParameters, "unwrap") eq true()) then
                 (: Remove DTS wrapper :)
                 let $xslUnwrap := eutil:getDoc($eutil:xsltBase || '/removeDtsWrapper.xsl')
                 let $outputXml := transform:transform($outputXml, $xslUnwrap, <parameters/>)
