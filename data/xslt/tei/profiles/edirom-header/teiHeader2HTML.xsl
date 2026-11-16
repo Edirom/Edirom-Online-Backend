@@ -363,7 +363,7 @@
     <xsl:template match="tei:change">
         
         <xsl:variable name="who">
-            <xsl:variable name="whos" as="xs:string+">
+            <xsl:variable name="whos" as="xs:string*">
                 <xsl:for-each select="tokenize(@who, ' '), tei:name, tei:persName, tei:orgName">
                     <xsl:value-of select="."/>
                 </xsl:for-each>
@@ -392,7 +392,9 @@
             </xsl:element>
             <xsl:element name="div">
                 <xsl:attribute name="class">value</xsl:attribute>
-                <xsl:value-of select="concat($who, ': ')"/>
+                <xsl:if test="normalize-space($who) != ''">
+                    <xsl:value-of select="concat($who, ': ')"/>
+                </xsl:if>
                 <xsl:apply-templates/>
             </xsl:element>
         </xsl:element>
