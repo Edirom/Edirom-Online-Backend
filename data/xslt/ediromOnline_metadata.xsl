@@ -254,7 +254,7 @@
             </xsl:element>
             <xsl:element name="span">
                 <xsl:attribute name="class" select="string('subvalue')" />
-                <xsl:variable name="nodes" as="node()+">
+                <xsl:variable name="nodes" as="node()*">
                     <xsl:for-each select="* except *:resp">
                         <xsl:apply-templates select="." mode="plain" />
                     </xsl:for-each>
