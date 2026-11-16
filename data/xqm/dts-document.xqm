@@ -731,10 +731,8 @@ declare function dts-document:transformHeaderToHTML(
     let $xslConvert :=
         if ($namespace eq "mei") then
             eutil:getDoc($eutil:xsltBase || '/meiHead2HTML.xsl')
-        (: TODO Verify how to make the stylesheet work again. The stylesheet is importing files that are no longer available.
         else if ($namespace eq "tei") then
             eutil:getDoc($eutil:xsltBase || '/tei/profiles/edirom-header/teiHeader2HTML.xsl')
-        :)
         else
             error($errors:UNSUPPORTED_DOCUMENT_FORMAT, "The header cannot be converted to HTML for the requested document format. Namespace: " || $namespace)
     let $parameters := (
