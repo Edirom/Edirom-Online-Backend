@@ -70,7 +70,7 @@ declare function local:getPriority($annot as node()) {
     let $doc := if (starts-with($uri, '#')) then (
         $annot/root()
     ) else (
-        doc(substring-before($uri, '#'))
+        eutil:getDoc(substring-before($uri, '#'))
     )
 
     let $locID := substring-after($uri, '#')
@@ -88,7 +88,7 @@ declare function local:getPriority($annot as node()) {
  :  This function gets a string representing all Annotation categories
  :
  :  @param $annot the annot with categories to look for
- :  @return the string of annotation labels, or, if one of them fails, the respecitve $uri
+ :  @return the string of annotation labels, or, if one of them fails, the respective $uri
  :)
 declare function local:getCategories($annot as node()) {
 
@@ -100,7 +100,7 @@ declare function local:getCategories($annot as node()) {
             if (starts-with($uri, '#')) then (
                 $annot/root()
             ) else (
-                doc(substring-before($uri, '#'))
+                eutil:getDoc(substring-before($uri, '#'))
             )
 
     let $locID := substring-after($uri, '#')
@@ -121,8 +121,8 @@ declare function local:getCategories($annot as node()) {
  :  This function generates an image path for a specific zone on an image.
  :  Based on a path prefix and a width.
  :
- :  @param $basePath The base path prefix for the image databse
- :  @param $zone The zone with coordiantes on the image
+ :  @param $basePath The base path prefix for the image database
+ :  @param $zone The zone with coordinates on the image
  :  @param $width The width the image should be loaded with
  :  @return A URL pointing to an image based as xs:string
  :)
@@ -228,7 +228,7 @@ declare function local:calculatePreviewsForTip($participants as xs:string*) {
     let $elems :=
         for $pUri in $participants
         return
-            doc(substring-before($pUri, '#'))/id(substring-after($pUri, '#'))
+            eutil:getDoc(substring-before($pUri, '#'))/id(substring-after($pUri, '#'))
 
     let $zones :=
         for $elem in $elems
@@ -315,7 +315,7 @@ let $docUri := substring-before($uri, '#')
 
 let $internalId := substring-after($uri, '#')
 
-let $doc := doc($docUri)
+let $doc := eutil:getDoc($docUri)
 
 let $annot := $doc/id($internalId)
 
@@ -386,7 +386,7 @@ return
 
                  if($imageserver = 'digilib') then (
                     for $pUri in tokenize($annot/string(@plist), ' ')
-                    let $elem := doc(substring-before($pUri, '#'))/id(substring-after($pUri, '#'))
+                    let $elem := eutil:getDoc(substring-before($pUri, '#'))/id(substring-after($pUri, '#'))
                     let $zone := local:getZone($elem)
         				return
                         <div class="previewItem">
@@ -400,7 +400,7 @@ return
                   )
             	else(
                 	for $pUri in tokenize($annot/string(@plist), ' ')
-                    let $elem := doc(substring-before($pUri, '#'))/id(substring-after($pUri, '#'))
+                    let $elem := eutil:getDoc(substring-before($pUri, '#'))/id(substring-after($pUri, '#'))
                     let $zone := local:getZone($elem)
                 	return
     				<div class="previewItem">

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.0" xml:id="test-mei-annotations">
+   <!--
+      Fixture for the classification functions in data/xqm/annotation.xqm, in particular
+      annotation:is-fully-taxonomised. That function resolves @class tokens via
+      eutil:get-referenced-element, which uses id() - and eXist resolves id() only on stored
+      documents, never on constructed nodes. Hence a fixture rather than inline MEI.
+
+      Each annotation below isolates one branch of the predicate.
+   -->
+   <meiHead>
+      <fileDesc>
+         <titleStmt>
+            <title>Test source for annotation classification</title>
+         </titleStmt>
+         <pubStmt/>
+      </fileDesc>
+      <encodingDesc>
+         <classDecls>
+            <!--
+               A taxonomy whose @xml:id is itself referenced from @class. Editions do this to
+               mark scheme membership, for global styling, and as a fallback in the class
+               hierarchy - see Edirom-Online-Backend#205. The reference resolves to the
+               taxonomy element, which has no mei:taxonomy ancestor.
+            -->
+            <taxonomy xml:id="test.tax.root">
+               <head>Test taxonomy</head>
+               <category xml:id="test.tax.category.alpha">
+                  <label>Alpha</label>
+               </category>
+               <category xml:id="test.tax.category.beta">
+                  <label>Beta</label>
+               </category>
+            </taxonomy>
+            <!--
+               A legacy priority modelled as mei:term in a termList, i.e. outside any
+               mei:taxonomy. The doc comment on is-fully-taxonomised names this as a
+               deliberate false; nothing pinned it down before.
+            -->
+            <classification>
+               <termList xml:id="test.termlist.priorities">
+                  <term xml:id="test.priority.high">high</term>
+               </termList>
+            </classification>
+         </classDecls>
+      </encodingDesc>
+   </meiHead>
+   <music>
+      <body>
+         <mdiv xml:id="test.mdiv">
+            <score>
+               <scoreDef>
+                  <staffGrp>
+                     <staffDef n="1" lines="5"/>
+                  </staffGrp>
+               </scoreDef>
+               <section>
+                  <measure xml:id="test.measure.1" n="1"/>
+
+                  <!-- 1. Only a nested category: fully taxonomised. -->
+                  <annot xml:id="test.annot.category-only" type="editorialComment"
+                         class="#test.tax.category.alpha">Category only</annot>
+
+                  <!-- 2. Taxonomy root alongside a category. The root resolves to a
+                       mei:taxonomy, which is not its own ancestor - the BAZ-GA shape. -->
+                  <annot xml:id="test.annot.taxonomy-root" type="editorialComment"
+                         class="#test.tax.root #test.tax.category.alpha">Root plus category</annot>
+
+                  <!-- 3. Taxonomy root on its own. -->
+                  <annot xml:id="test.annot.taxonomy-root-only" type="editorialComment"
+                         class="#test.tax.root">Root only</annot>
+
+                  <!-- 4. No classification at all: trivially true, nothing can be lost. -->
+                  <annot xml:id="test.annot.unclassified" type="editorialComment">Unclassified</annot>
+
+                  <!-- 5. A dangling @class reference: resolves to nothing. -->
+                  <annot xml:id="test.annot.dangling" type="editorialComment"
+                         class="#test.tax.category.alpha #test.no.such.category">Dangling</annot>
+
+                  <!-- 6. A legacy mei:ptr classification. -->
+                  <annot xml:id="test.annot.legacy-ptr" type="editorialComment"
+                         class="#test.tax.category.alpha">
+                     <ptr type="categories" target="#test.tax.category.beta"/>
+                  </annot>
+
+                  <!-- 7. A class token resolving to a mei:term outside any taxonomy. -->
+                  <annot xml:id="test.annot.term-outside-taxonomy" type="editorialComment"
+                         class="#test.priority.high">Legacy priority as term</annot>
+               </section>
+            </score>
+         </mdiv>
+      </body>
+   </music>
+</mei>

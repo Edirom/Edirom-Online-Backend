@@ -43,7 +43,7 @@ declare function local:generateRespSentence($names) {
 };
 
 declare function local:getSourceSummary($doc, $facsBasePath, $server) {
-    let $work := doc($doc//mei:relation[@rel = 'isEmbodimentOf'][1]/substring-before(@target, '#'))
+    let $work := eutil:getDoc($doc//mei:relation[@rel = 'isEmbodimentOf'][1]/substring-before(@target, '#'))
     let $title := $work//mei:work/mei:titleStmt/mei:title[1]/text()
     let $resp := local:generateRespSentence($work//mei:work/mei:titleStmt/mei:respStmt/*[local-name() != 'resp']/text())
     let $expression := $work/id($doc//mei:relation[@rel = 'isEmbodimentOf'][1]/substring-after(@target, '#'))/string(@label)
@@ -171,7 +171,7 @@ declare function local:getSourceSummary($doc, $facsBasePath, $server) {
 
 declare function local:getImagePath($basePath, $uri, $width) {
     if (starts-with($uri, 'xmldb:exist')) then (
-        let $imagePath := doc($uri)/edirom_image:image/@file
+        let $imagePath := eutil:getDoc($uri)/edirom_image:image/@file
         return
             concat($basePath, $imagePath, '?dw=', $width, '&amp;amp;mo=fit')
     ) else (

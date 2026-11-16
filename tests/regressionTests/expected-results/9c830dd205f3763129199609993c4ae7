@@ -1,0 +1,25 @@
+{
+  "type" : "source",
+  "internalIdType" : "unknown",
+  "title" : "Autographe Partitur, Berlin | Mus. ms. autogr. C. M. von Weber WFN 14 (2)",
+  "term" : null,
+  "views" : [ {
+    "label" : "Quellenbeschreibung",
+    "type" : "textView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/sourceDesc-1.xml"
+  }, {
+    "type" : "sourceView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-1.xml",
+    "defaultView" : true
+  }, {
+    "type" : "xmlView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-1.xml"
+  }, {
+    "label" : "XML Quellenbeschreibung",
+    "type" : "xmlView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/sourceDesc-1.xml"
+  } ],
+  "internalId" : "",
+  "path" : null,
+  "doc" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-1.xml"
+}

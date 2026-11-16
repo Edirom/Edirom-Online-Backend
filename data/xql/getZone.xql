@@ -9,6 +9,10 @@ xquery version "3.1";
     @author <a href="mailto:roewenstrunk@edirom.de">Daniel Röwenstrunk</a>
 :)
 
+(: IMPORTS ================================================================= :)
+
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
+
 (: NAMESPACE DECLARATIONS ================================================== :)
 
 declare namespace mei = "http://www.music-encoding.org/ns/mei";
@@ -27,7 +31,7 @@ declare option output:media-type "application/json";
 let $uri := request:get-parameter('uri', '')
 let $zoneId := request:get-parameter('zoneId', '')
 
-let $mei := doc($uri)/root()
+let $mei := eutil:getDoc($uri)
 let $zone := $mei/id($zoneId)
 
 return (

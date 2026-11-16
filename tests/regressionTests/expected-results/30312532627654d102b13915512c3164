@@ -1,0 +1,26 @@
+<div class="navigatorCategory" id="x651675ff-fa48-4fab-80bf-45bd70539283">
+    <div class="navigatorCategoryTitle">Texte</div>
+    <div id="x651675ff-fa48-4fab-80bf-45bd70539283-items" class="">
+        <div class="navigatorItem" id="x0eda59b9-aba1-4a15-8188-ee07e08da07d" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-1.xml', {})">Vorbemerkungen</div>
+        <div class="navigatorItem" id="x1080412b-2c1e-4c15-a43a-b8a474f5141e" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-2.xml', {})">Abkürzungen und Siglen</div>
+        <div class="navigatorItem" id="x30dd99c0-a7f6-4034-9ee2-b359a3c6a956" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-3.xml', {})">Zur Printversion</div>
+        <div class="navigatorItem" id="x906c2ee7-ebd4-4f2e-bef5-23b77de967b0" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-4.xml', {})">Zum vorliegenden Band</div>
+        <div class="navigatorItem" id="xa9585bcf-aa76-4004-88d3-e87369e4268e" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-5.xml', {})">Werkgenese und Werküberlieferung</div>
+        <div class="navigatorItem" id="xca800938-9306-478e-bfa4-d01c1e9e3014" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-6.xml', {})">Quellenbewertung</div>
+        <div class="navigatorItem" id="xb2b28693-a2c9-4639-8d43-24fdbd42d6c0" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-7.xml', {})">Editionsbericht</div>
+    </div>
+</div>
+<div class="navigatorCategory" id="x4e541c03-4e4a-4254-a47c-f62a7ac41278">
+    <div class="navigatorCategoryTitle">Notentexte</div>
+    <div id="x4e541c03-4e4a-4254-a47c-f62a7ac41278-items" class="">
+        <div class="navigatorItem" id="xe10beeda-8900-408b-be00-ec50007431ff" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml', {})">Edition</div>
+        <div class="navigatorItem" id="x547db0c6-f14f-4e1b-90a0-70e89123dc16" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-1.xml', {})">Autograph A</div>
+        <div class="navigatorItem" id="x943424ce-593f-488f-a6a3-23c1838a5ef5" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-3.xml', {})">Stichvorlage K/sv</div>
+        <div class="navigatorItem" id="x1880118c-0695-4b2a-87fa-1e7c517fa69e" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-2.xml', {})">Erstdruck I ED₁</div>
+        <div class="navigatorItem" id="x3b7d1cfc-1177-4305-85b6-a75a8af8ff60" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-5.xml', {})">Erstdruck II ED₂</div>
+        <div class="navigatorItem" id="x380eb5a2-6e2a-430f-a3d2-b494b75306f5" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-6.xml', {})">Baermann D⁺-st</div>
+        <div class="navigatorItem" id="x1681cdff-7343-4920-8211-b2cac3945cfc" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-7.xml', {})">Baermann D⁺-kl</div>
+        <div class="navigatorItem" id="x440a9a74-bf49-4a5e-834f-425e91b9ff1b" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-8.xml', {})">Ebers D-arr</div>
+        <div class="navigatorItem" id="x64d3f3be-1b22-4e2a-95c8-1280de5c8d3d" onclick="loadLink('xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-9.xml', {})">Hermann D⁺-arr</div>
+    </div>
+</div>

@@ -36,10 +36,8 @@ let $selectionId := request:get-parameter('selectionId', '')
 let $subtreeRoot := request:get-parameter('subtreeRoot', '')
 let $idPrefix := request:get-parameter('idPrefix', '')
 
-let $base := concat('file:', system:get-module-load-path())
-
-let $doc := doc($uri)/root()
-let $xsl := '../xslt/reduceToSelection.xsl'
+let $doc := eutil:getDoc($uri)
+let $xsl := $eutil:xsltBase || '/reduceToSelection.xsl'
 
 let $doc :=
     transform:transform($doc, $xsl,
@@ -61,21 +59,26 @@ let $xslInstruction :=
         else
         ()
 
-(:let $imagePrefix := edition:getPreference('image_prefix', request:get-parameter('edition', '')):)
-
-let $xsl :=
-    if ($xslInstruction) then
-        (doc($xslInstruction))
+let $xslInstructionDoc :=
+    if (exists($xslInstruction)) then
+        try {eutil:getDoc($xslInstruction)}
+        catch * {()}
     else
-        ('../xslt/teiBody2HTML.xsl')
+        ()
+
+let $xslDoc :=
+    if ($xslInstructionDoc) then
+        $xslInstructionDoc
+    else
+        eutil:getDoc($eutil:xsltBase || '/teiBody2HTML.xsl')
 
 let $params := (
-    <param name="base" value="{concat($base, '/../xslt/')}"/>,
+    <param name="base" value="{concat($eutil:xsltBase, '/')}"/>,
     <param name="idPrefix" value="{$idPrefix}"/>
 )
 
 return
-    if ($xslInstruction) then
-        (transform:transform($doc/root(), $xsl, <parameters>{$params}</parameters>))
+    if ($xslInstructionDoc) then
+        (transform:transform($doc/root(), $xslDoc, <parameters>{$params}</parameters>))
     else
-        (transform:transform($doc/root(), $xsl, <parameters>{$params}<param name="graphicsPrefix" value="{$imagePrefix}"/></parameters>))
+        (transform:transform($doc/root(), $xslDoc, <parameters>{$params}<param name="graphicsPrefix" value="{$imagePrefix}"/></parameters>))

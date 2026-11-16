@@ -1,0 +1,361 @@
+[ {
+  "type" : "",
+  "lry" : "1180",
+  "lrx" : "1200",
+  "name" : "1",
+  "ulx" : "478",
+  "uly" : "240",
+  "rest" : "0",
+  "id" : "bar-2001",
+  "zoneId" : "zone_bar-2001"
+}, {
+  "type" : "",
+  "lry" : "1180",
+  "lrx" : "1360",
+  "name" : "2",
+  "ulx" : "1170",
+  "uly" : "240",
+  "rest" : "0",
+  "id" : "bar-2002",
+  "zoneId" : "zone_bar-2002"
+}, {
+  "type" : "",
+  "lry" : "1180",
+  "lrx" : "1476",
+  "name" : "3",
+  "ulx" : "1332",
+  "uly" : "240",
+  "rest" : "0",
+  "id" : "bar-2003",
+  "zoneId" : "zone_bar-2003"
+}, {
+  "type" : "",
+  "lry" : "1180",
+  "lrx" : "1638",
+  "name" : "4",
+  "ulx" : "1440",
+  "uly" : "240",
+  "rest" : "0",
+  "id" : "bar-2004",
+  "zoneId" : "zone_bar-2004"
+}, {
+  "type" : "",
+  "lry" : "1180",
+  "lrx" : "1766",
+  "name" : "5",
+  "ulx" : "1610",
+  "uly" : "240",
+  "rest" : "0",
+  "id" : "bar-2005",
+  "zoneId" : "zone_bar-2005"
+}, {
+  "type" : "",
+  "lry" : "1180",
+  "lrx" : "1966",
+  "name" : "6",
+  "ulx" : "1726",
+  "uly" : "240",
+  "rest" : "0",
+  "id" : "bar-2006",
+  "zoneId" : "zone_bar-2006"
+}, {
+  "type" : "",
+  "lry" : "1180",
+  "lrx" : "2244",
+  "name" : "7",
+  "ulx" : "1898",
+  "uly" : "240",
+  "rest" : "0",
+  "id" : "bar-2007",
+  "zoneId" : "zone_bar-2007"
+}, {
+  "type" : "",
+  "lry" : "1180",
+  "lrx" : "2402",
+  "name" : "8",
+  "ulx" : "2198",
+  "uly" : "240",
+  "rest" : "0",
+  "id" : "bar-2008",
+  "zoneId" : "zone_bar-2008"
+}, {
+  "type" : "",
+  "lry" : "1180",
+  "lrx" : "2532",
+  "name" : "9",
+  "ulx" : "2368",
+  "uly" : "240",
+  "rest" : "0",
+  "id" : "bar-2009",
+  "zoneId" : "zone_bar-2009"
+}, {
+  "type" : "",
+  "lry" : "1180",
+  "lrx" : "2716",
+  "name" : "10",
+  "ulx" : "2458",
+  "uly" : "240",
+  "rest" : "0",
+  "id" : "bar-20010",
+  "zoneId" : "zone_bar-20010"
+}, {
+  "type" : "",
+  "lry" : "1180",
+  "lrx" : "2858",
+  "name" : "11",
+  "ulx" : "2634",
+  "uly" : "240",
+  "rest" : "0",
+  "id" : "bar-20011",
+  "zoneId" : "zone_bar-20011"
+}, {
+  "type" : "",
+  "lry" : "1180",
+  "lrx" : "3002",
+  "name" : "12",
+  "ulx" : "2786",
+  "uly" : "240",
+  "rest" : "0",
+  "id" : "bar-20012",
+  "zoneId" : "zone_bar-20012"
+}, {
+  "type" : "",
+  "lry" : "1180",
+  "lrx" : "3148",
+  "name" : "13",
+  "ulx" : "2926",
+  "uly" : "240",
+  "rest" : "0",
+  "id" : "bar-20013",
+  "zoneId" : "zone_bar-20013"
+}, {
+  "type" : "",
+  "lry" : "1180",
+  "lrx" : "3424",
+  "name" : "14",
+  "ulx" : "3082",
+  "uly" : "240",
+  "rest" : "0",
+  "id" : "bar-20014",
+  "zoneId" : "zone_bar-20014"
+}, {
+  "type" : "",
+  "lry" : "1180",
+  "lrx" : "3678",
+  "name" : "15",
+  "ulx" : "3388",
+  "uly" : "240",
+  "rest" : "0",
+  "id" : "bar-20015",
+  "zoneId" : "zone_bar-20015"
+}, {
+  "type" : "",
+  "lry" : "2034",
+  "lrx" : "920",
+  "name" : "16",
+  "ulx" : "576",
+  "uly" : "1140",
+  "rest" : "0",
+  "id" : "bar-20016",
+  "zoneId" : "zone_bar-20016"
+}, {
+  "type" : "",
+  "lry" : "2034",
+  "lrx" : "1206",
+  "name" : "17",
+  "ulx" : "904",
+  "uly" : "1140",
+  "rest" : "0",
+  "id" : "bar-20017",
+  "zoneId" : "zone_bar-20017"
+}, {
+  "type" : "",
+  "lry" : "2034",
+  "lrx" : "1484",
+  "name" : "18",
+  "ulx" : "1192",
+  "uly" : "1140",
+  "rest" : "0",
+  "id" : "bar-20018",
+  "zoneId" : "zone_bar-20018"
+}, {
+  "type" : "",
+  "lry" : "2034",
+  "lrx" : "1786",
+  "name" : "19",
+  "ulx" : "1460",
+  "uly" : "1140",
+  "rest" : "0",
+  "id" : "bar-20019",
+  "zoneId" : "zone_bar-20019"
+}, {
+  "type" : "",
+  "lry" : "2034",
+  "lrx" : "2064",
+  "name" : "20",
+  "ulx" : "1776",
+  "uly" : "1140",
+  "rest" : "0",
+  "id" : "bar-20020",
+  "zoneId" : "zone_bar-20020"
+}, {
+  "type" : "",
+  "lry" : "2034",
+  "lrx" : "2342",
+  "name" : "21",
+  "ulx" : "2062",
+  "uly" : "1140",
+  "rest" : "0",
+  "id" : "bar-20021",
+  "zoneId" : "zone_bar-20021"
+}, {
+  "type" : "",
+  "lry" : "2034",
+  "lrx" : "2600",
+  "name" : "22",
+  "ulx" : "2334",
+  "uly" : "1140",
+  "rest" : "0",
+  "id" : "bar-20022",
+  "zoneId" : "zone_bar-20022"
+}, {
+  "type" : "",
+  "lry" : "2034",
+  "lrx" : "2940",
+  "name" : "23",
+  "ulx" : "2598",
+  "uly" : "1140",
+  "rest" : "0",
+  "id" : "bar-20023",
+  "zoneId" : "zone_bar-20023"
+}, {
+  "type" : "",
+  "lry" : "2034",
+  "lrx" : "3136",
+  "name" : "24",
+  "ulx" : "2906",
+  "uly" : "1140",
+  "rest" : "0",
+  "id" : "bar-20024",
+  "zoneId" : "zone_bar-20024"
+}, {
+  "type" : "",
+  "lry" : "2034",
+  "lrx" : "3490",
+  "name" : "25",
+  "ulx" : "3130",
+  "uly" : "1140",
+  "rest" : "0",
+  "id" : "bar-20025",
+  "zoneId" : "zone_bar-20025"
+}, {
+  "type" : "",
+  "lry" : "2034",
+  "lrx" : "3716",
+  "name" : "26",
+  "ulx" : "3476",
+  "uly" : "1140",
+  "rest" : "0",
+  "id" : "bar-20026",
+  "zoneId" : "zone_bar-20026"
+}, {
+  "type" : "",
+  "lry" : "2918",
+  "lrx" : "946",
+  "name" : "27",
+  "ulx" : "500",
+  "uly" : "1930",
+  "rest" : "0",
+  "id" : "bar-20027",
+  "zoneId" : "zone_bar-20027"
+}, {
+  "type" : "",
+  "lry" : "2918",
+  "lrx" : "1184",
+  "name" : "28",
+  "ulx" : "940",
+  "uly" : "1930",
+  "rest" : "0",
+  "id" : "bar-20028",
+  "zoneId" : "zone_bar-20028"
+}, {
+  "type" : "",
+  "lry" : "2918",
+  "lrx" : "1510",
+  "name" : "29",
+  "ulx" : "1150",
+  "uly" : "1930",
+  "rest" : "0",
+  "id" : "bar-20029",
+  "zoneId" : "zone_bar-20029"
+}, {
+  "type" : "",
+  "lry" : "2918",
+  "lrx" : "1742",
+  "name" : "30",
+  "ulx" : "1498",
+  "uly" : "1930",
+  "rest" : "0",
+  "id" : "bar-20030",
+  "zoneId" : "zone_bar-20030"
+}, {
+  "type" : "",
+  "lry" : "2918",
+  "lrx" : "2006",
+  "name" : "31",
+  "ulx" : "1730",
+  "uly" : "1930",
+  "rest" : "0",
+  "id" : "bar-20031",
+  "zoneId" : "zone_bar-20031"
+}, {
+  "type" : "",
+  "lry" : "2918",
+  "lrx" : "2260",
+  "name" : "32",
+  "ulx" : "1998",
+  "uly" : "1930",
+  "rest" : "0",
+  "id" : "bar-20032",
+  "zoneId" : "zone_bar-20032"
+}, {
+  "type" : "",
+  "lry" : "2918",
+  "lrx" : "2716",
+  "name" : "33",
+  "ulx" : "2256",
+  "uly" : "1930",
+  "rest" : "0",
+  "id" : "bar-20033",
+  "zoneId" : "zone_bar-20033"
+}, {
+  "type" : "",
+  "lry" : "2918",
+  "lrx" : "3092",
+  "name" : "34",
+  "ulx" : "2696",
+  "uly" : "1930",
+  "rest" : "0",
+  "id" : "bar-20034",
+  "zoneId" : "zone_bar-20034"
+}, {
+  "type" : "",
+  "lry" : "2918",
+  "lrx" : "3494",
+  "name" : "35",
+  "ulx" : "3078",
+  "uly" : "1930",
+  "rest" : "0",
+  "id" : "bar-20035",
+  "zoneId" : "zone_bar-20035"
+}, {
+  "type" : "",
+  "lry" : "2918",
+  "lrx" : "3728",
+  "name" : "36",
+  "ulx" : "3454",
+  "uly" : "1930",
+  "rest" : "0",
+  "id" : "bar-20036",
+  "zoneId" : "zone_bar-20036"
+} ]

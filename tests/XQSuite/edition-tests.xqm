@@ -10,10 +10,10 @@ declare namespace test="http://exist-db.org/xquery/xqsuite";
 declare
     (: check xml:id :)
     %test:args("xqsuite_test_edition")
-    %test:assertEquals("xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/edition.xml")
+    %test:assertEquals("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/edition.xml")
     (: check database path :)
-    %test:args("/db/apps/Edirom-Online-Backend/testing/XQSuite/data/edition.xml")
-    %test:assertEquals("xmldb:exist:///db/apps/Edirom-Online-Backend/testing/XQSuite/data/edition.xml")
+    %test:args("/db/apps/Edirom-Online-Backend/tests/XQSuite/data/edition.xml")
+    %test:assertEquals("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/edition.xml")
     (: check empty sequence :)
     %test:arg("editionIDorPath")       %test:assertEmpty
     function edt:test-getEditionURI($editionIDorPath as xs:string?) as xs:string?  {

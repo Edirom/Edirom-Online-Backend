@@ -22,7 +22,7 @@ declare option output:media-type "application/json";
 (: QUERY BODY ============================================================== :)
 
 let $uri := request:get-parameter('uri', '')
-let $mei := doc($uri)
+let $mei := eutil:getDoc($uri)
 
 let $ret :=
     for $part in ($mei//mei:instrumentation/mei:instrVoice | $mei//mei:perfMedium//mei:perfRes)

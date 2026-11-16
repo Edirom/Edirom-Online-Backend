@@ -1,0 +1,29 @@
+{
+  "type" : "source",
+  "internalIdType" : "annot",
+  "title" : "Edition",
+  "term" : null,
+  "views" : [ {
+    "label" : "Quellenbeschreibung",
+    "type" : "textView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/sourceDesc-4.xml"
+  }, {
+    "type" : "verovioView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml",
+    "defaultView" : true
+  }, {
+    "type" : "annotationView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml",
+    "defaultView" : true
+  }, {
+    "type" : "xmlView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml"
+  }, {
+    "label" : "XML Quellenbeschreibung",
+    "type" : "xmlView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/sourceDesc-4.xml"
+  } ],
+  "internalId" : "annotation-2",
+  "path" : null,
+  "doc" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml"
+}

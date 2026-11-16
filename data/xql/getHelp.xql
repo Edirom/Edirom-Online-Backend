@@ -3,6 +3,10 @@ xquery version "3.1";
  : For LICENSE-Details please refer to the LICENSE file in the root directory of this repository.
  :)
 
+(: IMPORTS ================================================================= :)
+
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
+
 (: NAMESPACE DECLARATIONS ================================================== :)
 
 declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
@@ -19,53 +23,46 @@ declare option output:omit-xml-declaration "yes";
 
 (: QUERY BODY ============================================================== :)
 
-let $lang := request:get-parameter('lang', 'en')
+let $lang := eutil:getSetLanguage(())
 let $idPrefix := request:get-parameter('idPrefix', '')
 
 let $base := replace(system:get-module-load-path(), 'embedded-eXist-server', '') (:TODO:)
 
-let $doc := doc(concat('../../help/help_', $lang, '.xml'))
-let $contextPath := if(starts-with(document-uri($doc), '/db'))
-                    then substring-after(document-uri($doc), '/db')
-                    else document-uri($doc)
-let $contextPath := substring-before($contextPath, concat('help/help_', $lang, '.xml'))
-let $contextPath := request:get-context-path() || $contextPath
+let $uri := concat('xmldb:exist:///db/apps/Edirom-Online-Backend/help/help_', $lang, '.xml')
+let $doc := eutil:getDoc($uri)
+let $contextPath := request:get-scheme()|| "://" || request:get-server-name() || ":" || request:get-server-port() || request:get-context-path()
 
-let $xsl := doc('../xslt/edirom_langReplacement.xsl')
+let $xsl := eutil:getDoc($eutil:xsltBase || '/edirom_langReplacement.xsl')
 let $doc := 
     transform:transform($doc, $xsl,
         <parameters>
-            <param name="base" value="{concat($base, '/../xslt/')}"/>
+            <param name="base" value="{concat($eutil:xsltBase, '/')}"/>
             <param name="lang" value="{$lang}"/>
         </parameters>
     )
 
-let $xsl := doc('../xslt/tei/profiles/edirom-body/teiBody2HTML.xsl')
+let $xsl := eutil:getDoc($eutil:xsltBase || '/tei/profiles/edirom-body/teiBody2HTML.xsl')
 let $doc :=
     transform:transform($doc, $xsl,
         <parameters>
-            <param name="base" value="{concat($base, '/../xslt/')}"/>
+            <param name="base" value="{concat($eutil:xsltBase, '/')}"/>
             <param name="lang" value="{$lang}"/>
             <param name="tocDepth" value="1"/>
-            (: == passing empty value for docUri (XSLT expects xs:anyURI, but ExtJS view does not provide value) -> github#480 == :)
             <param name="contextPath" value="{$contextPath}"/>
-            (: == passing empty value for docUri (XSLT expects xs:anyURI, but ExtJS view does not provide value) -> github#480 == :)
-            <param name="docUri" value="''"/>
+            <param name="docUri" value="{$uri}"/>
         </parameters>
     )
 
 (: XSLT for removing unnecessary/disturbing head tags, e.g. meta, title, link - because those end up breaking CSS in other windows:)
-let $xsl := doc('../xslt/edirom_removeHead.xsl')
+let $xsl := eutil:getDoc($eutil:xsltBase || '/edirom_removeHead.xsl')
 let $doc :=
     transform:transform($doc, $xsl,
         <parameters></parameters>
     )
 
 return
-    transform:transform($doc, doc('../xslt/edirom_idPrefix.xsl'),
+    transform:transform($doc, eutil:getDoc($eutil:xsltBase || '/edirom_idPrefix.xsl'),
         <parameters>
             <param name="idPrefix" value="{$idPrefix}"/>
         </parameters>
     )
-    
-

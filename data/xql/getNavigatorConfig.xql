@@ -12,6 +12,7 @@ import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/e
 declare namespace edirom = "http://www.edirom.de/ns/1.3";
 declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 declare namespace request = "http://exist-db.org/xquery/request";
+declare namespace response = "http://exist-db.org/xquery/response";
 declare namespace xlink = "http://www.w3.org/1999/xlink";
 declare namespace xmldb = "http://exist-db.org/xquery/xmldb";
 
@@ -28,8 +29,9 @@ declare variable $lang := request:get-parameter('lang', '');
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
-declare function local:getCategory($category, $depth) {
-    
+(: HTML functions :)
+
+declare function local:getCategory-html($category as element(edirom:navigatorCategory), $depth as xs:integer) as element(div) {
     <div
         class="navigatorCategory{
                 if ($depth = 1) then
@@ -70,11 +72,11 @@ declare function local:getCategory($category, $depth) {
                 for $elem in $category/edirom:navigatorItem | $category/edirom:navigatorCategory
                 return
                     if (local-name($elem) eq 'navigatorItem') then (
-                        local:getItem($elem, $depth)
+                        local:getItem-html($elem, $depth)
                     ) else if (local-name($elem) eq 'navigatorSeparator') then (
-                        local:getSeparator()
+                        local:getSeparator-html()
                     ) else if (local-name($elem) eq 'navigatorCategory') then (
-                        local:getCategory($elem, $depth + 1)
+                        local:getCategory-html($elem, $depth + 1)
                     ) else
                         ()
             }
@@ -82,8 +84,7 @@ declare function local:getCategory($category, $depth) {
     </div>
 };
 
-declare function local:getItem($item, $depth) {
-    
+declare function local:getItem-html($item as element(edirom:navigatorItem), $depth as xs:integer) as element(div) {
     let $target := $item/replace(@targets, '\[.*\]', '')
     let $cfg := concat('{', replace(substring-before($item/substring-after(@targets, '['), ']'), '=', ':'), '}')
     let $target :=
@@ -91,8 +92,7 @@ declare function local:getItem($item, $depth) {
             (replace($target, 'javascript:', ''))
         else
             (concat("loadLink('", $target, "', ", $cfg, ")"))
-        return
-        
+    return
         <div class="navigatorItem{
                     if ($depth lt 2) then
                         ()
@@ -105,35 +105,106 @@ declare function local:getItem($item, $depth) {
         </div>
 };
 
-declare function local:getSeparator() {
-    
+declare function local:getSeparator-html() as element(div) {
     <div class="navigatorSeparator"></div>
 };
 
-declare function local:getDefinition($navConfig) {
+declare function local:getDefinition-html($navConfig as element(edirom:navigatorDefinition)) as element(div)* {
     let $elems := $navConfig/*
     
     for $elem in $elems
-    
     return
-        
         if (local-name($elem) eq 'navigatorItem') then (
-            local:getItem($elem, 1)
+            local:getItem-html($elem, 1)
         ) else if (local-name($elem) eq 'navigatorSeparator') then (
-            local:getSeparator()
+            local:getSeparator-html()
         ) else if (local-name($elem) eq 'navigatorCategory') then (
-            local:getCategory($elem, 1)
+            local:getCategory-html($elem, 1)
         ) else
             ()
+};
+
+(: JSON functions :)
+
+declare function local:getCategory-json($category as element(edirom:navigatorCategory)) as map(*) {
+    let $items :=
+        for $elem in $category/edirom:navigatorItem | $category/edirom:navigatorCategory | $category/edirom:navigatorSeparator
+        return
+            if (local-name($elem) eq 'navigatorItem') then (
+                local:getItem-json($elem)
+            ) else if (local-name($elem) eq 'navigatorSeparator') then (
+                local:getSeparator-json()
+            ) else if (local-name($elem) eq 'navigatorCategory') then (
+                local:getCategory-json($elem)
+            ) else
+                ()
+    
+    return
+        map {
+            "type": "navigatorCategory",
+            "id": string($category/@xml:id),
+            "sortNo": string($category/@sortNo),
+            "name": eutil:getLocalizedName($category, $lang),
+            "items": array { $items }
+        }
+};
+
+declare function local:getItem-json($item as element(edirom:navigatorItem)) as map(*) {
+    map {
+        "type": "navigatorItem",
+        "id": string($item/@xml:id),
+        "sortNo": string($item/@sortNo),
+        "name": eutil:getLocalizedName($item, $lang),
+        "targets": string($item/@targets)
+    }
+};
+
+declare function local:getSeparator-json() as map(*) {
+    map {
+        "type": "navigatorSeparator"
+    }
+};
+
+declare function local:getDefinition-json($navConfig as element(edirom:navigatorDefinition)) as array(*)? {
+    let $elems := $navConfig/*
+    
+    return
+        array {
+            for $elem in $elems
+            return
+                if (local-name($elem) eq 'navigatorItem') then (
+                    local:getItem-json($elem)
+                ) else if (local-name($elem) eq 'navigatorSeparator') then (
+                    local:getSeparator-json()
+                ) else if (local-name($elem) eq 'navigatorCategory') then (
+                    local:getCategory-json($elem)
+                ) else
+                    ()
+        }
 };
 
 (: QUERY BODY ============================================================== :)
 
 let $editionId := request:get-parameter('editionId', '')
 let $workId := request:get-parameter('workId', '')
-let $edition := doc($editionId)/root()
+let $mode := request:get-parameter('mode', '')
+let $edition := eutil:getDoc($editionId)
 let $work := $edition/id($workId)
 let $navConfig := $work/edirom:navigatorDefinition
 
 return
-    local:getDefinition($navConfig)
+    if ($mode = 'json') then (
+        let $serializationParameters := "method=text media-type=application/json encoding=utf-8"
+        let $outputOptions :=
+            <output:serialization-parameters>
+                <output:method>json</output:method>
+                <output:indent>yes</output:indent>
+            </output:serialization-parameters>
+        let $data :=
+            map {
+                "navigatorDefinition": local:getDefinition-json($navConfig)
+            }
+        return
+            response:stream($data => serialize($outputOptions), $serializationParameters)
+    ) else
+        local:getDefinition-html($navConfig)

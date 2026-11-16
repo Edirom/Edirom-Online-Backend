@@ -75,7 +75,7 @@ let $eoIndexPage :=  <html>
                             <script type="text/javascript" src="resources/js/openseadragon.min.js"/>
                             
                             <!-- **JQUERY** -->
-                            <script type="text/javascript" src="resources/jquery/jquery-2.1.3.js" charset="utf-8"/>
+                            <script type="text/javascript" src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous" charset="utf-8"/>
                             
                             <!-- **ACE** -->
                             <script src="resources/js/ace/ace.js" type="text/javascript" charset="utf-8"/>

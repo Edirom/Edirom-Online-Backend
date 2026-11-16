@@ -1,0 +1,26 @@
+[ {
+  "selectedByDefault" : true,
+  "label" : "Clarinet",
+  "id" : "perfRes-voice-1",
+  "selected" : true
+}, {
+  "selectedByDefault" : true,
+  "label" : "Violin I",
+  "id" : "perfRes-voice-2",
+  "selected" : true
+}, {
+  "selectedByDefault" : true,
+  "label" : "Violin II",
+  "id" : "perfRes-voice-3",
+  "selected" : true
+}, {
+  "selectedByDefault" : true,
+  "label" : "Viola",
+  "id" : "perfRes-voice-4",
+  "selected" : true
+}, {
+  "selectedByDefault" : true,
+  "label" : "cello",
+  "id" : "perfRes-voice-5",
+  "selected" : true
+} ]

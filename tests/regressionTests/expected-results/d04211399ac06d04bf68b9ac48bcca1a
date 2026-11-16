@@ -1,0 +1,7 @@
+[ {
+  "id" : "layer-1",
+  "name" : "Sichere Eintragungen Webers"
+}, {
+  "id" : "layer-2",
+  "name" : "Unsichere Eintragungen Webers"
+} ]

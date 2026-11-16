@@ -47,7 +47,10 @@ declare variable $imageBasePath := edition:getPreference('image_prefix', $editio
  :)
 declare function local:getParticipants($annot as element()) as map(*)* {
 
-    let $participants := tokenize($annot/string(@plist), ' ')
+    (: an @plist may name the same participant more than once; a repeated participant is not a
+       second thing to show, and left in it would both multiply the grouping work below and
+       inflate the measure counts of the ranges built from it :)
+    let $participants := distinct-values(tokenize(normalize-space($annot/@plist), ' '))
 
     (: get distinct document uris referenced in @plist :)
     let $docs :=
@@ -91,7 +94,7 @@ declare function local:getTextParticipants($participants as xs:string*, $doc as 
 };
 
 declare function local:getTextNoteContent($doc as xs:string, $id as xs:string) as xs:string {
-    let $elem := doc($doc)/id($id)
+    let $elem := eutil:getDoc($doc)/id($id)
     let $content := data($elem)
     return
         if (string-length($content) gt 0)
@@ -119,6 +122,17 @@ declare function local:getTextNotePrecedingContent($elem as element()) as xs:str
  : @param $doc a URI pointing to the MEI document
  :)
 declare function local:getSourceParticipants($participants as xs:string*, $doc as xs:string) as map(*)* {
+
+    (: local:groupParticipants() chains participants by comparing each to its predecessor, so it
+       can group a run of adjacent measures only if the sequence is in document order. An @plist
+       is not required to be ordered, so sort here — before grouping, and before the indices in
+       the combination strings are resolved back to participants further down. :)
+    let $participants :=
+        for $participant in $participants
+        let $elem := local:getElement($participant)
+        order by count($elem/preceding::*)
+        return
+            $participant
 
     (: group participants :)
     let $combs := local:groupParticipants($participants, $doc)
@@ -222,62 +236,77 @@ declare function local:getSourceLinkTarget($elems as node()*) as xs:string? {
             ($elems[1]/data(@xml:id))
 };
 
+(:~
+ : Groups the participants of one document into the previews to be shown for them
+ :
+ : $participants arrives in document order, so a preview is a maximal run of adjacent
+ : participants that belong together, and deciding that pairwise in a single left-to-right pass
+ : is enough. The former implementation instead enumerated, for every participant, every
+ : combination of the later participants it could reach, and then discarded all but the maximal
+ : ones - which is exponential in the number of participants and made annotations of a few dozen
+ : measures time out.
+ :
+ : @param $participants the participants pointing into $doc, in document order
+ : @param $doc a URI pointing to the MEI document
+ :
+ : @return one '-'-separated list of participant positions per preview
+ :)
 declare function local:groupParticipants($participants as xs:string*, $doc as xs:string) as xs:string* {
 
-    let $elems :=
+    (: one map per participant, so that positions stay aligned with $participants even where a
+       participant does not resolve :)
+    let $items :=
         for $p in $participants
-        let $id := substring-after($p, '#')
-        return doc($doc)/id($id)
+        let $elem := eutil:getDoc($doc)/id(substring-after($p, '#'))
+        return
+            map {
+                'elem': $elem,
+                'zone': if (exists($elem)) then local:getZone($elem) else ()
+            }
 
-    let $zones :=
-        for $elem in $elems
-        return local:getZone($elem)
+    let $isStart :=
+        for $i in 1 to count($items)
+        return
+            if ($i eq 1) then
+                true()
+            else
+                not(local:isSamePreview($items[$i - 1]('elem'), $items[$i - 1]('zone'),
+                                        $items[$i]('elem'), $items[$i]('zone')))
 
-    let $combs :=
-        for $p at $i in $participants
-        return local:getCombinations($elems, $zones, $i, count($zones))
+    let $starts := index-of($isStart, true())
 
     return
-        reverse(
-            for $comb at $i in reverse($combs)
-            let $contained := for $n in (1 to count($combs) - $i)
-                return
-                    if (contains($combs[$n], $comb)) then
-                        (1)
-                    else
-                        (0)
-            return
-                if (exists(index-of($contained, 1))) then
-                    ()
-                else
-                    ($comb)
-        )
+        for $start at $s in $starts
+        let $end := ($starts[$s + 1] - 1, count($items))[1]
+        return
+            string-join(($start to $end) ! string(.), '-')
 };
 
-declare function local:getCombinations($elems as element()*, $zones as element()*, $i as xs:int, $total as xs:int) as xs:string {
-
-    let $currentZone := $zones[$i]
-    let $currentElem := $elems[$i]
-
-    return
-        if (local-name($currentElem) eq 'measure' or local-name($currentElem) eq 'staff') then (
-            string-join((
-                string($i),
-                for $n in ($i + 1 to $total)
-                return
-                    if ((local-name($elems[$n]) eq 'measure' or local-name($elems[$n]) eq 'staff') and local:compareZones($currentZone, $zones[$n])) then
-                        (local:getCombinations($elems, $zones, $n, $total))
-                    else
-                        ()
-                ), '-')
-        ) else (
-            string($i)
-        )
+(:~
+ : Decides whether two participants adjacent in document order belong into the same preview,
+ : i.e. whether they are measures or staves whose zones sit next to each other on one page
+ :
+ : @param $elem1 the earlier participant
+ : @param $zone1 the zone of $elem1
+ : @param $elem2 the later participant
+ : @param $zone2 the zone of $elem2
+ :
+ : @return true if both belong into one preview
+ :)
+declare function local:isSamePreview($elem1 as element()?, $zone1 as element()?, $elem2 as element()?, $zone2 as element()?) as xs:boolean {
+    exists($zone1) and exists($zone2)
+        and (local-name($elem1) eq 'measure' or local-name($elem1) eq 'staff')
+        and (local-name($elem2) eq 'measure' or local-name($elem2) eq 'staff')
+        and local:compareZones($zone1, $zone2)
 };
 
 declare function local:compareZones($zone1 as element(), $zone2 as element()) as xs:boolean {
 
-    let $samePage := deep-equal($zone1/.., $zone2/..)
+    (: node identity, not deep-equal: two zones are on one page iff they hang off the very same
+       mei:surface. Comparing the surfaces by value instead was both far more expensive - a full
+       subtree comparison of every zone on the page, per pair of participants - and wrong for two
+       pages that happen to be encoded identically. :)
+    let $samePage := $zone1/.. is $zone2/..
     let $overlapping := not(
         number($zone1/@ulx) gt number($zone2/@lrx) or
         number($zone1/@lrx) lt number($zone2/@ulx) or
@@ -294,7 +323,7 @@ declare function local:getElement($uri as xs:string) as element()? {
     let $id := substring-after($uri, '#')
 
     return
-        doc($doc)/id($id)
+        eutil:getDoc($doc)/id($id)
 };
 
 (: TODO: in Modul auslagern :)
@@ -400,39 +429,49 @@ declare function local:getItemLabel($elems as element()*) as xs:string {
                     else
                         ()
 
+            let $item1Label := if ($items[1]/@label) then $items[1]/string(@label) else $items[1]/string(@n)
+
             let $itemLabelMultiRestSensitive :=
                 if ($items[1]//mei:multiRest) then
-                    ($items[1]/@n || '–' || number($items[1]/@n) + number($items[1]//mei:multiRest/@num) - 1)
+                    ($item1Label || '–' || number($items[1]/@n) + number($items[1]//mei:multiRest/@num) - 1)
                 else
-                    $items[1]/@n
+                    $item1Label
 
             return
                 if (local-name($items[1]) eq 'measure') then (
                     if (count($items) gt 1) then
-                        (eutil:getLanguageString('Bars_from_to', ($items[1]/@n, $items[last()]/@n), $language))
+                        (eutil:getLanguageString('Bars_from_to', ($item1Label, if ($items[last()]/@label) then $items[last()]/string(@label) else $items[last()]/string(@n)), $language))
                     else
                         (eutil:getLanguageString('Bar_n', $itemLabelMultiRestSensitive, $language))
                 ) else if (local-name($items[1]) eq 'staff') then (: TODO: $itemLabelMultiRestSensitive also for staffs? :) (
                     if (count($items) gt 1) then (
-                        let $measureNs := distinct-values($items/ancestor::mei:measure/@n)
+                        let $measureLabels := distinct-values(
+                            for $m in $items/ancestor::mei:measure
+                            return if ($m/@label) then $m/string(@label) else $m/string(@n)
+                        )
 
                         let $label :=
-                            if (count($measureNs) gt 1) then
-                                (concat(eutil:getLanguageString('Bars', (), $lang), ' ', $measureNs[1], '-', $measureNs[last()]))
+                            if (count($measureLabels) gt 1) then
+                                (concat(eutil:getLanguageString('Bars', (), $lang), ' ', $measureLabels[1], '-', $measureLabels[last()]))
                             else (
-                                concat(eutil:getLanguageString('Bar', (), $lang), ' ', $measureNs[1])
+                                concat(eutil:getLanguageString('Bar', (), $lang), ' ', $measureLabels[1])
                             )
 
                         return
                             concat($label, ' (', string-join($items/preceding::mei:staffDef[@n = $items[1]/@n][1]/@label.abbr, ', '), ')')
-                    ) else
-                        (concat(eutil:getLanguageString('Bar', (), $lang), ' ', $items[1]/ancestor::mei:measure/@n, ' (', $items[1]/preceding::mei:staffDef[@n = $items[1]/@n][1]/@label.abbr, ')'))
+                    ) else (
+                        let $m := $items[1]/ancestor::mei:measure
+                        return
+                            concat(eutil:getLanguageString('Bar', (), $lang), ' ', (if ($m/@label) then $m/string(@label) else $m/string(@n)), ' (', $items[1]/preceding::mei:staffDef[@n = $items[1]/@n][1]/@label.abbr, ')')
+                    )
 
                 ) else if (local-name($items[1]) eq 'zone') then (
                     if (count($items) gt 1) then (
                         (:Dieser Fall sollte nicht vorkommen, da freie zones nicht zusammengefasst werden dürfen:)
                     ) else (
-                        concat(eutil:getLanguageString('Detail', (), $lang), ' (', eutil:getLanguageString('Abbrev_page', (), $lang), ' ', $items[1]/parent::mei:surface/@n, ')')
+                        let $surf := $items[1]/parent::mei:surface
+                        return
+                            concat(eutil:getLanguageString('Detail', (), $lang), ' (', eutil:getLanguageString('Abbrev_page', (), $lang), ' ', (if ($surf/@label) then $surf/string(@label) else $surf/string(@n)), ')')
                     )
                 ) else ()
         ), ' ')
@@ -441,7 +480,7 @@ declare function local:getItemLabel($elems as element()*) as xs:string {
 
 let $docUri := substring-before($uri, '#')
 let $internalId := substring-after($uri, '#')
-let $doc := doc($docUri)
+let $doc := eutil:getDoc($docUri)
 let $annot := $doc/id($internalId)
 
 let $map := map {
