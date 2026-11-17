@@ -66,7 +66,7 @@
         </copy>
         <!-- Copy TEI Stylesheets from ${tei.dir} -->
         <mkdir dir="${build.dir}/data/xslt/tei/Stylesheets"/>
-        <copy todir="${build.dir}/data/xslt/tei/Stylesheets" preservelastmodified="true">
+        <copy todir="${build.dir}/data/xslt/tei/Stylesheets" preservelastmodified="true" overwrite="true">
             <fileset dir="${tei.dir}/xml/tei/stylesheet">
                 <include name="catalog.xml"/>
                 <include name="i18n.xml"/>
