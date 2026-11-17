@@ -12,6 +12,7 @@ xquery version "3.1";
 (: IMPORTS ================================================================= :)
 
 import module namespace edition = "http://www.edirom.de/xquery/edition" at "../xqm/edition.xqm";
+import module namespace annotation = "http://www.edirom.de/xquery/annotation" at "../xqm/annotation.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -26,6 +27,12 @@ declare namespace xmldb = "http://exist-db.org/xquery/xmldb";
 
 declare option output:method "json";
 declare option output:media-type "application/json";
+
+(: VARIABLE DECLARATIONS =================================================== :)
+
+declare variable $mode := request:get-parameter('mode', '');
+
+(: FUNCTION DECLARATIONS =================================================== :)
 
 (:~
     Finds all annotations in all works.
@@ -47,6 +54,7 @@ declare function local:getAnnotations($uriSharp as xs:string, $annotations as el
         let $classes := tokenize(replace(normalize-space($annotation/@class), '#', ''), ' ')
         let $prio := $annotation/mei:ptr[@type = "priority"]/replace(@target, '#', '') || $classes[starts-with(., 'ediromAnnotPrio')]
         let $cat := $annotation/mei:ptr[@type = "categories"]/replace(@target, '#', '') || string-join($classes[contains(., 'annotation.category.')], ' ')
+        let $taxonomyClasses := string-join(annotation:get-class-idrefs-as-sequence($annotation), ' ')
         let $plist as array(*) :=
             array {
                 for $p in tokenize($annotation/@plist, '\s+')
@@ -56,16 +64,26 @@ declare function local:getAnnotations($uriSharp as xs:string, $annotations as el
                         'id': concat( $id, '__', substring-after($p, $uriSharp))
                     }
             }
+        let $baseMap := map {
+            'id': $id,
+            'plist': $plist,
+            'svgList': [],
+            'fn': 'loadLink("' || $uri || '")',
+            'uri': $uri,
+            'priority': $prio,
+            'categories': $cat
+        }
+        let $taxonomiesMap := map {
+            'taxonomyClasses': $taxonomyClasses
+        }
         return
-            map {
-                'id': $id,
-                'plist': $plist,
-                'svgList': [],
-                'fn': 'loadLink("' || $uri || '")',
-                'uri': $uri,
-                'priority': $prio,
-                'categories': $cat
-            }
+            if ($mode eq 'taxonomies') then
+                map:merge((
+                    $baseMap,
+                    $taxonomiesMap
+                ))
+            else
+                $baseMap
     }
 };
 
