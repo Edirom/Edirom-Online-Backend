@@ -216,6 +216,23 @@ declare function dts-navigation:buildCitableUnitObject(
 };
 
 (:~
+ : Builds a virtual measure CitableUnit using the metadata of its underlying measure.
+ :)
+declare function dts-navigation:buildVirtualMeasureCitableUnitObject(
+    $selection as node(),
+    $citationTree as element(citeStructure),
+    $ref as xs:string,
+    $namespace as xs:string
+) as element()* {
+    for $child in dts-navigation:buildCitableUnitObject($selection, $citationTree, $ref, $namespace)
+    return
+        if ($child/self::citeType) then
+            <citeType>VirtualMeasure</citeType>
+        else
+            $child
+};
+
+(:~
  : Builds a flat sequence of CitableUnit members by traversing citation levels.
  : Selected elements are starting units; a document supplies all matching starting units.
  : Members are emitted parent-first, with units at each traversal step in document order.
@@ -312,6 +329,26 @@ declare function dts-navigation:buildMemberArrayRefDownZero(
 };
 
 (:~
+ : Builds one navigation member for each physical measure represented by a virtual measure reference.
+ :
+ : @param $measures The physical MEI measures represented by the virtual measure
+ : @param $citeStructure The citation structure for a physical measure
+ : @param $namespace The standardized namespace prefix of the containing document
+ : @return A member object for each physical measure
+ :)
+declare function dts-navigation:buildVirtualMeasureMemberArray(
+    $measures as element(mei:measure)*,
+    $citeStructure as element(citeStructure),
+    $namespace as xs:string
+) as element()* {
+    for $measure in $measures
+    return
+        <member json:array="true">
+            {dts-navigation:buildCitableUnitObject($measure, $citeStructure, string($measure/@xml:id), $namespace)}
+        </member>
+};
+
+(:~
  : Returns the navigation structure for a given resource.
  :
  : @param $resource The resource for which to retrieve the navigation structure.
@@ -349,9 +386,30 @@ declare function dts-navigation:navigation(
                 error($errors:NOT_FOUND, "The requested resource was not found.")
         let $namespace := eutil:getNamespace($document/*)
         let $citationTree := dts-util:selectCitationTree($document, $tree)
+        let $resolvedVirtualMeasure :=
+            if (
+                $namespace eq "mei"
+                and $citationTree/@xml:id = "musicStructure"
+                and $ref
+                and empty($document/id($ref)[self::mei:measure])
+            ) then
+                source:resolve-virtual-measure-id($document, $ref)
+            else
+                ()
+        let $isVirtualMeasureRef :=
+            exists($resolvedVirtualMeasure)
+            and (every $measure in $resolvedVirtualMeasure
+                satisfies dts-util:isInCitationTree($measure, $citationTree))
         let $resolvedSelection :=
             if ($ref) then
-                dts-util:selectRef($document, $ref, $citationTree)
+                if ($isVirtualMeasureRef) then
+                    map {
+                        "selectedNodes": $resolvedVirtualMeasure,
+                        "startNode": $resolvedVirtualMeasure,
+                        "endNode": ()
+                    }
+                else
+                    dts-util:selectRef($document, $ref, $citationTree)
             else if ($start and $end) then
                 dts-util:selectRange($document, $start, $end, $citationTree)
             else
@@ -359,11 +417,19 @@ declare function dts-navigation:navigation(
         let $boundaryUnits :=
             if ($ref) then
                 let $selection := $resolvedSelection?selectedNodes
-                let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
                 return
-                    <ref>
-                        {dts-navigation:buildCitableUnitObject($selection, $citeStructure, $ref, $namespace)}
-                    </ref>
+                    if ($isVirtualMeasureRef) then
+                        let $citeStructure := dts-util:getCiteStructureForNode($selection[1], $citationTree)
+                        return
+                            <ref>
+                                {dts-navigation:buildVirtualMeasureCitableUnitObject($selection[1], $citeStructure[1], $ref, $namespace)}
+                            </ref>
+                    else
+                        let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
+                        return
+                            <ref>
+                                {dts-navigation:buildCitableUnitObject($selection, $citeStructure, $ref, $namespace)}
+                            </ref>
             else if ($start and $end) then
                 let $startSelection := $resolvedSelection?startNode
                 let $endSelection := $resolvedSelection?endNode
@@ -381,7 +447,14 @@ declare function dts-navigation:navigation(
                 ()
 
         let $member :=
-            if (not(exists($down))) then
+            if ($isVirtualMeasureRef) then
+                if (exists($down)) then
+                    error($errors:INVALID_PARAMETERS, "The 'down' parameter cannot be used with a virtual measure ref.")
+                else
+                    let $citeStructure := dts-util:getCiteStructureForNode($resolvedVirtualMeasure[1], $citationTree)
+                    return
+                        dts-navigation:buildVirtualMeasureMemberArray($resolvedVirtualMeasure, $citeStructure[1], $namespace)
+            else if (not(exists($down))) then
                 ()
             (: If $down = 0 and $ref is present -> special case :)
             else if ($down eq 0 and $ref) then

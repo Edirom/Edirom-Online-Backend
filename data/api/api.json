@@ -147,7 +147,7 @@
 							"name": "ref",
 							"in": "query",
 							"required": false,
-							"description": "NOT used with start and end",
+							"description": "NOT used with start and end. In the MEI musicStructure tree, a virtual measure ref returns a VirtualMeasure boundary and its underlying Measure members when down is omitted.",
 							"schema": {
 								"type": "string"
 							},
@@ -227,6 +227,14 @@
 								"Klarinettenquintett source 2 (with parts) - Measure 5 Viola": {
 									"summary": "Klarinettenquintett source 2 (with parts) - Measure 5 Viola",
 									"value": "bar-4382"
+								},
+								"Klarinettenquintett source 2 (with parts) - Virtual measure 1 Fantasia": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Virtual measure 1 (Fantasia, all parts)",
+									"value": "measure_x2aedfe17-6552-4ae2-aaf7-4181fbac4819_1"
+								},
+								"Klarinettenquintett source 2 (with parts) - Virtual measure 5 Fantasia": {
+									"summary": "Klarinettenquintett source 2 (with parts) - Virtual measure 5 (Fantasia, all parts)",
+									"value": "measure_x2aedfe17-6552-4ae2-aaf7-4181fbac4819_5"
 								},
 								"meiHead": {
 									"summary": "meiHead",
@@ -448,7 +456,7 @@
 							"name": "down",
 							"in": "query",
 							"required": false,
-							"description": "If down is not provided only retrieve information about the queried CitableUnit",
+							"description": "If down is not provided, only retrieve information about the queried CitableUnit, except that a virtual MEI measure ref in musicStructure returns its underlying measures. The down parameter cannot be used with a virtual measure ref.",
 							"schema": {
 								"type": "int",
 								"minimum": -1,

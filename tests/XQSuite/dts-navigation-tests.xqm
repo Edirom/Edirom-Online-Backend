@@ -927,6 +927,93 @@ declare
 };
 
 declare
+    (: An explicit musicStructure tree resolves a virtual measure to one boundary and its physical measures. :)
+    %test:args(
+        "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-parts-labelled.xml",
+        "measure_test_mdiv_01_1",
+        "musicStructure",
+        "measure_3f9a1c2d-flauto-one measure_8c2d6f1b-oboe-one"
+    )
+    %test:assertTrue
+    (: The default musicStructure tree applies the same virtual-measure behavior. :)
+    %test:args(
+        "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-parts-labelled.xml",
+        "measure_test_mdiv_01_2b",
+        "",
+        "measure_5b7e4d8a-flauto-two measure_1e4a9b7c-oboe-two"
+    )
+    %test:assertTrue
+    function dnt:test-navigation-virtual-measure-ref(
+        $resource as xs:string,
+        $ref as xs:string,
+        $tree as xs:string?,
+        $expectedMembers as xs:string
+    ) as xs:boolean {
+        let $result := dts-navigation:navigation($resource, $ref, (), (), (), $tree)
+        return
+            $result/ref/identifier eq $ref
+            and $result/ref/citeType eq "VirtualMeasure"
+            and $result/ref/level eq "2"
+            and $result/ref/parent eq "test_mdiv_01"
+            and string-join($result/member/identifier, " ") eq $expectedMembers
+            and count($result/member) eq 2
+            and (every $member in $result/member satisfies (
+                $member/parent eq "test_mdiv_01"
+                and $member/citeType eq "Measure"
+                and $member/@json:array eq "true"
+            ))
+};
+
+declare
+    (: A real measure ID that starts with 'measure_' remains a single citable unit. :)
+    %test:assertTrue
+    function dnt:test-navigation-real-measure-id-is-not-treated-as-virtual() as xs:boolean {
+        let $result := dts-navigation:navigation(
+            "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-parts-labelled.xml",
+            "measure_3f9a1c2d-flauto-one", (), (), (), ()
+        )
+        return
+            $result/ref/identifier eq "measure_3f9a1c2d-flauto-one"
+            and $result/ref/citeType eq "Measure"
+            and empty($result/member)
+};
+
+declare
+    %test:assertError("errors:NotFoundError")
+    function dnt:test-navigation-virtual-measure-ref-is-limited-to-music-structure() as element(json:value) {
+        dts-navigation:navigation(
+            "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-parts-labelled.xml",
+            "measure_test_mdiv_01_1", (), (), (), "musicPartStructure"
+        )
+};
+
+declare
+    (: A virtual measure ref rejects an explicit down value with the explicit tree. :)
+    %test:args(
+        "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-parts-labelled.xml",
+        "measure_test_mdiv_01_1",
+        "0",
+        "musicStructure"
+    )
+    %test:assertError("errors:InvalidParametersError")
+    (: The default tree also rejects an explicit down value with a virtual measure ref. :)
+    %test:args(
+        "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-parts-labelled.xml",
+        "measure_test_mdiv_01_1",
+        "1",
+        ""
+    )
+    %test:assertError("errors:InvalidParametersError")
+    function dnt:test-navigation-virtual-measure-ref-rejects-down(
+        $resource as xs:string,
+        $ref as xs:string,
+        $down as xs:integer?,
+        $tree as xs:string?
+    ) as element(json:value) {
+        dts-navigation:navigation($resource, $ref, (), (), $down, $tree)
+};
+
+declare
     %test:assertTrue
     function dnt:test-navigation-start-end-without-down-omits-members() as xs:boolean {
         let $result := dts-navigation:navigation(
