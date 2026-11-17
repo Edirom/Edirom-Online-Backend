@@ -12,6 +12,7 @@ module namespace linktarget = "http://www.edirom.de/xquery/linktarget";
 
 import module namespace functx = "http://www.functx.com";
 
+import module namespace edition = "http://www.edirom.de/xquery/edition" at "edition.xqm";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 import module namespace source = "http://www.edirom.de/xquery/source" at "source.xqm";
 
@@ -124,9 +125,10 @@ declare function linktarget:getView($type as xs:string, $docUri as xs:string, $d
  : @param $docUri The URI of the document
  : @param $doc The document
  : @param $lang The language for the labels of the views
+ : @param $editionUri The URI of the current edition
  : @return a map object for each view the document supports, see linktarget:getView
  :)
-declare function linktarget:getViews($type as xs:string, $docUri as xs:string, $doc as document-node()?, $lang as xs:string) as map(*)* {
+declare function linktarget:getViews($type as xs:string, $docUri as xs:string, $doc as document-node()?, $lang as xs:string, $editionUri as xs:string?) as map(*)* {
     
     let $views := (
         (:'desc_summaryView',:)
@@ -144,8 +146,11 @@ declare function linktarget:getViews($type as xs:string, $docUri as xs:string, $
         'desc_xmlView'
     )
     
+    let $showMetadataView := edition:getPreference('display_metadata_view', $editionUri) = 'true'
+
     let $maps :=
         for $view in $views
+        where $view ne 'desc_headerView' or $showMetadataView
         return
             linktarget:getView($view, $docUri, $doc, $lang)
     
@@ -225,9 +230,10 @@ declare function linktarget:getWindowTitle($doc as document-node()?, $type as xs
  :
  : @param $uri The URI of the target, optionally with an internal ID (#...) and ?term= / ?path= parameters
  : @param $lang The language for localized titles and labels
+ : @param $editionUri The URI or ID of the current edition, for edition-specific preferences
  : @return a map object with the keys "type", "title", "doc", "views", "internalId", "term", "path" and "internalIdType"
  :)
-declare function linktarget:details($uri as xs:string, $lang as xs:string) as map(*) {
+declare function linktarget:details($uri as xs:string, $lang as xs:string, $editionUri as xs:string?) as map(*) {
 
     let $uriParams :=
         if (contains($uri, '?')) then
@@ -340,7 +346,7 @@ declare function linktarget:details($uri as xs:string, $lang as xs:string) as ma
             'type': $type,
             'title': linktarget:getWindowTitle($doc, $type, $lang),
             'doc': $docUri,
-            'views': array {linktarget:getViews($type, $docUri, $doc, $lang)},
+            'views': array {linktarget:getViews($type, $docUri, $doc, $lang, $editionUri)},
             'internalId': $internalId || $internalIdParam,
             'term': $term,
             'path': $path,

@@ -7,6 +7,7 @@ xquery version "3.1";
 
 import module namespace request = "http://exist-db.org/xquery/request";
 
+import module namespace edition = "http://www.edirom.de/xquery/edition" at "../xqm/edition.xqm";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
 import module namespace linktarget = "http://www.edirom.de/xquery/linktarget" at "../xqm/linktarget.xqm";
 
@@ -23,7 +24,8 @@ declare option output:media-type "application/json";
 
 declare variable $lang := eutil:getSetLanguage(());
 declare variable $uri := request:get-parameter('uri', '');
+declare variable $editionUri := edition:getEditionURI(request:get-parameter('edition', ''));
 
 (: QUERY BODY ============================================================== :)
 
-linktarget:details($uri, $lang)
+linktarget:details($uri, $lang, $editionUri)
