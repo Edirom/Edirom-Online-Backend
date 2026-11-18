@@ -8,13 +8,13 @@
                 <div class="value"></div>
             </div>
          <div class="property">
-                <div class="key">Title Statement</div>
+                <div class="key">Titelangabe</div>
                 <div class="value">
                     <div class="subProperty">
-                        <div class="subkey">Title</div>
+                        <div class="subkey">Titel</div>
                         <div class="subvalue">Quintett für Klarinette, 2 Violinen, Viola und Violoncello B-Dur</div>
                     </div>
-                    <div class="subProperty"><span class="subkey">Responsibility</span><span class="subvalue"></span></div>
+                    <div class="subProperty"><span class="subkey">Verfasserangabe</span><span class="subvalue"></span></div>
                 </div>
             </div>
          <div class="property">
@@ -116,7 +116,7 @@
       </div>
     </div>
     <div class="section">
-        <h1>FRBR manifestations</h1>
+        <h1>FRBR-Manifestationen</h1>
         <div class="propertyList">
             <div class="property">
                 <div class="key">id</div>
@@ -124,14 +124,14 @@
             </div>
          
             <div class="property">
-                <div class="key">Title Statement</div>
+                <div class="key">Titelangabe</div>
                 <div class="value">
                     <div class="subProperty">
-                        <div class="subkey">Title</div>
+                        <div class="subkey">Titel</div>
                         <div class="subvalue">Edition</div>
                     </div>
                     <div class="subProperty">
-                        <div class="subkey">Title</div>
+                        <div class="subkey">Titel</div>
                         <div class="subvalue">WeGA</div>
                     </div>
                 </div>
