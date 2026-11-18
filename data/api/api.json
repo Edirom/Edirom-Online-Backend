@@ -473,10 +473,13 @@
 							"required": false,
 							"schema": {
 								"type": "string",
+								"description": "Use text/plain only for an application-level CITATION.cff resource.",
 								"enum": [
 									"text/html",
+									"text/plain",
 									"application/mei+xml",
 									"application/tei+xml",
+									"model/x3d+xml",
 									"application/xml",
 									"application/json"
 								],
@@ -491,9 +494,17 @@
 									"summary": "tei",
 									"value": "application/tei+xml"
 								},
+								"x3d": {
+									"summary": "x3d",
+									"value": "model/x3d+xml"
+								},
 								"html": {
 									"summary": "html",
 									"value": "text/html"
+								},
+								"citation": {
+									"summary": "CITATION.cff text",
+									"value": "text/plain"
 								},
 								"json": {
 									"summary": "json",

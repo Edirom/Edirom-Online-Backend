@@ -7,14 +7,15 @@ xquery version "3.1";
  : Returns the details of several link targets at once, the batch version of getLinkTarget.xql.
  : The parameter "uri" may be repeated (GET or POST). The result is a JSON array in the order of
  : the requested URIs. Each entry is the result of getLinkTarget.xql plus the key "uri" holding the
- : requested URI. A URI that cannot be resolved yields an entry of type "unknown" with an empty
- : title and no views.
+ : requested URI. The optional "edition" parameter identifies the edition context for preferences.
+ : A URI that cannot be resolved yields an entry of type "unknown" with an empty title and no views.
  :)
 
 (: IMPORTS ================================================================= :)
 
 import module namespace request = "http://exist-db.org/xquery/request";
 
+import module namespace edition = "http://www.edirom.de/xquery/edition" at "../xqm/edition.xqm";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
 import module namespace linktarget = "http://www.edirom.de/xquery/linktarget" at "../xqm/linktarget.xqm";
 
@@ -32,12 +33,13 @@ declare option output:media-type "application/json";
 
 declare variable $lang := eutil:getSetLanguage(());
 declare variable $uris := request:get-parameter('uri', ());
+declare variable $editionUri := edition:getEditionURI(request:get-parameter('edition', ''));
 
 (: FUNCTION DECLARATIONS =================================================== :)
 
-declare function local:getLinkTarget($uri as xs:string) as map(*) {
+declare function local:getLinkTarget($uri as xs:string, $editionUri as xs:string?) as map(*) {
     try {
-        map:put(linktarget:details($uri, $lang), 'uri', $uri)
+        map:put(linktarget:details($uri, $lang, $editionUri), 'uri', $uri)
     } catch * {
         map {
             'uri': $uri,
@@ -53,5 +55,5 @@ declare function local:getLinkTarget($uri as xs:string) as map(*) {
 array {
     for $uri in $uris
     return
-        local:getLinkTarget($uri)
+        local:getLinkTarget($uri, $editionUri)
 }
