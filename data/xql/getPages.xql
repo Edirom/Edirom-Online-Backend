@@ -6,6 +6,7 @@ xquery version "3.1";
 (: IMPORTS ================================================================= :)
 
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "../xqm/eutil.xqm";
+import module namespace source = "http://www.edirom.de/xquery/source" at "../xqm/source.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -34,7 +35,7 @@ let $ret :=
             map {
                 'id': $surface/string(@xml:id),
                 'path': $graphic/string(@target),
-                'name': if ($surface/@label) then $surface/string(@label) else $surface/string(@n),
+                'name': source:getSurfaceTitle($surface),
                 'width': $graphic/string(@width),
                 'height': $graphic/string(@height)
             }
@@ -47,7 +48,7 @@ let $ret :=
                 map {
                     'id': $surface/string(@xml:id),
                     'path': $graphic/string(@url),
-                    'name': if ($surface/@label) then $surface/string(@label) else $surface/string(@n),
+                    'name': source:getSurfaceTitle($surface),
                     'width': replace($graphic/string(@width), 'px', ''),
                     'height': replace($graphic/string(@height), 'px', '')
                 }

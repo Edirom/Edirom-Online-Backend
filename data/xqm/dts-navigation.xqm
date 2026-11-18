@@ -130,6 +130,10 @@ declare function dts-navigation:getTitle($selection as node(), $namespace as xs:
     ) then
         string($selection/@label)
     else if ($namespace eq "mei" and
+        $selection instance of element(mei:surface)
+    ) then
+        string(source:getSurfaceTitle($selection))
+    else if ($namespace eq "mei" and
         $selection instance of element(mei:part)
     ) then
         let $headerPart := dts-navigation:getPartInHeader($selection)

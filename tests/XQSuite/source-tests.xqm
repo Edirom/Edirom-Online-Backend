@@ -27,6 +27,17 @@ declare
         source:label-or-n(doc($st:parts-labelled)/id($measureId))
 };
 
+(: source:getSurfaceTitle =================================================== :)
+
+declare
+    (: @label takes precedence over @n :)
+    %test:args("<surface xmlns='http://www.music-encoding.org/ns/mei' label='recto' n='1'/>") %test:assertEquals("recto")
+    (: @n is used when @label is absent :)
+    %test:args("<surface xmlns='http://www.music-encoding.org/ns/mei' n='2'/>") %test:assertEquals("2")
+    function st:test-getSurfaceTitle($surface as element()) as xs:string? {
+        source:getSurfaceTitle($surface)
+};
+
 (: source:getZoneIdsFromMeasure ============================================= :)
 
 declare

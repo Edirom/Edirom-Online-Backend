@@ -157,11 +157,21 @@ declare function source:getSiglum($source as xs:string) as xs:string? {
  : @param $element The element to read the designation from
  : @return The designation, or the empty sequence if the element carries neither attribute
  :)
-declare function source:label-or-n($element as element()) as xs:string? {
+declare function source:label-or-n($element as element()?) as xs:string? {
 
     if ($element/@label)
     then $element/string(@label)
     else $element/@n ! string(.)
+};
+
+(:~
+ : Returns a surface's title, preferring @label over @n.
+ :
+ : @param $surface The surface element, may be empty
+ : @return The surface title, or the empty sequence if neither attribute is present
+ :)
+declare function source:getSurfaceTitle($surface as element()?) as xs:string? {
+    source:label-or-n($surface)
 };
 
 (:~

@@ -162,11 +162,7 @@ declare function local:getSourceParticipants($participants as xs:string*, $doc a
         let $label := local:getItemLabel($elems)
 
         let $mdiv := '' (: TODO if($elem/ancestor-or-self::mei:mdiv) then($elem/ancestor-or-self::mei:mdiv/@label) else(''):)
-        let $page :=
-            if ($zones[1]/parent::mei:surface/@label != '') then
-                ($zones[1]/parent::mei:surface/string(@label))
-            else
-                ($zones[1]/parent::mei:surface/string(@n))
+        let $page := source:getSurfaceTitle($zones[1]/parent::mei:surface)
 
         let $sourceLabel := source:getLabel($doc, $edition)
         let $siglum := ($elems[1]/root()//mei:*[@type eq 'siglum'])[1]/text()
@@ -471,7 +467,7 @@ declare function local:getItemLabel($elems as element()*) as xs:string {
                     ) else (
                         let $surf := $items[1]/parent::mei:surface
                         return
-                            concat(eutil:getLanguageString('Detail', (), $lang), ' (', eutil:getLanguageString('Abbrev_page', (), $lang), ' ', (if ($surf/@label) then $surf/string(@label) else $surf/string(@n)), ')')
+                            concat(eutil:getLanguageString('Detail', (), $lang), ' (', eutil:getLanguageString('Abbrev_page', (), $lang), ' ', source:getSurfaceTitle($surf), ')')
                     )
                 ) else ()
         ), ' ')
