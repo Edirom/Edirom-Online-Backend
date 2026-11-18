@@ -527,6 +527,9 @@ declare
     %test:args("application/tei+xml", "mei")      %test:assertFalse
     %test:args("application/json", "edirom")      %test:assertFalse
     %test:args("application/xml", "unknown")      %test:assertFalse
+    %test:args("model/x3d+xml", "x3d")            %test:assertTrue
+    %test:args("application/xml", "x3d")          %test:assertFalse
+    %test:args("", "x3d")                         %test:assertTrue
     function ddt:test-isMediaTypeCompatible($mediaType as xs:string?, $namespace as xs:string) as xs:boolean {
         dts-document:isMediaTypeCompatible($mediaType, $namespace)
 };
