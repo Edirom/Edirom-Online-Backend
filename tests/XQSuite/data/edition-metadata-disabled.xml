@@ -1,0 +1,5 @@
+<edition xmlns="http://www.edirom.de/ns/1.3"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xml:id="xqsuite_metadata_disabled">
+    <preferences xlink:href="xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/prefs-metadata-disabled.xml"/>
+</edition>

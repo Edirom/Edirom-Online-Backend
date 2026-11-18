@@ -5,6 +5,9 @@
   "title" : "Autographe Partitur, Berlin | Mus. ms. autogr. C. M. von Weber WFN 14 (2)",
   "term" : null,
   "views" : [ {
+    "type" : "headerView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-1.xml"
+  }, {
     "label" : "Quellenbeschreibung",
     "type" : "textView",
     "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/sourceDesc-1.xml"
@@ -30,6 +33,9 @@
   "title" : "Vorbemerkung",
   "term" : null,
   "views" : [ {
+    "type" : "headerView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-1.xml"
+  }, {
     "type" : "textView",
     "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/text-1.xml",
     "defaultView" : true
@@ -47,6 +53,9 @@
   "title" : "Edition",
   "term" : null,
   "views" : [ {
+    "type" : "headerView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml"
+  }, {
     "label" : "Quellenbeschreibung",
     "type" : "textView",
     "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/sourceDesc-4.xml"
@@ -75,7 +84,10 @@
   "internalIdType" : "unknown",
   "title" : "",
   "term" : null,
-  "views" : [ ],
+  "views" : [ {
+    "type" : "headerView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/does-not-exist.xml"
+  } ],
   "internalId" : "",
   "path" : null,
   "doc" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/does-not-exist.xml"

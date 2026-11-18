@@ -4,6 +4,9 @@
   "title" : "Edition",
   "term" : null,
   "views" : [ {
+    "type" : "headerView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/sources/source-4-MEI.xml"
+  }, {
     "label" : "Quellenbeschreibung",
     "type" : "textView",
     "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/sourceDesc-4.xml"

@@ -40,7 +40,7 @@
         <entry key="controller.navigator.Navigator_ConcordanceExternalResources" value="Additional resources"/>
 
         <entry key="controller.window.Window_annotationView" value="Annotations"/>
-        <entry key="controller.window.Window_headerView" value="Meta data"/>
+        <entry key="controller.window.Window_headerView" value="Metadata"/>
         <entry key="controller.window.Window_renderingView" value="Rendering"/>
         <entry key="controller.window.Window_searchView" value="Search window"/>
         <entry key="controller.window.Window_sourceView" value="Facsimile"/>
