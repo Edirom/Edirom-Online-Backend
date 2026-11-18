@@ -37,7 +37,6 @@ ant
 * build and deploy **xar of Edirom-Online Backend**
   * also see [building locally] above
   * at `http://localhost:8080/exist/apps/dashboard/admin#` (signed-in) go to "Package Manager" then "Upload" and select the xar file which (supposed above build-method was used) was built at `/PATH_TO_LOCAL_EDIROM_REPO/build-xar/Edirom-Online-Backend-1.5.0-[TIMESTAMP].xar`
-  * if the Edirom Online Backend is already installed with the same version number (e.g. when testing a new local build), remove it in the "Package Manager" first – otherwise eXist-db keeps the previously installed files
 * build and deploy **xar of Edirom-Online Frontend**
   * for building the frontend module please see https://github.com/Edirom/Edirom-Online-Frontend
   * at `http://localhost:8080/exist/apps/dashboard/admin#` (signed-in) go to "Package Manager" then "Upload" and select the xar file which (supposed above build-method was used) was built at `/PATH_TO_LOCAL_EDIROM_REPO/build-xar/Edirom-Online-Frontend-1.5.0-[TIMESTAMP].xar`
