@@ -58,6 +58,89 @@
                </section>
             </score>
          </mdiv>
+         <!--
+            Third mdiv: a multiRest. The Flauto rests for three measures, encoded as the one
+            measure carrying the rest, while the Oboe writes 2, 3 and 4 out. Designations 3
+            and 4 therefore exist in the Oboe only, and must still resolve to the Flauto's
+            rest measure so that part is represented.
+         -->
+         <mdiv xml:id="test_mdiv_03" n="3" label="Dritter Satz">
+            <parts>
+               <part xml:id="test_part_03" label="Flauto">
+                  <staffDef n="1" lines="5" decls="#test_perfRes_01"/>
+                  <section>
+                     <measure xml:id="measure_c1a7f2e4-rest-before" label="1" n="1"/>
+                     <measure xml:id="measure_d8b3a95c-rest" label="2" n="2" visible="false">
+                        <staff n="1">
+                           <layer>
+                              <multiRest num="3"/>
+                           </layer>
+                        </staff>
+                     </measure>
+                  </section>
+               </part>
+               <part xml:id="test_part_04" label="Oboe">
+                  <staffDef n="2" lines="5" decls="#test_perfRes_02"/>
+                  <section>
+                     <measure xml:id="measure_2f6c8b1a-oboe-r1" label="1" n="5"/>
+                     <measure xml:id="measure_9e5d3c7b-oboe-r2" label="2" n="6"/>
+                     <measure xml:id="measure_4a8e6f2d-oboe-r3" label="3" n="7"/>
+                     <measure xml:id="measure_6b9f1d3e-oboe-r4" label="4" n="8"/>
+                  </section>
+               </part>
+            </parts>
+         </mdiv>
+         <!--
+            Fourth mdiv: an explicit range label, and a measure with no @xml:id. The range
+            measure is the sole carrier of designations 1, 2 and 3, so all three address it
+            by its own @xml:id and the display stays on its zone. Measure 4 has no @xml:id
+            and so falls back to a virtual measure ID rather than an empty reference.
+         -->
+         <mdiv xml:id="test_mdiv_04" n="4" label="Vierter Satz">
+            <score>
+               <scoreDef>
+                  <staffGrp>
+                     <staffDef n="1" lines="5"/>
+                  </staffGrp>
+               </scoreDef>
+               <section>
+                  <measure xml:id="measure_0c4e7a9b-range" label="1–3" n="1"/>
+                  <measure label="4" n="4"/>
+               </section>
+            </score>
+         </mdiv>
+         <!--
+            Fifth mdiv: both an abbreviated and an expanded form of the same three measures.
+            The expansion is authoritative, so the measure under mei:abbr is not in play and
+            its multiRest must not be expanded on top of the measures under mei:expan.
+         -->
+         <mdiv xml:id="test_mdiv_05" n="5" label="Fünfter Satz">
+            <score>
+               <scoreDef>
+                  <staffGrp>
+                     <staffDef n="1" lines="5"/>
+                  </staffGrp>
+               </scoreDef>
+               <section>
+                  <choice>
+                     <abbr>
+                        <measure xml:id="measure_5d2b8c6f-abbr" label="1">
+                           <staff n="1">
+                              <layer>
+                                 <multiRest num="3"/>
+                              </layer>
+                           </staff>
+                        </measure>
+                     </abbr>
+                     <expan>
+                        <measure xml:id="measure_3e9a4d1b-expan-one" label="1" n="1"/>
+                        <measure xml:id="measure_7c2f5e8a-expan-two" label="2" n="2"/>
+                        <measure xml:id="measure_1b6d9f3c-expan-three" label="3" n="3"/>
+                     </expan>
+                  </choice>
+               </section>
+            </score>
+         </mdiv>
       </body>
    </music>
 </mei>
