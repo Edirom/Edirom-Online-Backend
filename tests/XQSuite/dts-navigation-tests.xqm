@@ -66,6 +66,14 @@ declare
     %test:arg("selectionXml", "<measure xmlns='http://www.music-encoding.org/ns/mei' label='Measure 1'/>")
     %test:arg("namespace", "mei")
     %test:assertEquals("")
+    (: MEI part titles prefer the label of their referenced header declaration. :)
+    %test:arg("selectionXml", "<mei xmlns='http://www.music-encoding.org/ns/mei'><meiHead><workList><work><perfMedium><perfResList><perfRes xml:id='voice-1' label='Header instrument'/></perfResList></perfMedium></work></workList></meiHead><music><body><mdiv><parts><part label='Body label'><staffDef decls='#voice-1'/></part></parts></mdiv></body></music></mei>")
+    %test:arg("namespace", "mei")
+    %test:assertEquals("Header instrument")
+    (: MEI part titles fall back to the part label when no header declaration is referenced. :)
+    %test:arg("selectionXml", "<part xmlns='http://www.music-encoding.org/ns/mei' label='Body label'/>")
+    %test:arg("namespace", "mei")
+    %test:assertEquals("Body label")
     (: MEI mdiv titles come from the label attribute. :)
     %test:arg("selectionXml", "<mdiv xmlns='http://www.music-encoding.org/ns/mei' label='Movement I'/>")
     %test:arg("namespace", "mei")
@@ -75,7 +83,8 @@ declare
     %test:arg("namespace", "tei")
     %test:assertEquals("1: My example chapter")
     function dnt:test-getTitle($selectionXml as xs:string, $namespace as xs:string) as xs:string {
-        let $selection := parse-xml($selectionXml)/*
+        let $document := parse-xml($selectionXml)
+        let $selection := ($document//mei:part, $document/*)[1]
         return dts-navigation:getTitle($selection, $namespace)
 };
 
@@ -131,11 +140,27 @@ declare
     %test:arg("documentXml", "<TEI xmlns='http://www.tei-c.org/ns/1.0'><text><body><pb facs='#page-1'/><div type='chapter' n='1'><head>My example chapter</head></div></body></text></TEI>")
     %test:arg("namespace", "tei")
     %test:assertEquals("1: My example chapter|page-1")
+    (: Part metadata uses the referenced header label, ID, and selection state. :)
+    %test:arg("documentXml", "<mei xmlns='http://www.music-encoding.org/ns/mei'><meiHead><workList><work><perfMedium><perfResList><perfRes xml:id='voice-1' label='Header instrument' sameas='#base-voice'/></perfResList></perfMedium></work></workList></meiHead><music><body><mdiv><parts><part xml:id='part-1' label='Body label'><staffDef decls='#voice-1'/></part></parts></mdiv></body></music></mei>")
+    %test:arg("namespace", "mei")
+    %test:assertEquals("Header instrument|voice-1|false|false")
+    (: Part metadata falls back to the body part label and ID if no header declaration exists. :)
+    %test:arg("documentXml", "<mei xmlns='http://www.music-encoding.org/ns/mei'><meiHead/><music><body><mdiv><parts><part xml:id='part-2' label='Body label'><staffDef decls='#missing-voice'/></part></parts></mdiv></body></music></mei>")
+    %test:arg("namespace", "mei")
+    %test:assertEquals("Body label|part-2|true|true")
     function dnt:test-buildMetadataForCitableUnit($documentXml as xs:string, $namespace as xs:string) as xs:string {
         let $document := parse-xml($documentXml)
-        let $selection := $document//tei:div[@type = "chapter"]
+        let $selection := ($document//mei:part, $document//tei:div[@type = "chapter"])[1]
         let $metadata := dts-navigation:buildMetadataForCitableUnit($selection, $namespace)
-        return string($metadata[self::dublinCore]/title) || "|" || string($metadata[self::extensions]/pageId)
+        let $extensions := $metadata[self::extensions]
+        return
+            if ($selection instance of element(mei:part)) then
+                string($metadata[self::dublinCore]/title) || "|"
+                || string($extensions/partId) || "|"
+                || string($extensions/selectedByDefault) || "|"
+                || string($extensions/selected)
+            else
+                string($metadata[self::dublinCore]/title) || "|" || string($extensions/pageId)
 };
 
 declare

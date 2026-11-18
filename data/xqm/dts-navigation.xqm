@@ -125,13 +125,39 @@ declare function dts-navigation:buildResourceObject(
 declare function dts-navigation:getTitle($selection as node(), $namespace as xs:string) as xs:string {
     if ($namespace eq "tei" and $selection instance of element()) then
         teitext:getChapterName($selection treat as element())
-    else if ($namespace eq "mei" and (
+    else if ($namespace eq "mei" and
         $selection instance of element(mei:mdiv)
-        or $selection instance of element(mei:part)
-    )) then
+    ) then
         string($selection/@label)
+    else if ($namespace eq "mei" and
+        $selection instance of element(mei:part)
+    ) then
+        let $headerPart := dts-navigation:getPartInHeader($selection)
+        let $headerLabel :=
+            if ($headerPart) then
+                eutil:getPartLabel($headerPart, "perfRes")
+            else
+                ""
+        return
+            if ($headerLabel ne "") then
+                $headerLabel
+            else
+                string($selection/@label)
     else
         ""
+};
+
+(:~
+ : Finds the header declaration referenced by a part's staff definition.
+ :)
+declare function dts-navigation:getPartInHeader($selection as element(mei:part)) as element()? {
+    let $references := ($selection/@sameas, $selection//mei:staffDef/@decls)
+    let $partIds :=
+        for $reference in $references
+        for $token in tokenize(normalize-space(string($reference)), "\s+")
+        return substring-after($token, "#")
+    return
+        ($selection/root()//mei:meiHead//*[@xml:id = $partIds])[1]
 };
 
 (:~
@@ -155,6 +181,28 @@ declare function dts-navigation:getPageId($selection as node(), $namespace as xs
         ()
 };
 
+(:~
+ : Returns part-specific extension metadata when available.
+ :)
+declare function dts-navigation:getPartExtensionsMetadata($selection as node(), $namespace as xs:string) as element()* {
+    if ($namespace eq "mei" and $selection instance of element(mei:part)) then
+        let $partInHeader := dts-navigation:getPartInHeader($selection)
+        let $partId :=
+            if ($partInHeader/@xml:id) then
+                string($partInHeader/@xml:id)
+            else
+                string($selection/@xml:id)
+        let $hasNoAttrSameas :=
+            not(exists(($partInHeader, $selection)[1]/@sameas))
+        return (
+            <partId>{$partId}</partId>,
+            <selectedByDefault json:literal="true">{$hasNoAttrSameas}</selectedByDefault>,
+            <selected json:literal="true">{$hasNoAttrSameas}</selected>
+        )
+    else
+        ()
+};
+
 (: TODO: Add context to extensions :)
 (:~
  : Builds the metadata objects for a DTS CitableUnit.
@@ -172,6 +220,7 @@ declare function dts-navigation:buildMetadataForCitableUnit(
     </dublinCore>,
     <extensions>
         {dts-navigation:getPageId($selection, $namespace)}
+        {dts-navigation:getPartExtensionsMetadata($selection, $namespace)}
     </extensions>
 };
 
