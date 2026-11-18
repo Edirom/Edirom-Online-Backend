@@ -3,7 +3,10 @@
   "internalIdType" : "unknown",
   "title" : "",
   "term" : null,
-  "views" : [ ],
+  "views" : [ {
+    "type" : "headerView",
+    "uri" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/does-not-exist.xml"
+  } ],
   "internalId" : "",
   "path" : null,
   "doc" : "xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/does-not-exist.xml"

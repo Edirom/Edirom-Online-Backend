@@ -12,6 +12,7 @@ module namespace dts-document = "http://www.edirom.de/api/dts-document";
 
 (: IMPORTS ================================================================= :)
 
+import module namespace edition = "http://www.edirom.de/xquery/edition" at "edition.xqm";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 import module namespace errors = "http://www.edirom.de/xquery/errors" at "errors.xqm";
 import module namespace dts-util = "http://www.edirom.de/api/dts-util" at "dts-util.xqm";
@@ -96,6 +97,26 @@ declare function dts-document:htmlProfileParameters(
             error($errors:INVALID_PARAMETERS, "The specified HTML profile is not supported. Supported profiles are: " || string-join(map:keys($dts-document:htmlProfiles), ", ") || ". Specified profile: " || $htmlProfile)
     return
         map:get($dts-document:htmlProfiles, $profile)
+};
+
+(:~
+ : Returns the language to render HTML in: an explicitly requested 'lang' wins, otherwise the
+ : configured application language is used.
+ :
+ : Without this the language replacement stylesheet is handed "" whenever the caller omits 'lang'
+ : (which the frontend always does), finds no 'edirom-lang-.xml', and silently falls back to
+ : 'edirom-lang-en.xml' — so a German edition renders English interface terms.
+ :
+ : @param $htmlParameters The HTML parameters of the request
+ : @return The language key
+ :)
+declare function dts-document:htmlLanguage(
+    $htmlParameters as map(xs:string, xs:string)
+) as xs:string {
+    if (map:contains($htmlParameters, "lang") and map:get($htmlParameters, "lang") ne "") then
+        map:get($htmlParameters, "lang")
+    else
+        edition:getLanguage('')
 };
 
 (:~
@@ -374,6 +395,8 @@ declare function dts-document:isMediaTypeCompatible(
         contains($mediaType, "application/xml") or contains($mediaType, "text/xml") or contains($mediaType, "application/tei+xml") or contains($mediaType, "text/html")
     else if ($namespace eq "edirom") then
         contains($mediaType, "application/xml") or contains($mediaType, "text/xml")
+    else if ($namespace eq "x3d") then
+        exists($mediaType) and $mediaType eq "model/x3d+xml"
     else
         false()
 };
@@ -414,21 +437,6 @@ declare function dts-document:citation(
 };
 
 (:~
- : Resolves special resource aliases to their backing application resources.
- :
- : @param $resource The requested resource identifier
- : @return The resolved resource URI
- :)
-declare function dts-document:resolveSpecialResourceAlias(
-    $resource as xs:string?
-) as xs:string {
-    if (map:contains($dts-document:specialResourcesAliases, $resource)) then
-        map:get($dts-document:specialResourcesAliases, $resource)
-    else
-        $resource
-};
-
-(:~
  : Transforms a TEI document fragment into HTML using the configured XSLT pipeline.
  :
  : @param $xml The TEI source document fragment
@@ -457,7 +465,7 @@ declare function dts-document:transformTEIToHTML(
     let $doc := transform:transform($doc, $xslUnwrap, <parameters/>)
 
     (: Unpack html parameters :)
-    let $lang := if (map:contains($htmlParameters, "lang")) then map:get($htmlParameters, "lang") else ""
+    let $lang := dts-document:htmlLanguage($htmlParameters)
     let $idPrefix := if (map:contains($htmlParameters, "idPrefix")) then map:get($htmlParameters, "idPrefix") else ""
     let $htmlProfile := if (map:contains($htmlParameters, "htmlProfile")) then map:get($htmlParameters, "htmlProfile") else $dts-document:defaultHTMLProfile
 
@@ -527,16 +535,14 @@ declare function dts-document:transformHeaderToHTML(
     let $doc := transform:transform($doc, $xslUnwrap, <parameters/>)
 
     (: Unpack html parameters :)
-    let $lang := if (map:contains($htmlParameters, "lang")) then map:get($htmlParameters, "lang") else ""
+    let $lang := dts-document:htmlLanguage($htmlParameters)
 
     (: Convert to HTML :)
     let $xslConvert :=
         if ($namespace eq "mei") then
             eutil:getDoc($eutil:xsltBase || '/meiHead2HTML.xsl')
-        (: TODO Verify how to make the stylesheet work again. The stylesheet is importing files that are no longer available.
         else if ($namespace eq "tei") then
             eutil:getDoc($eutil:xsltBase || '/tei/profiles/edirom-header/teiHeader2HTML.xsl')
-        :)
         else
             error($errors:UNSUPPORTED_DOCUMENT_FORMAT, "The header cannot be converted to HTML for the requested document format. Namespace: " || $namespace)
     let $parameters := (
@@ -735,18 +741,28 @@ declare function dts-document:document(
             dts-document:citation($resource)
     else
         let $resource := dts-util:resolveSpecialResourceAlias($resource)
+        let $isX3d := ends-with(lower-case($resource), ".x3d")
         let $document := eutil:getDoc($resource)/root()
         let $document :=
             if ($document) then
-                eutil:add-xml-ids($document)
+                if ($isX3d) then
+                    $document
+                else
+                    eutil:add-xml-ids($document)
             else
                 error($errors:NOT_FOUND, "The requested resource was not found.")
-        let $namespace := eutil:getNamespace($document/*)
-        let $citationTree := dts-util:selectCitationTree($document, $tree)
+        let $namespace :=
+            if ($isX3d) then
+                "x3d"
+            else
+                eutil:getNamespace($document/*)
+        let $citationTree :=
+            if ($isX3d) then
+                ()
+            else
+                dts-util:selectCitationTree($document, $tree)
         let $mediaTypeCompatible := dts-document:isMediaTypeCompatible($mediaType, $namespace)
-
-
-        let $outputXmlRaw := 
+        let $outputXmlRaw :=
             if (not($mediaTypeCompatible)) then
                 error($errors:UNSUPPORTED_MEDIA_TYPE, "The requested media type is not compatible with the document format. Media type: " || $mediaType || ", Namespace: " || $namespace)
             else if (not($ref) and not($start) and not($end) and $mediaType eq "application/json") then
@@ -754,16 +770,25 @@ declare function dts-document:document(
             else if (not($ref) and not($start) and not($end)) then
                 $document/*
             else if ($namespace eq "mei" or $namespace eq "tei") then
-                dts-document:selectAndWrap($document, $ref, $start, $end, $citationTree)             
+                dts-document:selectAndWrap($document, $ref, $start, $end, $citationTree)
             else
                 error($errors:UNSUPPORTED_DOCUMENT_FORMAT, "The format of the requested document is not supported. Namespace: " || $namespace )
-        
+
         (: TODO: transformations should be applied here only when edirom output is requested :)
         let $xslPrepare := eutil:getDoc($eutil:xsltBase || '/edirom_prepareAnnotsForRendering.xsl')
-        let $outputXml := transform:transform($outputXmlRaw, $xslPrepare, <parameters/>)
+        let $outputXml :=
+            if ($isX3d) then
+                $outputXmlRaw
+            else
+                transform:transform($outputXmlRaw, $xslPrepare, <parameters/>)
 
         let $output :=
-            if (contains($mediaType, "xml") and map:contains($xmlParameters, "unwrap") and map:get($xmlParameters, "unwrap") eq true()) then
+            if ($isX3d) then
+                serialize($outputXml, map {
+                    "method": "xml",
+                    "omit-xml-declaration": true()
+                })
+            else if (contains($mediaType, "xml") and map:contains($xmlParameters, "unwrap") and map:get($xmlParameters, "unwrap") eq true()) then
                 (: Remove DTS wrapper :)
                 let $xslUnwrap := eutil:getDoc($eutil:xsltBase || '/removeDtsWrapper.xsl')
                 let $outputXml := transform:transform($outputXml, $xslUnwrap, <parameters/>)
