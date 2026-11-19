@@ -339,7 +339,7 @@ declare function dts-util:resolveCitableUnit(
         ) then
             $candidateSelection
         else if ($candidateSelection) then
-            error($errors:INVALID_PARAMETERS, "The selected citable units are not part of the citation tree specified for this document and are not part of the always preserved elements." || "Citation tree: " || string-join($citationTree/@xml:id, ", ") || ". Selected element: " || node-name($candidateSelection[1]) || ", Selected element @xml:id: " || $candidateSelection[1]/@xml:id)
+            error($errors:NOT_FOUND, "The selected citable units are not part of the citation tree specified for this document and are not part of the always preserved elements." || "Citation tree: " || string-join($citationTree/@xml:id, ", ") || ". Selected element: " || node-name($candidateSelection[1]) || ", Selected element @xml:id: " || $candidateSelection[1]/@xml:id)
         else
             error($errors:NOT_FOUND, "The specified citable units did not match any element in the document for the specified citation tree.")
 };

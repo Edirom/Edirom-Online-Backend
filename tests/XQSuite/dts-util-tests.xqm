@@ -201,6 +201,19 @@ declare
 };
 
 declare
+    (: A document element excluded from the selected citation tree is reported as not found. :)
+    %test:assertError("errors:NotFoundError")
+    function dct:test-resolveCitableUnit-outside-citation-tree() as element()* {
+        let $document := document {
+            <mei xmlns="http://www.music-encoding.org/ns/mei">
+                <mdiv xml:id="movement-1"><note xml:id="note-1"/></mdiv>
+            </mei>
+        }
+        let $citationTree := dct:alternativeCitationTree("musicStructure")
+        return dts-util:resolveCitableUnit($document, "note", $citationTree, true())
+};
+
+declare
     %test:assertTrue
     function dct:test-getCiteStructureForNode-root-and-descendant() as xs:boolean {
         let $citationTree := dct:alternativeCitationTree("musicStructure")
