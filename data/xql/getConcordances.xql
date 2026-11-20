@@ -36,6 +36,27 @@ declare function local:getId($element as element()) as xs:string {
             generate-id($element)
 };
 
+(: returns the edirom:connection referenced by @sameAs, independent of its @xml:lang :)
+declare function local:getSameAsTarget($connection as element(edirom:connection)) as element(edirom:connection)? {
+    let $targetId := substring-after($connection/@sameAs, '#')
+    return
+        $connection/root()/id($targetId)[self::edirom:connection][1]
+};
+
+(: returns the connection with all attributes of its @sameAs target which it doesn't have itself :)
+declare function local:resolveSameAs($connection as element(edirom:connection)) as element(edirom:connection) {
+    let $target := local:getSameAsTarget($connection)
+    return
+        if ($target) then (
+            element { node-name($connection) } {
+                $connection/@*,
+                $target/@*[not(node-name(.) = $connection/@*/node-name(.))],
+                $connection/node()
+            }
+        ) else
+            $connection
+};
+
 declare function local:getGroups($parent) as map(*)? {
     if ($parent/edirom:groups) then (
         map {
@@ -70,12 +91,13 @@ declare function local:getConnections($parent) as map(*)? {
 
 declare function local:getSingleConnections($parent) as array(*)* {
     array {
-        for $connection in $parent/edirom:connection
+        for $connection in $parent/edirom:connection[not(@xml:lang) or @xml:lang = $lang]
+        let $resolved := local:resolveSameAs($connection)
         return
             map {
-                "id": local:getId($connection),
-                "name": $connection/string(@name),
-                "plist": $connection/string(@plist)
+                "id": local:getId($resolved),
+                "name": $resolved/string(@name),
+                "plist": $resolved/string(@plist)
             }
     }
 };
