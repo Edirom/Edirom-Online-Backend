@@ -36,25 +36,16 @@ declare function local:getId($element as element()) as xs:string {
             generate-id($element)
 };
 
-(: returns the edirom:connection referenced by @sameAs, independent of its @xml:lang :)
+(: returns the edirom:connection referenced by @sameAs (e.g. sameAs="#123"), independent of its @xml:lang :)
 declare function local:getSameAsTarget($connection as element(edirom:connection)) as element(edirom:connection)? {
     let $targetId := substring-after($connection/@sameAs, '#')
     return
         $connection/root()/id($targetId)[self::edirom:connection][1]
 };
 
-(: returns the connection with all attributes of its @sameAs target which it doesn't have itself :)
-declare function local:resolveSameAs($connection as element(edirom:connection)) as element(edirom:connection) {
-    let $target := local:getSameAsTarget($connection)
-    return
-        if ($target) then (
-            element { node-name($connection) } {
-                $connection/@*,
-                $target/@*[not(node-name(.) = $connection/@*/node-name(.))],
-                $connection/node()
-            }
-        ) else
-            $connection
+(: connections with @sameAs use the @xml:id of the referenced connection :)
+declare function local:getConnectionId($connection as element(edirom:connection)) as xs:string {
+    local:getId((local:getSameAsTarget($connection), $connection)[1])
 };
 
 declare function local:getGroups($parent) as map(*)? {
@@ -69,7 +60,7 @@ declare function local:getGroups($parent) as map(*)? {
 
 declare function local:getSingleGroups($parent) as array(*)* {
     array {
-        for $group in $parent/edirom:group
+        for $group in $parent/edirom:group[not(@xml:lang) or @xml:lang = $lang]
         return
             map {
                 "id": local:getId($group),
@@ -92,12 +83,11 @@ declare function local:getConnections($parent) as map(*)? {
 declare function local:getSingleConnections($parent) as array(*)* {
     array {
         for $connection in $parent/edirom:connection[not(@xml:lang) or @xml:lang = $lang]
-        let $resolved := local:resolveSameAs($connection)
         return
             map {
-                "id": local:getId($resolved),
-                "name": $resolved/string(@name),
-                "plist": $resolved/string(@plist)
+                "id": local:getConnectionId($connection),
+                "name": $connection/string(@name),
+                "plist": $connection/string(@plist)
             }
     }
 };
@@ -108,7 +98,7 @@ let $id := request:get-parameter('id', '')
 let $mei := eutil:getDoc($id)
 let $workId := request:get-parameter('workId', '')
 let $work := $mei/id($workId)
-let $concordances := $work//edirom:concordance
+let $concordances := $work//edirom:concordance[not(@xml:lang) or @xml:lang = $lang]
 
 return (
     array {
