@@ -74,7 +74,7 @@ declare function linktarget:getView($type as xs:string, $docUri as xs:string, $d
             (true())
         
         else if ($type = 'desc_headerView') then
-            (exists($doc//mei:meiHead or $doc//tei:teiHeader))
+            (exists($doc//mei:meiHead) or exists($doc//tei:teiHeader))
         
         else if ($type = 'mei_textView') then
             (exists($doc//mei:annot[@type = 'descLink']))
