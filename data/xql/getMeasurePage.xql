@@ -60,10 +60,9 @@ declare function local:findMeasure($mei, $movementId, $measureIdName) as element
 :)
 declare function local:getMeasure($mei, $measure, $movementId) as map(*)* {
     let $measureId := $measure/string(@xml:id)
-    for $zoneRef in tokenize(normalize-space($measure/@facs), '\s+')
-    let $zoneId := substring-after($zoneRef, '#')
+    for $zoneId in source:getZoneIdsFromMeasure($measure)
     let $zone := $mei/id($zoneId)
-    let $surface := $zone/parent::mei:surface
+    let $surface := source:getSurfaceForZone($mei, $zoneId)
     let $graphic := $surface/mei:graphic[@type = 'facsimile']
     return
         map {

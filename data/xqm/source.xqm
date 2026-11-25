@@ -157,11 +157,45 @@ declare function source:getSiglum($source as xs:string) as xs:string? {
  : @param $element The element to read the designation from
  : @return The designation, or the empty sequence if the element carries neither attribute
  :)
-declare function source:label-or-n($element as element()) as xs:string? {
+declare function source:label-or-n($element as element()?) as xs:string? {
 
     if ($element/@label)
     then $element/string(@label)
     else $element/@n ! string(.)
+};
+
+(:~
+ : Returns a surface's title, preferring @label over @n.
+ :
+ : @param $surface The surface element, may be empty
+ : @return The surface title, or the empty sequence if neither attribute is present
+ :)
+declare function source:getSurfaceTitle($surface as element()?) as xs:string? {
+    source:label-or-n($surface)
+};
+
+(:~
+ : Extracts zone IDs from a measure's facsimile references.
+ :)
+declare function source:getZoneIdsFromMeasure($measure as element(mei:measure)?) as xs:string* {
+    let $zoneReferences := normalize-space(string($measure/@facs))
+    return
+        if ($zoneReferences eq "") then
+            ()
+        else
+            tokenize($zoneReferences, '\s+') ! (
+                if (starts-with(., '#')) then
+                    substring(., 2)
+                else
+                    .
+            )
+};
+
+(:~
+ : Finds the surface containing a zone.
+ :)
+declare function source:getSurfaceForZone($mei as node(), $zoneId as xs:string) as element(mei:surface)? {
+    $mei/id($zoneId)/parent::mei:surface
 };
 
 (:~

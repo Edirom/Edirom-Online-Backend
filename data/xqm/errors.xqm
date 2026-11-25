@@ -22,6 +22,7 @@ import module namespace roaster="http://e-editiones.org/roaster";
     Error codes for the DTS API
  :)
 declare variable $errors:INVALID_PARAMETERS := QName("http://www.edirom.de/xquery/errors", "InvalidParametersError");
+declare variable $errors:INVALID_CITATION_TREE := QName("http://www.edirom.de/xquery/errors", "InvalidCitationTreeError");
 declare variable $errors:UNSUPPORTED_MEDIA_TYPE := QName("http://www.edirom.de/xquery/errors", "UnsupportedMediaTypeError");
 declare variable $errors:UNSUPPORTED_DOCUMENT_FORMAT := QName("http://www.edirom.de/xquery/errors", "UnsupportedDocumentFormatError");
 declare variable $errors:NOT_FOUND := QName("http://www.edirom.de/xquery/errors", "NotFoundError");
@@ -33,6 +34,11 @@ declare function errors:sendResponse ($errCode as xs:QName, $errDescription as x
         case $errors:INVALID_PARAMETERS return
             roaster:response(400, "application/json", map {
                 "error": "InvalidParameters",
+                "message": $errDescription
+            })
+        case $errors:INVALID_CITATION_TREE return
+            roaster:response(500, "application/json", map {
+                "error": "InvalidCitationTree",
                 "message": $errDescription
             })
         case $errors:UNSUPPORTED_MEDIA_TYPE return

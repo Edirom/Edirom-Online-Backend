@@ -1,5 +1,540 @@
 xquery version "3.1";
+(:
+ : For LICENSE-Details please refer to the LICENSE file in the root directory of this repository.
+ :)
 
+ (:~
+ : This module implements the navigation endpoint for the Distributed Text Services API.
+ :
+ : @author Francesco Maccarini
+ :)
 module namespace dts-navigation = "http://www.edirom.de/api/dts-navigation";
 
+(: IMPORTS ================================================================= :)
 
+import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xqm";
+import module namespace errors = "http://www.edirom.de/xquery/errors" at "errors.xqm";
+import module namespace dts-util = "http://www.edirom.de/api/dts-util" at "dts-util.xqm";
+import module namespace source = "http://www.edirom.de/xquery/source" at "source.xqm";
+import module namespace teitext = "http://www.edirom.de/xquery/teitext" at "teitext.xqm";
+
+(: NAMESPACE DECLARATIONS ================================================== :)
+
+declare namespace array = "http://www.w3.org/2005/xpath-functions/array";
+declare namespace json = "http://www.json.org";
+declare namespace map = "http://www.w3.org/2005/xpath-functions/map";
+declare namespace dts = "https://w3id.org/dts/api#";
+declare namespace mei = "http://www.music-encoding.org/ns/mei";
+declare namespace tei = "http://www.tei-c.org/ns/1.0";
+declare namespace system = "http://exist-db.org/xquery/system";
+declare namespace transform = "http://exist-db.org/xquery/transform";
+declare namespace xhtml = "http://www.w3.org/1999/xhtml";
+declare namespace request = "http://exist-db.org/xquery/request";
+
+
+(: FUNCTION DECLARATIONS =================================================== :)
+
+(:~
+ : Builds an XML-based JSON representation of a DTS CiteStructure object.
+ :
+ : @param $citeStructure The citation structure to convert.
+ : @return The CiteStructure object, including recursively converted child structures.
+ :)
+declare function dts-navigation:buildCiteStructureObject(
+    $citeStructure as element(citeStructure)
+) as element(citeStructure) {
+    <citeStructure json:array="true">
+        <type json:name="@type">CiteStructure</type>
+        <citeType>{string($citeStructure/@unit)}</citeType>
+        {
+            for $childCiteStructure in $citeStructure/citeStructure
+            return dts-navigation:buildCiteStructureObject($childCiteStructure)
+        }
+    </citeStructure>
+};
+
+(:
+TODO: According to DTS specifications,
+the behaiour of the identifier must be changed here
+and in the document endpoint.
+
+If a Resource has a single CitationTree,
+that CitationTree object cannot have an identifier.
+If a Resource has multiple CitationTrees,
+then the first listed in citationTrees
+is the default CitationTree and cannot have an identifier.
+:)
+(:~
+ : Builds XML-based JSON representations of DTS CitationTree objects.
+ :
+ : @param $citationTrees The citation tree elements to convert.
+ : @return The CitationTree objects, or an empty JSON array representation.
+ :)
+declare function dts-navigation:buildCitationTreesObjects(
+    $citationTrees as element(citeStructure)*
+) as element(citationTrees)* {
+    if ($citationTrees) then
+        for $citationTree in $citationTrees
+        return
+            <citationTrees json:array="true">
+                <type json:name="@type">CitationTree</type>
+                {
+                    if ($citationTree/@xml:id) then
+                        <identifier>{string($citationTree/@xml:id)}</identifier>
+                    else
+                        ()
+                }
+                {dts-navigation:buildCiteStructureObject($citationTree)}
+            </citationTrees>
+    else
+        <citationTrees json:array="true"/>
+};
+
+(:~
+ : Builds the XML-based JSON representation of a DTS Resource object.
+ :
+ : @param $document The document represented by the resource.
+ : @param $resource The resource identifier.
+ : @return The Resource object with endpoint URIs and citation trees.
+ :)
+declare function dts-navigation:buildResourceObject(
+    $document as document-node(),
+    $resource as xs:string
+) as element(resource) {
+    let $base-url := substring-before(request:get-url(), "/api")
+    let $citationTreesXML := dts-util:getCitationTrees($document)
+    let $resourceObject :=
+        <resource>
+            <id json:name="@id">{$resource}</id>
+            <type json:name="@type">Resource</type>
+            <collection>{dts-util:buildCollectionURI($base-url, $resource, (), ())}</collection>
+            <navigation>{dts-util:buildNavigationURI($base-url, $resource, (), (), (), (), ())}</navigation>
+            <document>{dts-util:buildDocumentURI($base-url, $resource, (), (), (), (), (), (), (), (), ())}</document>
+            {dts-navigation:buildCitationTreesObjects($citationTreesXML)}
+        </resource>
+    return $resourceObject
+};
+
+(:~
+ : Returns the display title for a citable unit when one is available.
+ :
+ : @param $selection The selected citable unit
+ : @param $namespace The standardized namespace prefix of the containing document
+ : @return The display title, or an empty string when no title is available
+ :)
+declare function dts-navigation:getTitle($selection as node(), $namespace as xs:string) as xs:string {
+    if ($namespace eq "tei" and $selection instance of element()) then
+        teitext:getChapterName($selection treat as element())
+    else if ($namespace eq "mei" and
+        $selection instance of element(mei:mdiv)
+    ) then
+        string($selection/@label)
+    else if ($namespace eq "mei" and
+        $selection instance of element(mei:surface)
+    ) then
+        string(source:getSurfaceTitle($selection))
+    else if ($namespace eq "mei" and
+        $selection instance of element(mei:part)
+    ) then
+        let $headerPart := dts-navigation:getPartInHeader($selection)
+        let $headerLabel :=
+            if ($headerPart) then
+                eutil:getPartLabel($headerPart, "perfRes")
+            else
+                ""
+        return
+            if ($headerLabel ne "") then
+                $headerLabel
+            else
+                string($selection/@label)
+    else
+        ""
+};
+
+(:~
+ : Finds the header declaration referenced by a part's staff definition.
+ :)
+declare function dts-navigation:getPartInHeader($selection as element(mei:part)) as element()? {
+    let $references := ($selection/@sameas, $selection//mei:staffDef/@decls)
+    let $partIds :=
+        for $reference in $references
+        for $token in tokenize(normalize-space(string($reference)), "\s+")
+        return substring-after($token, "#")
+    return
+        ($selection/root()//mei:meiHead//*[@xml:id = $partIds])[1]
+};
+
+(:~
+ : Returns page identifier for a citable unit when available.
+ :
+ : @param $selection The selected citable unit
+ : @param $namespace The standardized namespace prefix of the containing document
+ : @return A pageId for TEI, a firstSurfaceId for MEI movements, or an empty sequence
+ :)
+declare function dts-navigation:getPageId($selection as node(), $namespace as xs:string) as element()? {
+    if ($namespace eq "tei" and $selection instance of element()) then
+        <pageId>{teitext:getChapterPageId($selection, "pageMode")}</pageId>
+    else if ($namespace eq "mei" and $selection instance of element(mei:mdiv)) then
+        let $mei := $selection/root()
+        let $measure := ($selection//mei:measure)[1]
+        let $zoneId := string(source:getZoneIdsFromMeasure($measure)[1])
+        let $surface := source:getSurfaceForZone($mei, $zoneId)
+        return
+            <firstSurfaceId>{string($surface/@xml:id)}</firstSurfaceId>
+    else
+        ()
+};
+
+(:~
+ : Returns part-specific extension metadata when available.
+ :)
+declare function dts-navigation:getPartExtensionsMetadata($selection as node(), $namespace as xs:string) as element()* {
+    if ($namespace eq "mei" and $selection instance of element(mei:part)) then
+        let $partInHeader := dts-navigation:getPartInHeader($selection)
+        let $partId :=
+            if ($partInHeader/@xml:id) then
+                string($partInHeader/@xml:id)
+            else
+                string($selection/@xml:id)
+        let $hasNoAttrSameas :=
+            not(exists(($partInHeader, $selection)[1]/@sameas))
+        return (
+            <partId>{$partId}</partId>,
+            <selectedByDefault json:literal="true">{$hasNoAttrSameas}</selectedByDefault>,
+            <selected json:literal="true">{$hasNoAttrSameas}</selected>
+        )
+    else
+        ()
+};
+
+(: TODO: Add context to extensions :)
+(:~
+ : Builds the metadata objects for a DTS CitableUnit.
+ :
+ : @param $selection The selected citable unit
+ : @param $namespace The standardized namespace prefix of the containing document
+ : @return The dublinCore and extensions objects
+ :)
+declare function dts-navigation:buildMetadataForCitableUnit(
+    $selection as node(),
+    $namespace as xs:string
+) as element()* {
+    <dublinCore>
+        <title>{dts-navigation:getTitle($selection, $namespace)}</title>
+    </dublinCore>,
+    <extensions>
+        {dts-navigation:getPageId($selection, $namespace)}
+        {dts-navigation:getPartExtensionsMetadata($selection, $namespace)}
+    </extensions>
+};
+
+(:~
+ : Builds the child elements for the XML-based JSON representation of a DTS CitableUnit object.
+ :
+ : The supplied selection is the resolved node. The matched
+ : citation structure determines the unit level and cite type. If the unit is
+ : nested in the citation tree, its parent is resolved from the corresponding
+ : ancestor element in the document.
+ :
+ : @param $selection The resolved node
+ : @param $citationTree The citation structure for the resolved node
+ : @param $ref The reference identifying the citable unit
+ : @param $namespace The standardized namespace prefix of the containing document
+ : @return The citable unit child elements containing its identifier, type, level, parent, and cite type
+ :)
+declare function dts-navigation:buildCitableUnitObject(
+    $selection as node(),
+    $citationTree as element(citeStructure),
+    $ref as xs:string,
+    $namespace as xs:string
+) as element()* {
+    let $level := count($citationTree/ancestor::citeStructure) + 1
+    let $parentCiteStructure := $citationTree/parent::citeStructure
+    let $parentId :=
+        if ($level eq 1) then
+            ()
+        else
+            string($selection/ancestor::*[
+                dts-util:matchesCiteStructure(., $parentCiteStructure)
+            ][1]/@xml:id)
+    return (
+        <identifier>{string($ref)}</identifier>,
+        <type json:name="@type">CitableUnit</type>,
+        <level json:literal="true">{$level}</level>,
+        <parent>{$parentId}</parent>,
+        <citeType>{string($citationTree/@unit)}</citeType>,
+        (: TODO: optional dublinCore and extensions objects for metadata :)
+        dts-navigation:buildMetadataForCitableUnit($selection, $namespace)
+    )
+};
+
+(:~
+ : Builds a virtual measure CitableUnit using the metadata of its underlying measure.
+ :)
+declare function dts-navigation:buildVirtualMeasureCitableUnitObject(
+    $selection as node(),
+    $citationTree as element(citeStructure),
+    $ref as xs:string,
+    $namespace as xs:string
+) as element()* {
+    for $child in dts-navigation:buildCitableUnitObject($selection, $citationTree, $ref, $namespace)
+    return
+        if ($child/self::citeType) then
+            <citeType>VirtualMeasure</citeType>
+        else
+            $child
+};
+
+(:~
+ : Builds a flat sequence of CitableUnit members by traversing citation levels.
+ : Selected elements are starting units; a document supplies all matching starting units.
+ : Members are emitted parent-first, with units at each traversal step in document order.
+ : Descendants belonging to a nested unit of the same parent type are excluded.
+ :
+ : @param $selection The document or already-selected citable elements
+ : @param $citeStructure The starting citation structures, retaining their tree ancestors
+ : @param $remainingLevels The number of levels still to include: 1 includes only
+ :                         the starting level, -1 includes all levels, and 0 or
+ :                         an empty value includes none
+ : @param $namespace The standardized namespace prefix of the containing document
+ : @return Individual member elements, each containing one CitableUnit
+ :)
+declare function dts-navigation:buildMemberArray(
+    $selection as node()*,
+    $citeStructure as element(citeStructure)*,
+    $remainingLevels as xs:integer?,
+    $namespace as xs:string
+) as element()* {
+    if (empty($remainingLevels) or $remainingLevels eq 0) then
+        ()
+    else
+        let $elements :=
+            for $node in $selection/self::node()
+            return
+                typeswitch ($node)
+                    case document-node() return $node/descendant::*
+                    case element() return $node
+                    default return ()
+        return
+            if (empty($elements)) then
+                ()
+            else
+                let $root := root($elements[1])
+                let $matchSets :=
+                    map:merge(
+                        for $currentCiteStructure at $position in $citeStructure
+                        return map:entry(
+                            $position,
+                            dts-util:getCiteStructureMatches($root, $currentCiteStructure)
+                        )
+                    )
+                for $node in $elements
+                for $currentCiteStructure at $position in $citeStructure
+                where some $match in map:get($matchSets, $position)
+                    satisfies $node is $match or (empty($node/parent::*) and deep-equal($node, $match))
+                return (
+                    <member json:array="true">
+                        {dts-navigation:buildCitableUnitObject($node, $currentCiteStructure, string($node/@xml:id), $namespace)}
+                    </member>,
+                    if (($remainingLevels eq -1 or $remainingLevels gt 1) and exists($currentCiteStructure/citeStructure)) then
+                        let $childMatches :=
+                            for $childCiteStructure in $currentCiteStructure/citeStructure
+                            return dts-util:findCiteStructureMatches($node, $childCiteStructure)
+                        let $currentStructureMatches := dts-util:getCiteStructureMatches($root, $currentCiteStructure)
+                        let $nestedUnits := $node/descendant::*[. intersect $currentStructureMatches]
+                        let $children := $node/descendant::*[
+                            exists(. intersect $childMatches)
+                            and empty(ancestor::*[. intersect $nestedUnits])
+                        ]
+                        let $nextRemainingLevels := if ($remainingLevels eq -1) then -1 else $remainingLevels - 1
+                        return
+                            dts-navigation:buildMemberArray($children, $currentCiteStructure/citeStructure, $nextRemainingLevels, $namespace)
+                    else
+                        ()
+                )
+};
+
+(:~
+ : Builds member objects for the ref and down=0 special case.
+ :
+ : If $down = 0 and $ref is present, information about the CitableUnit
+ : identified by ref along with a member property that is an array
+ : of CitableUnits that are siblings (sharing the same parent),
+ : including the current CitableUnit identified by ref.
+ :
+ : @param $selection The referenced node
+ : @param $citeStructure The citation structure for the referenced node
+ : @param $namespace The standardized namespace prefix of the containing document
+ : @return Matching XML siblings, including the referenced unit, in document order
+ :)
+declare function dts-navigation:buildMemberArrayRefDownZero(
+    $selection as node(),
+    $citeStructure as element(citeStructure),
+    $namespace as xs:string
+) as element()* {
+    let $matches := dts-util:getCiteStructureMatches(root($selection), $citeStructure)
+    let $siblings := $selection/parent::node()/*[. intersect $matches]
+    for $sibling in $siblings
+    return
+        <member json:array="true">
+            {dts-navigation:buildCitableUnitObject($sibling, $citeStructure, string($sibling/@xml:id), $namespace)}
+        </member>
+};
+
+(:~
+ : Builds one navigation member for each physical measure represented by a virtual measure reference.
+ :
+ : @param $measures The physical MEI measures represented by the virtual measure
+ : @param $citeStructure The citation structure for a physical measure
+ : @param $namespace The standardized namespace prefix of the containing document
+ : @return A member object for each physical measure
+ :)
+declare function dts-navigation:buildVirtualMeasureMemberArray(
+    $measures as element(mei:measure)*,
+    $citeStructure as element(citeStructure),
+    $namespace as xs:string
+) as element()* {
+    for $measure in $measures
+    return
+        <member json:array="true">
+            {dts-navigation:buildCitableUnitObject($measure, $citeStructure, string($measure/@xml:id), $namespace)}
+        </member>
+};
+
+(:~
+ : Returns the navigation structure for a given resource.
+ :
+ : @param $resource The resource for which to retrieve the navigation structure.
+ : @param $ref The reference point within the resource (optional).
+ : @param $start The starting point of the navigation (optional).
+ : @param $end The ending point of the navigation (optional).
+ : @param $down The depth of the navigation tree (optional).
+ : @param $tree The citation tree identifier to use (optional).
+ :)
+declare function dts-navigation:navigation(
+    $resource as xs:string,
+    $ref as xs:string?,
+    $start as xs:string?,
+    $end as xs:string?,
+    $down as xs:integer?,
+    $tree as xs:string?
+) as element(json:value) {
+    if ($ref and ($start or $end)) then
+        error($errors:INVALID_PARAMETERS, "The 'ref' parameter cannot be used together with 'start' or 'end'.")
+    else if (($start and not($end)) or ($end and not($start))) then
+        error($errors:INVALID_PARAMETERS, "Both 'start' and 'end' parameters must be provided together.")
+    else if (not($down) and not($ref) and not($start) and not($end)) then
+        error($errors:INVALID_PARAMETERS, "At least one of 'ref', 'start/end', or 'down' parameters must be provided.")
+    else if ($down eq 0 and not($ref)) then
+        error($errors:INVALID_PARAMETERS, "The 'down' parameter cannot be 0 when no 'ref' parameter is provided.")
+    else if ($down lt -1) then
+        error($errors:INVALID_PARAMETERS, "The 'down' parameter must be -1 or greater.")  
+    else
+        let $resource := dts-util:resolveSpecialResourceAlias($resource)
+        let $document := eutil:getDoc($resource)/root()
+        let $document :=
+            if ($document) then
+                eutil:add-xml-ids($document)
+            else
+                error($errors:NOT_FOUND, "The requested resource was not found.")
+        let $namespace := eutil:getNamespace($document/*)
+        let $citationTree := dts-util:selectCitationTree($document, $tree)
+        let $resolvedVirtualMeasure :=
+            if (
+                $namespace eq "mei"
+                and $citationTree/@xml:id = "musicStructure"
+                and $ref
+                and empty($document/id($ref)[self::mei:measure])
+            ) then
+                source:resolve-virtual-measure-id($document, $ref)
+            else
+                ()
+        let $isVirtualMeasureRef :=
+            exists($resolvedVirtualMeasure)
+            and (every $measure in $resolvedVirtualMeasure
+                satisfies dts-util:isInCitationTree($measure, $citationTree))
+        let $resolvedSelection :=
+            if ($ref) then
+                if ($isVirtualMeasureRef) then
+                    map {
+                        "selectedNodes": $resolvedVirtualMeasure,
+                        "startNode": $resolvedVirtualMeasure,
+                        "endNode": ()
+                    }
+                else
+                    dts-util:selectRef($document, $ref, $citationTree)
+            else if ($start and $end) then
+                dts-util:selectRange($document, $start, $end, $citationTree)
+            else
+                ()
+        let $boundaryUnits :=
+            if ($ref) then
+                let $selection := $resolvedSelection?selectedNodes
+                return
+                    if ($isVirtualMeasureRef) then
+                        let $citeStructure := dts-util:getCiteStructureForNode($selection[1], $citationTree)
+                        return
+                            <ref>
+                                {dts-navigation:buildVirtualMeasureCitableUnitObject($selection[1], $citeStructure[1], $ref, $namespace)}
+                            </ref>
+                    else
+                        let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
+                        return
+                            <ref>
+                                {dts-navigation:buildCitableUnitObject($selection, $citeStructure, $ref, $namespace)}
+                            </ref>
+            else if ($start and $end) then
+                let $startSelection := $resolvedSelection?startNode
+                let $endSelection := $resolvedSelection?endNode
+                let $startCiteStructure := dts-util:getCiteStructureForNode($startSelection, $citationTree)
+                let $endCiteStructure := dts-util:getCiteStructureForNode($endSelection, $citationTree)
+                return (
+                    <start>
+                        {dts-navigation:buildCitableUnitObject($startSelection, $startCiteStructure, $start, $namespace)}
+                    </start>,
+                    <end>
+                        {dts-navigation:buildCitableUnitObject($endSelection, $endCiteStructure, $end, $namespace)}
+                    </end>
+                )
+            else
+                ()
+
+        let $member :=
+            if ($isVirtualMeasureRef) then
+                if (exists($down)) then
+                    error($errors:INVALID_PARAMETERS, "The 'down' parameter cannot be used with a virtual measure ref.")
+                else
+                    let $citeStructure := dts-util:getCiteStructureForNode($resolvedVirtualMeasure[1], $citationTree)
+                    return
+                        dts-navigation:buildVirtualMeasureMemberArray($resolvedVirtualMeasure, $citeStructure[1], $namespace)
+            else if (not(exists($down))) then
+                ()
+            (: If $down = 0 and $ref is present -> special case :)
+            else if ($down eq 0 and $ref) then
+                let $selection := $resolvedSelection?startNode
+                let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
+                return
+                dts-navigation:buildMemberArrayRefDownZero($selection, $citeStructure, $namespace)
+            else if (not($ref) and not($start) and not($end)) then
+                dts-navigation:buildMemberArray($document, $citationTree, $down, $namespace)
+            else
+                let $selection := $resolvedSelection?selectedNodes
+                let $citeStructure := dts-util:getCiteStructureForNode($selection, $citationTree)
+                (: The selected CitableUnit is the starting level; down counts levels below it. :)
+                let $remainingLevels := if ($down gt 0) then $down + 1 else $down
+                return dts-navigation:buildMemberArray($selection, $citeStructure, $remainingLevels, $namespace)
+
+        let $resourceObject := dts-navigation:buildResourceObject($document, $resource)
+        let $output :=
+            <json:value>
+                <context json:name="@context">https://dtsapi.org/context/v1.0.json</context>
+                <dtsVersion>1.0</dtsVersion>
+                <id json:name="@id">{request:get-url()}</id>
+                <type json:name="@type">Navigation</type>
+                {$resourceObject}
+                {$boundaryUnits}
+                {$member}
+            </json:value>
+
+        return $output
+};

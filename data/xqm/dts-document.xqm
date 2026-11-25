@@ -15,6 +15,7 @@ module namespace dts-document = "http://www.edirom.de/api/dts-document";
 import module namespace edition = "http://www.edirom.de/xquery/edition" at "edition.xqm";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "eutil.xqm";
 import module namespace errors = "http://www.edirom.de/xquery/errors" at "errors.xqm";
+import module namespace dts-util = "http://www.edirom.de/api/dts-util" at "dts-util.xqm";
 
 (: NAMESPACE DECLARATIONS ================================================== :)
 
@@ -29,19 +30,6 @@ declare namespace util = "http://exist-db.org/xquery/util";
 
 (: VARIABLE DECLARATIONS ================================================== :)
 
-(:~
- : Lists MEI elements that must always be preserved for every endpoint request.
- :)
-declare variable $dts-document:alwaysPreserveMEIElements as xs:QName* := (
-    QName("http://www.music-encoding.org/ns/mei", "meiHead")
-);
-
-(:~
- : Lists TEI elements that must always be preserved for every endpoint request.
- :)
-declare variable $dts-document:alwaysPreserveTEIElements as xs:QName* := (
-    QName("http://www.tei-c.org/ns/1.0", "teiHeader")
-);
 
 (:~
  : Lists MEI elements that are preserved when they precede a selected sibling structure.
@@ -69,16 +57,6 @@ declare variable $dts-document:preserveIfPrecedingSiblingsMEIElements as xs:QNam
 declare variable $dts-document:followReferenceAttributes as xs:QName* := (
     QName("", "facs")
 );
-
-(:~
- : Maps special resource aliases to internal application resources.
- :)
-declare variable $dts-document:specialResourcesAliases as map(xs:string, xs:string) := map {
-    "help_en": "xmldb:exist:///db/apps/Edirom-Online-Backend/help/help_en.xml",
-    "help_de": "xmldb:exist:///db/apps/Edirom-Online-Backend/help/help_de.xml"
-}; (: TODO: this is a temporary solution.
-    There should be a collection also.
-    Make them available to collection and navigation endopoints. :)
 
 (:~
  : Denotes the default HTML profile used when no profile is requested.
@@ -152,7 +130,7 @@ declare function dts-document:wrapSelection(
     $selection as element()*,
     $document as node()
 ) as node()? {
-    let $alwaysPreserved := $document//*[node-name(.) = $dts-document:alwaysPreserveMEIElements or node-name(.) = $dts-document:alwaysPreserveTEIElements]
+    let $alwaysPreserved := $document//*[node-name(.) = $dts-util:alwaysPreserveMEIElements or node-name(.) = $dts-util:alwaysPreserveTEIElements]
     let $baseFullCopyNodes := ($selection, $alwaysPreserved)
     let $referencedNodes := dts-document:referenceClosure($document, $baseFullCopyNodes)
     let $referencingMeasures := dts-document:getMeasuresReferencingSelectedZones($document, $selection)
@@ -334,221 +312,6 @@ declare function dts-document:getMeasuresReferencingSelectedZones(
 };
 
 (:~
- : Checks whether the supplied elements match a citation structure in the given citation tree.
- :
- : @param $elements The elements to test
- : @param $citationTree The citation tree to check against
- : @return `true()` when the elements are part of the citation tree, otherwise `false()`
- :)
-declare function dts-document:isInCitationTree(
-    $elements as element()*,
-    $citationTree as element(citeStructure)*
-) as xs:boolean {
-    some $citeStructure in ($citationTree, $citationTree//citeStructure)
-        satisfies dts-document:matchesCitationStructure($elements, $citeStructure)
-};
-
-(:~
- : Tests whether a selection consists only of elements that should always be preserved.
- :
- : @param $elements The elements to test
- : @return `true()` if all supplied elements are in the list of always preserved elements, otherwise `false()`
- :)
-declare function dts-document:isAlwaysPreservedSelection(
-    $elements as element()*
-) as xs:boolean {
-    every $node in $elements satisfies node-name($node) = $dts-document:alwaysPreserveMEIElements or node-name($node) = $dts-document:alwaysPreserveTEIElements
-};
-
-(:~
- : Tests whether the supplied elements match a single citation structure definition.
- :
- : @param $elements The elements to test
- : @param $citeStructure The citation structure definition to compare against
- : @return `true()` when the elements match the citation structure, otherwise `false()`
- :)
-declare function dts-document:matchesCitationStructure(
-    $elements as element()*,
-    $citeStructure as element(citeStructure)
-) as xs:boolean {
-    let $match := normalize-space($citeStructure/@match)
-    let $matchName :=
-        if (not($match)) then
-            ()
-        else
-            resolve-QName($match, $citeStructure)
-    return
-        exists($matchName)
-        and (every $node in $elements satisfies node-name($node) eq $matchName)
-};
-(:~
- : Selects a TEI page range between the supplied page breaks.
- :
- : @param $document The source document
- : @param $startPb The starting page break element
- : @param $endPb The ending page break element, if present
- : @return The page content selected between the supplied boundaries
- :)declare function dts-document:selectTEIPages(
-    $document as node(),
-    $startPb as node()*,
-    $endPb as node()*
-) as node()* {
-    let $nextPb := 
-        if ($endPb) then
-            ($endPb/following::tei:pb)[1]
-        else
-            ($startPb/following::tei:pb)[1]
-    let $pb1 := $startPb/@xml:id
-    let $pb2 := 
-        if ($nextPb) then
-            $nextPb/@xml:id
-        else
-            ''
-    let $commonAncestorID :=
-        if ($nextPb) then
-            ($startPb/ancestor-or-self::*[. intersect $nextPb/ancestor-or-self::*])[last()]/@xml:id
-        else
-            ($startPb/ancestor-or-self::*[. intersect (($document//text())[last()])/ancestor-or-self::*])[last()]/@xml:id
-    let $reduced :=
-        transform:transform($document, eutil:getDoc($eutil:xsltBase || '/reduceToPageById.xsl'),
-            <parameters>
-                <param name="pb1_id" value="{$pb1}"/>
-                <param name="pb2_id" value="{$pb2}"/>
-            </parameters>
-        )
-    return
-        $reduced/descendant-or-self::*[@xml:id = $commonAncestorID]/*
-};
-
-(:~
- : Selects nodes from the document only for those references that are actually covered by the supplied citation structure.
- :
- : @param $document The source document
- : @param $ref The reference value to resolve
- : @param $citationTree The citation tree used to locate matching nodes
- : @return The selected nodes matching the supplied citation definition
- :)
-declare function dts-document:selectBasedOnCiteStructure(
-    $document as node(),
-    $ref as xs:string?,
-    $citationTree as element(citeStructure)*
-) as node()* {
-    let $citeStructures := ($citationTree, $citationTree//citeStructure)
-    for $citeStructure in $citeStructures
-    let $match := normalize-space($citeStructure/@match)
-    let $use := normalize-space($citeStructure/@use)
-    let $matchName :=
-        if (not($match)) then
-            ()
-        else
-            resolve-QName($match, $citeStructure)
-    let $selected :=
-        if (not($match) or not($use) or not($ref)) then
-            ()
-        else
-            let $attributeName :=
-                if (starts-with($use, "@")) then
-                    substring($use, 2)
-                else
-                    ()
-            return
-                if ($attributeName) then
-                    $document//*[node-name(.) eq $matchName and string(@*[string(node-name(.)) eq $attributeName]) = $ref][1]
-                else
-                    ()
-    return
-        $selected
-};
-
-(:~
- : Resolves a document selection from a reference or a start/end pair, matching a given citation structure.
- :
- : @param $document The source document
- : @param $ref An optional reference to select a single unit
- : @param $start The optional start reference of a range
- : @param $end The optional end reference of a range
- : @param $citationTree The citation tree used to validate the selection
- : @return The selected nodes or range content
- :)
-declare function dts-document:selectElementOrRange(
-    $document as node(),
-    $ref as xs:string?,
-    $start as xs:string?,
-    $end as xs:string?,
-    $citationTree as element(citeStructure)*
-) as node()* {
-    if ($ref) then
-        let $citeStructureSelection := dts-document:selectBasedOnCiteStructure($document, $ref, $citationTree)
-        let $candidateSelection :=
-            if ($citeStructureSelection) then
-                $citeStructureSelection
-            else
-                $document//*[local-name() = $ref]
-        return
-            if (
-                $candidateSelection and
-                (dts-document:isInCitationTree($candidateSelection, $citationTree)
-                or dts-document:isAlwaysPreservedSelection($candidateSelection))
-                and (node-name($candidateSelection[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb"))
-            ) then
-                dts-document:selectTEIPages($document, $candidateSelection, ())
-            else if (
-                $candidateSelection and
-                (dts-document:isInCitationTree($candidateSelection, $citationTree)
-                or dts-document:isAlwaysPreservedSelection($candidateSelection))
-            ) then
-                $candidateSelection
-            else if ($candidateSelection) then
-                error($errors:INVALID_PARAMETERS, "The selected citable units are not part of the citation tree specified for this document and are not part of the always preserved elements." || "Citation tree: " || string-join($citationTree/@xml:id, ", ") || ". Selected element: " || node-name($candidateSelection[1]) || ", Selected element @xml:id: " || $candidateSelection[1]/@xml:id)
-            else
-                error($errors:NOT_FOUND, "The specified citable units did not match any element in the document for the specified citation tree.")
-    else if ($start and $end) then
-        let $candidateStartNode := dts-document:selectBasedOnCiteStructure($document, $start, $citationTree)
-        let $candidateEndNode := dts-document:selectBasedOnCiteStructure($document, $end, $citationTree)
-        let $startNode :=
-            if (
-                $candidateStartNode and
-                dts-document:isInCitationTree($candidateStartNode, $citationTree)
-            ) then
-                $candidateStartNode
-            else if ($candidateStartNode) then
-                error($errors:INVALID_PARAMETERS, "The selected start citable unit is not part of the citation tree specified for this document." || "Citation tree: " || string-join($citationTree/@xml:id, ", ") || ". Selected element: " || node-name($candidateStartNode[1]) || ", Selected element @xml:id: " || $candidateStartNode[1]/@xml:id)
-            else
-                error($errors:NOT_FOUND, "The specified start citable unit did not match any element in the document for the specified citation tree.")
-        let $endNode :=
-            if (
-                $candidateEndNode and
-                dts-document:isInCitationTree($candidateEndNode, $citationTree)
-            ) then
-                $candidateEndNode
-            else if ($candidateEndNode) then
-                error($errors:INVALID_PARAMETERS, "The selected end citable unit is not part of the citation tree specified for this document." || "Citation tree: " || string-join($citationTree/@xml:id, ", ") || ". Selected element: " || node-name($candidateEndNode[1]) || ", Selected element @xml:id: " || $candidateEndNode[1]/@xml:id)
-            else
-                error($errors:NOT_FOUND, "The specified end citable unit did not match any element in the document for the specified citation tree.")
-        
-        return
-            if (node-name($startNode[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb")
-            and node-name($endNode[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb")) then
-                dts-document:selectTEIPages($document, $startNode, $endNode)
-            else if ($start eq $end) then
-                $startNode
-            else if (not($startNode/parent::* is $endNode/parent::*)) then
-                error($errors:INVALID_PARAMETERS, "The start and end citable units must have the same parent, or be page break elements." || "Selected start element: " || node-name($startNode[1]) || ", Selected start element @xml:id: " || $startNode[1]/@xml:id || ". Selected end element: " || node-name($endNode[1]) || ", Selected end element @xml:id: " || $endNode[1]/@xml:id)
-            else if ($startNode << $endNode) then
-                (
-                    $startNode,
-                    $startNode/following-sibling::*[
-                        . << $endNode
-                    ],
-                    $endNode
-                )
-            else
-                error($errors:INVALID_PARAMETERS, "Invalid start and end citable units. The start node must come before the end node. Start: " || $start || ", End: " || $end)
-    else
-        ()
-};
-
-(:~
  : Selects content according to the supplied parameters and wraps it for DTS output.
  :
  : @param $document The source document
@@ -568,6 +331,45 @@ declare function dts-document:selectAndWrap(
     let $selection := dts-document:selectElementOrRange($document, $ref, $start, $end, $citationTree)
     return
         dts-document:wrapSelection($selection, $document)
+};
+
+(:~
+ : Selects document content from a reference or range, expanding TEI page
+ : selections to the requested page content.
+ :
+ : @param $document The source document
+ : @param $ref An optional reference to select a single unit
+ : @param $start The optional start reference of a range
+ : @param $end The optional end reference of a range
+ : @param $citationTree The citation tree used to validate the selection
+ : @return The selected nodes or page content
+ :)
+declare function dts-document:selectElementOrRange(
+    $document as node(),
+    $ref as xs:string?,
+    $start as xs:string?,
+    $end as xs:string?,
+    $citationTree as element(citeStructure)*
+) as node()* {
+    let $resolvedSelection :=
+        if ($ref) then
+            dts-util:selectRef($document, $ref, $citationTree)
+        else if ($start and $end) then
+            dts-util:selectRange($document, $start, $end, $citationTree)
+        else
+            map { "selectedNodes": (), "startNode": (), "endNode": () }
+    let $selection := $resolvedSelection?selectedNodes
+    let $startBoundary := $resolvedSelection?startNode
+    let $endBoundary := $resolvedSelection?endNode
+    return
+        if (
+            exists($startBoundary)
+            and node-name($startBoundary[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb")
+            and (empty($endBoundary) or node-name($endBoundary[1]) eq QName("http://www.tei-c.org/ns/1.0", "pb"))
+        ) then
+            dts-util:selectTEIPages($document, $startBoundary, $endBoundary)
+        else
+            $selection
 };
 
 (:~
@@ -632,21 +434,6 @@ declare function dts-document:citation(
         util:binary-to-string(util:binary-doc($resource), "UTF-8")
     else
         error($errors:NOT_FOUND, "The requested citation resource was not found.")
-};
-
-(:~
- : Resolves special resource aliases to their backing application resources.
- :
- : @param $resource The requested resource identifier
- : @return The resolved resource URI
- :)
-declare function dts-document:resolveSpecialResourceAlias(
-    $resource as xs:string?
-) as xs:string {
-    if (map:contains($dts-document:specialResourcesAliases, $resource)) then
-        map:get($dts-document:specialResourcesAliases, $resource)
-    else
-        $resource
 };
 
 (:~
@@ -832,17 +619,7 @@ declare function dts-document:selectCitationTreeRootElements(
     $citationTree as element(citeStructure)*
 ) as element()* {
     let $topLevel := $citationTree[1]
-    let $match := normalize-space($topLevel/@match)
-    let $matchName :=
-        if ($match) then
-            resolve-QName($match, $topLevel)
-        else
-            ()
-    let $selection :=
-        if (exists($matchName)) then
-            $xml//*[node-name(.) eq $matchName]
-        else
-            ()
+    let $selection := dts-util:findCiteStructureMatches($xml, $topLevel)
     let $startNode := $selection[1]
     let $endNode := $selection[last()]
     let $start := $startNode/@xml:id
@@ -963,7 +740,7 @@ declare function dts-document:document(
         else
             dts-document:citation($resource)
     else
-        let $resource := dts-document:resolveSpecialResourceAlias($resource)
+        let $resource := dts-util:resolveSpecialResourceAlias($resource)
         let $isX3d := ends-with(lower-case($resource), ".x3d")
         let $document := eutil:getDoc($resource)/root()
         let $document :=
@@ -983,9 +760,7 @@ declare function dts-document:document(
             if ($isX3d) then
                 ()
             else
-                eutil:getDoc($eutil:app-root || '/data/trees/citationTrees' || upper-case($namespace) || '.xml')/refsDecl/citeStructure[
-                    not($tree) or @xml:id = $tree
-                ]
+                dts-util:selectCitationTree($document, $tree)
         let $mediaTypeCompatible := dts-document:isMediaTypeCompatible($mediaType, $namespace)
         let $outputXmlRaw :=
             if (not($mediaTypeCompatible)) then
@@ -1029,7 +804,7 @@ declare function dts-document:document(
                     document { dts-document:transformTEIToHTML($outputXml, $resource, $xslInstruction, $htmlParameters) }
             else if ($namespace eq "mei" and contains($mediaType, "json")) then
                 let $addMeasuresToZones :=
-                    if (dts-document:isInCitationTree(element mei:measure { }, $citationTree)) then
+                    if (dts-util:isInCitationTree(element mei:measure { }, $citationTree)) then
                         false()
                     else
                         true()

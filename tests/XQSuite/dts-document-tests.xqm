@@ -3,6 +3,7 @@ xquery version "3.1";
 module namespace ddt = "http://www.edirom.de/xquery/xqsuite/dts-document-tests";
 
 import module namespace dts-document = "http://www.edirom.de/api/dts-document" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/dts-document.xqm";
+import module namespace dts-util = "http://www.edirom.de/api/dts-util" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/dts-util.xqm";
 import module namespace eutil = "http://www.edirom.de/xquery/eutil" at "xmldb:exist:///db/apps/Edirom-Online-Backend/data/xqm/eutil.xqm";
 
 declare namespace dts="https://w3id.org/dts/api#";
@@ -11,21 +12,52 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace test="http://exist-db.org/xquery/xqsuite";
 declare namespace xhtml="http://www.w3.org/1999/xhtml";
 
+declare
+    (: A page-break ref returns content from that page only. :)
+    %test:arg("ref", "pb-2")
+    %test:arg("start") %test:arg("end")
+    %test:arg("expectedIdentifiers", "pb-2 yes-in-p2-1")
+    %test:arg("excludedIdentifiers", "pb-1 pb-3 not-in-p2-1 not-in-p2-2")
+    %test:assertTrue
+    (: A page range returns content across both requested pages. :)
+    %test:arg("ref")
+    %test:arg("start", "pb-1") %test:arg("end", "pb-2")
+    %test:arg("expectedIdentifiers", "pb-1 pb-2 yes-in-p2-1")
+    %test:arg("excludedIdentifiers", "pb-3 not-in-p2-2")
+    %test:assertTrue
+    function ddt:test-selectElementOrRange-expands-TEI-pages(
+        $ref as xs:string?,
+        $start as xs:string?,
+        $end as xs:string?,
+        $expectedIdentifiers as xs:string,
+        $excludedIdentifiers as xs:string
+    ) as xs:boolean {
+        let $resource := "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml"
+        let $document := eutil:add-xml-ids(eutil:getDoc($resource))
+        let $citationTree := dts-util:selectCitationTree($document, "paginationStructure")
+        let $content := dts-document:selectElementOrRange($document, $ref, $start, $end, $citationTree)
+        let $expectedIds := tokenize(normalize-space($expectedIdentifiers), "\s+")
+        let $excludedIds := tokenize(normalize-space($excludedIdentifiers), "\s+")
+        return
+            (every $id in $expectedIds satisfies exists($content/descendant-or-self::*[@xml:id = $id]))
+            and empty($content/descendant-or-self::*[@xml:id = $excludedIds])
+};
+
 declare function ddt:citationTree(
     $tree as xs:string?
 ) as element(citeStructure)* {
     <refsDecl xmlns:mei="http://www.music-encoding.org/ns/mei">
         <citeStructure xml:id="musicStructure"
                         unit="Movement"
-                        match="mei:mdiv"
+                        match="//mei:mdiv"
                         use="@xml:id">
             <citeStructure unit="Measure"
-                            match="mei:measure"
+                            match="descendant::mei:measure"
                             use="@xml:id"/>
         </citeStructure>
         <citeStructure xml:id="paginationStructure"
                         unit="Surface"
-                        match="mei:surface"
+                        match="//mei:surface"
                         use="@xml:id">
             <citeStructure unit="Zone"
                             match="mei:zone"
@@ -33,88 +65,11 @@ declare function ddt:citationTree(
         </citeStructure>
         <citeStructure xml:id="performanceStructure"
                     unit="Recording"
-                    match="mei:recording"
+                    match="//mei:recording"
                     use="@xml:id"/>
     </refsDecl>/citeStructure[
         not($tree) or @xml:id = $tree
     ]
-};
-
-declare function ddt:alternativeCitationTree(
-    $tree as xs:string?
-) as element(citeStructure)* {
-    <refsDecl xmlns:mei="http://www.music-encoding.org/ns/mei">
-        <citeStructure xml:id="musicStructure"
-                        unit="Movement"
-                        match="mei:mdiv"
-                        use="@xml:id">
-            <citeStructure unit="Measure"
-                            match="mei:measure"
-                            use="@n"/>
-        </citeStructure>
-        <citeStructure xml:id="paginationStructure"
-                        unit="Surface"
-                        match="mei:surface"
-                        use="@xml:id">
-            <citeStructure unit="Zone"
-                            match="mei:zone"
-                            use="@xml:id"/>
-        </citeStructure>
-        <citeStructure xml:id="performanceStructure"
-                    unit="Recording"
-                    match="mei:recording"
-                    use="@xml:id"/>
-    </refsDecl>/citeStructure[
-        not($tree) or @xml:id = $tree
-    ]
-};
-
-declare
-    %test:assertEquals("movement-1")
-    function ddt:test-selectBasedOnCiteStructure-selects-by-xml-id() as xs:string {
-        let $document := document {
-            <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.0.0">
-                <meiHead/>
-                <music>
-                    <body>
-                        <mdiv xml:id="movement-1">
-                            <score>
-                                <section>
-                                    <measure n="42"/>
-                                </section>
-                            </score>
-                        </mdiv>
-                    </body>
-                </music>
-            </mei>
-        }
-        let $citationTree := ddt:alternativeCitationTree("musicStructure")
-        let $selected := dts-document:selectBasedOnCiteStructure($document, "movement-1", $citationTree)
-        return string($selected/@xml:id)
-};
-
-declare
-    %test:assertEquals("42")
-    function ddt:test-selectBasedOnCiteStructure-selects-by-n() as xs:string {
-        let $document := document {
-            <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.0.0">
-                <meiHead/>
-                <music>
-                    <body>
-                        <mdiv xml:id="movement-1">
-                            <score>
-                                <section>
-                                    <measure n="42"/>
-                                </section>
-                            </score>
-                        </mdiv>
-                    </body>
-                </music>
-            </mei>
-        }
-        let $citationTree := ddt:alternativeCitationTree("musicStructure")
-        let $selected := dts-document:selectBasedOnCiteStructure($document, "42", $citationTree)
-        return string($selected/@n)
 };
 
 declare
@@ -459,67 +414,6 @@ declare
 };
 
 declare
-    %test:assertTrue
-    function ddt:test-selectTEIPages-returns-something() {
-        let $document := doc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
-        let $document := eutil:add-xml-ids($document)
-        let $result :=
-        <result>
-        {
-            dts-document:selectTEIPages(
-                $document,
-                $document//tei:pb[@xml:id = "pb-1"],
-                ()
-            )
-        }
-        </result>
-        return
-            $result
-};
-
-declare
-    %test:assertTrue
-    function ddt:test-selectTEIPages-with-endPb-selects-page-range() as xs:boolean {
-        let $document := doc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
-        let $document := eutil:add-xml-ids($document)
-        let $result := 
-        <result>
-        {
-            dts-document:selectTEIPages(
-                $document,
-                $document//tei:pb[@xml:id = "pb-1"],
-                $document//tei:pb[@xml:id = "pb-2"]
-            )
-        }
-        </result>
-        return
-            exists($result//tei:pb[@xml:id = "pb-1"])
-            and exists($result//tei:pb[@xml:id = "pb-2"])
-            and exists($result//tei:p[@xml:id = "yes-in-p2-1"])
-            and empty($result//tei:div[@xml:id = "test-div-3"])
-            and empty($result//tei:p[@xml:id = "not-in-p2-2"])
-};
-
-declare
-    %test:assertTrue
-    function ddt:test-selectTEIPages-with-empty-endPb-selects-current-page() as xs:boolean {
-        let $document := doc("xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
-        let $document := eutil:add-xml-ids($document)
-        let $result := dts-document:selectTEIPages(
-            $document,
-            $document//tei:pb[@xml:id = "pb-2"],
-            ()
-        )
-        return
-            exists($result//tei:pb[@xml:id = "pb-2"])
-            and exists($result//tei:p[@xml:id = "yes-in-p2-1"])
-            and empty($result//tei:pb[@xml:id = "pb-1"])
-            and empty($result//tei:pb[@xml:id = "pb-3"])
-            and empty($result//tei:p[@xml:id = "not-in-p2-1"])
-            and empty($result//tei:p[@xml:id = "not-in-p2-2"])
-};
-
-declare
     %test:args("", "mei")                         %test:assertTrue
     %test:args("application/xml", "mei")          %test:assertTrue
     %test:args("text/xml", "mei")                 %test:assertTrue
@@ -725,12 +619,12 @@ declare
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper/Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-1']/Q{http://www.tei-c.org/ns/1.0}pb[@xml:id='pb-2']")
     (: retrieve the last tei page worhout any pb after it :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
-    %test:arg("ref", "pb-3")
+    %test:arg("ref", "pb-4")
     %test:arg("start") %test:arg("end")
     %test:arg("tree", "paginationStructure")
     %test:arg("mediaType", "application/xml")
     %test:arg("lang", "de")
-    %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper//Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-2']/Q{http://www.tei-c.org/ns/1.0}pb[@xml:id='pb-3']")
+    %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper//Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-2']/Q{http://www.tei-c.org/ns/1.0}pb[@xml:id='pb-4']")
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper//Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-3']//Q{http://www.tei-c.org/ns/1.0}p[@rend='footer']")
     (: retieve range of tei pages :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
@@ -747,12 +641,13 @@ declare
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref")
     %test:arg("start", "pb-2")
-    %test:arg("end", "pb-3")
+    %test:arg("end", "pb-4")
     %test:arg("tree", "paginationStructure")
     %test:arg("mediaType", "application/xml")
     %test:arg("lang", "de")
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper//Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-1']/Q{http://www.tei-c.org/ns/1.0}pb[@xml:id='pb-2']")
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper//Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-2']/Q{http://www.tei-c.org/ns/1.0}pb[@xml:id='pb-3']")
+    %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper//Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-2']/Q{http://www.tei-c.org/ns/1.0}pb[@xml:id='pb-4']")
     %test:assertXPath("/Q{http://www.tei-c.org/ns/1.0}TEI[@xml:id='test-tei-document']//Q{https://w3id.org/dts/api#}wrapper//Q{http://www.tei-c.org/ns/1.0}div[@xml:id='test-div-3']//Q{http://www.tei-c.org/ns/1.0}p[@rend='footer']")
     (: retrieve teiHeader by ref :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
@@ -838,12 +733,19 @@ declare
     %test:arg("tree", "musicStructure")
     %test:arg("mediaType", "application/xml")
     %test:arg("lang")
-    %test:assertError("errors:InvalidParametersError")
+    %test:assertError("errors:NotFoundError")
     (: ask for a tei element that is not in the tree and not in the always-included teiHead :)
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/tei-document.xml")
     %test:arg("ref", "text")
     %test:arg("start") %test:arg("end")
     %test:arg("tree")
+    %test:arg("mediaType", "application/xml")
+    %test:arg("lang")
+    %test:assertError("errors:NotFoundError")
+    (: reject an unknown citation tree id explicitly :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-score.xml")
+    %test:arg("ref") %test:arg("start") %test:arg("end")
+    %test:arg("tree", "missingCitationTree")
     %test:arg("mediaType", "application/xml")
     %test:arg("lang")
     %test:assertError("errors:InvalidParametersError")
@@ -1648,6 +1550,14 @@ declare
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
     %test:arg("tree", "paginationStructure")
     %test:assertTrue
+    (: An empty tree parameter selects the first citation tree by default. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
+    %test:arg("tree", "")
+    %test:assertTrue
+    (: An omitted tree parameter also selects the first citation tree by default. :)
+    %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-facsimile.xml")
+    %test:arg("tree")
+    %test:assertTrue
     %test:arg("resource", "xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/mei-recording.xml")
     %test:arg("tree", "performanceStructure")
     %test:assertTrue
@@ -1665,7 +1575,7 @@ declare
         let $mediaType := "application/json"
         let $response := dts-document:document($resource, (), (), (), $tree, $mediaType, $html-parameters, $xml-parameters)
         let $checkResponseStructure := 
-            if ($tree eq "musicStructure") then
+            if (not($tree) or $tree eq "" or $tree eq "musicStructure") then
                 map:contains($response, "mdiv")
                 and map:contains($response?mdiv(1)?score(1)?section(1), "measure")
                 and map:contains($response?mdiv(1)?score(1)?section(1)?measure(1), "measureId")
