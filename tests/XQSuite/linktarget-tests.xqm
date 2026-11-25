@@ -19,3 +19,17 @@ declare
         let $views := linktarget:getViews('text', $lt:document-uri, doc($lt:document-uri), 'en', $editionUri)
         return exists($views[?type eq 'headerView'])
     };
+
+declare
+    %test:assertFalse
+    function lt:test-html-document-has-no-header-view() as xs:boolean {
+        let $htmlDoc := document { <html><head/><body/></html> }
+        let $views := linktarget:getViews(
+            'html',
+            'plain.html',
+            $htmlDoc,
+            'en',
+            'xmldb:exist:///db/apps/Edirom-Online-Backend/tests/XQSuite/data/edition-metadata-enabled.xml'
+        )
+        return exists($views[?type eq 'headerView'])
+    };
