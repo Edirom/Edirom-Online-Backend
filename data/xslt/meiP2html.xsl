@@ -95,6 +95,15 @@
     <xd:doc scope="component">
         <xd:desc>Transform mei:ref elements to HTML a-elements. Adds a onclick attribute to handle links with the Edirom Online LinkController.</xd:desc>
     </xd:doc>
+    <xsl:template match="mei:ref[not(normalize-space(@target))]">
+        <span>
+            <xsl:attribute name="class" select="string-join(('ref_noTarget', @rend[string-length() gt 0]), ' ')"/>
+            <xsl:if test="@xml:id">
+                <xsl:attribute name="xml:id" select="concat($idPrefix,@xml:id)"/>
+            </xsl:if>
+            <xsl:apply-templates select="* | text()"/>
+        </span>
+    </xsl:template>
     <xsl:template match="mei:ref">
         <a>
             <xsl:attribute name="class" select="string-join(('link_ref', @rend[string-length() gt 0]), ' ')"/>
