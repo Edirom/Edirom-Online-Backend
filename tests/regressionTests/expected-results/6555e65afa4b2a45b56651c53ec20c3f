@@ -1,38 +1,34 @@
 <!DOCTYPE html>
 <div class="meiHead">
     <div class="section">
-        <h1>File Information</h1>
+        <h1>Dateinformationen</h1>
         <div class="propertyList">
             <div class="property">
                 <div class="key">id</div>
                 <div class="value"></div>
             </div>
-         
-            <div class="property">
-                <div class="key">Title</div>
-                <div class="value">Quintett für Klarinette, 2 Violinen, Viola und Violoncello B-Dur</div>
-            </div>
-            <div class="property">
-                <div class="key">Responsibility</div>
+         <div class="property">
+                <div class="key">Titelangabe</div>
                 <div class="value">
-                    <div class="subProperty"><span class="subkey">Responsibility</span><span class="subvalue"> (PDxxxN3l3l3l2l4) 
-               ()
-            </span></div>
+                    <div class="subProperty">
+                        <div class="subkey">Titel</div>
+                        <div class="subvalue">Quintett für Klarinette, 2 Violinen, Viola und Violoncello B-Dur</div>
+                    </div>
+                    <div class="subProperty"><span class="subkey">Verfasserangabe</span><span class="subvalue"></span></div>
                 </div>
             </div>
-         
          <div class="property">
-                <div class="key">Publication Statement</div>
+                <div class="key">Informationen zur Publikation</div>
                 <div class="value">
-            <div class="subProperty"><span class="subkey">Availability</span><span class="subvalue"> (PDxxxN3l3l3l4l2) 
+            <div class="subProperty"><span class="subkey">Verfügbarkeit</span><span class="subvalue"> (PDxxxN3l3l3l4l2) 
                
             </span></div>
          </div>
             </div>
          <div class="section">
-                <h1 class="key">Source Description</h1>
+                <h1 class="key">Quellenbeschreibung</h1>
                 <div class="section">
-                    <h1>Sources</h1>
+                    <h1>Quellen</h1>
                     <h1></h1>
                     <h1></h1>
                     <h1></h1>
@@ -45,22 +41,22 @@
       </div>
     </div>
     <div class="section">
-        <h1>Details about the encoding</h1>
+        <h1>Angaben zu der Codierung</h1>
         <div class="propertyList">
             <div class="property">
                 <div class="key">id</div>
                 <div class="value"></div>
             </div>
          <div class="property">
-                <div class="key">Processed using</div>
+                <div class="key">Entwickelt mit</div>
                 <div class="value">Mac OS X Mountain Lion (Version 19100) </div>
             </div>
             <div class="property">
-                <div class="key">Processed using</div>
+                <div class="key">Entwickelt mit</div>
                 <div class="value">Sibelius to MEI Exporter (2.3.0) (Version 2.3.0) </div>
             </div>
             <div class="property">
-                <div class="key">Processed using</div>
+                <div class="key">Entwickelt mit</div>
                 <div class="value">mei30To40.xsl (Version v1.0_beta) </div>
             </div>
          
@@ -120,33 +116,36 @@
       </div>
     </div>
     <div class="section">
-        <h1>manifestationList</h1>
+        <h1>FRBR-Manifestationen</h1>
         <div class="propertyList">
             <div class="property">
                 <div class="key">id</div>
                 <div class="value"></div>
             </div>
          
-            
-               <div class="property">
-                <div class="key">Title</div>
-                <div class="value">Edition</div>
+            <div class="property">
+                <div class="key">Titelangabe</div>
+                <div class="value">
+                    <div class="subProperty">
+                        <div class="subkey">Titel</div>
+                        <div class="subvalue">Edition</div>
+                    </div>
+                    <div class="subProperty">
+                        <div class="subkey">Titel</div>
+                        <div class="subvalue">WeGA</div>
+                    </div>
+                </div>
             </div>
-               <div class="property">
-                <div class="key">Title</div>
-                <div class="value">WeGA</div>
-            </div>
-            
             <div>
                 <div class="section">
-                    <h1>Annotations</h1>
+                    <h1>Annotationen</h1>
                     <div class="propertyList">
                         <div class="property">
                             <div class="key">id</div>
                             <div class="value"></div>
                         </div>
                <div class="property">
-                            <div class="key">Source Description</div>
+                            <div class="key">Quellenbeschreibung</div>
                             <div class="value">(xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/sourceDesc-4.xml)</div>
                         </div>
             </div>
@@ -156,20 +155,20 @@
       </div>
     </div>
     <div class="section">
-        <h1>File revisions</h1>
+        <h1>Revisionen der Datei</h1>
         <div class="propertyList">
             <div class="property">
                 <div class="key">id</div>
                 <div class="value"></div>
             </div>
          <div class="property">
-                <div class="key">Change 2</div>
+                <div class="key">Änderungen 2</div>
                 <div class="value">
                     <p>Merged old annotations into correct positions in this file.</p>
                 </div>
             </div>
          <div class="property">
-                <div class="key">Change 1<span class="date">2021-03-23</span></div>
+                <div class="key">Änderungen 1<span class="date">2021-03-23</span></div>
                 <div class="value">
                Ran Mo
             <p>Erstellen der Datei</p>

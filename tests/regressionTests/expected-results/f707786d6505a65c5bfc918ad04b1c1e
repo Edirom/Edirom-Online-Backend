@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<div class="meiHead">
+    <div class="section">
+        <h1>Dateinformationen</h1>
+        <div class="propertyList">
+            <div class="property">
+                <div class="key">id</div>
+                <div class="value"></div>
+            </div>
+         <div class="property">
+                <div class="key">Titelangabe</div>
+                <div class="value">
+                    <div class="subProperty">
+                        <div class="subkey">Titel</div>
+                        <div class="subvalue">Quintett für Klarinette, 2 Violinen, Viola und Violoncello B-Dur</div>
+                    </div>
+                    <div class="subProperty"><span class="subkey">Verfasserangabe</span><span class="subvalue"></span></div>
+                </div>
+            </div>
+         <div class="property">
+                <div class="key">Informationen zur Publikation</div>
+                <div class="value">
+            <div class="subProperty"><span class="subkey">Verfügbarkeit</span><span class="subvalue"> (PDxxxN3l3l3l4l2) 
+               
+            </span></div>
+         </div>
+            </div>
+         <div class="section">
+                <h1 class="key">Quellenbeschreibung</h1>
+                <div class="section">
+                    <h1>Quellen</h1>
+                    <h1></h1>
+                    <h1></h1>
+                    <h1></h1>
+                    <h1></h1>
+                    <h1></h1>
+                    <h1></h1>
+                    <h1></h1>
+                </div>
+            </div>
+      </div>
+    </div>
+    <div class="section">
+        <h1>Angaben zu der Codierung</h1>
+        <div class="propertyList">
+            <div class="property">
+                <div class="key">id</div>
+                <div class="value"></div>
+            </div>
+         <div class="property">
+                <div class="key">Entwickelt mit</div>
+                <div class="value">Mac OS X Mountain Lion (Version 19100) </div>
+            </div>
+            <div class="property">
+                <div class="key">Entwickelt mit</div>
+                <div class="value">Sibelius to MEI Exporter (2.3.0) (Version 2.3.0) </div>
+            </div>
+            <div class="property">
+                <div class="key">Entwickelt mit</div>
+                <div class="value">mei30To40.xsl (Version v1.0_beta) </div>
+            </div>
+         
+            
+               
+               
+               
+                  
+                     1
+                     1
+                  
+                  
+                     2
+                     2
+                  
+                  
+                     3
+                     3
+                  
+               
+               
+                  
+                     Bogensetzung
+                     slurs
+                  
+                  
+                     Notation
+                     notation
+                  
+                  
+                     Dynamik
+                     dynamics
+                  
+                  
+                     Artikulation
+                     articulation
+                  
+                  
+                     Rhythmus
+                     rhythm
+                  
+                  
+                     Korrektur
+                     correction
+                  
+                  
+                     Editorischer Eingriff
+                     editorial intervention
+                  
+                  
+                     Spielanweisung
+                     verbal instruction
+                  
+               
+            
+         
+      </div>
+    </div>
+    <div class="section">
+        <h1>FRBR-Manifestationen</h1>
+        <div class="propertyList">
+            <div class="property">
+                <div class="key">id</div>
+                <div class="value"></div>
+            </div>
+         
+            <div class="property">
+                <div class="key">Titelangabe</div>
+                <div class="value">
+                    <div class="subProperty">
+                        <div class="subkey">Titel</div>
+                        <div class="subvalue">Edition</div>
+                    </div>
+                    <div class="subProperty">
+                        <div class="subkey">Titel</div>
+                        <div class="subvalue">WeGA</div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="section">
+                    <h1>Annotationen</h1>
+                    <div class="propertyList">
+                        <div class="property">
+                            <div class="key">id</div>
+                            <div class="value"></div>
+                        </div>
+               <div class="property">
+                            <div class="key">Quellenbeschreibung</div>
+                            <div class="value">(xmldb:exist:///db/apps/weber-klarinettenquintett-eol-emeritus/texts/sourceDesc-4.xml)</div>
+                        </div>
+            </div>
+                </div>
+            </div>
+         
+      </div>
+    </div>
+    <div class="section">
+        <h1>Revisionen der Datei</h1>
+        <div class="propertyList">
+            <div class="property">
+                <div class="key">id</div>
+                <div class="value"></div>
+            </div>
+         <div class="property">
+                <div class="key">Änderungen 2</div>
+                <div class="value">
+                    <p>Merged old annotations into correct positions in this file.</p>
+                </div>
+            </div>
+         <div class="property">
+                <div class="key">Änderungen 1<span class="date">2021-03-23</span></div>
+                <div class="value">
+               Ran Mo
+            <p>Erstellen der Datei</p>
+                </div>
+            </div>
+      </div>
+    </div>
+</div>
